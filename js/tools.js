@@ -248,7 +248,11 @@ const TOOLS = {
         newDate.setMonth(newDate.getMonth() + sign * v.add_months);
         newDate.setDate(newDate.getDate() + sign * (v.add_weeks * 7 + v.add_days));
         return {
-          stats: [{ label: 'Resulting Date', value: newDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), highlight: true }],
+          stats: [{
+            label: 'Resulting Date',
+            value: `${newDate.toLocaleDateString('en-US', { weekday: 'long' })}, ${newDate.toISOString().split('T')[0]}`,
+            highlight: true
+          }],
         };
       }
     },
