@@ -2,8 +2,8 @@
 // UtilityHub — Supabase Client & Helpers
 // ============================================================
 
-const SUPABASE_URL  = 'https://YOUR_PROJECT_REF.supabase.co';
-const SUPABASE_ANON = 'YOUR_ANON_KEY';
+const SUPABASE_URL  = 'https://uvkukqdrkvqhzrvfgxgq.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2a3VrcWRya3ZxaHpydmZneGdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1OTgzMDUsImV4cCI6MjEwMDE3NDMwNX0.lnzPHVUWFsZQ6mikxO2hQd9Uy1bjMutmvQXa8A8_-cA';
 
 const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
     auth: {

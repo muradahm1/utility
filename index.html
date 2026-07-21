@@ -145,7 +145,7 @@
                     <div class="hero-graphic">
                         <div class="floating-card payment-card">
                             <span class="label">Monthly Payment</span>
-                            <span class="amount">$1,825.23</span>
+                            <span class="amount" id="hero-mortgage-result">—</span>
                             <div class="mini-chart">
                                 <svg viewBox="0 0 100 30" class="chart-svg">
                                     <path d="M 0 25 Q 25 5, 50 20 T 100 5" fill="none" stroke="#6366F1" stroke-width="3" />
@@ -167,27 +167,27 @@
                     <div class="categories-grid">
                         <a href="index.html?category=finance" class="category-card">
                             <div class="icon-wrapper cat-finance"><i class="fa-solid fa-dollar-sign"></i></div>
-                            <div class="cat-details"><h3>Finance</h3><p>32 tools</p></div>
+                            <div class="cat-details"><h3>Finance</h3><p id="count-finance"></p></div>
                         </a>
                         <a href="index.html?category=health" class="category-card">
                             <div class="icon-wrapper cat-health"><i class="fa-solid fa-heart"></i></div>
-                            <div class="cat-details"><h3>Health</h3><p>18 tools</p></div>
+                            <div class="cat-details"><h3>Health</h3><p id="count-health"></p></div>
                         </a>
                         <a href="index.html?category=business" class="category-card">
                             <div class="icon-wrapper cat-business"><i class="fa-solid fa-briefcase"></i></div>
-                            <div class="cat-details"><h3>Business</h3><p>28 tools</p></div>
+                            <div class="cat-details"><h3>Business</h3><p id="count-business"></p></div>
                         </a>
                         <a href="index.html?category=education" class="category-card">
                             <div class="icon-wrapper cat-education"><i class="fa-solid fa-graduation-cap"></i></div>
-                            <div class="cat-details"><h3>Education</h3><p>22 tools</p></div>
+                            <div class="cat-details"><h3>Education</h3><p id="count-education"></p></div>
                         </a>
                         <a href="index.html?category=construction" class="category-card">
                             <div class="icon-wrapper cat-construction"><i class="fa-solid fa-helmet-safety"></i></div>
-                            <div class="cat-details"><h3>Construction</h3><p>16 tools</p></div>
+                            <div class="cat-details"><h3>Construction</h3><p id="count-construction"></p></div>
                         </a>
                         <a href="index.html?category=engineering" class="category-card">
                             <div class="icon-wrapper cat-engineering"><i class="fa-solid fa-gear"></i></div>
-                            <div class="cat-details"><h3>Engineering</h3><p>24 tools</p></div>
+                            <div class="cat-details"><h3>Engineering</h3><p id="count-engineering"></p></div>
                         </a>
                     </div>
                 </section>
@@ -297,9 +297,37 @@
         </div>
     </footer>
 
+    <script src="js/tools.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
-    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+    <script>
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        // Fill category counts from TOOLS registry (real numbers)
+        const categoryCounts = {};
+        Object.values(TOOLS).forEach(t => {
+            const cat = t.category.toLowerCase();
+            categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+        });
+        ['finance','health','business','education','construction','engineering'].forEach(cat => {
+            const el = document.getElementById('count-' + cat);
+            if (el) el.textContent = (categoryCounts[cat] || 0) + ' tool' + (categoryCounts[cat] !== 1 ? 's' : '');
+        });
+
+        // Hero card: calculate real mortgage result using default values
+        (function() {
+            const el = document.getElementById('hero-mortgage-result');
+            if (!el || typeof TOOLS === 'undefined') return;
+            const tool = TOOLS['mortgage-calculator'];
+            if (!tool) return;
+            const defaults = {};
+            tool.fields.forEach(f => { defaults[f.id] = typeof f.default === 'function' ? f.default() : f.default; });
+            try {
+                const result = tool.calculate(defaults);
+                el.textContent = result.stats[0].value;
+            } catch(e) { el.textContent = ''; }
+        })();
+    </script>
 </body>
 </html>
