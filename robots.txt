@@ -3,4 +3,4 @@ Allow: /
 Disallow: /auth
 Disallow: /history
 
-Sitemap: https://utilityhub.app/sitemap.xml
+Sitemap: https://utility-rose.vercel.app/sitemap.xml

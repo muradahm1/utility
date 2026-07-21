@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── SEO ───────────────────────────────────────────────────
-    const pageUrl = `https://utilityhub.app/tool?slug=${slug}`;
+    const pageUrl = `https://utility-rose.vercel.app/tool?slug=${slug}`;
     document.title = `${tool.name} | UtilityHub`;
     document.querySelector('meta[name="description"]').setAttribute('content', tool.metaDescription);
     document.getElementById('canonical-tag').setAttribute('href', pageUrl);
