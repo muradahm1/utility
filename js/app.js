@@ -63,34 +63,34 @@ function initHeroSearch() {
 
 // Active Nav State
 function initActiveNav() {
-    const path = window.location.pathname.split('/').pop() || 'index.html';
+    const path = window.location.pathname; // e.g., '/', '/tool', '/history'
     const params = new URLSearchParams(window.location.search);
     const category = params.get('category');
     const slug = params.get('slug');
 
     // On tool pages, resolve the category from the TOOLS registry
     let activeCategory = category;
-    if (path === 'tool.html' && slug && typeof TOOLS !== 'undefined' && TOOLS[slug]) {
+    if (path === '/tool' && slug && typeof TOOLS !== 'undefined' && TOOLS[slug]) {
         activeCategory = TOOLS[slug].category.toLowerCase();
     }
 
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         const href = item.getAttribute('href');
-        if (!href) return;
-        const [itemPath, itemQuery] = href.split('?');
+        if (!href) return; // Should not happen
+        const itemUrl = new URL(href, window.location.origin);
+        const itemPath = itemUrl.pathname;
+        const itemQuery = itemUrl.search;
         const itemCategory = new URLSearchParams(itemQuery || '').get('category');
 
-        if (path === 'tool.html') {
-            // Highlight the matching category nav item
-            if (itemCategory && itemCategory === activeCategory) {
+        if (path === '/tool') {
+            if (itemPath === '/' && itemCategory && itemCategory === activeCategory) {
                 item.classList.add('active');
             }
             return;
         }
-
-        const pathMatch = (itemPath === path) || (path === '' && itemPath === 'index.html');
-        if (pathMatch && (itemCategory === null ? !category : itemCategory === category)) {
+        const pathMatch = (itemPath === path) || (path === '/' && itemPath === '/index.html');
+        if (pathMatch && itemCategory === category) {
             item.classList.add('active');
         }
     });
@@ -146,7 +146,7 @@ function initAuthUI() {
             if (historyNav) historyNav.classList.remove('hidden');
             if (promoCard)  promoCard.style.display = 'none';
         } else {
-            slot.innerHTML = `<a href="auth.html" class="btn btn-primary btn-pill">Sign in</a>`;
+            slot.innerHTML = `<a href="/auth" class="btn btn-primary btn-pill">Sign in</a>`;
             if (historyNav) historyNav.classList.add('hidden');
             if (promoCard)  promoCard.style.display = '';
         }
@@ -205,7 +205,7 @@ function initSearchModal() {
             filtered.forEach(tool => {
                 const item = document.createElement('a');
                 item.className = 'search-item';
-                item.href = `tool.html?slug=${tool.slug}`;
+                item.href = `/tool?slug=${tool.slug}`;
                 item.innerHTML = `<strong>${tool.name}</strong> <span style="font-size:12px; color:var(--text-secondary); float:right;">${tool.cat}</span>`;
                 resultsContainer.appendChild(item);
             });

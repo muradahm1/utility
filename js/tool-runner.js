@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="not-found-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <h2>Tool Not Found</h2>
                 <p>The calculator you're looking for doesn't exist or the link may be broken.</p>
-                <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-house"></i> Back to Home</a>
+                <a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> Back to Home</a>
             </div>`;
         return;
     }
 
     // ── SEO ───────────────────────────────────────────────────
-    const pageUrl = `https://utilityhub.app/tool.html?slug=${slug}`;
+    const pageUrl = `https://utilityhub.app/tool?slug=${slug}`;
     document.title = `${tool.name} | UtilityHub`;
     document.querySelector('meta[name="description"]').setAttribute('content', tool.metaDescription);
     document.getElementById('canonical-tag').setAttribute('href', pageUrl);

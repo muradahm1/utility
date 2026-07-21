@@ -18,7 +18,7 @@ const staticUrls = [
 ];
 
 const toolUrls = slugs.map(slug => ({
-    loc:        `${BASE_URL}/tool.html?slug=${slug}`,
+    loc:        `${BASE_URL}/tool?slug=${slug}`,
     priority:   '0.9',
     changefreq: 'monthly',
 }));

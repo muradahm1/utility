@@ -38,7 +38,7 @@ async function signUp(email, password, displayName) {
         password,
         options: {
             data: { full_name: displayName },
-            emailRedirectTo: `${location.origin}/index.html`,
+            emailRedirectTo: `${location.origin}/`,
         }
     });
     return { data, error };
@@ -52,14 +52,14 @@ async function signIn(email, password) {
 async function signInWithGoogle() {
     const { data, error } = await _sb.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${location.origin}/index.html` }
+        options: { redirectTo: `${location.origin}/` }
     });
     return { data, error };
 }
 
 async function resetPassword(email) {
     const { data, error } = await _sb.auth.resetPasswordForEmail(email, {
-        redirectTo: `${location.origin}/auth.html?mode=update-password`,
+        redirectTo: `${location.origin}/auth?mode=update-password`,
     });
     return { data, error };
 }
