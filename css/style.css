@@ -527,3 +527,186 @@ tbody tr:last-child td { border-bottom: none; }
     .hamburger-btn { display: block; }
     .search-trigger { width: auto; flex: 1; }
 }
+
+/* ── Auth Page ───────────────────────────────────────────── */
+.auth-title    { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.auth-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+
+.btn-google {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+    gap: 10px;
+    padding: 10px 16px;
+}
+.btn-google:hover { border-color: var(--primary-color); }
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+.auth-divider::before,
+.auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+
+.auth-banner {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 10px;
+}
+.auth-banner-error   { background: rgba(239,68,68,0.1);  color: #EF4444; }
+.auth-banner-success { background: rgba(16,185,129,0.1); color: #10B981; }
+
+.auth-switch-text {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 16px;
+}
+.auth-switch-text a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+
+.pw-toggle {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.password-strength {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+.strength-bar  { flex: 1; height: 4px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
+.strength-fill { height: 100%; border-radius: 4px; transition: width 0.3s, background 0.3s; }
+.strength-label { font-size: 12px; font-weight: 600; min-width: 44px; }
+
+/* ── Auth Header Slot ────────────────────────────────────── */
+.auth-user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.auth-user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Save Result Bar ─────────────────────────────────────── */
+.save-result-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+.save-result-msg {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ── History Page ────────────────────────────────────────── */
+.history-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 0;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.history-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: border-color 0.2s;
+}
+.history-card:hover { border-color: var(--primary-color); }
+
+.history-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.history-tool-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+}
+.history-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 2px;
+}
+
+.history-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.history-input-chip {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.history-results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+}
+.history-result-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.history-result-line strong { color: var(--text-primary); }
+
+/* ── Responsive tweaks ───────────────────────────────────── */
+@media (max-width: 768px) {
+    .history-header { flex-direction: column; gap: 12px; }
+    .auth-user-name { display: none; }
+    .save-result-bar { flex-wrap: wrap; }
+}

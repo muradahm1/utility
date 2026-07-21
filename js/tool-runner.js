@@ -201,10 +201,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="calculator-results-card">${bmiGaugeHtml}${resultsHtml}${chartHtml}</div>
                 </div>
                 ${tableHtml}
+                <div class="save-result-bar" id="save-result-bar">
+                    <button class="btn btn-primary" id="save-result-btn">
+                        <i class="fa-solid fa-bookmark"></i> Save Result
+                    </button>
+                    <span class="save-result-msg hidden" id="save-result-msg"></span>
+                </div>
             </div>
         `;
 
         if (result.chart) renderChart(result.chart);
+
+        // Wire save button
+        initSaveButton();
+    }
+
+    // --- Save Result ---
+    function initSaveButton() {
+        const bar = document.getElementById('save-result-bar');
+        const btn = document.getElementById('save-result-btn');
+        const msg = document.getElementById('save-result-msg');
+        if (!bar || !btn) return;
+
+        // Show bar only when signed in
+        if (typeof onAuthChange === 'function') {
+            onAuthChange((session) => {
+                bar.style.display = session ? '' : 'none';
+            });
+        } else {
+            bar.style.display = 'none';
+        }
+
+        btn.addEventListener('click', async () => {
+            if (typeof saveCalculation !== 'function') return;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+            const result = tool.calculate(values);
+            // Build a flat key:value results object for storage
+            const flatResults = {};
+            result.stats.forEach(s => { flatResults[s.label] = s.value; });
+            const { error } = await saveCalculation(slug, tool.name, values, flatResults);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
+            msg.classList.remove('hidden');
+            if (error) {
+                msg.textContent = 'Failed to save. Please try again.';
+                msg.style.color = '#EF4444';
+            } else {
+                msg.textContent = '✓ Saved to history!';
+                msg.style.color = '#10B981';
+            }
+            setTimeout(() => msg.classList.add('hidden'), 3000);
+        });
     }
 
     // --- Event Handling ---

@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroSearch();
     initActiveNav();
     initMobileNav();
+    initAuthUI();
 });
 
 // Theme Management Engine
@@ -119,6 +120,37 @@ function initMobileNav() {
     overlay && overlay.addEventListener('click', closeNav);
     // Close on nav link tap on mobile
     sidebar.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', closeNav));
+}
+
+// Auth UI — header slot + history nav visibility
+function initAuthUI() {
+    if (typeof onAuthChange !== 'function') return;
+    const slot = document.getElementById('auth-header-slot');
+    const historyNav = document.querySelector('.nav-item.auth-only');
+    const promoCard  = document.getElementById('sidebar-promo');
+
+    onAuthChange(async (session) => {
+        if (!slot) return;
+        if (session) {
+            const name = session.user.user_metadata?.full_name
+                || session.user.email.split('@')[0];
+            slot.innerHTML = `
+                <div class="auth-user-menu">
+                    <span class="auth-user-name">${name}</span>
+                    <button class="btn btn-outline btn-sm" id="signout-btn">Sign out</button>
+                </div>`;
+            document.getElementById('signout-btn').addEventListener('click', async () => {
+                await signOut();
+                location.reload();
+            });
+            if (historyNav) historyNav.classList.remove('hidden');
+            if (promoCard)  promoCard.style.display = 'none';
+        } else {
+            slot.innerHTML = `<a href="auth.html" class="btn btn-primary btn-pill">Sign in</a>`;
+            if (historyNav) historyNav.classList.add('hidden');
+            if (promoCard)  promoCard.style.display = '';
+        }
+    });
 }
 
 // Global Search Overlay Logic

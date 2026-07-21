@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History — UtilityHub</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236366F1'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>&#x2605;</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+            <span class="brand-name">UtilityHub</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+            <a href="index.html?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+            <a href="index.html?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+            <a href="index.html?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+            <a href="index.html?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+            <a href="index.html?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+            <a href="index.html?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
+            <a href="index.html?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+            <a href="history.html" class="nav-item active"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="theme-switch-container">
+                <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle-switch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-wrapper">
+        <header class="top-header">
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="search-trigger" id="cmd-k-trigger">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Search calculators, converters, tools...</span>
+                <kbd>⌘K</kbd>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+                <div id="auth-header-slot"></div>
+            </div>
+        </header>
+
+        <div class="content-body">
+            <!-- Auth guard: shown while checking session -->
+            <div id="history-loading" class="history-state">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size:28px; color:var(--primary-color);"></i>
+            </div>
+
+            <!-- Auth guard: shown if not signed in -->
+            <div id="history-unauthenticated" class="tool-not-found hidden">
+                <div class="not-found-icon"><i class="fa-solid fa-lock"></i></div>
+                <h2>Sign in to view history</h2>
+                <p>Your saved calculations will appear here once you sign in.</p>
+                <a href="auth.html" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
+            </div>
+
+            <!-- Main history content -->
+            <div id="history-content" class="hidden">
+                <div class="history-header">
+                    <div>
+                        <h1 style="font-size:24px; font-weight:700;">Calculation History</h1>
+                        <p style="color:var(--text-secondary); font-size:14px; margin-top:4px;">
+                            Your last <span id="history-count">0</span> saved calculations
+                        </p>
+                    </div>
+                    <button class="btn btn-outline" id="clear-all-btn" style="color:#EF4444; border-color:#EF4444;">
+                        <i class="fa-solid fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Empty state -->
+                <div id="history-empty" class="tool-not-found hidden">
+                    <div class="not-found-icon" style="background:rgba(99,102,241,0.1); color:var(--primary-color);">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <h2>No saved calculations yet</h2>
+                    <p>Use any calculator and click "Save Result" to see it here.</p>
+                    <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-calculator"></i> Browse Tools</a>
+                </div>
+
+                <!-- History list -->
+                <div id="history-list" class="history-list"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Mobile overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Search Modal -->
+<div class="modal-overlay hidden" id="search-modal">
+    <div class="modal-card">
+        <div class="modal-search-input-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="modal-search-field" placeholder="Search all calculators...">
+            <button class="close-btn" id="modal-close-btn">&times;</button>
+        </div>
+        <div class="search-results-list" id="search-results"></div>
+    </div>
+</div>
+
+<!-- Confirm modal -->
+<div class="modal-overlay hidden" id="confirm-modal">
+    <div class="modal-card" style="max-width:380px; padding:28px; text-align:center;">
+        <div style="font-size:32px; margin-bottom:12px;">🗑️</div>
+        <h3 id="confirm-title" style="margin-bottom:8px;">Clear all history?</h3>
+        <p id="confirm-msg" style="font-size:14px; color:var(--text-secondary); margin-bottom:20px;">This cannot be undone.</p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button class="btn btn-outline" id="confirm-cancel">Cancel</button>
+            <button class="btn btn-primary" id="confirm-ok" style="background:#EF4444;">Delete</button>
+        </div>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+            <span class="brand-name">UtilityHub</span>
+        </div>
+        <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+        <nav class="footer-links" aria-label="Footer navigation">
+            <a href="index.html">Home</a>
+            <a href="index.html?category=finance">Finance</a>
+            <a href="index.html?category=health">Health</a>
+            <a href="index.html?category=math">Math</a>
+        </nav>
+        <p class="footer-copy">&copy; <span id="footer-year"></span> UtilityHub. All rights reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/app.js"></script>
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+(function () {
+    const loadingEl   = document.getElementById('history-loading');
+    const unauthEl    = document.getElementById('history-unauthenticated');
+    const contentEl   = document.getElementById('history-content');
+    const emptyEl     = document.getElementById('history-empty');
+    const listEl      = document.getElementById('history-list');
+    const countEl     = document.getElementById('history-count');
+    const clearBtn    = document.getElementById('clear-all-btn');
+
+    // ── Auth guard ───────────────────────────────────────────
+    onAuthChange(async (session) => {
+        loadingEl.classList.add('hidden');
+        if (!session) {
+            unauthEl.classList.remove('hidden');
+            contentEl.classList.add('hidden');
+            return;
+        }
+        unauthEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+        await loadHistory();
+    });
+
+    // ── Load history ─────────────────────────────────────────
+    async function loadHistory() {
+        listEl.innerHTML = '<div class="history-state"><i class="fa-solid fa-circle-notch fa-spin" style="font-size:22px;color:var(--primary-color);"></i></div>';
+        const { data, error } = await getHistory(50);
+
+        if (error) {
+            listEl.innerHTML = `<p style="color:#EF4444; padding:16px;">Failed to load history. Please refresh.</p>`;
+            return;
+        }
+
+        countEl.textContent = data.length;
+
+        if (!data.length) {
+            listEl.innerHTML = '';
+            emptyEl.classList.remove('hidden');
+            clearBtn.style.display = 'none';
+            return;
+        }
+
+        emptyEl.classList.add('hidden');
+        clearBtn.style.display = '';
+        listEl.innerHTML = data.map(row => buildHistoryCard(row)).join('');
+
+        // Bind delete buttons
+        listEl.querySelectorAll('.history-delete-btn').forEach(btn => {
+            btn.addEventListener('click', () => confirmDelete(btn.dataset.id));
+        });
+    }
+
+    // ── Build card HTML ──────────────────────────────────────
+    function buildHistoryCard(row) {
+        const inputLines = Object.entries(row.inputs)
+            .map(([k, v]) => `<span class="history-input-chip">${formatKey(k)}: <strong>${v}</strong></span>`)
+            .join('');
+
+        const resultLines = Object.entries(row.results)
+            .slice(0, 3)
+            .map(([k, v]) => `<div class="history-result-line"><span>${formatKey(k)}</span><strong>${v}</strong></div>`)
+            .join('');
+
+        return `
+            <div class="history-card" data-id="${row.id}">
+                <div class="history-card-header">
+                    <div>
+                        <span class="history-tool-name">${row.tool_name}</span>
+                        <span class="history-date">${formatDate(row.created_at)}</span>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <a href="tool.html?slug=${row.tool_slug}" class="btn btn-outline btn-sm">
+                            <i class="fa-solid fa-rotate-right"></i> Re-run
+                        </a>
+                        <button class="btn btn-sm history-delete-btn" data-id="${row.id}" style="background:rgba(239,68,68,0.1); color:#EF4444; border:none;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="history-inputs">${inputLines}</div>
+                <div class="history-results">${resultLines}</div>
+            </div>
+        `;
+    }
+
+    function formatKey(key) {
+        return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    // ── Delete single ────────────────────────────────────────
+    function confirmDelete(id) {
+        showConfirm('Delete this calculation?', 'This cannot be undone.', async () => {
+            const { error } = await deleteCalculation(id);
+            if (!error) {
+                document.querySelector(`.history-card[data-id="${id}"]`)?.remove();
+                const remaining = listEl.querySelectorAll('.history-card').length;
+                countEl.textContent = remaining;
+                if (!remaining) { emptyEl.classList.remove('hidden'); clearBtn.style.display = 'none'; }
+            }
+        });
+    }
+
+    // ── Clear all ────────────────────────────────────────────
+    clearBtn.addEventListener('click', () => {
+        showConfirm('Clear all history?', 'All saved calculations will be permanently deleted.', async () => {
+            const { error } = await clearAllHistory();
+            if (!error) await loadHistory();
+        });
+    });
+
+    // ── Confirm modal ────────────────────────────────────────
+    let _confirmCallback = null;
+    function showConfirm(title, msg, callback) {
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-msg').textContent = msg;
+        _confirmCallback = callback;
+        document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+    document.getElementById('confirm-cancel').addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+    });
+    document.getElementById('confirm-ok').addEventListener('click', async () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        if (_confirmCallback) await _confirmCallback();
+        _confirmCallback = null;
+    });
+})();
+</script>
+</body>
+</html>
