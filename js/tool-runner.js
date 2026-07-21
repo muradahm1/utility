@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── SEO ───────────────────────────────────────────────────
-    const pageUrl = `https://utility-rose.vercel.app/tool?slug=${slug}`;
-    document.title = `${tool.name} | UtilityHub`;
+    const pageUrl = `https://www.getcalcu.com/tool?slug=${slug}`;
+    document.title = `${tool.name} | GetCalcu`;
     document.querySelector('meta[name="description"]').setAttribute('content', tool.metaDescription);
     document.getElementById('canonical-tag').setAttribute('href', pageUrl);
-    document.querySelector('meta[property="og:title"]').setAttribute('content', `${tool.name} | UtilityHub`);
+    document.querySelector('meta[property="og:title"]').setAttribute('content', `${tool.name} | GetCalcu`);
     document.querySelector('meta[property="og:description"]').setAttribute('content', tool.metaDescription);
     document.querySelector('meta[property="og:url"]').setAttribute('content', pageUrl);
-    document.querySelector('meta[name="twitter:title"]').setAttribute('content', `${tool.name} | UtilityHub`);
+    document.querySelector('meta[name="twitter:title"]').setAttribute('content', `${tool.name} | GetCalcu`);
     document.querySelector('meta[name="twitter:description"]').setAttribute('content', tool.metaDescription);
 
     const schemaScript = document.createElement('script');
