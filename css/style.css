@@ -710,3 +710,20 @@ tbody tr:last-child td { border-bottom: none; }
     .auth-user-name { display: none; }
     .save-result-bar { flex-wrap: wrap; }
 }
+
+/* ── Input Validation ────────────────────────────────────── */
+.form-group input.input-error,
+.form-group select.input-error {
+    border-color: #EF4444;
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.12);
+}
+.field-error {
+    font-size: 12px;
+    color: #EF4444;
+    margin-top: 2px;
+}
+
+/* ── Copy Results Button ─────────────────────────────────── */
+.copy-results-btn {
+    transition: color 0.2s, border-color 0.2s;
+}
