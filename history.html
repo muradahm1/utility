@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History — UtilityHub</title>
+    <title>History — GetCalcu</title>
     <meta name="robots" content="noindex">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236366F1'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>&#x2605;</text></svg>">
     <link rel="stylesheet" href="css/style.css">
@@ -16,18 +16,18 @@
     <aside class="sidebar">
         <div class="brand">
             <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
-            <span class="brand-name">UtilityHub</span>
+            <span class="brand-name">GetCalcu</span>
         </div>
         <nav class="nav-menu">
-            <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-            <a href="index.html?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
-            <a href="index.html?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
-            <a href="index.html?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
-            <a href="index.html?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
-            <a href="index.html?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
-            <a href="index.html?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
-            <a href="index.html?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
-            <a href="history.html" class="nav-item active"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+            <a href="/" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+            <a href="/?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+            <a href="/?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+            <a href="/?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+            <a href="/?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+            <a href="/?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+            <a href="/?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
+            <a href="/?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+            <a href="/history" class="nav-item active"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
         </nav>
         <div class="sidebar-footer">
             <div class="theme-switch-container">
@@ -68,7 +68,7 @@
                 <div class="not-found-icon"><i class="fa-solid fa-lock"></i></div>
                 <h2>Sign in to view history</h2>
                 <p>Your saved calculations will appear here once you sign in.</p>
-                <a href="auth.html" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
+                <a href="/auth" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
             </div>
 
             <!-- Main history content -->
@@ -92,7 +92,7 @@
                     </div>
                     <h2>No saved calculations yet</h2>
                     <p>Use any calculator and click "Save Result" to see it here.</p>
-                    <a href="index.html" class="btn btn-primary"><i class="fa-solid fa-calculator"></i> Browse Tools</a>
+                    <a href="/" class="btn btn-primary"><i class="fa-solid fa-calculator"></i> Browse Tools</a>
                 </div>
 
                 <!-- History list -->
@@ -134,16 +134,16 @@
     <div class="footer-inner">
         <div class="footer-brand">
             <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
-            <span class="brand-name">UtilityHub</span>
+            <span class="brand-name">GetCalcu</span>
         </div>
         <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
         <nav class="footer-links" aria-label="Footer navigation">
-            <a href="index.html">Home</a>
-            <a href="index.html?category=finance">Finance</a>
-            <a href="index.html?category=health">Health</a>
-            <a href="index.html?category=math">Math</a>
+            <a href="/">Home</a>
+            <a href="/?category=finance">Finance</a>
+            <a href="/?category=health">Health</a>
+            <a href="/?category=math">Math</a>
         </nav>
-        <p class="footer-copy">&copy; <span id="footer-year"></span> UtilityHub. All rights reserved.</p>
+        <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
     </div>
 </footer>
 
@@ -224,7 +224,7 @@ document.getElementById('footer-year').textContent = new Date().getFullYear();
                         <span class="history-date">${formatDate(row.created_at)}</span>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <a href="tool.html?slug=${row.tool_slug}" class="btn btn-outline btn-sm">
+                        <a href="/tool?slug=${row.tool_slug}" class="btn btn-outline btn-sm">
                             <i class="fa-solid fa-rotate-right"></i> Re-run
                         </a>
                         <button class="btn btn-sm history-delete-btn" data-id="${row.id}" style="background:rgba(239,68,68,0.1); color:#EF4444; border:none;">
