@@ -172,7 +172,7 @@
             if (event === 'PASSWORD_RECOVERY') showPanel('update-password');
             if (event === 'SIGNED_IN' && mode !== 'update-password') {
                 // Redirect to page they came from, or home
-                const returnTo = sessionStorage.getItem('uh_return') || 'index.html';
+                const returnTo = sessionStorage.getItem('uh_return') || '/';
                 sessionStorage.removeItem('uh_return');
                 location.href = returnTo;
             }
@@ -305,7 +305,7 @@
             setLoading('update-pw', false);
             if (error) return showBanner('update-pw-error', friendlyError(error.message), 'error');
             showBanner('update-pw-success', 'Password updated! Redirecting...', 'success');
-            setTimeout(() => location.href = 'index.html', 1500);
+            setTimeout(() => location.href = '/', 1500);
         });
 
         // ── Friendly error messages ──────────────────────────

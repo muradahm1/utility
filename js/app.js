@@ -89,8 +89,8 @@ function initActiveNav() {
             }
             return;
         }
-        const pathMatch = (itemPath === path) || (path === '/' && itemPath === '/index.html');
-        if (pathMatch && itemCategory === category) {
+        const pathMatch = (itemPath === path);
+        if (pathMatch && itemCategory === category || (path === '/' && itemPath === '/' && !category)) {
             item.classList.add('active');
         }
     });

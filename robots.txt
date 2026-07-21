@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /auth.html
-Disallow: /history.html
+Disallow: /auth
+Disallow: /history
 
 Sitemap: https://utilityhub.app/sitemap.xml

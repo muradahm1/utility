@@ -273,9 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
             const result = tool.calculate(values);
-            const flatResults = {};
-            result.stats.forEach(s => { flatResults[s.label] = s.value; });
-            const { error } = await saveCalculation(slug, tool.name, values, flatResults);
+            const { error } = await saveCalculation(slug, tool.name, values, { stats: result.stats });
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
             msg.classList.remove('hidden');
