@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Filled dynamically by tool-runner.js -->
+    <title>UtilityHub — Free Online Calculators &amp; Tools</title>
+    <meta name="description" content="">
+    <link rel="canonical" href="" id="canonical-tag">
+
+    <!-- Open Graph (filled dynamically) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="UtilityHub">
+    <meta property="og:title" content="">
+    <meta property="og:description" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="https://utilityhub.app/og-image.png">
+
+    <!-- Twitter Card (filled dynamically) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="">
+    <meta name="twitter:description" content="">
+    <meta name="twitter:image" content="https://utilityhub.app/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236366F1'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>&#x2605;</text></svg>">
+
+    <!-- Performance: preconnect to CDN origins -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+                <span class="brand-name">UtilityHub</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                <a href="index.html?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+                <a href="index.html?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+                <a href="index.html?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+                <a href="index.html?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+                <a href="index.html?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+                <a href="index.html?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
+                <a href="index.html?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+                <a href="history.html" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="promo-card" id="sidebar-promo">
+                    <h4>Save your results</h4>
+                    <p>Create a free account to save your calculations and history.</p>
+                    <a href="auth.html?mode=signup" class="btn btn-primary btn-sm">Sign up free</a>
+                </div>
+                <div class="theme-switch-container">
+                    <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle-switch">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <!-- Top Header -->
+            <header class="top-header">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="search-trigger" id="cmd-k-trigger">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search calculators, converters, tools...</span>
+                    <kbd>⌘K</kbd>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+                    <div id="auth-header-slot">
+                        <a href="auth.html" class="btn btn-primary btn-pill">Sign in</a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body" id="tool-runner-container">
+                <!-- Tool will be dynamically rendered here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Search Modal -->
+    <div class="modal-overlay hidden" id="search-modal">
+        <div class="modal-card">
+            <div class="modal-search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="modal-search-field" placeholder="Search all calculators...">
+                <button class="close-btn" id="modal-close-btn">&times;</button>
+            </div>
+            <div class="search-results-list" id="search-results"></div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+                <span class="brand-name">UtilityHub</span>
+            </div>
+            <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="index.html">Home</a>
+                <a href="index.html?category=finance">Finance</a>
+                <a href="index.html?category=health">Health</a>
+                <a href="index.html?category=math">Math</a>
+                <a href="auth.html">Sign In</a>
+            </nav>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> UtilityHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/tools.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/tool-runner.js"></script>
+    <script src="js/app.js"></script>
+    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
