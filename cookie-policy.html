@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366F1">
     <title>Cookie Policy | GetCalcu</title>
     <meta name="description" content="Learn about how GetCalcu uses cookies to improve site functionality and analyze anonymous traffic.">
     <link rel="canonical" href="https://www.getcalcu.com/cookie-policy">
@@ -93,8 +94,12 @@
                 <a href="/" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
                 <a href="/?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
                 <a href="/?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+                <a href="/?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+                <a href="/?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+                <a href="/?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+                <a href="/?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
                 <a href="/?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
-                <a href="/history.html" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+                <a href="/history" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="promo-card" id="sidebar-promo">
@@ -257,38 +262,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
-    <script>
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
-
-        const banner = document.getElementById('cookie-banner');
-        const prefStatus = document.getElementById('pref-status');
-
-        function updatePrefStatus() {
-            const pref = localStorage.getItem('cookie_consent');
-            if (pref === 'all') prefStatus.textContent = 'Accept All — analytics and advertising cookies are enabled.';
-            else if (pref === 'essential') prefStatus.textContent = 'Essential Only — only necessary cookies are active.';
-            else prefStatus.textContent = 'No preference set yet.';
-        }
-        updatePrefStatus();
-
-        if (!localStorage.getItem('cookie_consent')) {
-            setTimeout(() => banner.classList.add('show'), 800);
-        }
-
-        function setConsent(value) {
-            localStorage.setItem('cookie_consent', value);
-            banner.classList.remove('show');
-            updatePrefStatus();
-        }
-
-        document.getElementById('cookie-accept-btn').addEventListener('click', () => setConsent('all'));
-        document.getElementById('cookie-essential-btn').addEventListener('click', () => setConsent('essential'));
-
-        document.getElementById('reset-consent-btn').addEventListener('click', () => {
-            localStorage.removeItem('cookie_consent');
-            updatePrefStatus();
-            setTimeout(() => banner.classList.add('show'), 300);
-        });
-    </script>
+    <script src="js/cookie-consent.js"></script>
 </body>
 </html>

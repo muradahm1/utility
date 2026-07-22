@@ -5,13 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initActiveNav();
     initMobileNav();
     initAuthUI();
+    initFooterYear();
 });
+
+// ── Footer Year ────────────────────────────────────────────────
+function initFooterYear() {
+    const yearEl = document.getElementById('footer-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+}
 
 // Theme Management Engine
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
-    
+
     const themeSwitch = document.getElementById('theme-toggle-switch');
     if (themeSwitch) {
         themeSwitch.checked = savedTheme === 'dark';
@@ -90,7 +97,8 @@ function initActiveNav() {
             return;
         }
         const pathMatch = (itemPath === path);
-        if (pathMatch && itemCategory === category || (path === '/' && itemPath === '/' && !category)) {
+        // Explicit parentheses to avoid operator precedence ambiguity
+        if ((pathMatch && itemCategory === category) || (path === '/' && itemPath === '/' && !category)) {
             item.classList.add('active');
         }
     });
@@ -187,6 +195,13 @@ function initSearchModal() {
     if (trigger) trigger.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
+    // Close modal on click outside the card
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+    }
+
     // Only add Cmd+K shortcut on non-touch devices
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (!isTouchDevice) {
@@ -209,8 +224,14 @@ function initSearchModal() {
             filtered.forEach(tool => {
                 const item = document.createElement('a');
                 item.className = 'search-item';
-                item.href = `/tool?slug=${tool.slug}`;
-                item.innerHTML = `<strong>${tool.name}</strong> <span style="font-size:12px; color:var(--text-secondary); float:right;">${tool.cat}</span>`;
+                item.href = `/tool?slug=${encodeURIComponent(tool.slug)}`;
+                const strong = document.createElement('strong');
+                strong.textContent = tool.name;
+                const span = document.createElement('span');
+                span.style.cssText = 'font-size:12px;color:var(--text-secondary);float:right;';
+                span.textContent = tool.cat;
+                item.appendChild(strong);
+                item.appendChild(span);
                 resultsContainer.appendChild(item);
             });
         });

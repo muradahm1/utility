@@ -771,3 +771,31 @@ tbody tr:last-child td { border-bottom: none; }
 .copy-results-btn {
     transition: color 0.2s, border-color 0.2s;
 }
+
+/* ── Skip to Content Link ────────────────────────────────── */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    z-index: 200;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.2s;
+}
+.skip-link:focus {
+    top: 6px;
+}
+
+/* ── Reduced Motion Support ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

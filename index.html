@@ -65,9 +65,10 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
+    <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+        <div class="app-container">
+            <!-- Sidebar -->
         <aside class="sidebar">
             <div class="brand">
                 <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
@@ -101,7 +102,7 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="main-wrapper">
+        <main class="main-wrapper" id="main-content">
             <!-- Top Header -->
             <header class="top-header">
                 <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
@@ -315,22 +316,6 @@
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
     <script>
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
-
-        // Cookie banner
-        const banner = document.getElementById('cookie-banner');
-        if (!localStorage.getItem('cookie_consent')) {
-            setTimeout(() => banner.classList.add('show'), 1200);
-        }
-        document.getElementById('cookie-accept-btn').addEventListener('click', () => {
-            localStorage.setItem('cookie_consent', 'all');
-            banner.classList.remove('show');
-        });
-        document.getElementById('cookie-essential-btn').addEventListener('click', () => {
-            localStorage.setItem('cookie_consent', 'essential');
-            banner.classList.remove('show');
-        });
-
         // Fill category counts from TOOLS registry (real numbers)
         const categoryCounts = {};
         Object.values(TOOLS).forEach(t => {
@@ -356,5 +341,6 @@
             } catch(e) { el.textContent = ''; }
         })();
     </script>
+    <script src="js/cookie-consent.js"></script>
 </body>
 </html>

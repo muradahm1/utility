@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366F1">
 
     <!-- Filled dynamically by tool-runner.js -->
     <title>GetCalcu — Free Online Calculators &amp; Tools</title>
@@ -33,9 +34,10 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
+    <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+        <div class="app-container">
+            <!-- Sidebar -->
         <aside class="sidebar">
             <div class="brand">
                 <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
@@ -69,7 +71,7 @@
         </aside>
 
         <!-- Main Content Area -->
-        <main class="main-wrapper">
+        <main class="main-wrapper" id="main-content">
             <!-- Top Header -->
             <header class="top-header">
                 <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
@@ -134,6 +136,6 @@
     <script src="js/supabase.js"></script>
     <script src="js/tool-runner.js"></script>
     <script src="js/app.js"></script>
-    <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+    <script src="js/cookie-consent.js"></script>
 </body>
 </html>

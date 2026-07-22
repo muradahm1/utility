@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366F1">
     <title>History — GetCalcu</title>
     <meta name="robots" content="noindex">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236366F1'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>&#x2605;</text></svg>">
@@ -10,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to content</a>
 <div class="app-container">
 
     <!-- Sidebar -->
@@ -41,7 +43,7 @@
     </aside>
 
     <!-- Main -->
-    <main class="main-wrapper">
+    <main class="main-wrapper" id="main-content">
         <header class="top-header">
             <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
                 <i class="fa-solid fa-bars"></i>
@@ -138,10 +140,11 @@
         </div>
         <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
         <nav class="footer-links" aria-label="Footer navigation">
-            <a href="/">Home</a>
-            <a href="/?category=finance">Finance</a>
-            <a href="/?category=health">Health</a>
-            <a href="/?category=math">Math</a>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/privacy.html">Privacy Policy</a>
+            <a href="/terms.html">Terms of Service</a>
+            <a href="/cookie-policy.html">Cookie Policy</a>
         </nav>
         <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
     </div>
@@ -152,8 +155,6 @@
 <script src="js/supabase.js"></script>
 <script src="js/app.js"></script>
 <script>
-document.getElementById('footer-year').textContent = new Date().getFullYear();
-
 (function () {
     const loadingEl   = document.getElementById('history-loading');
     const unauthEl    = document.getElementById('history-unauthenticated');
@@ -279,7 +280,8 @@ document.getElementById('footer-year').textContent = new Date().getFullYear();
         if (_confirmCallback) await _confirmCallback();
         _confirmCallback = null;
     });
-})();
-</script>
+    })();
+    </script>
+    <script src="js/cookie-consent.js"></script>
 </body>
 </html>
