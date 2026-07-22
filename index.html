@@ -279,6 +279,18 @@
         </div>
     </div>
 
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
+        <p class="cookie-consent-text">
+            <i class="fa-solid fa-cookie-bite" style="color: var(--primary-color); margin-right: 6px;"></i>
+            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy.html" style="color: var(--primary-color); font-weight: 600;">Cookie Policy</a>.
+        </p>
+        <div class="cookie-consent-actions">
+            <button class="btn btn-outline btn-sm" id="cookie-essential-btn">Essential Only</button>
+            <button class="btn btn-primary btn-sm" id="cookie-accept-btn">Accept All</button>
+        </div>
+    </div>
+
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
@@ -287,11 +299,11 @@
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
             <nav class="footer-links" aria-label="Footer navigation">
-                <a href="/">Home</a>
-                <a href="/?category=finance">Finance</a>
-                <a href="/?category=health">Health</a>
-                <a href="/?category=math">Math</a>
-                <a href="/auth">Sign In</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                <a href="/privacy.html">Privacy Policy</a>
+                <a href="/terms.html">Terms of Service</a>
+                <a href="/cookie-policy.html">Cookie Policy</a>
             </nav>
             <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
         </div>
@@ -304,6 +316,20 @@
     <script src="js/app.js"></script>
     <script>
         document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        // Cookie banner
+        const banner = document.getElementById('cookie-banner');
+        if (!localStorage.getItem('cookie_consent')) {
+            setTimeout(() => banner.classList.add('show'), 1200);
+        }
+        document.getElementById('cookie-accept-btn').addEventListener('click', () => {
+            localStorage.setItem('cookie_consent', 'all');
+            banner.classList.remove('show');
+        });
+        document.getElementById('cookie-essential-btn').addEventListener('click', () => {
+            localStorage.setItem('cookie_consent', 'essential');
+            banner.classList.remove('show');
+        });
 
         // Fill category counts from TOOLS registry (real numbers)
         const categoryCounts = {};

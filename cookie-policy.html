@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Policy | GetCalcu</title>
+    <meta name="description" content="Learn about how GetCalcu uses cookies to improve site functionality and analyze anonymous traffic.">
+    <link rel="canonical" href="https://www.getcalcu.com/cookie-policy">
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%236366F1'/><text x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='18' fill='white'>&#x2605;</text></svg>">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .static-content h3 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: var(--text-primary); }
+        .static-content p, .static-content li { font-size: 14px; color: var(--text-secondary); line-height: 1.75; }
+        .static-content ul { padding-left: 20px; margin: 8px 0; }
+        .static-content li { margin-bottom: 6px; }
+        .static-content a { color: var(--primary-color); }
+        .callout-box {
+            background: rgba(99,102,241,0.06);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .callout-box strong { color: var(--text-primary); }
+        .cookie-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+        .cookie-table th {
+            background: var(--bg-main);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        .cookie-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+        .cookie-table tr:last-child td { border-bottom: none; }
+        .badge-essential { background: rgba(16,185,129,0.12); color: #10B981; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .badge-analytics { background: rgba(99,102,241,0.12); color: #6366F1; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .badge-advertising { background: rgba(245,158,11,0.12); color: #F59E0B; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+        .browser-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 16px 0; }
+        .browser-link {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            transition: border-color 0.2s;
+        }
+        .browser-link:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .pref-reset-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .pref-reset-box p { font-size: 14px; color: var(--text-secondary); margin: 0; }
+        #pref-status { font-size: 13px; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+                <span class="brand-name">GetCalcu</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                <a href="/?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+                <a href="/?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+                <a href="/?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+                <a href="/history.html" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="promo-card" id="sidebar-promo">
+                    <h4>Save your results</h4>
+                    <p>Create a free account to save your calculations and history.</p>
+                    <a href="/auth.html?mode=signup" class="btn btn-primary btn-sm">Sign up free</a>
+                </div>
+                <div class="theme-switch-container">
+                    <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle-switch">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-wrapper">
+            <header class="top-header">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="search-trigger" id="cmd-k-trigger">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search calculators, converters, tools...</span>
+                    <kbd>⌘K</kbd>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+                    <div id="auth-header-slot">
+                        <a href="/auth.html" class="btn btn-primary btn-pill">Sign in</a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="tool-runner-card">
+                    <div class="tool-header">
+                        <h1>Cookie Policy</h1>
+                        <p>Last Updated: <strong>July 22, 2025</strong></p>
+                    </div>
+
+                    <div class="static-content">
+                        <p>This Cookie Policy explains what cookies are, how GetCalcu uses them, and how you can control them. For broader privacy information, see our <a href="/privacy.html">Privacy Policy</a>.</p>
+
+                        <h3>What Are Cookies?</h3>
+                        <p>Cookies are small text files placed on your device by a website when you visit it. They are widely used to make websites work correctly, remember your preferences, and provide information to site owners about how their site is being used. Cookies cannot run programs or deliver viruses to your device.</p>
+
+                        <h3>How We Use Cookies</h3>
+                        <p>We use three categories of cookies:</p>
+
+                        <div style="overflow-x: auto;">
+                            <table class="cookie-table">
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Purpose</th>
+                                        <th>Can be disabled?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge-essential">Essential</span></td>
+                                        <td>Required for the site to function. Stores your theme preference (dark/light mode) and your cookie consent choice. No personal data is collected.</td>
+                                        <td>No — these are necessary for basic functionality.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge-analytics">Analytics</span></td>
+                                        <td>Helps us understand how visitors use the site (e.g., which tools are popular, what devices are used). Data is anonymized and aggregated via Google Analytics 4. No PII is collected.</td>
+                                        <td>Yes — choose "Essential Only" in the consent banner.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge-advertising">Advertising</span></td>
+                                        <td>Used by third-party ad networks (e.g., Google AdSense) to serve relevant ads. These partners may use cookies to track visits across websites.</td>
+                                        <td>Yes — choose "Essential Only" in the consent banner.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3>Your Cookie Preferences</h3>
+                        <p>When you first visit GetCalcu, a consent banner appears at the bottom of the screen. You can choose:</p>
+                        <ul>
+                            <li><strong>Accept All</strong> — enables all cookie categories including analytics and advertising.</li>
+                            <li><strong>Essential Only</strong> — disables analytics and advertising cookies. Only strictly necessary cookies are set.</li>
+                        </ul>
+
+                        <div class="callout-box">
+                            <strong>Your current preference:</strong> <span id="pref-status">Loading...</span>
+                        </div>
+
+                        <div class="pref-reset-box">
+                            <p>Want to change your cookie preference? Reset it here and the consent banner will reappear.</p>
+                            <button class="btn btn-outline btn-sm" id="reset-consent-btn">
+                                <i class="fa-solid fa-rotate-left"></i> Reset Cookie Preferences
+                            </button>
+                        </div>
+
+                        <h3>How to Manage Cookies in Your Browser</h3>
+                        <p>You can also control cookies directly through your browser settings. Note that disabling all cookies may affect site functionality (e.g., your theme preference won't be saved).</p>
+
+                        <div class="browser-links">
+                            <a class="browser-link" href="https://support.google.com/accounts/answer/61416" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-brands fa-chrome"></i> Google Chrome
+                            </a>
+                            <a class="browser-link" href="https://support.microsoft.com/en-us/windows/microsoft-edge-browsing-data-and-privacy-bb8174ba-9d73-dcf2-9b4a-c582b4e640dd" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-brands fa-edge"></i> Microsoft Edge
+                            </a>
+                            <a class="browser-link" href="https://support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-desktop" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-brands fa-firefox-browser"></i> Mozilla Firefox
+                            </a>
+                            <a class="browser-link" href="https://support.apple.com/guide/safari/manage-cookies-and-website-data-sfri11471/mac" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-brands fa-safari"></i> Apple Safari
+                            </a>
+                        </div>
+
+                        <p>For more information about cookies in general, visit <a href="https://www.allaboutcookies.org" target="_blank" rel="noopener noreferrer">allaboutcookies.org</a>.</p>
+
+                        <h3>Changes to This Policy</h3>
+                        <p>We may update this Cookie Policy from time to time. Changes will be posted on this page with an updated "Last Updated" date. If you have any questions, contact us at <a href="mailto:support@getcalcu.com">support@getcalcu.com</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="site-footer">
+                <div class="footer-inner">
+                    <div class="footer-brand">
+                        <div class="brand-icon"><i class="fa-solid fa-shapes"></i></div>
+                        <span class="brand-name">GetCalcu</span>
+                    </div>
+                    <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+                    <nav class="footer-links" aria-label="Footer navigation">
+                        <a href="/about.html">About</a>
+                        <a href="/contact.html">Contact</a>
+                        <a href="/privacy.html">Privacy Policy</a>
+                        <a href="/terms.html">Terms of Service</a>
+                        <a href="/cookie-policy.html">Cookie Policy</a>
+                    </nav>
+                    <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Cookie Consent Banner -->
+    <div class="cookie-consent-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
+        <p class="cookie-consent-text">
+            <i class="fa-solid fa-cookie-bite" style="color: var(--primary-color); margin-right: 6px;"></i>
+            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy.html" style="color: var(--primary-color); font-weight: 600;">Cookie Policy</a>.
+        </p>
+        <div class="cookie-consent-actions">
+            <button class="btn btn-outline btn-sm" id="cookie-essential-btn">Essential Only</button>
+            <button class="btn btn-primary btn-sm" id="cookie-accept-btn">Accept All</button>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        const banner = document.getElementById('cookie-banner');
+        const prefStatus = document.getElementById('pref-status');
+
+        function updatePrefStatus() {
+            const pref = localStorage.getItem('cookie_consent');
+            if (pref === 'all') prefStatus.textContent = 'Accept All — analytics and advertising cookies are enabled.';
+            else if (pref === 'essential') prefStatus.textContent = 'Essential Only — only necessary cookies are active.';
+            else prefStatus.textContent = 'No preference set yet.';
+        }
+        updatePrefStatus();
+
+        if (!localStorage.getItem('cookie_consent')) {
+            setTimeout(() => banner.classList.add('show'), 800);
+        }
+
+        function setConsent(value) {
+            localStorage.setItem('cookie_consent', value);
+            banner.classList.remove('show');
+            updatePrefStatus();
+        }
+
+        document.getElementById('cookie-accept-btn').addEventListener('click', () => setConsent('all'));
+        document.getElementById('cookie-essential-btn').addEventListener('click', () => setConsent('essential'));
+
+        document.getElementById('reset-consent-btn').addEventListener('click', () => {
+            localStorage.removeItem('cookie_consent');
+            updatePrefStatus();
+            setTimeout(() => banner.classList.add('show'), 300);
+        });
+    </script>
+</body>
+</html>
