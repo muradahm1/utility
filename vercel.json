@@ -1,7 +1,6 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/supa-api/:path*", "destination": "https://uvkukqdrkvqhzrvfgxgq.supabase.co/:path*" },
     { "source": "/tool",    "destination": "/tool.html"    },
     { "source": "/auth",    "destination": "/auth.html"    },
     { "source": "/history", "destination": "/history.html" }
