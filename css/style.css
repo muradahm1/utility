@@ -530,7 +530,7 @@ tbody tr:last-child td { border-bottom: none; }
     .hero-graphic { display: none; }
     .tool-grid-workspace { grid-template-columns: 1fr; }
     .hamburger-btn { display: block; }
-    .search-trigger { width: auto; flex: 1; justify-content: space-between; }
+    .search-trigger { width: auto; flex: 1 1 auto; justify-content: space-between; }
     .search-trigger span { display: none; }
     .search-trigger kbd { display: none; }
     .hero-text h1 { font-size: 32px; }
