@@ -536,6 +536,10 @@ tbody tr:last-child td { border-bottom: none; }
     .hero-text h1 { font-size: 32px; }
     .content-body { padding: 24px; }
     .tool-runner-card { padding: 24px; }
+    .form-group input, .form-group select { font-size: 16px; }
+    .header-actions {
+        gap: 8px;
+    }
 }
 
 /* ── Auth Page ───────────────────────────────────────────── */
