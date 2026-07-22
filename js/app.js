@@ -187,13 +187,17 @@ function initSearchModal() {
     if (trigger) trigger.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
-    document.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            openModal();
-        }
-        if (e.key === 'Escape') closeModal();
-    });
+    // Only add Cmd+K shortcut on non-touch devices
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (!isTouchDevice) {
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openModal();
+            }
+        });
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
     if (searchField) {
         searchField.addEventListener('input', (e) => {

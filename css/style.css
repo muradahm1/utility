@@ -183,6 +183,11 @@ input:checked + .slider:before { transform: translateX(20px); }
     font-size: 11px;
 }
 
+.search-trigger kbd {
+    margin-left: auto;
+    font-family: monospace;
+}
+
 .header-actions { display: flex; align-items: center; gap: 16px; }
 
 /* Content Body */
@@ -525,7 +530,12 @@ tbody tr:last-child td { border-bottom: none; }
     .hero-graphic { display: none; }
     .tool-grid-workspace { grid-template-columns: 1fr; }
     .hamburger-btn { display: block; }
-    .search-trigger { width: auto; flex: 1; }
+    .search-trigger { width: auto; flex: 1; justify-content: space-between; }
+    .search-trigger span { display: none; }
+    .search-trigger kbd { display: none; }
+    .hero-text h1 { font-size: 32px; }
+    .content-body { padding: 24px; }
+    .tool-runner-card { padding: 24px; }
 }
 
 /* ── Auth Page ───────────────────────────────────────────── */
