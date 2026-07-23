@@ -632,7 +632,48 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Tool Page Layout */
 .tool-runner-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px; border: 1px solid var(--border-color); }
-.tool-header { margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; }
+.tool-header { 
+    margin-bottom: 24px; 
+    border-bottom: 1px solid var(--border-color); 
+    padding-bottom: 16px; 
+}
+.tool-header h1 { 
+    font-size: 28px; 
+    font-weight: 700; 
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+.tool-header p { 
+    font-size: 15px; 
+    color: var(--text-secondary); 
+    line-height: 1.5;
+    max-width: 600px;
+}
+
+/* Mobile tool header */
+@media (max-width: 768px) {
+    .tool-header {
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+    }
+    .tool-header h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+    }
+    .tool-header p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+}
+
+@media (max-width: 480px) {
+    .tool-header h1 {
+        font-size: 20px;
+    }
+    .tool-header p {
+        font-size: 12px;
+    }
+}
 .tool-grid-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
 .form-group label { font-size: 13px; font-weight: 600; }
@@ -644,6 +685,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     background: var(--bg-main);
     color: var(--text-primary);
     transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+/* Finance tools specific improvements */
+.calculator-form-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 /* Mobile form improvements */
@@ -670,11 +719,49 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
     .form-group label {
         font-size: 14px;
+        line-height: 1.4;
     }
     .form-group input,
     .form-group select {
         padding: 12px;
         font-size: 16px; /* Prevents zoom on iOS */
+        min-height: 48px; /* Better touch target */
+    }
+    /* Better spacing for finance tool fields */
+    .calculator-form-inputs .form-group {
+        margin-bottom: 16px;
+    }
+    /* Stack results below inputs on mobile */
+    .calculator-results-card {
+        order: 2;
+    }
+    .calculator-form-inputs {
+        order: 1;
+    }
+    /* Visual separator between sections on mobile */
+    .calculator-results-card {
+        margin-top: 8px;
+        border-top: 2px solid var(--border-color);
+        padding-top: 24px;
+    }
+}
+
+/* Extra small screens - finance tools */
+@media (max-width: 480px) {
+    .tool-header h1 {
+        font-size: 20px;
+    }
+    .tool-header p {
+        font-size: 12px;
+    }
+    .form-group label {
+        font-size: 13px;
+    }
+    .form-group input,
+    .form-group select {
+        padding: 10px;
+        font-size: 16px;
+        min-height: 44px;
     }
 }
 .calculator-results-card {
@@ -706,17 +793,131 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
 }
 .result-stat-box { margin-top: 16px; }
-.result-stat-box .res-label { font-size: 14px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-.result-stat-box .res-val { font-size: 24px; font-weight: 700; color: var(--text-primary); }
-.result-stat-box .res-val.highlight { font-size: 32px; color: var(--primary-color); }
-.chart-container { height: 200px; margin-top: 24px; }
+.result-stat-box .res-label { 
+    font-size: 14px; 
+    color: var(--text-secondary); 
+    display: block; 
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+.result-stat-box .res-val { 
+    font-size: 24px; 
+    font-weight: 700; 
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+.result-stat-box .res-val.highlight { 
+    font-size: 32px; 
+    color: var(--primary-color);
+    font-weight: 800;
+}
+.result-stat-box .res-val.warn {
+    color: #EF4444;
+}
+
+/* Mobile result stats */
+@media (max-width: 768px) {
+    .result-stat-box {
+        margin-top: 12px;
+        padding: 12px;
+        background: var(--bg-card);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+    }
+    .result-stat-box .res-label {
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .result-stat-box .res-val {
+        font-size: 20px;
+    }
+    .result-stat-box .res-val.highlight {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .result-stat-box {
+        padding: 10px;
+        margin-top: 8px;
+    }
+    .result-stat-box .res-label {
+        font-size: 12px;
+    }
+    .result-stat-box .res-val {
+        font-size: 18px;
+    }
+    .result-stat-box .res-val.highlight {
+        font-size: 24px;
+    }
+}
+.chart-container { height: 200px; margin-top: 24px; position: relative; }
+.chart-container canvas { width: 100% !important; height: 100% !important; }
+
+/* Mobile chart improvements */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 180px;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 160px;
+        margin-top: 16px;
+    }
+}
 .result-table-container { margin-top: 32px; }
-.result-table-container h4 { margin-bottom: 12px; }
-.table-wrapper { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+.result-table-container h4 { margin-bottom: 12px; font-size: 16px; font-weight: 600; }
+.table-wrapper { 
+    max-height: 400px; 
+    overflow-y: auto; 
+    border: 1px solid var(--border-color); 
+    border-radius: var(--radius-md);
+    margin-top: 16px;
+}
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px 14px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--border-color); }
-thead th { background: var(--bg-main); position: sticky; top: 0; }
+thead th { 
+    background: var(--bg-main); 
+    position: sticky; 
+    top: 0; 
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--primary-light); }
+
+/* Mobile table improvements */
+@media (max-width: 768px) {
+    .result-table-container {
+        margin-top: 24px;
+    }
+    .result-table-container h4 {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+    .table-wrapper {
+        max-height: 300px;
+        border-radius: var(--radius-md);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    table {
+        min-width: 500px; /* Ensures horizontal scroll on small screens */
+    }
+    th, td {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    thead th {
+        font-size: 11px;
+        padding: 10px 12px;
+    }
+}
 
 .bmi-gauge-container { display: flex; justify-content: center; margin-bottom: 20px; }
 .bmi-gauge { width: 180px; height: 90px; position: relative; overflow: hidden; }
@@ -1182,7 +1383,23 @@ tbody tr:last-child td { border-bottom: none; }
 }
 .save-result-msg {
     font-size: 13px;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Mobile save bar */
+@media (max-width: 768px) {
+    .save-result-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-top: 20px;
+        padding-top: 16px;
+    }
+    .save-result-msg {
+        justify-content: center;
+    }
 }
 
 /* ── History Page ────────────────────────────────────────── */
@@ -1313,9 +1530,21 @@ tbody tr:last-child td { border-bottom: none; }
 
 @media (max-width: 768px) { .app-container > .site-footer { margin-left: 0; } }
 
-/* ── Copy Results Button ─────────────────────────────────── */
+/* Copy Results Button */
 .copy-results-btn {
     transition: color 0.2s, border-color 0.2s;
+}
+.copy-results-btn:hover {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* Mobile copy button */
+@media (max-width: 768px) {
+    .copy-results-btn {
+        width: 100%;
+        padding: 12px 20px;
+    }
 }
 
 /* ── Skip to Content Link ────────────────────────────────── */
