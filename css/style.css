@@ -187,6 +187,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .main-wrapper {
     margin-left: 260px;
     flex: 1;
+    min-width: 0; /* Prevent flexbox blowout */
     display: flex;
     flex-direction: column;
 }
@@ -243,7 +244,13 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Content Body */
-.content-body { padding: 36px; max-width: 1200px; margin: 0 auto; width: 100%; }
+.content-body { 
+    padding: 36px; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+    width: 100%; 
+    min-width: 0; /* Prevent flexbox blowout */
+}
 
 /* Hero Section */
 .hero-section {
@@ -634,7 +641,11 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Tool Page Layout */
-.tool-runner-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 32px; border: 1px solid var(--border-color); }
+.tool-runner-card { 
+    background: var(--bg-card); border-radius: var(--radius-lg); 
+    padding: 32px; border: 1px solid var(--border-color); 
+    min-width: 0; /* Prevent flexbox blowout */
+}
 .tool-header { 
     margin-bottom: 24px; 
     border-bottom: 1px solid var(--border-color); 
@@ -1150,8 +1161,15 @@ tbody tr:hover { background: var(--primary-light); }
     .search-trigger span { display: none; }
     .search-trigger kbd { display: none; }
     .hero-text h1 { font-size: 28px; line-height: 1.2; }
-    .content-body { padding: 16px; }
-    .tool-runner-card { padding: 16px 12px; width: 100%; box-sizing: border-box; }
+    .content-body {
+        padding: 12px !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box;
+    }
+    .tool-runner-card {
+        padding: 16px 12px !important; width: 100% !important; box-sizing: border-box !important; max-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important;
+    }
     .form-group input, .form-group select { 
         font-size: 16px; 
         padding: 12px;
@@ -1626,6 +1644,9 @@ tbody tr:hover { background: var(--primary-light); }
 }
 
 /* ── Static Content Pages (About, Privacy, Terms, etc.) ────────────────── */
+.static-content {
+    min-width: 0; /* Prevent flexbox blowout */
+}
 .static-content h3 { font-size: 16px; font-weight: 700; margin: 28px 0 10px; color: var(--text-primary); }
 .static-content p, .static-content li { font-size: 14px; color: var(--text-secondary); line-height: 1.75; }
 .static-content ul { padding-left: 20px; margin: 8px 0; }
