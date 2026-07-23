@@ -1151,7 +1151,7 @@ tbody tr:hover { background: var(--primary-light); }
     .search-trigger kbd { display: none; }
     .hero-text h1 { font-size: 28px; line-height: 1.2; }
     .content-body { padding: 16px; }
-    .tool-runner-card { padding: 20px; }
+    .tool-runner-card { padding: 16px 12px; width: 100%; box-sizing: border-box; }
     .form-group input, .form-group select { 
         font-size: 16px; 
         padding: 12px;
@@ -1281,6 +1281,9 @@ tbody tr:hover { background: var(--primary-light); }
     .btn-sm {
         font-size: 11px;
         padding: 6px 12px;
+    }
+    .browser-links {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1666,11 +1669,18 @@ tbody tr:hover { background: var(--primary-light); }
     border-bottom: 2px solid var(--border-color);
     color: var(--text-primary);
 }
+.cookie-table th, .cookie-table td {
+    white-space: nowrap;
+}
 .cookie-table td {
     padding: 10px 14px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-secondary);
     vertical-align: top;
+}
+.cookie-table td:nth-child(2) {
+    white-space: normal;
+    min-width: 200px;
 }
 .cookie-table tr:last-child td { border-bottom: none; }
 
