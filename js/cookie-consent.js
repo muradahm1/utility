@@ -24,7 +24,7 @@
         const acceptBtn = document.getElementById('cookie-accept-btn');
         const essentialBtn = document.getElementById('cookie-essential-btn');
         const prefStatus = document.getElementById('pref-status');
-        const resetBtn = document.getElementById('reset-consent-btn');
+        const resetBtns = Array.from(new Set(document.querySelectorAll('[data-reset-consent], #reset-consent-btn')));
 
         function setConsent(value) {
             localStorage.setItem('cookie_consent', value);
@@ -52,12 +52,12 @@
         // Bind event listeners
         if (acceptBtn) acceptBtn.addEventListener('click', () => setConsent('all'));
         if (essentialBtn) essentialBtn.addEventListener('click', () => setConsent('essential'));
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
+        if (resetBtns.length) {
+            resetBtns.forEach(btn => btn.addEventListener('click', () => {
                 localStorage.removeItem('cookie_consent');
                 updatePrefStatus();
                 setTimeout(() => banner.classList.add('show'), 300);
-            });
+            }));
         }
 
         // Update preference status on load

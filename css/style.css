@@ -1540,6 +1540,24 @@ tbody tr:hover { background: var(--primary-light); }
         flex-grow: 1; /* Make buttons share width */
         min-height: 44px; /* Ensure proper touch target */
     }
+    .cookie-table th,
+    .cookie-table td {
+        white-space: normal;
+        word-break: break-word;
+    }
+    .browser-links {
+        grid-template-columns: 1fr;
+    }
+    .browser-link {
+        justify-content: center;
+    }
+    .pref-reset-box {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .pref-reset-box button {
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) { .app-container > .site-footer { margin-left: 0; } }

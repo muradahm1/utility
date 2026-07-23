@@ -117,7 +117,7 @@
             </div>
         </aside>
 
-        <main class="main-wrapper">
+        <main class="main-wrapper" id="main-content">
             <header class="top-header">
                 <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
                     <i class="fa-solid fa-bars"></i>
@@ -193,7 +193,7 @@
 
                         <div class="pref-reset-box">
                             <p>Want to change your cookie preference? Reset it here and the consent banner will reappear.</p>
-                            <button class="btn btn-outline btn-sm" id="reset-consent-btn">
+                            <button class="btn btn-outline btn-sm" id="pref-reset-btn" data-reset-consent>
                                 <i class="fa-solid fa-rotate-left"></i> Reset Cookie Preferences
                             </button>
                         </div>
@@ -255,7 +255,7 @@
         <div class="cookie-consent-actions">
             <button class="btn btn-outline btn-sm" id="cookie-essential-btn">Essential Only</button>
             <button class="btn btn-primary btn-sm" id="cookie-accept-btn">Accept All</button>
-            <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
+            <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn" data-reset-consent>Reset Preferences</button>
         </div>
     </div>
 
