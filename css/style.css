@@ -1109,43 +1109,11 @@ tbody tr:hover { background: var(--primary-light); }
 }
 
 /* Hamburger */
-.hamburger-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 22px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease;
-}
-.hamburger-btn:hover {
-    background-color: var(--bg-main);
-}
-.hamburger-btn[aria-expanded="true"] {
-    color: var(--primary-color);
-}
+.hamburger-btn { display: none; background: none; border: none; font-size: 20px; color: var(--text-primary); cursor: pointer; padding: 4px 8px; }
 
 /* Mobile sidebar overlay */
-.sidebar-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 9;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.sidebar-overlay.active {
-    display: block;
-    opacity: 1;
-}
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9; }
+.sidebar-overlay.active { display: block; }
 
 /* Input focus ring */
 .form-group input:focus, .form-group select:focus {
@@ -1156,64 +1124,42 @@ tbody tr:hover { background: var(--primary-light); }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        width: 280px;
-        max-width: 90vw;
-    }
-    .sidebar.open {
-        transform: translateX(0);
-    }
+    .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+    .sidebar.open { transform: translateX(0); }
     .main-wrapper { margin-left: 0; }
     .site-footer { margin-left: 0; }
-    .top-header {
-        padding: 0 12px;
-        height: 60px;
-    }
+    .top-header { padding: 0 12px; height: 60px; }
     .hero-section { grid-template-columns: 1fr; gap: 24px; }
     .hero-graphic { display: none; }
     .tool-grid-workspace { grid-template-columns: 1fr; gap: 24px; }
-    .hamburger-btn {
-        display: flex;
-        padding: 8px;
-    }
-    .search-trigger {
-        width: auto;
-        flex: 1 1 auto;
-        justify-content: center;
+    .hamburger-btn { display: block; padding: 8px; }
+    .search-trigger { 
+        order: 2; /* Move search to the middle */
+        flex-grow: 1; /* Allow it to take space */
+        justify-content: flex-start;
         padding: 8px 12px;
         max-width: 200px;
-        height: 40px;
-        border-radius: 12px;
     }
     .search-trigger span { display: none; }
     .search-trigger kbd { display: none; }
     .hero-text h1 { font-size: 28px; line-height: 1.2; }
     .content-body { padding: 16px; }
     .tool-runner-card { padding: 20px; }
-    .form-group input, .form-group select {
-        font-size: 16px;
+    .form-group input, .form-group select { 
+        font-size: 16px; 
         padding: 12px;
-        width: 100%;
     }
     .header-actions {
+        order: 3; /* Actions (sign-in/theme) to the right */
         gap: 12px;
     }
-    .icon-btn {
-        font-size: 20px;
+    .icon-btn { 
+        font-size: 20px; 
         padding: 8px;
-        min-width: 44px;
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
     }
-    .btn-pill {
-        padding: 8px 16px;
+    .btn-pill { 
+        padding: 8px 16px; 
         font-size: 13px;
-        min-height: 44px;
     }
     /* Fix dark mode switcher spacing on mobile */
     .theme-switch-container {
@@ -1222,19 +1168,19 @@ tbody tr:hover { background: var(--primary-light); }
         border-top: 1px solid var(--border-color);
     }
     /* Improve tool card grid on mobile */
-    .tools-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+    .tools-grid { 
+        grid-template-columns: 1fr; 
+        gap: 16px; 
     }
     /* Better spacing for calculator results */
     .calculator-results-card {
         padding: 20px;
     }
-    .result-stat-box .res-val {
-        font-size: 20px;
+    .result-stat-box .res-val { 
+        font-size: 20px; 
     }
-    .result-stat-box .res-val.highlight {
-        font-size: 28px;
+    .result-stat-box .res-val.highlight { 
+        font-size: 28px; 
     }
     /* Table responsiveness */
     .table-wrapper {
@@ -1250,13 +1196,13 @@ tbody tr:hover { background: var(--primary-light); }
         margin-top: 20px;
     }
     /* Better touch targets */
-    .btn {
-        min-height: 44px;
+    .btn { 
+        min-height: 44px; 
         padding: 10px 20px;
     }
-    .btn-sm {
-        min-height: 44px;
-        padding: 10px 16px;
+    .btn-sm { 
+        min-height: 36px; 
+        padding: 8px 16px; 
     }
     /* Category cards spacing */
     .category-card {
@@ -1290,10 +1236,6 @@ tbody tr:hover { background: var(--primary-light); }
     .features-grid {
         grid-template-columns: 1fr;
         gap: 16px;
-    }
-    /* Cookie banner z-index above overlay */
-    .cookie-consent-banner {
-        z-index: 201;
     }
 }
 
@@ -1329,181 +1271,9 @@ tbody tr:hover { background: var(--primary-light); }
         font-size: 13px;
         padding: 10px 16px;
     }
-        .btn-sm {
+    .btn-sm {
         font-size: 11px;
         padding: 6px 12px;
-    }
-}
-
-/* Ultra-small screens (320px and below) */
-@media (max-width: 360px) {
-    .top-header {
-        height: 52px;
-        padding: 0 6px;
-    }
-    .search-trigger {
-        max-width: 140px;
-        padding: 4px 8px;
-        font-size: 11px;
-    }
-    .hero-text h1 {
-        font-size: 22px;
-    }
-    .content-body {
-        padding: 10px;
-    }
-    .tool-runner-card {
-        padding: 14px;
-    }
-    .btn {
-        font-size: 12px;
-        padding: 8px 12px;
-    }
-    .btn-sm {
-        font-size: 10px;
-        padding: 6px 10px;
-    }
-    .cookie-consent-text {
-        font-size: 10px;
-    }
-    .cookie-consent-actions .btn {
-        font-size: 10px;
-        padding: 8px 8px;
-    }
-}
-
-/* ── Slider Inputs for Finance Calculators ─────────────────── */
-.slider-input-container {
-    margin-bottom: 16px;
-}
-.slider-input-container .form-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-.slider-input-container .slider-value {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--primary-color);
-    min-width: 80px;
-    text-align: right;
-}
-.slider-input-container input[type="range"] {
-    width: 100%;
-    height: 8px;
-    -webkit-appearance: none;
-    background: var(--border-color);
-    border-radius: 4px;
-    outline: none;
-    margin: 8px 0;
-}
-.slider-input-container input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    transition: background 0.2s;
-}
-.slider-input-container input[type="range"]::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--primary-color);
-    cursor: pointer;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-.slider-input-container input[type="range"]::-webkit-slider-runnable-track {
-    height: 8px;
-    border-radius: 4px;
-}
-.slider-input-container input[type="range"]::-moz-range-track {
-    height: 8px;
-    border-radius: 4px;
-}
-.slider-input-container input[type="range"]:hover::-webkit-slider-thumb {
-    background: var(--primary-hover);
-}
-.slider-input-container input[type="range"]:hover::-moz-range-thumb {
-    background: var(--primary-hover);
-}
-
-/* Mobile slider optimization */
-@media (max-width: 768px) {
-    .slider-input-container .form-label {
-        font-size: 14px;
-    }
-    .slider-input-container input[type="range"]::-webkit-slider-thumb {
-        width: 28px;
-        height: 28px;
-    }
-    .slider-input-container input[type="range"]::-moz-range-thumb {
-        width: 28px;
-        height: 28px;
-    }
-}
-
-/* ── Amortization Schedule Table ──────────────────────────── */
-.amortization-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
-    font-size: 13px;
-}
-.amortization-table th {
-    background: var(--bg-main);
-    padding: 10px 12px;
-    text-align: left;
-    font-weight: 700;
-    border-bottom: 2px solid var(--border-color);
-    color: var(--text-primary);
-    white-space: nowrap;
-}
-.amortization-table td {
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    white-space: nowrap;
-}
-.amortization-table tr:last-child td {
-    border-bottom: none;
-}
-.amortization-table .payment-cell {
-    font-family: monospace;
-    font-size: 12px;
-}
-
-/* Mobile amortization table */
-@media (max-width: 768px) {
-    .amortization-table {
-        font-size: 12px;
-    }
-    .amortization-table th,
-    .amortization-table td {
-        padding: 8px 10px;
-    }
-    .amortization-table .payment-cell {
-        font-size: 11px;
-    }
-    /* Show only first 12 months on mobile by default */
-    .amortization-table tbody tr:nth-child(n+13) {
-        display: none;
-    }
-    .amortization-show-all {
-        margin-top: 12px;
-        text-align: center;
-    }
-    .amortization-show-all .btn {
-        font-size: 12px;
-        padding: 8px 16px;
     }
 }
 
@@ -1741,102 +1511,39 @@ tbody tr:hover { background: var(--primary-light); }
     left: 0;
     right: 0;
     background: var(--bg-card);
-    padding: 14px 20px;
+    padding: 16px 24px;
     border-top: 1px solid var(--border-color);
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     z-index: 200;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 20px;
     transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s ease-in-out;
 }
 .cookie-consent-banner.show {
     transform: translateY(0);
 }
-.cookie-consent-text {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.cookie-consent-text a {
-    color: var(--primary-color);
-    font-weight: 600;
-    text-decoration: none;
-}
-.cookie-consent-text a:hover {
-    text-decoration: underline;
-}
-.cookie-consent-actions {
-    display: flex;
-    gap: 10px;
-    flex-shrink: 0;
-}
-.cookie-consent-actions .btn {
-    min-height: 44px;
-    min-width: 44px;
-    padding: 10px 18px;
-    font-size: 13px;
-    font-weight: 600;
-}
-.cookie-consent-actions .btn-sm {
-    min-height: 44px;
-    padding: 10px 16px;
-}
-
-/* Compact cookie banner for mobile */
+.cookie-consent-text { font-size: 13px; color: var(--text-secondary); }
+.cookie-consent-actions { display: flex; gap: 10px; flex-shrink: 0; }
 @media (max-width: 768px) {
     .cookie-consent-banner {
         flex-direction: column;
         text-align: center;
-        gap: 14px;
-        padding: 18px 16px;
-        border-radius: 16px 16px 0 0;
-        margin-top: auto;
-    }
-    .cookie-consent-text {
-        font-size: 12px;
-        justify-content: center;
+        gap: 16px;
     }
     .cookie-consent-actions {
         width: 100%;
-        flex-wrap: wrap;
-        gap: 8px;
     }
     .cookie-consent-actions .btn {
-        flex: 1 1 48%;
-        min-height: 44px;
-        padding: 10px 14px;
-        font-size: 12px;
-    }
-    .cookie-consent-actions .btn-reset {
-        flex: 1 1 100%;
-        margin-top: 6px;
-    }
-}
-
-/* Extra small screens - cookie banner */
-@media (max-width: 480px) {
-    .cookie-consent-banner {
-        padding: 16px 12px;
-        gap: 12px;
-    }
-    .cookie-consent-text {
-        font-size: 11px;
-    }
-    .cookie-consent-actions .btn {
-        font-size: 11px;
-        padding: 10px 10px;
+        flex-grow: 1; /* Make buttons share width */
+        min-height: 44px; /* Ensure proper touch target */
     }
 }
 
 @media (max-width: 768px) { .app-container > .site-footer { margin-left: 0; } }
 
-/* Copy Results Button */
 .copy-results-btn {
     transition: color 0.2s, border-color 0.2s;
 }
