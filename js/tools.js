@@ -252,9 +252,70 @@ const TOOLS = {
             label: 'Resulting Date',
             value: `${newDate.toLocaleDateString('en-US', { weekday: 'long' })}, ${newDate.toISOString().split('T')[0]}`,
             highlight: true
-          }],
+                              }],
         };
+    },
+  },
+
+  // ── Loan Interest Calculator ────────────────────────────────
+  'loan-interest-calculator': {
+    name: 'Loan Interest Calculator',
+    category: 'Finance',
+    icon: 'fa-hand-holding-dollar',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate total interest payable, monthly payments, and generate a complete amortization schedule for any loan.',
+    metaDescription: 'Free loan interest calculator — compute total interest, monthly payments, and download full amortization schedule for personal, auto, or business loans.',
+    fields: [
+      { id: 'principal',      label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 100,    step: 100   },
+      { id: 'annual_rate',    label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.1,    step: 0.05  },
+      { id: 'loan_tenure',    label: 'Loan Tenure',            type: 'number', default: 5,     min: 1,      step: 1,
+        suffix: 'years' },
+      { id: 'repayment_freq', label: 'Repayment Frequency',    type: 'select', default: 'monthly',
+        options: [
+          { value: 'monthly',   label: 'Monthly (12/yr)' },
+          { value: 'biweekly',  label: 'Bi-weekly (26/yr)' },
+          { value: 'weekly',    label: 'Weekly (52/yr)' },
+          { value: 'quarterly', label: 'Quarterly (4/yr)' },
+        ]
+      },
+    ],
+    calculate(v) {
+      const principal = v.principal;
+      const annualRate = v.annual_rate / 100;
+      const years = v.loan_tenure;
+      const freq = v.repayment_freq;
+
+      const periodsPerYear = { monthly: 12, biweekly: 26, weekly: 52, quarterly: 4 }[freq];
+      const totalPeriods = years * periodsPerYear;
+      const periodicRate = annualRate / periodsPerYear;
+
+      let payment;
+      if (periodicRate === 0) {
+        payment = principal / totalPeriods;
+      } else {
+        payment = principal * (periodicRate * Math.pow(1 + periodicRate, totalPeriods)) / (Math.pow(1 + periodicRate, totalPeriods) - 1);
       }
+
+      const totalPaid = payment * totalPeriods;
+      const totalInterest = totalPaid - principal;
+
+      const schedule = buildAmortization(principal, periodicRate, totalPeriods, payment);
+
+      const freqLabel = { monthly: 'Monthly', biweekly: 'Bi-weekly', weekly: 'Weekly', quarterly: 'Quarterly' }[freq];
+
+      return {
+        stats: [
+          { label: freqLabel + ' Payment', value: fmtCurrency(payment), highlight: true },
+          { label: 'Total Interest Payable', value: fmtCurrency(totalInterest), warn: true },
+          { label: 'Total Amount Payable', value: fmtCurrency(totalPaid) },
+          { label: 'Loan Amount', value: fmtCurrency(principal) },
+          { label: 'Interest-to-Principal Ratio', value: pct(totalInterest / principal) },
+          { label: 'Total Payments', value: totalPeriods + ' ' + freqLabel.toLowerCase() + ' payments' },
+        ],
+        chart: { principal, totalInterest },
+        table: schedule,
+      };
     },
   },
 };
@@ -283,3 +344,5 @@ function buildAmortization(principal, r, n, payment) {
   }
   return rows;
 }
+
+function fmtCurrency(n) { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
