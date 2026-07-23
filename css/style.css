@@ -1526,7 +1526,13 @@ tbody tr:hover { background: var(--primary-light); }
 }
 .cookie-consent-text { font-size: 13px; color: var(--text-secondary); }
 .cookie-consent-actions { display: flex; gap: 10px; flex-shrink: 0; }
-@media (max-width: 768px) { .cookie-consent-banner { flex-direction: column; } }
+@media (max-width: 768px) { 
+    .cookie-consent-banner { 
+        flex-direction: column; 
+        text-align: center;
+        gap: 16px;
+    } 
+}
 
 @media (max-width: 768px) { .app-container > .site-footer { margin-left: 0; } }
 
