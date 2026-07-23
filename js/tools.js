@@ -254,6 +254,8 @@ const TOOLS = {
             highlight: true
                               }],
         };
+      }
+
     },
   },
 
