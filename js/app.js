@@ -177,7 +177,7 @@ function initSearchModal() {
             { name: 'BMI Calculator',               slug: 'bmi-calculator',         cat: 'Health'  },
             { name: 'Percentage Calculator',        slug: 'percentage-calculator',  cat: 'Math'    },
             { name: 'Loan Calculator',              slug: 'loan-calculator',        cat: 'Finance' },
-            { name: 'Compound Interest Calculator', slug: 'compound-interest',      cat: 'Finance' },
+            { name: 'Compound Interest Calculator', slug: 'compound-interest-calculator',      cat: 'Finance' },
             { name: 'Date Calculator',              slug: 'date-calculator',        cat: 'Math'    },
         ];
 

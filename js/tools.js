@@ -155,54 +155,6 @@ const TOOLS = {
     },
   },
 
-  'compound-interest': {
-    name: 'Compound Interest Calculator',
-    category: 'Finance',
-    icon: 'fa-chart-line',
-    iconClass: 'icon-chart',
-    tagClass: 'tag-finance',
-    description: 'Calculate how your investment grows over time with compound interest.',
-    metaDescription: 'Free compound interest calculator — see how your money grows with compound interest over time, with yearly breakdown.',
-    fields: [
-      { id: 'principal',    label: 'Initial Investment ($)',   type: 'number', default: 10000, min: 1,   step: 100  },
-      { id: 'monthly_add', label: 'Monthly Contribution ($)', type: 'number', default: 200,   min: 0,   step: 50   },
-      { id: 'rate',        label: 'Annual Interest Rate (%)', type: 'number', default: 8,     min: 0.1, step: 0.1  },
-      { id: 'years',       label: 'Time Period (years)',      type: 'number', default: 20,    min: 1,   max: 50, step: 1 },
-      { id: 'compound',    label: 'Compounding Frequency',   type: 'select', default: 12,
-        options: [
-          { value: 1,  label: 'Annually'   },
-          { value: 4,  label: 'Quarterly'  },
-          { value: 12, label: 'Monthly'    },
-          { value: 365,label: 'Daily'      },
-        ]
-      },
-    ],
-    calculate(v) {
-      const n = Number(v.compound), r = v.rate / 100;
-      const totalYears = v.years;
-      let balance = v.principal;
-      const yearlyData = [];
-      for (let y = 1; y <= totalYears; y++) {
-        for (let m = 0; m < 12; m++) {
-          balance = balance * Math.pow(1 + r/n, n/12) + v.monthly_add;
-        }
-        yearlyData.push({ year: y, balance });
-      }
-      const totalContributions = v.principal + v.monthly_add * 12 * totalYears;
-      const totalInterestEarned = balance - totalContributions;
-      return {
-        stats: [
-          { label: 'Final Balance',       value: fmt(balance),              highlight: true },
-          { label: 'Total Contributions', value: fmt(totalContributions)                    },
-          { label: 'Interest Earned',     value: fmt(totalInterestEarned),  warn: false, positive: true },
-          { label: 'Return on Investment',value: pct(totalInterestEarned / totalContributions) },
-        ],
-        growthChart: yearlyData,
-        chart: { principal: totalContributions, totalInterest: totalInterestEarned },
-      };
-    },
-  },
-
   'date-calculator': {
     name: 'Date Calculator',
     category: 'Math',
@@ -318,6 +270,133 @@ const TOOLS = {
         table: schedule,
       };
     },
+  },
+
+  // ── Compound Interest Calculator ──────────────────────────────
+  'compound-interest-calculator': {
+    name: 'Compound Interest Calculator',
+    category: 'Finance',
+    icon: 'fa-chart-line',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Project how your savings and investments grow over time with compound interest and recurring monthly contributions.',
+    metaDescription: 'Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
+    fields: [
+      { id: 'principal',         label: 'Starting Balance ($)',          type: 'number', default: 10000, min: 0,      step: 100   },
+      { id: 'annual_rate',       label: 'Annual Interest Rate (%)',       type: 'number', default: 8.0,   min: 0.01,   step: 0.1   },
+      { id: 'compounding_freq',  label: 'Compounding Frequency',         type: 'select', default: 'monthly',
+        options: [
+          { value: 'annually',       label: 'Annually (1/yr)' },
+          { value: 'semi-annually',  label: 'Semi-annually (2/yr)' },
+          { value: 'quarterly',      label: 'Quarterly (4/yr)' },
+          { value: 'monthly',        label: 'Monthly (12/yr)' },
+          { value: 'daily',          label: 'Daily (365/yr)' },
+        ]
+      },
+      { id: 'monthly_contribution', label: 'Monthly Contribution ($)',   type: 'number', default: 500,   min: 0,      step: 50    },
+      { id: 'time_years',          label: 'Time Horizon (years)',        type: 'number', default: 30,    min: 1,      max: 100,   step: 1 },
+    ],
+    calculate(v) {
+      const principal = v.principal;
+      const annualRate = v.annual_rate / 100;
+      const years = v.time_years;
+      const contribution = v.monthly_contribution;
+
+      const periodsPerYear = { annually: 1, 'semi-annually': 2, quarterly: 4, monthly: 12, daily: 365 }[v.compounding_freq];
+      const totalPeriods = years * periodsPerYear;
+      const periodicRate = annualRate / periodsPerYear;
+      const contributionPerPeriod = contribution * (12 / periodsPerYear);
+
+      let futureValue;
+      if (periodicRate === 0) {
+        futureValue = principal + contributionPerPeriod * totalPeriods;
+      } else {
+        const growthFactor = Math.pow(1 + periodicRate, totalPeriods);
+        const lumpSumPortion = principal * growthFactor;
+        const contribPortion = contributionPerPeriod * (growthFactor - 1) / periodicRate;
+        futureValue = lumpSumPortion + contribPortion;
+      }
+
+      const totalContributions = principal + contribution * 12 * years;
+      const totalInterest = futureValue - totalContributions;
+
+      // Year-by-year schedule
+      const schedule = [];
+      for (let y = 1; y <= years; y++) {
+        const yPeriods = y * periodsPerYear;
+        let yValue;
+        if (periodicRate === 0) {
+          yValue = principal + contributionPerPeriod * yPeriods;
+        } else {
+          const yGrowth = Math.pow(1 + periodicRate, yPeriods);
+          const yLump = principal * yGrowth;
+          const yContrib = contributionPerPeriod * (yGrowth - 1) / periodicRate;
+          yValue = yLump + yContrib;
+        }
+        const yContributions = principal + contribution * 12 * y;
+        const yInterest = yValue - yContributions;
+        schedule.push({
+          month: y,
+          payment: fmtCurrency(contribution * 12),
+          principal: fmtCurrency(yContributions),
+          interest: fmtCurrency(yInterest),
+          balance: fmtCurrency(yValue),
+        });
+      }
+
+      const freqMap = { annually: 'Annual', 'semi-annually': 'Semi-Annual', quarterly: 'Quarterly', monthly: 'Monthly', daily: 'Daily' };
+
+      return {
+        stats: [
+          { label: 'Final Balance',       value: fmtCurrency(futureValue),         highlight: true },
+          { label: 'Total Contributions', value: fmtCurrency(totalContributions)                        },
+          { label: 'Total Interest Earned', value: fmtCurrency(totalInterest),      warn: false          },
+          { label: 'Compounding',         value: freqMap[v.compounding_freq] + ' (' + periodsPerYear + '/yr)' },
+          { label: 'Interest-to-Contributions Ratio', value: pct(totalInterest / (totalContributions || 1)) },
+          { label: 'Annual Return',       value: (annualRate * 100).toFixed(2) + '%'                     },
+        ],
+        chart: { principal: totalContributions, totalInterest },
+        table: schedule,
+      };
+    },
+    examples: [
+      {
+        icon: 'fa-building-columns',
+        title: 'Retirement at 65',
+        description: 'Start with $10,000 at age 30, add $500/month at 9% compounded monthly. After 35 years you have over $1.6 million.',
+        inputs: { 'Starting Balance': '$10,000', 'Monthly Contribution': '$500', 'Rate': '9%', 'Time': '35 years' },
+      },
+      {
+        icon: 'fa-graduation-cap',
+        title: 'College Fund',
+        description: 'Save $200/month from birth, 7% compounded monthly. At age 18 you have over $85,000 for tuition.',
+        inputs: { 'Starting Balance': '$0', 'Monthly Contribution': '$200', 'Rate': '7%', 'Time': '18 years' },
+      },
+      {
+        icon: 'fa-house',
+        title: 'Down Payment Savings',
+        description: 'Save $800/month at 4.5% compounded monthly. In 5 years you have nearly $54,000 for a down payment.',
+        inputs: { 'Starting Balance': '$0', 'Monthly Contribution': '$800', 'Rate': '4.5%', 'Time': '5 years' },
+      },
+    ],
+    faqs: [
+      {
+        q: 'How often should I compound interest for the best results?',
+        a: 'More frequent compounding yields higher returns, but the benefit shrinks as frequency increases. Monthly compounding is the standard sweet spot for savings and investment projections. Daily compounding adds marginal extra growth. The big difference is between annual and monthly — not between daily and continuous compounding.',
+      },
+      {
+        q: 'What is the difference between compound interest and simple interest?',
+        a: 'Simple interest earns returns only on your original principal. Compound interest earns returns on your principal plus all previously earned interest. On $10,000 at 8% over 30 years, simple interest gives you $24,000 in earnings — compound interest gives you over $90,000. The gap grows exponentially with time.',
+      },
+      {
+        q: 'Can compound interest work against me?',
+        a: 'Yes. Credit cards and adjustable-rate loans often compound interest daily. If you carry a balance on a card with 22% APR compounded daily, your debt can spiral fast. The same math that grows your savings can accelerate your debt. Use this calculator with your loan terms to see the true cost of carrying a balance.',
+      },
+      {
+        q: 'What is a reasonable rate of return to use for long-term projections?',
+        a: 'For US stock market investments: 7-10% before inflation, 5-7% after inflation. For high-yield savings accounts: check current rates (typically 4-5%). For bonds: 3-6% depending on duration and credit quality. When in doubt, use a lower rate — undershooting your goal is better than overshooting it.',
+      },
+    ],
   }
 };
 
