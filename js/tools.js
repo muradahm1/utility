@@ -1,4 +1,4 @@
-const TOOLS = {
+﻿const TOOLS = {
   'mortgage-calculator': {
     name: 'Mortgage Calculator',
     category: 'Finance',
@@ -6,33 +6,50 @@ const TOOLS = {
     iconClass: 'icon-home',
     tagClass: 'tag-finance',
     description: 'Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.',
-    metaDescription: 'Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.',
+    metaDescription: 'Free mortgage calculator â€” instantly calculate monthly payments, total interest, and amortization schedule for any home loan.',
     fields: [
       { id: 'home_price',    label: 'Home Price ($)',         type: 'number', default: 400000, min: 1000,   step: 1000  },
       { id: 'down_payment',  label: 'Down Payment ($)',       type: 'number', default: 80000,  min: 0,      step: 1000  },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)',type: 'number', default: 7.0,   min: 0.1,    step: 0.05  },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)',type: 'number', default: 7.0,   min: 0.01,   step: 0.05, max: 50 },
       { id: 'loan_term',     label: 'Loan Term (years)',      type: 'select', default: 30,
         options: [10,15,20,25,30].map(v => ({ value: v, label: `${v} years` })) },
       { id: 'property_tax',  label: 'Annual Property Tax ($)',type: 'number', default: 4800,   min: 0,      step: 100   },
       { id: 'insurance',     label: 'Annual Insurance ($)',   type: 'number', default: 1200,   min: 0,      step: 100   },
     ],
     calculate(v) {
-      const principal = v.home_price - v.down_payment;
-      const r = v.interest_rate / 100 / 12;
-      const n = v.loan_term * 12;
-      const base = r === 0 ? principal / n : principal * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
-      const monthly = base + v.property_tax/12 + v.insurance/12;
-      const totalPaid = base * n;
-      const totalInterest = totalPaid - principal;
-      const schedule = buildAmortization(principal, r, n, base);
+      // M = P * [r(1+r)^n] / [(1+r)^n - 1]
+      const principal = safeNum(v.home_price, 0) - safeNum(v.down_payment, 0);
+      if (principal <= 0) {
+        return errorResult('Down payment must be less than home price.');
+      }
+      const annualRate = safeNum(v.interest_rate, 0);
+      const r = annualRate / 100 / 12;
+      const n = Math.round(safeNum(v.loan_term, 30)) * 12;
+      const taxMonthly = safeNum(v.property_tax, 0) / 12;
+      const insMonthly = safeNum(v.insurance, 0) / 12;
+
+      const base = r === 0
+        ? principal / n
+        : principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+
+      const monthlyPI = roundTo(base, 2);
+      const monthlyTotal = roundTo(monthlyPI + taxMonthly + insMonthly, 2);
+      const totalPaid = roundTo(monthlyTotal * n, 2);
+      const totalInterest = roundTo(monthlyPI * n - principal, 2);
+      const totalTaxIns = roundTo((taxMonthly + insMonthly) * n, 2);
+      // Total cost = down_payment + (monthly_total * n)
+      const trueTotalCost = roundTo(safeNum(v.down_payment, 0) + monthlyTotal * n, 2);
+
+      const schedule = buildAmortization(principal, r, n, monthlyPI);
       return {
         stats: [
-          { label: 'Monthly Payment',   value: fmt(monthly),       highlight: true  },
-          { label: 'Principal & Interest', value: fmt(base)                          },
-          { label: 'Total Interest',    value: fmt(totalInterest), warn: true        },
-          { label: 'Total Cost',        value: fmt(totalPaid + v.down_payment)       },
-          { label: 'Loan Amount',       value: fmt(principal)                        },
-          { label: 'Down Payment',      value: pct(v.down_payment / v.home_price)   },
+          { label: 'Monthly Payment',   value: fmt(monthlyTotal), highlight: true  },
+          { label: 'Principal & Interest', value: fmt(monthlyPI)                      },
+          { label: 'Total Interest',    value: fmt(totalInterest), warn: true         },
+          { label: 'Property Tax & Insurance', value: fmt(totalTaxIns)                 },
+          { label: 'Total Cost',        value: fmt(trueTotalCost)                      },
+          { label: 'Loan Amount',       value: fmt(principal)                          },
+          { label: 'Down Payment',      value: pct(safeNum(v.down_payment, 0) / safeNum(v.home_price, 1)) },
         ],
         chart: { principal, totalInterest },
         table: schedule,
@@ -47,7 +64,7 @@ const TOOLS = {
     iconClass: 'icon-health',
     tagClass: 'tag-health',
     description: 'Calculate your Body Mass Index (BMI) and find out your healthy weight range.',
-    metaDescription: 'Free BMI calculator — instantly calculate your Body Mass Index, health category, and ideal weight range.',
+    metaDescription: 'Free BMI calculator â€” instantly calculate your Body Mass Index, health category, and ideal weight range.',
     fields: [
       { id: 'unit',   label: 'Unit System', type: 'select', default: 'metric',
         options: [{ value:'metric', label:'Metric (kg / cm)' }, { value:'imperial', label:'Imperial (lb / in)' }] },
@@ -62,21 +79,33 @@ const TOOLS = {
       };
     },
     calculate(v) {
-      let weightKg = v.weight, heightM = v.height / 100;
-      if (v.unit === 'imperial') { weightKg = v.weight * 0.453592; heightM = v.height * 0.0254; }
+      // BMI = weight_kg / (height_m)^2
+      let weightKg = safeNum(v.weight, 0);
+      let heightM = safeNum(v.height, 0) / 100;
+      if (v.unit === 'imperial') {
+        weightKg *= 0.453592;
+        heightM = safeNum(v.height, 0) * 0.0254;
+      }
+      if (weightKg <= 0 || heightM <= 0) {
+        return errorResult('Please enter valid weight and height values greater than zero.');
+      }
+
       const bmi = weightKg / (heightM * heightM);
-      const { label, color } = bmiCategory(bmi);
-      const minW = 18.5 * heightM * heightM, maxW = 24.9 * heightM * heightM;
-      const minDisp = v.unit === 'imperial' ? `${(minW/0.453592).toFixed(1)} lb` : `${minW.toFixed(1)} kg`;
-      const maxDisp = v.unit === 'imperial' ? `${(maxW/0.453592).toFixed(1)} lb` : `${maxW.toFixed(1)} kg`;
+      const clampedBmi = Math.min(Math.max(bmi, 10), 100);
+
+      const cat = bmiCategory(clampedBmi);
+      const healthyMin = roundTo(18.5 * heightM * heightM, 1);
+      const healthyMax = roundTo(24.9 * heightM * heightM, 1);
+
+      const weightDisplay = v.unit === 'imperial' ? 'lb' : 'kg';
+
       return {
         stats: [
-          { label: 'Your BMI',        value: bmi.toFixed(1),          highlight: true, color },
-          { label: 'Category',        value: label,                   color                  },
-          { label: 'Healthy Range',   value: `${minDisp} – ${maxDisp}`                       },
-          { label: 'Healthy BMI',     value: '18.5 – 24.9'                                   },
+          { label: 'Your BMI',          value: fmtN(bmi),            highlight: true },
+          { label: 'Category',          value: cat.label,            color: cat.color },
+          { label: 'Healthy Weight Range', value: `${healthyMin}â€“${healthyMax} ${weightDisplay}` },
         ],
-        bmiGauge: { bmi, label, color },
+        bmiGauge: { bmi: clampedBmi, color: cat.color, label: cat.label },
       };
     },
   },
@@ -87,69 +116,105 @@ const TOOLS = {
     icon: 'fa-percent',
     iconClass: 'icon-math',
     tagClass: 'tag-math',
-    description: 'Calculate percentages, percentage change, and percentage of a total instantly.',
-    metaDescription: 'Free percentage calculator — calculate what percent one number is of another, percentage increase/decrease, and more.',
+    description: 'Quickly find what percent one number is of another, calculate percentage increase or decrease, and more.',
+    metaDescription: 'Free percentage calculator â€” find percentages, percent change, and compute values instantly.',
     fields: [
-      { id: 'mode', label: 'Calculation Type', type: 'select', default: 'of',
+      { id: 'mode',    type: 'select', default: 'what-percent',
         options: [
-          { value: 'of',      label: 'What is X% of Y?'           },
-          { value: 'is',      label: 'X is what % of Y?'          },
-          { value: 'change',  label: '% Change from X to Y'       },
-          { value: 'add',     label: 'Add X% to Y'                },
-          { value: 'remove',  label: 'Remove X% from Y'           },
-        ]
-      },
-      { id: 'val_a', label: 'Value A (X)', type: 'number', default: 25,   step: 'any' },
-      { id: 'val_b', label: 'Value B (Y)', type: 'number', default: 200,  step: 'any' },
+          { value: 'what-percent',  label: 'X is what % of Y?' },
+          { value: 'percent-of',    label: 'What is X% of Y?' },
+          { value: 'change',        label: '% Change (from X to Y)' },
+        ]},
+      { id: 'val_a',   label: 'Value A',   type: 'number', default: 50,  min: -99999999, step: 1 },
+      { id: 'val_b',   label: 'Value B',   type: 'number', default: 200, min: -99999999, step: 1 },
     ],
+    fieldLabels(v) {
+      if (v.mode === 'what-percent') return { val_a: 'What is',  val_b: '% of?' };
+      if (v.mode === 'percent-of')   return { val_a: 'Percent', val_b: 'Of (whole)' };
+      if (v.mode === 'change')       return { val_a: 'From',    val_b: 'To' };
+      return {};
+    },
     calculate(v) {
-      let result, explanation;
-      switch (v.mode) {
-        case 'of':     result = (v.val_a / 100) * v.val_b; explanation = `${v.val_a}% of ${v.val_b} = ${fmtN(result)}`; break;
-        case 'is':     result = (v.val_a / v.val_b) * 100; explanation = `${v.val_a} is ${fmtN(result)}% of ${v.val_b}`; break;
-        case 'change': result = ((v.val_b - v.val_a) / Math.abs(v.val_a)) * 100; explanation = `Change from ${v.val_a} to ${v.val_b} = ${fmtN(result)}%`; break;
-        case 'add':    result = v.val_b * (1 + v.val_a/100); explanation = `${v.val_b} + ${v.val_a}% = ${fmtN(result)}`; break;
-        case 'remove': result = v.val_b * (1 - v.val_a/100); explanation = `${v.val_b} − ${v.val_a}% = ${fmtN(result)}`; break;
+      const a = safeNum(v.val_a, 0);
+      const b = safeNum(v.val_b, 0);
+
+      if (v.mode === 'what-percent') {
+        if (b === 0) return errorResult('Value B cannot be zero when calculating "X is what % of Y?"');
+        const result = (a / b) * 100;
+        return {
+          stats: [
+            { label: 'Result',              value: fmtN(result) + '%', highlight: true },
+            { label: 'Calculation',         value: `${fmtN(a)} is ${fmtN(result)}% of ${fmtN(b)}` },
+          ],
+        };
       }
-      const isPercent = v.mode === 'is' || v.mode === 'change';
-      return {
-        stats: [
-          { label: 'Result', value: isPercent ? `${fmtN(result)}%` : fmtN(result), highlight: true },
-          { label: 'Formula', value: explanation },
-        ],
-      };
+
+      if (v.mode === 'percent-of') {
+        const result = (a / 100) * b;
+        return {
+          stats: [
+            { label: 'Result',              value: fmtN(result),       highlight: true },
+            { label: 'Calculation',         value: `${fmtN(a)}% of ${fmtN(b)} = ${fmtN(result)}` },
+          ],
+        };
+      }
+
+      if (v.mode === 'change') {
+        if (a === 0) return errorResult('Starting value (From) cannot be zero when calculating percent change.');
+        const result = ((b - a) / Math.abs(a)) * 100;
+        const direction = result >= 0 ? 'increase' : 'decrease';
+        return {
+          stats: [
+            { label: 'Result',              value: fmtN(Math.abs(result)) + '% ' + direction, highlight: true },
+            { label: 'Difference',          value: fmtN(b - a) },
+            { label: 'From',                value: fmtN(a) },
+            { label: 'To',                  value: fmtN(b) },
+          ],
+        };
+      }
+
+      return errorResult('Invalid calculation mode.');
     },
   },
 
   'loan-calculator': {
     name: 'Loan Calculator',
     category: 'Finance',
-    icon: 'fa-hand-holding-dollar',
+    icon: 'fa-sack-dollar',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    description: 'Calculate monthly loan payments, total interest, and full amortization schedule for any loan.',
-    metaDescription: 'Free loan calculator — calculate monthly payments, total interest, and amortization schedule for personal, auto, or student loans.',
+    description: 'Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.',
+    metaDescription: 'Free loan calculator â€” estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.',
     fields: [
-      { id: 'loan_amount',   label: 'Loan Amount ($)',          type: 'number', default: 25000, min: 100,  step: 100  },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,  min: 0.01, step: 0.05 },
-      { id: 'loan_term',     label: 'Loan Term',                type: 'select', default: 5,
-        options: [1,2,3,4,5,6,7,10,15,20].map(v => ({ value: v, label: `${v} year${v>1?'s':''}` })) },
+      { id: 'loan_amount', label: 'Loan Amount ($)',      type: 'number', default: 30000,  min: 1,      step: 100   },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.01,   step: 0.05, max: 50 },
+      { id: 'loan_term',    label: 'Loan Term (years)',    type: 'select', default: 5,
+        options: [1,2,3,4,5,6,7,10].map(v => ({ value: v, label: `${v} year${v > 1 ? 's' : ''}` })) },
     ],
     calculate(v) {
-      const r = v.interest_rate / 100 / 12;
-      const n = v.loan_term * 12;
-      const payment = r === 0 ? v.loan_amount / n : v.loan_amount * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
-      const totalPaid = payment * n;
-      const totalInterest = totalPaid - v.loan_amount;
-      const schedule = buildAmortization(v.loan_amount, r, n, payment);
+      const principal = safeNum(v.loan_amount, 0);
+      if (principal <= 0) return errorResult('Loan amount must be greater than zero.');
+      const annualRate = safeNum(v.interest_rate, 0);
+      const r = annualRate / 100 / 12;
+      const n = Math.round(safeNum(v.loan_term, 5)) * 12;
+
+      const payment = r === 0
+        ? principal / n
+        : principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+
+      const monthlyPayment = roundTo(payment, 2);
+      const totalPaid = roundTo(monthlyPayment * n, 2);
+      const totalInterest = roundTo(totalPaid - principal, 2);
+
+      const schedule = buildAmortization(principal, r, n, monthlyPayment);
       return {
         stats: [
-          { label: 'Monthly Payment',  value: fmt(payment),       highlight: true },
-          { label: 'Total Interest',   value: fmt(totalInterest), warn: true      },
-          { label: 'Total Paid',       value: fmt(totalPaid)                      },
-          { label: 'Loan Amount',      value: fmt(v.loan_amount)                  },
+          { label: 'Monthly Payment',   value: fmt(monthlyPayment), highlight: true },
+          { label: 'Total Interest',    value: fmt(totalInterest),  warn: true       },
+          { label: 'Total Paid',        value: fmt(totalPaid)                         },
+          { label: 'Loan Amount',       value: fmt(principal)                         },
         ],
-        chart: { principal: v.loan_amount, totalInterest },
+        chart: { principal, totalInterest },
         table: schedule,
       };
     },
@@ -158,113 +223,151 @@ const TOOLS = {
   'date-calculator': {
     name: 'Date Calculator',
     category: 'Math',
-    icon: 'fa-calendar-days',
+    icon: 'fa-calendar',
     iconClass: 'icon-math',
     tagClass: 'tag-math',
-    description: 'Calculate the duration between two dates or find a future/past date by adding or subtracting time.',
-    metaDescription: 'Free and easy Date Calculator to find the duration between two dates in years, months, and days. Also, add or subtract days, weeks, months, or years from any date.',
+    description: 'Calculate the number of days between two dates, or add/subtract days, weeks, months, or years from a date.',
+    metaDescription: 'Free date calculator â€” find days between dates, or add/subtract days, weeks, months and years from any date.',
     fields: [
-      { id: 'mode', label: 'Calculation Mode', type: 'select', default: 'duration',
+      { id: 'mode',    type: 'select', default: 'between',
         options: [
-          { value: 'duration', label: 'Find Duration Between Dates' },
-          { value: 'add',      label: 'Add to a Date' },
-          { value: 'subtract', label: 'Subtract from a Date' },
-        ]
-      },
-      { id: 'start_date', label: 'Start Date', type: 'date', default: () => new Date().toISOString().split('T')[0] },
-      { id: 'end_date',   label: 'End Date',   type: 'date', default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], condition: v => v.mode === 'duration' },
-      { id: 'add_years',   label: 'Years',   type: 'number', default: 0, min: 0, step: 1, condition: v => v.mode === 'add' || v.mode === 'subtract' },
-      { id: 'add_months',  label: 'Months',  type: 'number', default: 1, min: 0, step: 1, condition: v => v.mode === 'add' || v.mode === 'subtract' },
-      { id: 'add_weeks',   label: 'Weeks',   type: 'number', default: 0, min: 0, step: 1, condition: v => v.mode === 'add' || v.mode === 'subtract' },
-      { id: 'add_days',    label: 'Days',    type: 'number', default: 0, min: 0, step: 1, condition: v => v.mode === 'add' || v.mode === 'subtract' },
+          { value: 'between', label: 'Days between dates' },
+          { value: 'add',     label: 'Add/subtract from date' },
+        ]},
+      { id: 'start_date',   label: 'Start Date', type: 'date', default: () => new Date().toISOString().split('T')[0] },
+      { id: 'end_date',     label: 'End Date',   type: 'date', default: () => {
+        const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().split('T')[0];
+      }},
+      { id: 'add_days',     label: 'Days',       type: 'number', default: 0, min: -99999, max: 99999, step: 1,
+        condition: v => v.mode === 'add' },
+      { id: 'add_months',   label: 'Months',     type: 'number', default: 0, min: -99999, max: 99999, step: 1,
+        condition: v => v.mode === 'add' },
+      { id: 'add_years',    label: 'Years',      type: 'number', default: 0, min: -99999, max: 99999, step: 1,
+        condition: v => v.mode === 'add' },
     ],
+    fieldLabels(v) {
+      if (v.mode === 'between') return { start_date: 'From', end_date: 'To' };
+      if (v.mode === 'add') return { start_date: 'Reference Date' };
+      return {};
+    },
     calculate(v) {
-      const startDate = new Date(v.start_date + 'T00:00:00');
-      if (v.mode === 'duration') {
-        const endDate = new Date(v.end_date + 'T00:00:00');
-        const diffTime = Math.abs(endDate - startDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        const diffWeeks = (diffDays / 7).toFixed(2);
-        const diffMonths = (diffDays / 30.44).toFixed(2);
-        const diffYears = (diffDays / 365.25).toFixed(2);
+      const startStr = safeStr(v.start_date);
+      const endStr = safeStr(v.end_date);
+
+      if (v.mode === 'between') {
+        const startParts = startStr.split('-').map(Number);
+        const endParts = endStr.split('-').map(Number);
+        if (startParts.length !== 3 || endParts.length !== 3 ||
+            isNaN(startParts[0]) || isNaN(endParts[0])) {
+          return errorResult('Please enter valid dates.');
+        }
+        const startUTC = Date.UTC(startParts[0], startParts[1] - 1, startParts[2]);
+        const endUTC   = Date.UTC(endParts[0], endParts[1] - 1, endParts[2]);
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const diffDays = Math.round((endUTC - startUTC) / msPerDay);
+        const absDays = Math.abs(diffDays);
+        const years = Math.floor(absDays / 365);
+        const rem = absDays % 365;
+        const months = Math.floor(rem / 30);
+        const days = rem % 30;
+
+        let dur = '';
+        if (years > 0) dur += `${years} yr${years > 1 ? 's' : ''} `;
+        if (months > 0) dur += `${months} mo${months > 1 ? 's' : ''} `;
+        if (days > 0 || (years === 0 && months === 0)) dur += `${days} day${days !== 1 ? 's' : ''}`;
+        dur = dur.trim() || 'same day';
+
         return {
           stats: [
-            { label: 'Duration', value: `${diffDays} days`, highlight: true },
-            { label: 'In Other Units', value: `${diffWeeks} weeks / ${diffMonths} months / ${diffYears} years` },
+            { label: 'Days Between', value: `${fmtN(absDays)} (${dur})`, highlight: true },
+            { label: 'Start Date',   value: startStr },
+            { label: 'End Date',     value: endStr },
           ],
         };
-      } else {
-        let newDate = new Date(startDate);
-        const sign = v.mode === 'add' ? 1 : -1;
-        newDate.setFullYear(newDate.getFullYear() + sign * v.add_years);
-        newDate.setMonth(newDate.getMonth() + sign * v.add_months);
-        newDate.setDate(newDate.getDate() + sign * (v.add_weeks * 7 + v.add_days));
-        return {
-          stats: [{
-            label: 'Resulting Date',
-            value: `${newDate.toLocaleDateString('en-US', { weekday: 'long' })}, ${newDate.toISOString().split('T')[0]}`,
-            highlight: true
-                              }],
-        };
       }
 
-    },
-  },
-
-  // ── Loan Interest Calculator ────────────────────────────────
-  'loan-interest-calculator': {
-    name: 'Loan Interest Calculator',
-    category: 'Finance',
-    icon: 'fa-hand-holding-dollar',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate total interest payable, monthly payments, and generate a complete amortization schedule for any loan.',
-    metaDescription: 'Free loan interest calculator — compute total interest, monthly payments, and download full amortization schedule for personal, auto, or business loans.',
-    fields: [
-      { id: 'principal',      label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 100,    step: 100   },
-      { id: 'annual_rate',    label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.1,    step: 0.05  },
-      { id: 'loan_tenure',    label: 'Loan Tenure (years)',    type: 'number', default: 5,     min: 1,      step: 1 },
-      { id: 'repayment_freq', label: 'Repayment Frequency',    type: 'select', default: 'monthly',
-        options: [
-          { value: 'monthly',   label: 'Monthly (12/yr)' },
-          { value: 'biweekly',  label: 'Bi-weekly (26/yr)' },
-          { value: 'weekly',    label: 'Weekly (52/yr)' },
-          { value: 'quarterly', label: 'Quarterly (4/yr)' },
-        ]
-      },
-    ],
-    calculate(v) {
-      const principal = v.principal;
-      const annualRate = v.annual_rate / 100;
-      const years = v.loan_tenure;
-      const freq = v.repayment_freq;
-
-      const periodsPerYear = { monthly: 12, biweekly: 26, weekly: 52, quarterly: 4 }[freq];
-      const totalPeriods = years * periodsPerYear;
-      const periodicRate = annualRate / periodsPerYear;
-
-      let payment;
-      if (periodicRate === 0) {
-        payment = principal / totalPeriods;
-      } else {
-        payment = principal * (periodicRate * Math.pow(1 + periodicRate, totalPeriods)) / (Math.pow(1 + periodicRate, totalPeriods) - 1);
+      // Add/subtract mode
+      const refDate = new Date(startStr + 'T12:00:00');
+      if (isNaN(refDate.getTime())) {
+        return errorResult('Please enter a valid reference date.');
       }
 
-      const totalPaid = payment * totalPeriods;
-      const totalInterest = totalPaid - principal;
+      const dd = safeNum(v.add_days, 0);
+      const dm = safeNum(v.add_months, 0);
+      const dy = safeNum(v.add_years, 0);
 
-      const schedule = buildAmortization(principal, periodicRate, totalPeriods, payment);
+      let resultDate = new Date(refDate.getTime());
+      const refDay = refDate.getDate();
 
-      const freqLabel = { monthly: 'Monthly', biweekly: 'Bi-weekly', weekly: 'Weekly', quarterly: 'Quarterly' }[freq];
+      if (dy !== 0) {
+        resultDate.setFullYear(resultDate.getFullYear() + dy);
+        if (resultDate.getDate() !== refDay) resultDate.setDate(0);
+      }
+      if (dm !== 0) {
+        resultDate.setMonth(resultDate.getMonth() + dm);
+        if (resultDate.getDate() !== refDay) resultDate.setDate(0);
+      }
+      if (dd !== 0) {
+        resultDate.setDate(resultDate.getDate() + dd);
+      }
+
+      const fmt1 = resultDate.toLocaleDateString('en-US', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      });
 
       return {
         stats: [
-          { label: freqLabel + ' Payment', value: fmtCurrency(payment), highlight: true },
-          { label: 'Total Interest Payable', value: fmtCurrency(totalInterest), warn: true },
-          { label: 'Total Amount Payable', value: fmtCurrency(totalPaid) },
-          { label: 'Loan Amount', value: fmtCurrency(principal) },
-          { label: 'Interest-to-Principal Ratio', value: pct(totalInterest / principal) },
-          { label: 'Total Payments', value: totalPeriods + ' ' + freqLabel.toLowerCase() + ' payments' },
+          { label: 'Result Date', value: fmt1, highlight: true },
+          { label: 'Reference',   value: refDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) },
+        ],
+      };
+    },
+  },
+
+  'loan-interest-calculator': {
+    name: 'Loan Interest Calculator',
+    category: 'Finance',
+    icon: 'fa-percent',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate total interest paid on any loan with detailed amortization by payment frequency.',
+    metaDescription: 'Free loan interest calculator â€” see total interest, monthly payments, and full amortization with flexible payment frequencies.',
+    fields: [
+      { id: 'loan_amount',   label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 1,      step: 100   },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.0,   min: 0.01,   step: 0.05, max: 50 },
+      { id: 'loan_term',     label: 'Loan Term (years)',       type: 'number', default: 5,     min: 1,      max: 50,    step: 1 },
+      { id: 'payment_freq',  label: 'Payment Frequency',       type: 'select', default: 'monthly',
+        options: [
+          { value: 'monthly',  label: 'Monthly (12/yr)' },
+          { value: 'biweekly', label: 'Bi-Weekly (26/yr)' },
+          { value: 'weekly',   label: 'Weekly (52/yr)' },
+          { value: 'quarterly',label: 'Quarterly (4/yr)' },
+        ]},
+    ],
+    calculate(v) {
+      const principal = safeNum(v.loan_amount, 0);
+      if (principal <= 0) return errorResult('Loan amount must be greater than zero.');
+      const annualRate = safeNum(v.interest_rate, 0);
+      const ppy = { monthly: 12, biweekly: 26, weekly: 52, quarterly: 4 }[v.payment_freq] || 12;
+      const r = annualRate / 100 / ppy;
+      const n = Math.round(safeNum(v.loan_term, 5)) * ppy;
+
+      const payment = r === 0
+        ? principal / n
+        : principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+
+      const periodPayment = roundTo(payment, 2);
+      const totalPaid = roundTo(periodPayment * n, 2);
+      const totalInterest = roundTo(totalPaid - principal, 2);
+
+      const schedule = buildAmortization(principal, r, n, periodPayment);
+      return {
+        stats: [
+          { label: `Payment (${v.payment_freq})`, value: fmt(periodPayment), highlight: true },
+          { label: 'Total Payments',              value: fmtN(n) },
+          { label: 'Total Interest',              value: fmt(totalInterest), warn: true },
+          { label: 'Total Paid',                  value: fmt(totalPaid) },
+          { label: 'Loan Amount',                 value: fmt(principal) },
         ],
         chart: { principal, totalInterest },
         table: schedule,
@@ -272,7 +375,7 @@ const TOOLS = {
     },
   },
 
-  // ── Compound Interest Calculator ──────────────────────────────
+  // â”€â”€ Compound Interest Calculator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   'compound-interest-calculator': {
     name: 'Compound Interest Calculator',
     category: 'Finance',
@@ -280,7 +383,7 @@ const TOOLS = {
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Project how your savings and investments grow over time with compound interest and recurring monthly contributions.',
-    metaDescription: 'Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
+    metaDescription: 'Free compound interest calculator â€” see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
     fields: [
       { id: 'principal',         label: 'Starting Balance ($)',          type: 'number', default: 10000, min: 0,      step: 100   },
       { id: 'annual_rate',       label: 'Annual Interest Rate (%)',       type: 'number', default: 8.0,   min: 0.01,   step: 0.1   },
@@ -297,132 +400,92 @@ const TOOLS = {
       { id: 'time_years',          label: 'Time Horizon (years)',        type: 'number', default: 30,    min: 1,      max: 100,   step: 1 },
     ],
     calculate(v) {
-      const principal = v.principal;
-      const annualRate = v.annual_rate / 100;
-      const years = v.time_years;
-      const contribution = v.monthly_contribution;
+      // FV = PV * (1 + r)^n + PMT * ((1 + r)^n - 1) / r
+      // Assumes end-of-period contributions
+      const principal = safeNum(v.principal, 0);
+      const annualRate = safeNum(v.annual_rate, 0) / 100;
+      const years = Math.round(safeNum(v.time_years, 30));
+      const contribution = safeNum(v.monthly_contribution, 0);
 
-      const periodsPerYear = { annually: 1, 'semi-annually': 2, quarterly: 4, monthly: 12, daily: 365 }[v.compounding_freq];
-      const totalPeriods = years * periodsPerYear;
-      const periodicRate = annualRate / periodsPerYear;
-      const contributionPerPeriod = contribution * (12 / periodsPerYear);
+      const ppy = { annually: 1, 'semi-annually': 2, quarterly: 4, monthly: 12, daily: 365 }[v.compounding_freq] || 12;
+      const n = years * ppy;
+      const periodicRate = annualRate / ppy;
+      const contribPerPeriod = roundTo(contribution * (12 / ppy), 2);
 
       let futureValue;
       if (periodicRate === 0) {
-        futureValue = principal + contributionPerPeriod * totalPeriods;
+        futureValue = principal + contribPerPeriod * n;
       } else {
-        const growthFactor = Math.pow(1 + periodicRate, totalPeriods);
-        const lumpSumPortion = principal * growthFactor;
-        const contribPortion = contributionPerPeriod * (growthFactor - 1) / periodicRate;
-        futureValue = lumpSumPortion + contribPortion;
+        const growthFactor = Math.pow(1 + periodicRate, n);
+        futureValue = principal * growthFactor + contribPerPeriod * (growthFactor - 1) / periodicRate;
       }
 
-      const totalContributions = principal + contribution * 12 * years;
-      const totalInterest = futureValue - totalContributions;
+      futureValue = roundTo(futureValue, 2);
+      const totalContributions = roundTo(principal + contribution * 12 * years, 2);
+      const totalInterest = roundTo(futureValue - totalContributions, 2);
 
       // Year-by-year schedule
       const schedule = [];
       for (let y = 1; y <= years; y++) {
-        const yPeriods = y * periodsPerYear;
-        let yValue;
+        const periods = y * ppy;
+        let yearValue;
         if (periodicRate === 0) {
-          yValue = principal + contributionPerPeriod * yPeriods;
+          yearValue = principal + contribPerPeriod * periods;
         } else {
-          const yGrowth = Math.pow(1 + periodicRate, yPeriods);
-          const yLump = principal * yGrowth;
-          const yContrib = contributionPerPeriod * (yGrowth - 1) / periodicRate;
-          yValue = yLump + yContrib;
+          const gf = Math.pow(1 + periodicRate, periods);
+          yearValue = principal * gf + contribPerPeriod * (gf - 1) / periodicRate;
         }
-        const yContributions = principal + contribution * 12 * y;
-        const yInterest = yValue - yContributions;
+        yearValue = roundTo(yearValue, 2);
+        const yrContrib = roundTo(principal + contribution * 12 * y, 2);
         schedule.push({
           month: y,
-          payment: fmtCurrency(contribution * 12),
-          principal: fmtCurrency(yContributions),
-          interest: fmtCurrency(yInterest),
-          balance: fmtCurrency(yValue),
+          payment: fmt(contribution * 12),
+          principal: fmt(yrContrib),
+          interest: fmt(roundTo(yearValue - yrContrib, 2)),
+          balance: fmt(yearValue),
         });
       }
 
-      const freqMap = { annually: 'Annual', 'semi-annually': 'Semi-Annual', quarterly: 'Quarterly', monthly: 'Monthly', daily: 'Daily' };
+      // Format chart data as simple numbers (not formatted strings)
+      const chartPrincipal = totalContributions;
+      const chartInterest = totalInterest;
 
       return {
         stats: [
-          { label: 'Final Balance',       value: fmtCurrency(futureValue),         highlight: true },
-          { label: 'Total Contributions', value: fmtCurrency(totalContributions)                        },
-          { label: 'Total Interest Earned', value: fmtCurrency(totalInterest),      warn: false          },
-          { label: 'Compounding',         value: freqMap[v.compounding_freq] + ' (' + periodsPerYear + '/yr)' },
-          { label: 'Interest-to-Contributions Ratio', value: pct(totalInterest / (totalContributions || 1)) },
-          { label: 'Annual Return',       value: (annualRate * 100).toFixed(2) + '%'                     },
+          { label: 'Future Balance',       value: fmt(futureValue),        highlight: true },
+          { label: 'Total Contributions',   value: fmt(totalContributions)                 },
+          { label: 'Total Interest Earned', value: fmt(totalInterest)                       },
         ],
-        chart: { principal: totalContributions, totalInterest },
+        chart: { principal: chartPrincipal, totalInterest: chartInterest },
         table: schedule,
       };
     },
-    examples: [
-      {
-        icon: 'fa-building-columns',
-        title: 'Retirement at 65',
-        description: 'Start with $10,000 at age 30, add $500/month at 9% compounded monthly. After 35 years you have over $1.6 million.',
-        inputs: { 'Starting Balance': '$10,000', 'Monthly Contribution': '$500', 'Rate': '9%', 'Time': '35 years' },
-      },
-      {
-        icon: 'fa-graduation-cap',
-        title: 'College Fund',
-        description: 'Save $200/month from birth, 7% compounded monthly. At age 18 you have over $85,000 for tuition.',
-        inputs: { 'Starting Balance': '$0', 'Monthly Contribution': '$200', 'Rate': '7%', 'Time': '18 years' },
-      },
-      {
-        icon: 'fa-house',
-        title: 'Down Payment Savings',
-        description: 'Save $800/month at 4.5% compounded monthly. In 5 years you have nearly $54,000 for a down payment.',
-        inputs: { 'Starting Balance': '$0', 'Monthly Contribution': '$800', 'Rate': '4.5%', 'Time': '5 years' },
-      },
-    ],
-    faqs: [
-      {
-        q: 'How often should I compound interest for the best results?',
-        a: 'More frequent compounding yields higher returns, but the benefit shrinks as frequency increases. Monthly compounding is the standard sweet spot for savings and investment projections. Daily compounding adds marginal extra growth. The big difference is between annual and monthly — not between daily and continuous compounding.',
-      },
-      {
-        q: 'What is the difference between compound interest and simple interest?',
-        a: 'Simple interest earns returns only on your original principal. Compound interest earns returns on your principal plus all previously earned interest. On $10,000 at 8% over 30 years, simple interest gives you $24,000 in earnings — compound interest gives you over $90,000. The gap grows exponentially with time.',
-      },
-      {
-        q: 'Can compound interest work against me?',
-        a: 'Yes. Credit cards and adjustable-rate loans often compound interest daily. If you carry a balance on a card with 22% APR compounded daily, your debt can spiral fast. The same math that grows your savings can accelerate your debt. Use this calculator with your loan terms to see the true cost of carrying a balance.',
-      },
-      {
-        q: 'What is a reasonable rate of return to use for long-term projections?',
-        a: 'For US stock market investments: 7-10% before inflation, 5-7% after inflation. For high-yield savings accounts: check current rates (typically 4-5%). For bonds: 3-6% depending on duration and credit quality. When in doubt, use a lower rate — undershooting your goal is better than overshooting it.',
-      },
-    ],
   }
 };
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function fmt(n)  { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-function fmtN(n) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-function pct(n)  { return (n * 100).toFixed(2) + '%'; }
-
-function bmiCategory(bmi) {
-  if (bmi < 18.5) return { label: 'Underweight',    color: '#3B82F6' };
-  if (bmi < 25)   return { label: 'Normal Weight',  color: '#10B981' };
-  if (bmi < 30)   return { label: 'Overweight',     color: '#F59E0B' };
-  return              { label: 'Obese',           color: '#EF4444' };
-}
-
+function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
+function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
+function safeStr(val) { if (val === null || val === undefined) return ""; return String(val).trim(); }
+function fmt(n) { const num = safeNum(n, 0); return "$" + num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtN(n) { const num = safeNum(n, 0); return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function pct(n) { const num = safeNum(n, 0); return (num * 100).toFixed(2) + "%"; }
+function errorResult(message) { return { error: true, stats: [{ label: "Error", value: message, warn: true }] }; }
+function bmiCategory(bmi) { if (!isFinite(bmi)) return { label: "â€”", color: "#64748B" }; if (bmi < 18.5) return { label: "Underweight", color: "#3B82F6" }; if (bmi < 25) return { label: "Normal Weight", color: "#10B981" }; if (bmi < 30) return { label: "Overweight", color: "#F59E0B" }; return { label: "Obese", color: "#EF4444" }; }
 function buildAmortization(principal, r, n, payment) {
   const rows = [];
-  let balance = principal;
+  let balance = safeNum(principal, 0);
   for (let i = 1; i <= n; i++) {
-    const interest = balance * r;
-    const principalPaid = payment - interest;
-    balance -= principalPaid;
-    rows.push({ month: i, payment, principal: principalPaid, interest, balance: Math.max(0, balance) });
-    if (balance <= 0) break;
+    const interest = roundTo(balance * r, 2);
+    let principalPaid = roundTo(payment - interest, 2);
+    if (principalPaid > balance) principalPaid = balance;
+    balance = roundTo(balance - principalPaid, 2);
+    rows.push({ month: i, payment: (i === n && balance > 0) ? roundTo(principalPaid + balance, 2) : payment, principal: principalPaid, interest, balance: Math.max(0, balance) });
+    if (balance <= 0 && i < n) break;
+  }
+  if (rows.length > 0) {
+    rows[rows.length - 1].balance = 0;
+    rows[rows.length - 1].payment = roundTo(rows[rows.length - 1].principal + rows[rows.length - 1].interest, 2);
   }
   return rows;
 }
-
-function fmtCurrency(n) { return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtCurrency(n) { return fmt(n); }
