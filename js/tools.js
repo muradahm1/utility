@@ -269,8 +269,7 @@ const TOOLS = {
     fields: [
       { id: 'principal',      label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 100,    step: 100   },
       { id: 'annual_rate',    label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.1,    step: 0.05  },
-      { id: 'loan_tenure',    label: 'Loan Tenure',            type: 'number', default: 5,     min: 1,      step: 1,
-        suffix: 'years' },
+      { id: 'loan_tenure',    label: 'Loan Tenure (years)',    type: 'number', default: 5,     min: 1,      step: 1 },
       { id: 'repayment_freq', label: 'Repayment Frequency',    type: 'select', default: 'monthly',
         options: [
           { value: 'monthly',   label: 'Monthly (12/yr)' },
@@ -317,7 +316,7 @@ const TOOLS = {
         table: schedule,
       };
     },
-  },
+  }
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
