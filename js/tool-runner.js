@@ -214,18 +214,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function bindCopyBtn(stats) {
         const btn = document.getElementById('copy-results-btn');
         if (!btn) return;
-        btn.addEventListener('click', () => {
+
+        const resetCopyBtn = () => {
+            btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+        };
+
+        btn.addEventListener('click', async () => {
             const text = stats.map(s => `${s.label}: ${s.value}`).join('\n');
-            navigator.clipboard.writeText(text).then(() => {
+            try {
+                await navigator.clipboard.writeText(text);
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
                 btn.style.color = '#10B981';
                 btn.style.borderColor = '#10B981';
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results';
-                    btn.style.color = '';
-                    btn.style.borderColor = '';
-                }, 2000);
-            });
+                setTimeout(resetCopyBtn, 2000);
+            } catch (err) {
+                console.error('Copy failed:', err);
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Copy failed';
+                btn.style.color = '#EF4444';
+                btn.style.borderColor = '#EF4444';
+                setTimeout(resetCopyBtn, 2000);
+            }
         });
     }
 
@@ -350,16 +360,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         btn.addEventListener('click', async () => {
             if (typeof saveCalculation !== 'function') return;
+
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
-            const result = tool.calculate(values);
-            const { error } = await saveCalculation(slug, tool.name, values, { stats: result.stats });
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
-            msg.classList.remove('hidden');
-            msg.textContent = error ? 'Failed to save. Please try again.' : '✓ Saved to history!';
-            msg.style.color  = error ? '#EF4444' : '#10B981';
-            setTimeout(() => msg.classList.add('hidden'), 3000);
+
+            try {
+                const result = tool.calculate(values);
+                const { error } = await saveCalculation(slug, tool.name, values, { stats: result.stats });
+                msg.classList.remove('hidden');
+                msg.textContent = error ? 'Failed to save. Please try again.' : '✓ Saved to history!';
+                msg.style.color = error ? '#EF4444' : '#10B981';
+            } catch (err) {
+                console.error('Save calculation failed:', err);
+                msg.classList.remove('hidden');
+                msg.textContent = 'Failed to save. Please try again.';
+                msg.style.color = '#EF4444';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
+                setTimeout(() => msg.classList.add('hidden'), 3000);
+            }
         });
     }
 
