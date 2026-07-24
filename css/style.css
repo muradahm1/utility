@@ -1355,6 +1355,99 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     justify-content: flex-end;
 }
 
+/* Cookie policy page enhancements */
+.overflow-x-auto { overflow-x: auto; }
+.w-full { width: 100%; }
+
+.static-content a,
+.cookie-consent-text a,
+.footer-links a,
+.browser-links a {
+    color: #38bdf8;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.static-content a:hover,
+.cookie-consent-text a:hover,
+.footer-links a:hover,
+.browser-links a:hover {
+    color: #7dd3fc;
+    text-decoration: underline;
+}
+
+.cookie-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    -webkit-overflow-scrolling: touch;
+}
+
+.cookie-table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+}
+
+.cookie-table th,
+.cookie-table td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.cookie-table th {
+    background: var(--bg-main);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+}
+
+.cookie-table td {
+    color: var(--text-primary);
+    border-top: 1px solid var(--border-color);
+}
+
+.cookie-table tr:first-child td {
+    border-top: none;
+}
+
+.browser-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin: 12px 0 18px;
+}
+
+.browser-links .browser-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.browser-links .browser-link:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
 /* Footer */
 .site-footer {
     background: var(--bg-sidebar);
@@ -1616,6 +1709,41 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     }
     .browser-links {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Fixes for mobile screens (@media max-width: 768px) */
+@media (max-width: 768px) {
+    .cookie-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .cookie-table {
+        min-width: 0;
+    }
+
+    .cookie-table th,
+    .cookie-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .browser-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .browser-links .browser-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        white-space: nowrap;
     }
 }
 

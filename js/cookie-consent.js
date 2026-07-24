@@ -1,14 +1,3 @@
-// ============================================================
-// GetCalcu — Shared Cookie Consent Module
-// ============================================================
-// Extracted from inline scripts across all HTML pages to eliminate
-// code duplication. Provides a single source of truth for cookie
-// consent logic.
-//
-// Usage: Include this script AFTER the cookie banner HTML exists.
-//   <script src="js/cookie-consent.js"></script>
-//   <script>initCookieConsent();</script>
-// ============================================================
 
 (function () {
     'use strict';
