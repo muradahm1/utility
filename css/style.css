@@ -1376,10 +1376,11 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     text-decoration: underline;
 }
 
+/* ── Cookie Table ──────────────────────────────────────────── */
 .cookie-table-wrapper {
     width: 100%;
     overflow-x: auto;
-    overflow-y: hidden;
+    overflow-y: auto;       /* changed from hidden so bottom border-radius isn't clipped */
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     background: var(--bg-card);
@@ -1388,7 +1389,7 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
 
 .cookie-table {
     width: 100%;
-    min-width: 0;
+    min-width: 480px;       /* reasonable min before scroll kicks in */
     border-collapse: collapse;
 }
 
@@ -1438,6 +1439,8 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     color: var(--text-primary);
     text-decoration: none;
     white-space: nowrap;
+    font-size: 14px;                 /* explicit font size */
+    font-weight: 500;                /* medium weight for readability */
     transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -1486,14 +1489,15 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
 }
 .footer-links a { 
     font-size: 13px; 
-    color: var(--text-secondary); 
+    color: #38bdf8;          /* sky-400 – WCAG AA on dark backgrounds */
     text-decoration: none; 
     transition: color 0.2s, background-color 0.2s;
     padding: 4px 8px;
     border-radius: 4px;
 }
 .footer-links a:hover { 
-    color: var(--primary-color); 
+    color: #7dd3fc;          /* sky-300 – lighter hover */
+    text-decoration: underline;
     background: var(--primary-light);
 }
 .footer-copy { 
@@ -1706,9 +1710,6 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     .btn-sm {
         font-size: 11px;
         padding: 6px 12px;
-    }
-    .browser-links {
-        grid-template-columns: 1fr;
     }
 }
 
