@@ -532,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch(e) {}
             return JSON.parse(JSON.stringify(DEFAULTS));
         }
+        let data = loadData();
         function saveData(d) { try { localStorage.setItem('getcalcu_budget_data', JSON.stringify(d)); } catch(e) {} }
         function clearData() { try { localStorage.removeItem('getcalcu_budget_data'); } catch(e) {} }
         function getCur(code) { return DEFAULTS.currencies.find(c => c.code === code) || DEFAULTS.currencies[0]; }
@@ -726,6 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function refresh(budgetData) {
             const scrollY = window.scrollY;
+            data = budgetData;
             container.innerHTML = buildHtml();
             attachEvents(budgetData);
             renderCharts(budgetData);
