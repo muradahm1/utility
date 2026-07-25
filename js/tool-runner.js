@@ -546,7 +546,6 @@ document.addEventListener('DOMContentLoaded', () => {
         function uid() { return 'b' + (idCount++); }
 
         function buildHtml() {
-            const cur = getCur(data.currency);
             const totalIncome = data.incomeSources.reduce((s, i) => s + safeNum(i.amount, 0), 0);
             const totalExpenses = data.expenses.reduce((s, e) => s + safeNum(e.amount, 0), 0);
             const remaining = totalIncome - totalExpenses;
@@ -605,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>`;
             }).join('');
-            const cur = getCur(data.currency);
 
             return `<div class="budget-planner-root">
                 <div class="tool-header"><h1>${esc(tool.name)}</h1><p>${esc(tool.description)}</p></div>

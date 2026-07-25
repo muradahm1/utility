@@ -460,7 +460,6 @@
         table: schedule,
       };
     },
-    },
   },
 
   'budget-planner': {
