@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSearchModal();
     initHeroSearch();
     initActiveNav();
+    initCategoryPage();
     initMobileNav();
     initAuthUI();
     initFooterYear();
@@ -12,6 +13,62 @@ document.addEventListener('DOMContentLoaded', () => {
 function initFooterYear() {
     const yearEl = document.getElementById('footer-year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
+}
+
+// Category Page Rendering
+function initCategoryPage() {
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category');
+    if (!category) return;
+
+    // Hide homepage-only sections
+    const hero = document.getElementById('hero-section');
+    const categoriesSection = document.getElementById('all-categories');
+    if (hero) hero.style.display = 'none';
+    if (categoriesSection) categoriesSection.style.display = 'none';
+
+    const toolsSection = document.getElementById('all-tools');
+    if (!toolsSection) return;
+
+    // Update section title and hide the view-all link
+    const titleEl = toolsSection.querySelector('.section-header h2');
+    if (titleEl) {
+        titleEl.textContent = category.charAt(0).toUpperCase() + category.slice(1) + ' Tools';
+    }
+    const viewLink = toolsSection.querySelector('.view-link');
+    if (viewLink) viewLink.style.display = 'none';
+
+    // Filter tools by category (case-insensitive)
+    let filteredTools = [];
+    if (typeof TOOLS !== 'undefined') {
+        filteredTools = Object.entries(TOOLS)
+            .filter(([slug, tool]) => tool.category.toLowerCase() === category.toLowerCase())
+            .map(([slug, tool]) => ({ slug, ...tool }));
+    }
+
+    const grid = toolsSection.querySelector('.tools-grid');
+    if (!grid) return;
+
+    if (filteredTools.length === 0) {
+        grid.innerHTML = `
+            <div class="tool-not-found" style="grid-column: 1 / -1;">
+                <div class="not-found-icon" style="background:rgba(99,102,241,0.1); color:var(--primary-color);">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h2>We haven't added any ${category.charAt(0).toUpperCase() + category.slice(1)} tools just yet!</h2>
+                <p>Check back soon.</p>
+            </div>
+        `;
+    } else {
+        grid.innerHTML = filteredTools.map(tool => `
+            <a href="/tool?slug=${tool.slug}" class="tool-card">
+                <div class="tool-icon ${tool.iconClass || ''}"><i class="fa-solid ${tool.icon || 'fa-calculator'}"></i></div>
+                <h3>${tool.name}</h3>
+                <p>${tool.description || ''}</p>
+                <span class="tag ${tool.tagClass || 'tag-finance'}">${tool.category}</span>
+            </a>
+        `).join('');
+    }
 }
 
 // Theme Management Engine
