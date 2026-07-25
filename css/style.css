@@ -1380,44 +1380,254 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
 .cookie-table-wrapper {
     width: 100%;
     overflow-x: auto;
-    overflow-y: auto;       /* changed from hidden so bottom border-radius isn't clipped */
+    overflow-y: auto;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     background: var(--bg-card);
     -webkit-overflow-scrolling: touch;
+    /* Prevent overflow-wrap:anywhere from breaking the scroll container */
+    overflow-clip-margin: 0px;
 }
 
 .cookie-table {
     width: 100%;
-    min-width: 480px;       /* reasonable min before scroll kicks in */
+    min-width: 540px;       /* reasonable min before scroll kicks in */
     border-collapse: collapse;
+    table-layout: auto;     /* Let columns size naturally */
+}
+
+.cookie-table thead {
+    /* Sticky header while scrolling horizontally */
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 .cookie-table th,
 .cookie-table td {
-    padding: 12px 14px;
+    padding: 14px 18px;
     text-align: left;
     vertical-align: top;
     white-space: normal;
-    word-break: break-word;
-    overflow-wrap: anywhere;
+    /* NO overflow-wrap: anywhere — that causes single-letter breaks */
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
 }
 
 .cookie-table th {
     background: var(--bg-main);
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
+    font-weight: 700;
     color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+
+.cookie-table th:first-child {
+    border-radius: 0;
 }
 
 .cookie-table td {
     color: var(--text-primary);
-    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 14px;
+    line-height: 1.6;
 }
 
-.cookie-table tr:first-child td {
-    border-top: none;
+.cookie-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Row hover effect */
+.cookie-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.cookie-table tbody tr:hover {
+    background: var(--primary-light-2);
+}
+
+/* Dark mode: slightly different hover */
+[data-theme="dark"] .cookie-table tbody tr:hover {
+    background: rgba(99, 102, 241, 0.08);
+}
+
+/* Category badges */
+.badge-essential,
+.badge-analytics,
+.badge-advertising {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.badge-essential {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+[data-theme="dark"] .badge-essential {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34D399;
+}
+
+.badge-analytics {
+    background: rgba(99, 102, 241, 0.12);
+    color: #6366F1;
+}
+
+[data-theme="dark"] .badge-analytics {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818CF8;
+}
+
+.badge-advertising {
+    background: rgba(245, 158, 11, 0.12);
+    color: #D97706;
+}
+
+[data-theme="dark"] .badge-advertising {
+    background: rgba(245, 158, 11, 0.2);
+    color: #FBBF24;
+}
+
+/* Cookie preference callout & reset box */
+.callout-box {
+    background: rgba(99,102,241,0.06);
+    border-left: 4px solid var(--primary-color);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.callout-box strong {
+    color: var(--text-primary);
+}
+
+.pref-reset-box {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.pref-reset-box p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Responsive: Convert table to card layout on mobile ──── */
+@media (max-width: 768px) {
+    .cookie-table {
+        min-width: 100%;
+        display: block;
+    }
+
+    .cookie-table thead {
+        display: none;  /* Hide headers on mobile */
+    }
+
+    .cookie-table tbody {
+        display: block;
+    }
+
+    .cookie-table tbody tr {
+        display: block;
+        padding: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        margin-bottom: 12px;
+        background: var(--bg-card);
+        transition: border-color 0.2s ease;
+    }
+
+    .cookie-table tbody tr:hover {
+        background: var(--bg-card);
+        border-color: var(--primary-color);
+    }
+
+    .cookie-table tbody tr:last-child {
+        margin-bottom: 0;
+    }
+
+    .cookie-table td {
+        padding: 6px 0;
+        border: none;
+        font-size: 14px;
+        line-height: 1.6;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .cookie-table td:first-child {
+        padding-top: 0;
+    }
+
+    .cookie-table td:last-child {
+        padding-bottom: 0;
+    }
+
+    /* Add visible labels on mobile using ::before */
+    .cookie-table td::before {
+        content: attr(data-label);
+        flex-shrink: 0;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-secondary);
+        min-width: 110px;
+        max-width: 110px;
+    }
+
+    /* The category badge cell — no extra padding needed */
+    .cookie-table tbody tr:first-child td {
+        border-top: none;
+    }
+
+    /* Remove the wrapper border for card layout, keep border-radius on rows */
+    .cookie-table-wrapper {
+        border: none;
+        background: transparent;
+        overflow: visible;
+    }
+
+    .cookie-table td br {
+        display: none; /* Clean up any inner breaks */
+    }
+}
+
+/* Small mobile refinements */
+@media (max-width: 480px) {
+    .cookie-table td {
+        flex-direction: column;
+        gap: 2px;
+        padding: 5px 0;
+    }
+
+    .cookie-table td::before {
+        min-width: auto;
+        max-width: 100%;
+        font-size: 10px;
+    }
 }
 
 .browser-links {
