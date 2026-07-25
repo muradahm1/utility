@@ -711,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const source = row.querySelector('.bp-income-source').value.trim();
                     const amt = safeNum(row.querySelector('.bp-income-amount').value, 0);
                     if (budgetData.incomeSources[idx]) { budgetData.incomeSources[idx].source = source; budgetData.incomeSources[idx].amount = amt; }
-                    saveData(budgetData); refresh(budgetData);
+                    saveData(budgetData); updateDynamicValues(budgetData);
                 });
             });
             container.querySelectorAll('.bp-btn-remove-income').forEach(btn => {
@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const idx = parseInt(this.closest('.bp-income-row').dataset.idx);
                     if (budgetData.incomeSources.length <= 1) return;
                     budgetData.incomeSources.splice(idx, 1);
-                    saveData(budgetData); refresh(budgetData);
+                    saveData(budgetData); updateDynamicValues(budgetData);
                 });
             });
             container.querySelectorAll('.bp-expense-amount').forEach(el => {
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const id = this.closest('.bp-expense-row').dataset.id;
                     const exp = budgetData.expenses.find(e => e.id === id);
                     if (exp) exp.amount = safeNum(this.value, 0);
-                    saveData(budgetData); refresh(budgetData);
+                    saveData(budgetData); updateDynamicValues(budgetData);
                 });
             });
             container.querySelectorAll('.bp-btn-remove-expense').forEach(btn => {
@@ -735,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const id = this.closest('.bp-expense-row').dataset.id;
                     if (budgetData.expenses.length <= 1) return;
                     budgetData.expenses = budgetData.expenses.filter(e => e.id !== id);
-                    saveData(budgetData); refresh(budgetData);
+                    saveData(budgetData); updateDynamicValues(budgetData);
                 });
             });
             container.querySelector('.bp-btn-pdf')?.addEventListener('click', function() { exportPDF(budgetData); });
@@ -759,44 +759,139 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo(0, scrollY);
         }
 
+        function updateDynamicValues(budgetData) {
+            const totalIncome = budgetData.incomeSources.reduce((s, i) => s + safeNum(i.amount, 0), 0);
+            const totalExpenses = budgetData.expenses.reduce((s, e) => s + safeNum(e.amount, 0), 0);
+            const remaining = totalIncome - totalExpenses;
+            const savingsRate = totalIncome > 0 ? (remaining / totalIncome) * 100 : 0;
+
+            const totalIncomeEl = container.querySelector('.bp-total-income-value');
+            const totalExpenseEl = container.querySelector('.bp-total-expense-value');
+            if (totalIncomeEl) totalIncomeEl.textContent = fmtC(totalIncome, budgetData.currency);
+            if (totalExpenseEl) totalExpenseEl.textContent = fmtC(totalExpenses, budgetData.currency);
+
+            const summaryValues = container.querySelectorAll('.bp-summary-item span:last-child');
+            if (summaryValues.length >= 4) {
+                summaryValues[0].textContent = fmtC(totalIncome, budgetData.currency);
+                summaryValues[1].textContent = fmtC(totalExpenses, budgetData.currency);
+                summaryValues[2].textContent = fmtC(remaining, budgetData.currency);
+                summaryValues[3].textContent = savingsRate.toFixed(1) + '%';
+            }
+
+            let statusIcon, statusText, statusClass;
+            if (totalIncome === 0) { statusIcon = 'fa-circle-info'; statusText = 'Enter your income to begin'; statusClass = 'bp-status-info'; }
+            else if (remaining >= totalIncome * 0.2) { statusIcon = 'fa-circle-check'; statusText = 'Excellent! Strong savings rate'; statusClass = 'bp-status-excellent'; }
+            else if (remaining >= 0) { statusIcon = 'fa-circle-check'; statusText = "Good: You're within budget"; statusClass = 'bp-status-good'; }
+            else if (remaining >= -totalIncome * 0.1) { statusIcon = 'fa-triangle-exclamation'; statusText = 'Warning: Slight overspend'; statusClass = 'bp-status-warning'; }
+            else { statusIcon = 'fa-circle-exclamation'; statusText = 'Overspending! Review expenses'; statusClass = 'bp-status-overspend'; }
+
+            const statusCard = container.querySelector('.bp-status-card');
+            if (statusCard) {
+                statusCard.className = 'bp-card bp-status-card ' + statusClass;
+                const iconEl = statusCard.querySelector('.bp-status-icon i');
+                const textEl = statusCard.querySelector('.bp-status-text');
+                if (iconEl) iconEl.className = 'fa-solid ' + statusIcon;
+                if (textEl) textEl.textContent = statusText;
+            }
+
+            budgetData.expenses.forEach(exp => {
+                const row = container.querySelector('.bp-expense-row[data-id="' + exp.id + '"]');
+                if (!row) return;
+                const pct = totalIncome > 0 ? (safeNum(exp.amount, 0) / totalIncome * 100) : 0;
+                const limit = exp.type === 'needs' ? 50 : exp.type === 'wants' ? 30 : 20;
+                const ratio = limit > 0 ? pct / limit : 0;
+                let barColor;
+                if (pct === 0) barColor = 'var(--border-color)';
+                else if (ratio <= 0.5) barColor = '#10B981';
+                else if (ratio <= 0.8) barColor = '#3B82F6';
+                else if (ratio <= 1.0) barColor = '#F59E0B';
+                else barColor = '#EF4444';
+                const barWidth = Math.min(pct / limit * 100, 100);
+                const fill = row.querySelector('.bp-progress-bar-fill');
+                const labelEl = row.querySelector('.bp-progress-label');
+                const pctEl = row.querySelector('.bp-expense-pct');
+                const amountDisplay = row.querySelector('.bp-expense-amount-display');
+                if (fill) { fill.style.width = barWidth + '%'; fill.style.backgroundColor = barColor; }
+                if (labelEl) labelEl.textContent = (pct === 0 ? '—' : ratio <= 0.5 ? 'Great' : ratio <= 0.8 ? 'Good' : ratio <= 1.0 ? 'OK' : 'Over') + ' ' + pct.toFixed(1) + '% / ' + limit + '%';
+                if (pctEl) pctEl.textContent = pct.toFixed(1) + '%';
+                if (amountDisplay) amountDisplay.textContent = fmtC(exp.amount, budgetData.currency);
+            });
+
+            const needsTotal = budgetData.expenses.filter(e => e.type === 'needs').reduce((s, e) => s + safeNum(e.amount, 0), 0);
+            const wantsTotal = budgetData.expenses.filter(e => e.type === 'wants').reduce((s, e) => s + safeNum(e.amount, 0), 0);
+            const savingsTotal = budgetData.expenses.filter(e => e.type === 'savings').reduce((s, e) => s + safeNum(e.amount, 0), 0);
+            const needsPct = totalIncome > 0 ? (needsTotal / totalIncome) * 100 : 0;
+            const wantsPct = totalIncome > 0 ? (wantsTotal / totalIncome) * 100 : 0;
+            const savingsPct = totalIncome > 0 ? (savingsTotal / totalIncome) * 100 : 0;
+
+            const ruleBars = container.querySelectorAll('.bp-rule-row');
+            if (ruleBars.length >= 3) {
+                const updateRuleBar = (bar, pct, limit) => {
+                    const fill = bar.querySelector('.bp-progress-bar-fill');
+                    const pctSpan = bar.querySelector('.bp-rule-pct');
+                    if (fill) fill.style.width = Math.min(pct / limit * 100, 100) + '%';
+                    if (pctSpan) pctSpan.textContent = pct.toFixed(1) + '% / ' + limit + '% ' + (pct <= limit ? '✓' : '⚠');
+                };
+                updateRuleBar(ruleBars[0], needsPct, 50);
+                updateRuleBar(ruleBars[1], wantsPct, 30);
+                updateRuleBar(ruleBars[2], savingsPct, 20);
+            }
+
+            renderCharts(budgetData);
+        }
+
         function renderCharts(budgetData) {
             const expenses = budgetData.expenses;
             const labels = expenses.map(e => e.category);
             const vals = expenses.map(e => safeNum(e.amount, 0));
             const colors = expenses.map(e => e.type==='needs'?'#3B82F6':e.type==='savings'?'#10B981':'#8B5CF6');
-            if (pieChart) pieChart.destroy();
+
             const pc = document.getElementById('bp-pie-chart');
             if (pc) {
-                pieChart = new Chart(pc.getContext('2d'), {
-                    type: 'doughnut',
-                    data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderWidth: 2, borderColor: 'var(--bg-card)' }] },
-                    options: {
-                        responsive: true, maintainAspectRatio: true,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, boxWidth: 8, font: { size: 11 }, color: 'var(--text-primary)' } },
-                            tooltip: { callbacks: { label: ctx => {
-                                const t = vals.reduce((a,b)=>a+b,0);
-                                return ctx.label+': '+fmtC(ctx.parsed, budgetData.currency)+' ('+(t>0?(ctx.parsed/t*100).toFixed(1):'0')+'%)';
-                            }}}
+                if (pieChart) {
+                    pieChart.data.labels = labels;
+                    pieChart.data.datasets[0].data = vals;
+                    pieChart.data.datasets[0].backgroundColor = colors;
+                    pieChart.update('none');
+                } else {
+                    pieChart = new Chart(pc.getContext('2d'), {
+                        type: 'doughnut',
+                        data: { labels, datasets: [{ data: vals, backgroundColor: colors, borderWidth: 2, borderColor: 'var(--bg-card)' }] },
+                        options: {
+                            responsive: true, maintainAspectRatio: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, boxWidth: 8, font: { size: 11 }, color: 'var(--text-primary)' } },
+                                tooltip: { callbacks: { label: ctx => {
+                                    const t = vals.reduce((a,b)=>a+b,0);
+                                    return ctx.label+': '+fmtC(ctx.parsed, budgetData.currency)+' ('+(t>0?(ctx.parsed/t*100).toFixed(1):'0')+'%)';
+                                }}}
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
-            if (barChart) barChart.destroy();
+
             const bc = document.getElementById('bp-bar-chart');
             if (bc) {
-                barChart = new Chart(bc.getContext('2d'), {
-                    type: 'bar',
-                    data: { labels, datasets: [{ label: 'Amount', data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
-                    options: {
-                        responsive: true, maintainAspectRatio: true, indexAxis: 'y',
-                        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmtC(ctx.parsed, budgetData.currency) } } },
-                        scales: {
-                            x: { ticks: { callback: v => fmtC(v, budgetData.currency), font: { size: 10 }, color: 'var(--text-secondary)' } },
-                            y: { ticks: { font: { size: 10 }, color: 'var(--text-primary)' }, grid: { display: false } }
+                if (barChart) {
+                    barChart.data.labels = labels;
+                    barChart.data.datasets[0].data = vals;
+                    barChart.data.datasets[0].backgroundColor = colors;
+                    barChart.update('none');
+                } else {
+                    barChart = new Chart(bc.getContext('2d'), {
+                        type: 'bar',
+                        data: { labels, datasets: [{ label: 'Amount', data: vals, backgroundColor: colors, borderRadius: 4, borderSkipped: false }] },
+                        options: {
+                            responsive: true, maintainAspectRatio: true, indexAxis: 'y',
+                            plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => fmtC(ctx.parsed, budgetData.currency) } } },
+                            scales: {
+                                x: { ticks: { callback: v => fmtC(v, budgetData.currency), font: { size: 10 }, color: 'var(--text-secondary)' } },
+                                y: { ticks: { font: { size: 10 }, color: 'var(--text-primary)' }, grid: { display: false } }
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
 
