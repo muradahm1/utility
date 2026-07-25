@@ -179,6 +179,7 @@ function initSearchModal() {
             { name: 'Loan Calculator',              slug: 'loan-calculator',        cat: 'Finance' },
             { name: 'Compound Interest Calculator', slug: 'compound-interest-calculator',      cat: 'Finance' },
             { name: 'Date Calculator',              slug: 'date-calculator',        cat: 'Math'    },
+            { name: 'Budget Planner & Expense Tracker', slug: 'budget-planner',     cat: 'Finance' },
         ];
 
     function openModal() {

@@ -460,8 +460,48 @@
         table: schedule,
       };
     },
+    },
+  },
+
+  'budget-planner': {
+    name: 'Budget Planner & Expense Tracker',
+    category: 'Finance',
+    icon: 'fa-wallet',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.',
+    metaDescription: 'Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.',
+    fields: [
+      { id: 'budget_placeholder', label: 'Budget', type: 'number', default: 0, min: 0 },
+    ],
+    calculate() {
+      return {
+        stats: [
+          { label: 'Total Income', value: '$0.00', highlight: true },
+          { label: 'Total Expenses', value: '$0.00' },
+          { label: 'Remaining Balance', value: '$0.00' },
+          { label: 'Savings Rate', value: '0%' },
+        ],
+      };
+    },
+    howTo: [
+      'Add your monthly income sources (salary, freelance, investments, etc.).',
+      'Enter your expenses by category — use the default categories or create your own.',
+      'View your spending breakdown with interactive charts and progress bars.',
+      'Check your Budget Status and 50/30/20 rule recommendations.',
+      'Export your budget as PDF or share the summary with others.',
+    ],
+    formula: 'Budget Status = Total Income – Total Expenses | Savings Rate = (Remaining / Income) × 100 | 50/30/20 Rule: Needs ≤ 50%, Wants ≤ 30%, Savings ≥ 20%',
+    faqs: [
+      { q: 'What is the 50/30/20 budgeting rule?', a: 'The 50/30/20 rule splits your after-tax income into three categories: 50% for needs (housing, food, utilities, healthcare, transport), 30% for wants (entertainment, dining, shopping, hobbies), and 20% for savings and debt repayment. It provides a simple framework for balanced spending.' },
+      { q: 'How is the savings rate calculated?', a: 'Your savings rate is calculated as: (Remaining Balance / Total Income) × 100. This shows what percentage of your income you are saving after all expenses.' },
+      { q: 'Can I add custom expense categories?', a: 'Yes! Click the "+ Add Category" button to create unlimited custom categories. You can remove them anytime with the delete button.' },
+      { q: 'Does my data get saved?', a: 'Your budget data is saved automatically in your browser\'s local storage. It stays on your device and is never sent to our servers.' },
+      { q: 'Can I export my budget?', a: 'Yes, you can download a PDF summary of your budget, print the page, or share the summary using your device\'s share menu.' },
+    ],
   }
 };
+
 
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
