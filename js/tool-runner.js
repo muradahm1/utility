@@ -639,32 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="bp-section-total bp-expense-total"><span>Total Expenses</span><span class="bp-total-expense-value">${fmtC(totalExpenses, data.currency)}</span></div>
                         </div>
                     </div>
-                    <div class="bp-right-col">` +
-                        <div class="bp-card bp-summary-card">
-                            <h3 class="bp-card-title"><i class="fa-solid fa-chart-simple"></i> Budget Summary</h3>
-                            <div class="bp-summary-stats">
-                                <div class="bp-summary-item"><span>Total Income</span><span style="color:var(--success-color);font-weight:700;">${fmtC(totalIncome, data.currency)}</span></div>
-                                <div class="bp-summary-item"><span>Total Expenses</span><span style="color:var(--danger-color);font-weight:700;">${fmtC(totalExpenses, data.currency)}</span></div>
-                                <div class="bp-summary-divider"></div>
-                                <div class="bp-summary-item"><span>Remaining Balance</span><span style="font-size:22px;font-weight:800;${remaining>=0?'color:var(--success-color)':'color:var(--danger-color)'}">${fmtC(remaining, data.currency)}</span></div>
-                                <div class="bp-summary-item"><span>Savings Rate</span><span style="font-weight:700;${savingsRate>=20?'color:var(--success-color)':savingsRate>=0?'color:var(--warning-color)':'color:var(--danger-color)'}">${savingsRate.toFixed(1)}%</span></div>
-                            </div>
-                        </div>
-                        <div class="bp-card bp-status-card ${statusClass}"><div class="bp-status-icon"><i class="fa-solid ${statusIcon}"></i></div><div class="bp-status-text">${statusText}</div></div>
-                        <div class="bp-card bp-rule-card">
-                            <h3 class="bp-card-title"><i class="fa-solid fa-scale-balanced"></i> 50/30/20 Rule <span class="bp-tooltip-wrap" tabindex="0"><i class="fa-regular fa-circle-question"></i><span class="bp-tooltip-text">50% Needs, 30% Wants, 20% Savings &amp; Debt.</span></span></h3>
-                            ${ruleBar('Needs', needsPct, 50, '#3B82F6')}
-                            ${ruleBar('Wants', wantsPct, 30, '#8B5CF6')}
-                            ${ruleBar('Savings & Debt', savingsPct, 20, '#10B981')}
-                        </div>
-                        <div class="bp-card bp-chart-card">
-                            <h3 class="bp-card-title"><i class="fa-solid fa-chart-pie"></i> Spending Breakdown</h3>
-                            <div class="bp-charts-grid">
-                                <div class="bp-chart-container"><canvas id="bp-pie-chart"></canvas></div>
-                                <div class="bp-chart-container"><canvas id="bp-bar-chart"></canvas></div>
-                            </div>
-                        </div> +
-                    `</div>
+                    <div class="bp-right-col">${rightColHtml}</div>
                 </div>
                 <div class="bp-card bp-table-card" style="margin-top:24px;">
                     <h3 class="bp-card-title"><i class="fa-solid fa-table"></i> Spending by Category</h3>
@@ -859,14 +834,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const tExp = budgetData.expenses.reduce((s,e) => s+safeNum(e.amount,0), 0);
             const rem = tInc - tExp;
             const rate = tInc>0?((rem/tInc)*100).toFixed(1):'0';
-            const text = '📊 My Budget Summary
+            const text = `📊 My Budget Summary
 
-💰 Income: '+fmtC(tInc,budgetData.currency)+'
-💸 Expenses: '+fmtC(tExp,budgetData.currency)+'
-? Balance: '+fmtC(rem,budgetData.currency)+'
-📈 Savings Rate: '+rate+'%
+💰 Income: ${fmtC(tInc,budgetData.currency)}
+💸 Expenses: ${fmtC(tExp,budgetData.currency)}
+💳 Balance: ${fmtC(rem,budgetData.currency)}
+📈 Savings Rate: ${rate}%
 
-Created with GetCalcu Budget Planner';
+Created with GetCalcu Budget Planner`;
             if (navigator.share) { navigator.share({ title: 'Budget Summary', text }).catch(()=>{}); }
             else if (navigator.clipboard) { navigator.clipboard.writeText(text).then(()=>alert('Copied!')).catch(()=>prompt('Copy:',text)); }
             else { prompt('Copy:', text); }
