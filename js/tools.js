@@ -8,13 +8,13 @@
     description: 'Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.',
     metaDescription: 'Free mortgage calculator â€” instantly calculate monthly payments, total interest, and amortization schedule for any home loan.',
     fields: [
-      { id: 'home_price',    label: 'Home Price ($)',         type: 'number', default: 400000, min: 1000,   step: 1000  },
-      { id: 'down_payment',  label: 'Down Payment ($)',       type: 'number', default: 80000,  min: 0,      step: 1000  },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)',type: 'number', default: 7.0,   min: 0.01,   step: 0.05, max: 50 },
+      { id: 'home_price',    label: 'Home Price ($)',         type: 'number', default: 400000, min: 1000,   step: 1000,  hint: 'The total purchase price of the home you are buying.' },
+      { id: 'down_payment',  label: 'Down Payment ($)',       type: 'number', default: 80000,  min: 0,      step: 1000,  hint: 'Cash paid upfront. A larger down payment lowers your loan amount and can help you avoid PMI (typically need 20% to skip it).' },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)',type: 'number', default: 7.0,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) on your mortgage. US 30-year fixed rates have often ranged 6-8%.' },
       { id: 'loan_term',     label: 'Loan Term (years)',      type: 'select', default: 30,
-        options: [10,15,20,25,30].map(v => ({ value: v, label: `${v} years` })) },
-      { id: 'property_tax',  label: 'Annual Property Tax ($)',type: 'number', default: 4800,   min: 0,      step: 100   },
-      { id: 'insurance',     label: 'Annual Insurance ($)',   type: 'number', default: 1200,   min: 0,      step: 100   },
+        options: [10,15,20,25,30].map(v => ({ value: v, label: `${v} years` })), hint: 'How long you take to repay the loan. Shorter terms mean higher monthly payments but far less total interest.' },
+      { id: 'property_tax',  label: 'Annual Property Tax ($)',type: 'number', default: 4800,   min: 0,      step: 100,   hint: 'Yearly property tax set by your local government, spread across your monthly payments.' },
+      { id: 'insurance',     label: 'Annual Insurance ($)',   type: 'number', default: 1200,   min: 0,      step: 100,   hint: 'Yearly homeowners insurance premium, spread across your monthly payments.' },
     ],
     calculate(v) {
       // M = P * [r(1+r)^n] / [(1+r)^n - 1]
@@ -67,10 +67,10 @@
     metaDescription: 'Free BMI calculator â€” instantly calculate your Body Mass Index, health category, and ideal weight range.',
     fields: [
       { id: 'unit',   label: 'Unit System', type: 'select', default: 'metric',
-        options: [{ value:'metric', label:'Metric (kg / cm)' }, { value:'imperial', label:'Imperial (lb / in)' }] },
-      { id: 'weight', label: 'Weight',      type: 'number', default: 70,  min: 1,   step: 0.1 },
-      { id: 'height', label: 'Height',      type: 'number', default: 175, min: 1,   step: 0.1 },
-      { id: 'age',    label: 'Age',         type: 'number', default: 30,  min: 1,   max: 120, step: 1 },
+        options: [{ value:'metric', label:'Metric (kg / cm)' }, { value:'imperial', label:'Imperial (lb / in)' }], hint: 'Choose Metric (kilograms / centimeters) or Imperial (pounds / inches).' },
+      { id: 'weight', label: 'Weight',      type: 'number', default: 70,  min: 1,   step: 0.1, hint: 'Your body weight, entered in the unit system selected above.' },
+      { id: 'height', label: 'Height',      type: 'number', default: 175, min: 1,   step: 0.1, hint: 'Your height, entered in the unit system selected above.' },
+      { id: 'age',    label: 'Age',         type: 'number', default: 30,  min: 1,   max: 120, step: 1, hint: 'Your age. BMI categories are the same for adults of all ages, but age gives context to your result.' },
     ],
     fieldLabels(v) {
       return {
@@ -124,9 +124,9 @@
           { value: 'what-percent',  label: 'X is what % of Y?' },
           { value: 'percent-of',    label: 'What is X% of Y?' },
           { value: 'change',        label: '% Change (from X to Y)' },
-        ]},
-      { id: 'val_a',   label: 'Value A',   type: 'number', default: 50,  min: -99999999, step: 1 },
-      { id: 'val_b',   label: 'Value B',   type: 'number', default: 200, min: -99999999, step: 1 },
+        ], hint: 'Pick the type of percentage calculation you want to perform.' },
+      { id: 'val_a',   label: 'Value A',   type: 'number', default: 50,  min: -99999999, step: 1, hint: 'The first value. Its meaning changes based on the mode chosen above.' },
+      { id: 'val_b',   label: 'Value B',   type: 'number', default: 200, min: -99999999, step: 1, hint: 'The second value. Its meaning changes based on the mode chosen above.' },
     ],
     fieldLabels(v) {
       if (v.mode === 'what-percent') return { val_a: 'What is',  val_b: '% of?' };
@@ -186,10 +186,10 @@
     description: 'Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.',
     metaDescription: 'Free loan calculator â€” estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.',
     fields: [
-      { id: 'loan_amount', label: 'Loan Amount ($)',      type: 'number', default: 30000,  min: 1,      step: 100   },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.01,   step: 0.05, max: 50 },
+      { id: 'loan_amount', label: 'Loan Amount ($)',      type: 'number', default: 30000,  min: 1,      step: 100,   hint: 'The total amount you are borrowing (the principal).' },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) charged on the loan.' },
       { id: 'loan_term',    label: 'Loan Term (years)',    type: 'select', default: 5,
-        options: [1,2,3,4,5,6,7,10].map(v => ({ value: v, label: `${v} year${v > 1 ? 's' : ''}` })) },
+        options: [1,2,3,4,5,6,7,10].map(v => ({ value: v, label: `${v} year${v > 1 ? 's' : ''}` })), hint: 'How many years you will take to repay the loan in full.' },
     ],
     calculate(v) {
       const principal = safeNum(v.loan_amount, 0);
@@ -233,16 +233,16 @@
         options: [
           { value: 'between', label: 'Days between dates' },
           { value: 'add',     label: 'Add/subtract from date' },
-        ]},
-      { id: 'start_date',   label: 'Start Date', type: 'date', default: () => new Date().toISOString().split('T')[0] },
+        ], hint: 'Choose whether to count days between two dates or add/subtract time from a date.' },
+      { id: 'start_date',   label: 'Start Date', type: 'date', default: () => new Date().toISOString().split('T')[0], hint: 'The starting date for your calculation.' },
       { id: 'end_date',     label: 'End Date',   type: 'date', default: () => {
         const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().split('T')[0];
-      }},
-      { id: 'add_days',     label: 'Days',       type: 'number', default: 0, min: -99999, max: 99999, step: 1,
+      }, hint: 'The ending date, used when counting days between two dates.' },
+      { id: 'add_days',     label: 'Days',       type: 'number', default: 0, min: -99999, max: 99999, step: 1, hint: 'Days to add (positive) or subtract (negative).',
         condition: v => v.mode === 'add' },
-      { id: 'add_months',   label: 'Months',     type: 'number', default: 0, min: -99999, max: 99999, step: 1,
+      { id: 'add_months',   label: 'Months',     type: 'number', default: 0, min: -99999, max: 99999, step: 1, hint: 'Months to add (positive) or subtract (negative).',
         condition: v => v.mode === 'add' },
-      { id: 'add_years',    label: 'Years',      type: 'number', default: 0, min: -99999, max: 99999, step: 1,
+      { id: 'add_years',    label: 'Years',      type: 'number', default: 0, min: -99999, max: 99999, step: 1, hint: 'Years to add (positive) or subtract (negative).',
         condition: v => v.mode === 'add' },
     ],
     fieldLabels(v) {
@@ -333,16 +333,16 @@
     description: 'Calculate total interest paid on any loan with detailed amortization by payment frequency.',
     metaDescription: 'Free loan interest calculator â€” see total interest, monthly payments, and full amortization with flexible payment frequencies.',
     fields: [
-      { id: 'loan_amount',   label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 1,      step: 100   },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.0,   min: 0.01,   step: 0.05, max: 50 },
-      { id: 'loan_term',     label: 'Loan Term (years)',       type: 'number', default: 5,     min: 1,      max: 50,    step: 1 },
+      { id: 'loan_amount',   label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 1,      step: 100,    hint: 'The total amount you are borrowing (the principal).' },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.0,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) charged on the loan.' },
+      { id: 'loan_term',     label: 'Loan Term (years)',       type: 'number', default: 5,     min: 1,      max: 50,    step: 1, hint: 'How many years you will take to repay the loan.' },
       { id: 'payment_freq',  label: 'Payment Frequency',       type: 'select', default: 'monthly',
         options: [
           { value: 'monthly',  label: 'Monthly (12/yr)' },
           { value: 'biweekly', label: 'Bi-Weekly (26/yr)' },
           { value: 'weekly',   label: 'Weekly (52/yr)' },
           { value: 'quarterly',label: 'Quarterly (4/yr)' },
-        ]},
+        ], hint: 'How often you make payments. More frequent payments slightly reduce total interest paid.' },
     ],
     calculate(v) {
       const principal = safeNum(v.loan_amount, 0);
@@ -385,8 +385,8 @@
     description: 'Project how your savings and investments grow over time with compound interest and recurring monthly contributions.',
     metaDescription: 'Free compound interest calculator â€” see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
     fields: [
-      { id: 'principal',         label: 'Starting Balance ($)',          type: 'number', default: 10000, min: 0,      step: 100   },
-      { id: 'annual_rate',       label: 'Annual Interest Rate (%)',       type: 'number', default: 8.0,   min: 0.01,   step: 0.1   },
+      { id: 'principal',         label: 'Starting Balance ($)',          type: 'number', default: 10000, min: 0,      step: 100,    hint: 'Your initial lump-sum deposit or current investment balance.' },
+      { id: 'annual_rate',       label: 'Annual Interest Rate (%)',       type: 'number', default: 8.0,   min: 0.01,   step: 0.1,   hint: 'Expected average yearly growth rate. A diversified stock portfolio has historically returned about 7-10% long-term.' },
       { id: 'compounding_freq',  label: 'Compounding Frequency',         type: 'select', default: 'monthly',
         options: [
           { value: 'annually',       label: 'Annually (1/yr)' },
@@ -394,10 +394,10 @@
           { value: 'quarterly',      label: 'Quarterly (4/yr)' },
           { value: 'monthly',        label: 'Monthly (12/yr)' },
           { value: 'daily',          label: 'Daily (365/yr)' },
-        ]
+        ], hint: 'How often interest is added to your balance. More frequent compounding grows your money slightly faster.'
       },
-      { id: 'monthly_contribution', label: 'Monthly Contribution ($)',   type: 'number', default: 500,   min: 0,      step: 50    },
-      { id: 'time_years',          label: 'Time Horizon (years)',        type: 'number', default: 30,    min: 1,      max: 100,   step: 1 },
+      { id: 'monthly_contribution', label: 'Monthly Contribution ($)',   type: 'number', default: 500,   min: 0,      step: 50,    hint: 'Amount you add each month on top of your starting balance.' },
+      { id: 'time_years',          label: 'Time Horizon (years)',        type: 'number', default: 30,    min: 1,      max: 100,   step: 1, hint: 'How long your money stays invested. Longer horizons dramatically boost compound growth.' },
     ],
     calculate(v) {
       // FV = PV * (1 + r)^n + PMT * ((1 + r)^n - 1) / r
@@ -472,10 +472,10 @@
     description: 'Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.',
     metaDescription: 'Free investment calculator — project future value with compound returns and monthly contributions. See how long to save $100k, when you can retire early, and how much to invest each month to reach $1M.',
     fields: [
-      { id: 'initial_investment',    label: 'Initial Investment ($)',       type: 'number', default: 10000, min: 0,      step: 1000  },
-      { id: 'monthly_contribution',  label: 'Monthly Contribution ($)',     type: 'number', default: 500,   min: 0,      step: 50    },
-      { id: 'annual_return',         label: 'Expected Annual Return (%)',   type: 'number', default: 8.0,   min: 0.01,   step: 0.1,  max: 100 },
-      { id: 'investment_period',     label: 'Investment Period (years)',    type: 'number', default: 20,    min: 1,      max: 100,   step: 1 },
+      { id: 'initial_investment',    label: 'Initial Investment ($)',       type: 'number', default: 10000, min: 0,      step: 1000,  hint: 'Your starting lump-sum amount invested today.' },
+      { id: 'monthly_contribution',  label: 'Monthly Contribution ($)',     type: 'number', default: 500,   min: 0,      step: 50,    hint: 'How much you add to your investment each month.' },
+      { id: 'annual_return',         label: 'Expected Annual Return (%)',   type: 'number', default: 8.0,   min: 0.01,   step: 0.1,  max: 100, hint: 'Expected average yearly return. S&P 500 long-term average: about 7-10%. <a href="#faqs">See safe return rates ↓</a>' },
+      { id: 'investment_period',     label: 'Investment Period (years)',    type: 'number', default: 20,    min: 1,      max: 100,   step: 1, hint: 'How many years you plan to keep your money invested.' },
       { id: 'compound_freq',         label: 'Compounding Frequency',        type: 'select', default: 'monthly',
         options: [
           { value: 'annually',       label: 'Annually (1/yr)' },
@@ -483,9 +483,8 @@
           { value: 'quarterly',      label: 'Quarterly (4/yr)' },
           { value: 'monthly',        label: 'Monthly (12/yr)' },
           { value: 'daily',          label: 'Daily (365/yr)' },
-        ]
-      },
-      { id: 'goal_amount',           label: 'Savings Goal ($) (optional)',  type: 'number', default: 1000000, min: 0, step: 10000 },
+        ], hint: 'How often returns are reinvested. <a href="#faqs">See how compounding frequency affects growth ↓</a>' },
+      { id: 'goal_amount',           label: 'Savings Goal ($) (optional)',  type: 'number', default: 1000000, min: 0, step: 10000, hint: 'A target balance you want to reach (e.g. $1M). Optional — used to estimate how long it will take.' },
     ],
     calculate(v) {
       const principal = safeNum(v.initial_investment, 0);
