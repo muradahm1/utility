@@ -265,8 +265,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const periodLabel = (slug === 'compound-interest-calculator' || slug === 'investment-calculator') ? 'Year' : 'Month';
-        const scheduleTitle = (slug === 'compound-interest-calculator' || slug === 'investment-calculator') ? 'Year-by-Year Schedule' : 'Amortization Schedule';
+        const periodLabel = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year' : 'Month';
+        const scheduleTitle = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year-by-Year Schedule' : 'Amortization Schedule';
         const tableHtml = result.table ? `
             <div class="result-table-container">
                 <h4>${scheduleTitle}</h4>

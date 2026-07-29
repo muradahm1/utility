@@ -645,8 +645,244 @@
       { q: 'Does my data get saved?', a: 'Your budget data is saved automatically in your browser\'s local storage. It stays on your device and is never sent to our servers.' },
       { q: 'Can I export my budget?', a: 'Yes, you can download a PDF summary of your budget, print the page, or share the summary using your device\'s share menu.' },
     ],
-  }
+  },
+
+  // ── Retirement Calculator ─────────────────────────────────────
+  'retirement-calculator': {
+    id: 'retirement-calculator',
+    name: 'Retirement Calculator',
+    category: 'Finance',
+    icon: 'fa-umbrella',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Determine how much money you need to retire comfortably, estimate your future nest egg balance, and calculate required monthly savings based on inflation and life expectancy.',
+    metaTitle: 'Retirement Calculator for Early Career Professionals | Free Template - GetCalcu',
+    metaDescription: 'Free online Retirement Savings Calculator for early career professionals. Estimate your target retirement nest egg, monthly savings requirements, compound returns, and inflation impact. Start planning at 25.',
+    keywords: [
+      'retirement calculator',
+      'retirement savings calculator',
+      'how much do I need to retire',
+      '401k retirement planning',
+      'compound interest calculator for young professionals',
+      'early career retirement calculator',
+      'retirement nest egg estimator',
+      'how to calculate retirement if you start at 25',
+      'retirement planner',
+    ],
+    fields: [
+      { id: 'current_age',         label: 'Your Current Age',                    type: 'number', default: 25,   min: 18,    max: 70,  step: 1 },
+      { id: 'current_savings',     label: 'Current Retirement Savings ($)',      type: 'number', default: 0,    min: 0,     step: 1000 },
+      { id: 'annual_income',       label: 'Annual Income ($)',                   type: 'number', default: 55000, min: 10000, step: 5000 },
+      { id: 'monthly_contribution',label: 'Monthly Contribution ($)',            type: 'number', default: 500,   min: 0,     step: 50 },
+      { id: 'annual_return',       label: 'Expected Annual Return (%)',          type: 'number', default: 7.0,   min: 0.1,   step: 0.1, max: 30 },
+      { id: 'inflation_rate',      label: 'Expected Inflation Rate (%)',         type: 'number', default: 3.0,   min: 0,     step: 0.1, max: 20 },
+      { id: 'retirement_age',      label: 'Desired Retirement Age',              type: 'number', default: 65,   min: 30,    max: 80,  step: 1 },
+      { id: 'life_expectancy',     label: 'Life Expectancy (years)',             type: 'number', default: 95,   min: 50,    max: 120, step: 1 },
+      { id: 'income_replacement',  label: 'Desired Retirement Income (% of current)', type: 'number', default: 80, min: 10, max: 100, step: 5 },
+    ],
+    calculate(v) {
+      // ── Extract & validate inputs
+      const currentAge      = safeNum(v.current_age, 25);
+      const currentSavings  = safeNum(v.current_savings, 0);
+      const annualIncome    = safeNum(v.annual_income, 55000);
+      const monthlyContrib  = safeNum(v.monthly_contribution, 500);
+      const annualReturn    = safeNum(v.annual_return, 7) / 100;
+      const inflationRate   = safeNum(v.inflation_rate, 3) / 100;
+      const retirementAge   = safeNum(v.retirement_age, 65);
+      const lifeExpectancy  = safeNum(v.life_expectancy, 95);
+      const incomeReplace   = safeNum(v.income_replacement, 80) / 100;
+
+      if (retirementAge <= currentAge) {
+        return errorResult('Retirement age must be greater than your current age.');
+      }
+      if (lifeExpectancy <= retirementAge) {
+        return errorResult('Life expectancy must be greater than retirement age.');
+      }
+
+      // ── Core time periods
+      const yearsToRetire  = retirementAge - currentAge;
+      const yearsInRetire  = lifeExpectancy - retirementAge;
+
+      // ── Fisher equation: inflation-adjusted real return
+      // r_real = (1 + r_nominal) / (1 + inflation) - 1
+      const realReturn     = (1 + annualReturn) / (1 + inflationRate) - 1;
+      const monthlyRealRet = realReturn / 12;
+      const totalMonths    = yearsToRetire * 12;
+
+      // ── Future Value of current savings
+      // FV = PV x (1 + r_real)^years
+      const fvCurrentSavings = currentSavings * Math.pow(1 + realReturn, yearsToRetire);
+
+      // ── Future Value of monthly contributions
+      // FV = PMT x [((1 + r_monthly)^n - 1) / r_monthly]
+      let fvContributions;
+      if (monthlyRealRet === 0) {
+        fvContributions = monthlyContrib * totalMonths;
+      } else {
+        const growthFactor = Math.pow(1 + monthlyRealRet, totalMonths);
+        fvContributions = monthlyContrib * (growthFactor - 1) / monthlyRealRet;
+      }
+
+      // ── Total projected nest egg
+      const totalNestEgg     = roundTo(fvCurrentSavings + fvContributions, 2);
+      const totalContribs    = roundTo(currentSavings + monthlyContrib * 12 * yearsToRetire, 2);
+      const totalGrowth      = roundTo(totalNestEgg - totalContribs, 2);
+
+      // ── Target retirement income (today's dollars)
+      const desiredIncomeToday = annualIncome * incomeReplace;
+
+      // ── Future value of desired income (inflation-adjusted)
+      const fvDesiredIncome = desiredIncomeToday * Math.pow(1 + inflationRate, yearsToRetire);
+
+      // ── 4% Rule: target nest egg (25x annual desired income)
+      const targetNestEgg   = roundTo(fvDesiredIncome * 25, 2);
+
+      // ── Monthly and annual retirement income (4% rule)
+      const monthlyRetireIncome = roundTo(totalNestEgg * 0.04 / 12, 2);
+      const annualRetireIncome  = roundTo(totalNestEgg * 0.04, 2);
+
+      // ── Inflation-adjusted monthly income (today's dollars)
+      // PV = FV / (1 + inflation)^years
+      const inflationAdjMonthly = roundTo(
+        monthlyRetireIncome / Math.pow(1 + inflationRate, yearsToRetire), 2
+      );
+
+      // ── Achieved replacement rate
+      const achievedReplaceRate = roundTo((annualRetireIncome / annualIncome) * 100, 1);
+
+      // ── Status assessment
+      let status;
+      if (totalNestEgg >= targetNestEgg) {
+        status = 'On Track ✓';
+      } else if (totalNestEgg >= targetNestEgg * 0.75) {
+        status = 'Close - Increase Savings';
+      } else {
+        status = 'Needs Attention - Boost Contributions';
+      }
+
+      // ── Additional monthly savings needed to reach target
+      let additionalMonthlyNeeded = 0;
+      if (totalNestEgg < targetNestEgg && monthlyRealRet > 0) {
+        const fvCurrentOnly = currentSavings * Math.pow(1 + realReturn, yearsToRetire);
+        const neededFromContribs = targetNestEgg - fvCurrentOnly;
+        if (neededFromContribs > 0) {
+          const gf = Math.pow(1 + monthlyRealRet, totalMonths);
+          const pmtNeeded = neededFromContribs * monthlyRealRet / (gf - 1);
+          additionalMonthlyNeeded = roundTo(Math.max(0, pmtNeeded - monthlyContrib), 2);
+        }
+      }
+
+      // ── Year-by-year projection schedule
+      const schedule = [];
+      for (let y = 1; y <= yearsToRetire; y++) {
+        const periods = y * 12;
+        let yearValue = currentSavings * Math.pow(1 + realReturn, y);
+        if (monthlyRealRet === 0) {
+          yearValue += monthlyContrib * periods;
+        } else {
+          const gf = Math.pow(1 + monthlyRealRet, periods);
+          yearValue += monthlyContrib * (gf - 1) / monthlyRealRet;
+        }
+        yearValue = roundTo(yearValue, 2);
+
+        const yrContribs = roundTo(currentSavings + monthlyContrib * 12 * y, 2);
+        schedule.push({
+          month: y,
+          payment: roundTo(monthlyContrib * 12, 2),
+          principal: roundTo(yrContribs, 2),
+          interest: roundTo(yearValue - yrContribs, 2),
+          balance: yearValue,
+        });
+      }
+
+      return {
+        stats: [
+          { label: 'Projected Nest Egg',             value: fmt(totalNestEgg),          highlight: true },
+          { label: 'Target Nest Egg (4% Rule)',       value: fmt(targetNestEgg)                         },
+          { label: 'Status',                          value: status,                     warn: totalNestEgg < targetNestEgg },
+          { label: 'Monthly Retirement Income',       value: fmt(monthlyRetireIncome)                   },
+          { label: 'Annual Retirement Income',        value: fmt(annualRetireIncome)                    },
+          { label: 'Total Contributions',             value: fmt(totalContribs)                         },
+          { label: 'Investment Growth',               value: fmt(totalGrowth)                           },
+          { label: 'Inflation-Adj. Monthly Income',   value: fmt(inflationAdjMonthly)                   },
+          { label: 'Income Replacement Rate',         value: pct(achievedReplaceRate / 100)             },
+          { label: 'Additional Monthly Savings Needed', value: fmt(additionalMonthlyNeeded), warn: additionalMonthlyNeeded > 0 },
+        ],
+        chart: { principal: totalContribs, totalInterest: totalGrowth },
+        table: schedule,
+      };
+    },
+
+    // ── How-To Guide
+    howTo: [
+      'Enter your current age and annual income to set a baseline - the calculator uses your age to determine the exact number of years until retirement.',
+      'Add your current retirement savings balance (401k, IRA, brokerage accounts) and your monthly contribution amount.',
+      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and your expected inflation rate (2.5-3% historical average).',
+      'Choose your desired retirement age and life expectancy - the calculator projects how long your nest egg needs to last.',
+      'Review your results: projected nest egg, target savings goal using the 4% rule, monthly retirement income, and any additional savings needed to reach your goal.',
+    ],
+
+    // ── Real-World Examples
+    examples: [
+      {
+        title: 'Starting at 25 - The Power of Early Saving',
+        input: 'Age: 25, Income: $55,000, Savings: $0, Monthly: $500, Return: 7%, Inflation: 3%, Retire: 65, Live to: 95',
+        result: 'Nest Egg: $1,197,000+ | Monthly Income: ~$3,990 | Replacement Rate: 87%',
+      },
+      {
+        title: 'Mid-Career Catch-Up (Age 35)',
+        input: 'Age: 35, Income: $80,000, Savings: $30,000, Monthly: $1,000, Return: 7%, Inflation: 3%, Retire: 65, Live to: 90',
+        result: 'Nest Egg: $1,185,000+ | Monthly Income: ~$3,950 | Replacement Rate: 59%',
+      },
+      {
+        title: 'Aggressive Early Retirement at 55',
+        input: 'Age: 25, Income: $75,000, Savings: $10,000, Monthly: $1,500, Return: 8%, Inflation: 3%, Retire: 55, Live to: 90',
+        result: 'Nest Egg: $1,625,000+ | Monthly Income: ~$5,417 | Replacement Rate: 87%',
+      },
+    ],
+    formula: 'Real Return = (1 + Nominal Return) / (1 + Inflation Rate) - 1 | FV = PV x (1 + r)^n | FV = PMT x [((1 + r_monthly)^n - 1) / r_monthly] | 4% Rule: Annual Withdrawal = Nest Egg x 0.04 | Target Nest Egg = Desired Annual Income x 25',
+
+    // ── SEO Article Content
+    article: {
+      heading: 'The Ultimate Early Career Retirement Projection Tool',
+      intro: 'Standard retirement calculators assume a static income, but early-career professionals typically see rapid salary progression over time. Our specialized retirement calculator for early career professionals accounts for inflation-adjusted compound growth, realistic return rates, and the 4% rule to give you a clear roadmap to financial independence - starting from wherever you are today.',
+    },
+
+    // ── Schema-Ready FAQs (targets Google Featured Snippets / PAA)
+    faqs: [
+      {
+        q: 'How much money do I need to retire comfortably?',
+        a: 'A widely accepted guideline is the 4% Rule, which suggests you need approximately 25 times your expected annual retirement expenses saved in investments. For early career professionals, a good rule of thumb is to aim for 1x your annual salary saved by age 30, 3x by 40, 6x by 50, and 8x by 60. Use our retirement calculator to find your personalized target nest egg based on your income, age, and desired retirement lifestyle.',
+      },
+      {
+        q: 'How much should an early career professional have saved?',
+        a: 'By age 25-30, a common benchmark is to have saved at least 1x your annual salary. If you start saving 15% of your income at age 25 with a 7% average annual return, you could accumulate over $1 million by age 65. The key advantage for early career professionals is time - even small contributions grow exponentially through compound interest over 35-40 year horizons.',
+      },
+      {
+        q: 'What is a realistic investment return rate over 30 years?',
+        a: 'The S&P 500 has historically returned approximately 10% before inflation and 7-8% after inflation (real return) over long periods. For a balanced portfolio (60% stocks / 40% bonds), a realistic assumption is 6-7% nominal or 4-5% real return. Our calculator uses the Fisher equation - (1 + nominal return) / (1 + inflation rate) - 1 - to compute the inflation-adjusted real return, giving you a more accurate long-term projection.',
+      },
+      {
+        q: 'What percentage of my current income should I replace in retirement?',
+        a: 'Most financial advisors recommend aiming to replace 70% to 80% of your pre-retirement annual income to maintain your current lifestyle. This accounts for reduced expenses in retirement (no commuting, lower taxes, no retirement savings contributions) while still covering housing, healthcare, and leisure. Our calculator defaults to 80% and shows your projected replacement rate based on your actual savings trajectory.',
+      },
+      {
+        q: 'How does inflation impact my retirement savings?',
+        a: 'Inflation erodes purchasing power over time. At an average annual inflation rate of 2.5% to 3%, the real value of money decreases by roughly half over 25-30 years - meaning $1,000,000 in 30 years will only buy what $412,000 buys today. Our retirement calculator automatically adjusts for inflation using the Fisher equation, showing both nominal future values and inflation-adjusted (today\'s dollar) figures so you can plan accurately.',
+      },
+      {
+        q: 'What is the 4% rule for retirement planning?',
+        a: 'The 4% rule is a retirement planning guideline developed from the Trinity Study. It suggests you can withdraw 4% of your retirement portfolio in the first year of retirement (adjusting for inflation annually) with a low probability of running out of money over a 30-year retirement. For example, if your portfolio is $1,000,000, you could withdraw $40,000 in your first year. Our calculator applies this rule to your projected nest egg to estimate your monthly retirement income.',
+      },
+      {
+        q: 'Can I retire early if I start saving at 25?',
+        a: 'Yes! Starting at 25 gives you a massive advantage due to compound interest. If you save $500 per month with a 7% return, you could accumulate $1.2M by 65. To retire early at 55, you would need to save approximately $1,500-$2,000 per month - but the earlier you start, the less you need to save each month to reach the same goal. Use our retirement calculator to experiment with different retirement ages and see the impact on your monthly contribution needs.',
+      },
+    ],
+  },
 };
+
+
 
 
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }

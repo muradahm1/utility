@@ -238,6 +238,7 @@ function initSearchModal() {
             { name: 'Compound Interest Calculator', slug: 'compound-interest-calculator',      cat: 'Finance' },
             { name: 'Date Calculator',              slug: 'date-calculator',        cat: 'Math'    },
             { name: 'Budget Planner & Expense Tracker', slug: 'budget-planner',     cat: 'Finance' },
+            { name: 'Retirement Calculator',        slug: 'retirement-calculator',           cat: 'Finance' },
         ];
 
     function openModal() {
