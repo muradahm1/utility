@@ -233,6 +233,7 @@ function initSearchModal() {
             { name: 'Mortgage Calculator',          slug: 'mortgage-calculator',   cat: 'Finance' },
             { name: 'BMI Calculator',               slug: 'bmi-calculator',         cat: 'Health'  },
             { name: 'Percentage Calculator',        slug: 'percentage-calculator',  cat: 'Math'    },
+            { name: 'Investment Calculator',        slug: 'investment-calculator',            cat: 'Finance' },
             { name: 'Loan Calculator',              slug: 'loan-calculator',        cat: 'Finance' },
             { name: 'Compound Interest Calculator', slug: 'compound-interest-calculator',      cat: 'Finance' },
             { name: 'Date Calculator',              slug: 'date-calculator',        cat: 'Math'    },

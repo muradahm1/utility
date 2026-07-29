@@ -462,6 +462,153 @@
     },
   },
 
+  // ── Investment Calculator ─────────────────────────────────────
+  'investment-calculator': {
+    name: 'Investment Calculator',
+    category: 'Finance',
+    icon: 'fa-chart-line',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.',
+    metaDescription: 'Free investment calculator — project future value with compound returns and monthly contributions. See how long to save $100k, when you can retire early, and how much to invest each month to reach $1M.',
+    fields: [
+      { id: 'initial_investment',    label: 'Initial Investment ($)',       type: 'number', default: 10000, min: 0,      step: 1000  },
+      { id: 'monthly_contribution',  label: 'Monthly Contribution ($)',     type: 'number', default: 500,   min: 0,      step: 50    },
+      { id: 'annual_return',         label: 'Expected Annual Return (%)',   type: 'number', default: 8.0,   min: 0.01,   step: 0.1,  max: 100 },
+      { id: 'investment_period',     label: 'Investment Period (years)',    type: 'number', default: 20,    min: 1,      max: 100,   step: 1 },
+      { id: 'compound_freq',         label: 'Compounding Frequency',        type: 'select', default: 'monthly',
+        options: [
+          { value: 'annually',       label: 'Annually (1/yr)' },
+          { value: 'semi-annually',  label: 'Semi-annually (2/yr)' },
+          { value: 'quarterly',      label: 'Quarterly (4/yr)' },
+          { value: 'monthly',        label: 'Monthly (12/yr)' },
+          { value: 'daily',          label: 'Daily (365/yr)' },
+        ]
+      },
+      { id: 'goal_amount',           label: 'Savings Goal ($) (optional)',  type: 'number', default: 1000000, min: 0, step: 10000 },
+    ],
+    calculate(v) {
+      const principal = safeNum(v.initial_investment, 0);
+      const annualRate = safeNum(v.annual_return, 0) / 100;
+      const years = Math.round(safeNum(v.investment_period, 20));
+      const monthlyContrib = safeNum(v.monthly_contribution, 0);
+      const goal = safeNum(v.goal_amount, 0);
+      const ppy = { annually: 1, 'semi-annually': 2, quarterly: 4, monthly: 12, daily: 365 }[v.compound_freq] || 12;
+      const n = years * ppy;
+      const periodicRate = annualRate / ppy;
+      const contribPerPeriod = roundTo(monthlyContrib * (12 / ppy), 2);
+      let futureValue;
+      if (periodicRate === 0) {
+        futureValue = principal + contribPerPeriod * n;
+      } else {
+        const growthFactor = Math.pow(1 + periodicRate, n);
+        futureValue = principal * growthFactor + contribPerPeriod * (growthFactor - 1) / periodicRate;
+      }
+      futureValue = roundTo(futureValue, 2);
+      const totalContributions = roundTo(principal + monthlyContrib * 12 * years, 2);
+      const totalReturn = roundTo(futureValue - totalContributions, 2);
+      const totalReturnPct = totalContributions > 0 ? roundTo((totalReturn / totalContributions) * 100, 2) : 0;
+      let monthsToGoal = null, goalReached = false;
+      if (goal > 0) {
+        const monthlyRate = annualRate / 12;
+        let runningBalance = principal, monthCount = 0;
+        const maxMonths = 1200;
+        while (runningBalance < goal && monthCount < maxMonths) {
+          monthCount++;
+          runningBalance *= (1 + monthlyRate);
+          runningBalance += monthlyContrib;
+          runningBalance = roundTo(runningBalance, 2);
+        }
+        if (runningBalance >= goal) { monthsToGoal = monthCount; goalReached = true; }
+      }
+      const schedule = [];
+      for (let y = 1; y <= years; y++) {
+        const periods = y * ppy;
+        let yearValue;
+        if (periodicRate === 0) {
+          yearValue = principal + contribPerPeriod * periods;
+        } else {
+          const gf = Math.pow(1 + periodicRate, periods);
+          yearValue = principal * gf + contribPerPeriod * (gf - 1) / periodicRate;
+        }
+        yearValue = roundTo(yearValue, 2);
+        const yrContrib = roundTo(principal + monthlyContrib * 12 * y, 2);
+        schedule.push({ month: y, payment: roundTo(monthlyContrib * 12, 2), principal: roundTo(yrContrib, 2), interest: roundTo(yearValue - yrContrib, 2), balance: yearValue });
+      }
+      const stats = [
+        { label: 'Future Balance',       value: fmt(futureValue),        highlight: true },
+        { label: 'Total Contributions',   value: fmt(totalContributions)                 },
+        { label: 'Total Return (Profit)', value: fmt(totalReturn),       warn: totalReturn <= 0 },
+        { label: 'Total Return %',        value: totalReturnPct + '%'                     },
+      ];
+      if (goal > 0) {
+        stats.push({
+          label: goalReached ? `Time to Reach ${fmt(goal)}` : `Goal of ${fmt(goal)}`,
+          value: goalReached ? `${Math.floor(monthsToGoal / 12)} yr ${monthsToGoal % 12} mo` : 'Not reached in ' + years + ' yrs',
+          highlight: goalReached, warn: !goalReached,
+        });
+      }
+      return { stats, chart: { principal: totalContributions, totalInterest: totalReturn }, table: schedule };
+    },
+    howTo: [
+      'Enter your initial investment (lump sum you\'re starting with).',
+      'Set your monthly contribution — the amount you plan to add each month.',
+      'Choose an expected annual return rate based on your investment strategy (S&P 500 historically ~8-10%, bonds ~3-5%).',
+      'Pick your investment time horizon in years — the longer you invest, the more compounding works in your favor.',
+      'Optionally enter a savings goal (e.g., $100,000, $500,000, or $1,000,000) to see exactly how long it will take to reach that milestone.',
+      'Review the year-by-year schedule, total return, and interactive chart to understand your investment\'s growth trajectory.',
+    ],
+    formula: 'Future Value = Principal × (1 + r/n)^(nt) + Monthly Contribution × [((1 + r/12)^(12t) - 1) / (r/12)] | Total Return % = (Total Return / Total Contributions) × 100',
+    examples: [
+      {
+        title: 'How long to save $100,000?',
+        input: '$10,000 initial, $400/month, 7% return',
+        result: 'Reach $100,000 in ~11 years 2 months',
+      },
+      {
+        title: 'Retire early with $1 Million',
+        input: '$20,000 initial, $1,000/month, 8% return',
+        result: 'Reach $1,000,000 in ~24 years 5 months',
+      },
+      {
+        title: 'Monthly investment to reach $500k',
+        input: '$5,000 initial, 15 years, 9% return',
+        result: 'Need ~$1,530/month to reach $500,000',
+      },
+    ],
+    faqs: [
+      {
+        q: 'How long will it take to save $100,000 with my investments?',
+        a: 'The time to reach $100,000 depends on your starting balance, monthly contribution, and annual return rate. With a $10,000 initial investment, $400 monthly contributions, and a 7% annual return, you would reach $100,000 in approximately 11 years and 2 months. Our investment calculator shows exactly how long it takes to reach any savings goal you set.',
+      },
+      {
+        q: 'How much do I need to invest monthly to reach $1,000,000?',
+        a: 'To reach $1,000,000 in 25 years with an 8% annual return starting from $0, you would need to invest approximately $1,050 per month. With a $25,000 initial investment, that drops to about $770 per month. The required monthly contribution decreases significantly the earlier you start and the higher your expected return rate.',
+      },
+      {
+        q: 'Can I use the investment calculator to see when I can retire early?',
+        a: 'Yes! Enter your current retirement savings as the initial investment, add your monthly retirement contributions, set a conservative expected return (7-8% for stock-heavy portfolios), and enter your retirement savings goal as the target amount. The calculator will show you the exact year you\'ll reach financial independence and how much your nest egg will grow over time.',
+      },
+      {
+        q: 'What is the difference between simple and compound investment returns?',
+        a: 'Simple returns earn interest only on your original principal. Compound returns (compound interest) earn returns on both your principal AND the accumulated returns from prior periods. Over a 20-year horizon with $10,000 at 8%, simple interest yields $26,000, while compounding annually yields $46,610 — a 79% higher ending balance.',
+      },
+      {
+        q: 'What is a safe annual return rate to use for long-term investing?',
+        a: 'For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation. A conservative estimate of 6-7% is wise for planning. For bond-heavy portfolios, use 3-5%. For balanced portfolios (60/40 stocks/bonds), 5-7% is a reasonable planning range. Always use a rate you\'re comfortable with and consider inflation (typically 2-3% annually).',
+      },
+      {
+        q: 'How does compounding frequency affect my investment returns?',
+        a: 'More frequent compounding generates slightly higher returns because interest is calculated on a growing balance more often. For example, $10,000 at 8% over 30 years grows to $100,627 with annual compounding, $107,432 with quarterly compounding, $108,383 with monthly compounding, and $108,856 with daily compounding. The difference between monthly and daily compounding is marginal for most investors.',
+      },
+      {
+        q: 'What is the 4% rule for retirement planning?',
+        a: 'The 4% rule is a retirement planning guideline suggesting you can withdraw 4% of your retirement portfolio in the first year of retirement (adjusting for inflation annually) with a low probability of running out of money over a 30-year retirement. For example, if your portfolio is $1,000,000, you could withdraw $40,000 in your first year. Use our investment calculator to determine if your savings goal supports your desired retirement lifestyle.',
+      },
+    ],
+  },
+
+  // ── Budget Planner & Expense Tracker ──────────────────────────
   'budget-planner': {
     name: 'Budget Planner & Expense Tracker',
     category: 'Finance',
