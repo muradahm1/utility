@@ -97,6 +97,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(faqScript);
     }
 
+    // TechArticle schema (if tool defines an article)
+    if (tool.article) {
+        const articleScript = document.createElement('script');
+        articleScript.type = 'application/ld+json';
+        articleScript.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'TechArticle',
+            headline: tool.article.heading,
+            description: tool.article.intro,
+            author: { '@type': 'Organization', name: 'GetCalcu' },
+            publisher: { '@type': 'Organization', name: 'GetCalcu', url: 'https://www.getcalcu.com/' },
+            about: tool.name,
+            url: pageUrl,
+        });
+        document.head.appendChild(articleScript);
+    }
+
     // ── State ─────────────────────────────────────────────────
     let values = {};
     tool.fields.forEach(f => {
@@ -396,6 +413,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── SEO Content Section (How-To, Examples, FAQs) ──────────
     function buildSeoContentHtml() {
         let html = '';
+
+        // ── SEO Article (intro + optional H3 sections) ─────────────
+        if (tool.article) {
+            const a = tool.article;
+            const sectionsHtml = (a.sections && a.sections.length)
+                ? a.sections.map(s => `
+                    <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">${esc(s.heading)}</h3>
+                    <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${esc(s.body)}</p>`).join('')
+                : '';
+            html += `
+            <div class="tool-runner-card" style="margin-top:24px;">
+                <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${esc(a.heading)}</h2>
+                <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${esc(a.intro)}</p>
+                ${sectionsHtml}
+            </div>`;
+        }
 
         if (tool.howTo && tool.howTo.length) {
             const steps = tool.howTo.map((step, i) => `
