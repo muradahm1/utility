@@ -153,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (field.type === 'select') return `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
                     <label for="${field.id}">${label}</label>
+                    ${field.hint ? `<span class="field-hint">${field.hint}</span>` : ''}
                     <select id="${field.id}" data-id="${field.id}">
                         ${field.options.map(o => `<option value="${o.value}" ${values[field.id] == o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
                     </select>
@@ -161,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
                     <label for="${field.id}">${label}</label>
+                    ${field.hint ? `<span class="field-hint">${field.hint}</span>` : ''}
                     <input type="${field.type}" id="${field.id}" data-id="${field.id}"
                            value="${values[field.id]}" ${attrs}>
                     <span class="field-error hidden" data-error="${field.id}"></span>
@@ -430,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </details>`).join('');
             html += `
             <div class="tool-runner-card" style="margin-top:24px;">
-                <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+                <h2 id="faqs" style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
                 ${faqHtml}
             </div>`;
         }
