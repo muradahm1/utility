@@ -863,6 +863,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         font-size: 13px;
     }
     .tool-grid-workspace {
+        grid-template-columns: 1fr;
         gap: 24px;
     }
     .form-group {

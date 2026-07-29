@@ -439,10 +439,10 @@
         const yrContrib = roundTo(principal + contribution * 12 * y, 2);
         schedule.push({
           month: y,
-          payment: fmt(contribution * 12),
-          principal: fmt(yrContrib),
-          interest: fmt(roundTo(yearValue - yrContrib, 2)),
-          balance: fmt(yearValue),
+          payment: roundTo(contribution * 12, 2),
+          principal: roundTo(yrContrib, 2),
+          interest: roundTo(yearValue - yrContrib, 2),
+          balance: yearValue,
         });
       }
 

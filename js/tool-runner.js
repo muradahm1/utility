@@ -265,12 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const periodLabel = slug === 'compound-interest-calculator' ? 'Year' : 'Month';
+        const scheduleTitle = slug === 'compound-interest-calculator' ? 'Year-by-Year Schedule' : 'Amortization Schedule';
         const tableHtml = result.table ? `
             <div class="result-table-container">
-                <h4>Amortization Schedule</h4>
+                <h4>${scheduleTitle}</h4>
                 <div class="table-wrapper">
                     <table>
-                        <thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+                        <thead><tr><th>${periodLabel}</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
                         <tbody>${buildTableRowsHtml(result.table)}</tbody>
                     </table>
                 </div>
@@ -839,6 +841,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             renderCharts(budgetData);
         }
+
+        let pieChart, barChart;
 
         function renderCharts(budgetData) {
             const expenses = budgetData.expenses;
