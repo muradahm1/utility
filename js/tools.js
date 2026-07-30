@@ -1058,369 +1058,6 @@
       },
     ],
     formula: 'Real Return = (1 + Nominal Return) / (1 + Inflation Rate) - 1 | FV = PV x (1 + r)^n | FV = PMT x [((1 + r_monthly)^n - 1) / r_monthly] | 4% Rule: Annual Withdrawal = Nest Egg x 0.04 | Target Nest Egg = Desired Annual Income x 25',
-  'savings-calculator': {
-    name: 'Savings & Strategy Calculator',
-    category: 'Finance',
-    icon: 'fa-piggy-bank',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.',
-    metaTitle: 'Savings Calculator | Biweekly vs Monthly & HYSA Growth — GetCalcu',
-    metaDescription: 'Free online Savings Calculator. Compare biweekly vs monthly deposits, estimate real HYSA returns after tax and inflation, and pinpoint your exact goal completion timeline.',
-    keywords: [
-      'biweekly vs monthly savings calculator',
-      'hysa inflation calculator',
-      'emergency fund months calculator',
-      'savings goal timeline calculator',
-      'interest calculator with tax',
-    ],
-    fields: [
-      { id: 'mode', label: 'Savings Strategy Mode', type: 'select', default: 'biweekly-monthly',
-        options: [
-          { value: 'biweekly-monthly', label: 'Biweekly vs Monthly Growth Comparison' },
-          { value: 'goal-timeline', label: 'Target Goal & Exact Date Timeline' },
-          { value: 'hysa-real-yield', label: 'HYSA Net Return (Tax & Inflation Adjusted)' },
-          { value: 'emergency-fund', label: 'Emergency Fund Expenses Calculator' },
-        ],
-        hint: 'Choose a savings strategy to model. Each mode surfaces only the inputs it needs.' },
-      { id: 'initial_deposit', label: 'Initial Deposit / Current Savings ($)', type: 'number', default: 5000, min: 0, step: 100,
-        hint: 'Your starting balance or current savings today. Use 0 if you are starting from scratch.' },
-      { id: 'recurring_deposit', label: 'Monthly-Equivalent Deposit ($)', type: 'number', default: 250, min: 0, step: 25,
-        condition: v => ['biweekly-monthly','goal-timeline','hysa-real-yield'].includes(v.mode),
-        hint: 'The amount you deposit per paycheck cycle. In Biweekly vs Monthly mode this is the monthly-equivalent payment (two half-paychecks = one full payment here).' },
-      { id: 'deposit_frequency', label: 'Deposit Frequency', type: 'select', default: 'biweekly',
-        condition: v => ['biweekly-monthly','goal-timeline','hysa-real-yield'].includes(v.mode),
-        options: [
-          { value: 'biweekly', label: 'Biweekly (26/yr)' },
-          { value: 'monthly', label: 'Monthly (12/yr)' },
-          { value: 'weekly', label: 'Weekly (52/yr)' },
-        ],
-        hint: 'How often you contribute. Used for compounding cadence in Growth and Goal modes.' },
-      { id: 'target_goal', label: 'Target Goal Amount ($)', type: 'number', default: 25000, min: 0, step: 500,
-        condition: v => ['goal-timeline','emergency-fund'].includes(v.mode),
-        hint: 'The total balance you want to reach. The calculator projects the exact month and year you cross this line.' },
-      { id: 'essential_expenses', label: 'Essential Monthly Expenses ($)', type: 'number', default: 3500, min: 0, step: 100,
-        condition: v => v.mode === 'emergency-fund',
-        hint: 'Non-negotiable monthly costs: rent/mortgage, utilities, food, insurance, and minimum debt payments.' },
-      { id: 'interest_rate', label: 'Annual Interest Rate / HYSA APY (%)', type: 'number', default: 4.5, min: 0, max: 30, step: 0.1,
-        hint: 'Stated annual yield. For a High-Yield Savings Account use the advertised APY (commonly 3-5%).' },
-      { id: 'tax_rate', label: 'Marginal Income Tax Rate (%)', type: 'number', default: 22, min: 0, max: 50, step: 1,
-        condition: v => v.mode === 'hysa-real-yield',
-        hint: 'Your marginal federal + state income tax bracket applied to interest earned.' },
-      { id: 'inflation_rate', label: 'Expected Inflation Rate (%)', type: 'number', default: 2.5, min: 0, max: 15, step: 0.1,
-        condition: v => v.mode === 'hysa-real-yield',
-        hint: 'Expected annual price increase that erodes purchasing power. US long-run average is about 2.5-3%.' },
-      { id: 'duration_years', label: 'Savings Duration (Years)', type: 'number', default: 5, min: 1, max: 50, step: 1,
-        condition: v => ['biweekly-monthly','hysa-real-yield'].includes(v.mode),
-        hint: 'The planning horizon over which growth, compounding, and real-yield erosion are measured.' },
-    ],
-    fieldLabels(v) {
-      if (v.mode === 'biweekly-monthly') return {
-        initial_deposit: 'Initial Deposit / Current Savings ($)',
-        recurring_deposit: 'Monthly-Equivalent Deposit ($)',
-        interest_rate: 'Annual Interest Rate (%)',
-        target_goal: 'Target Goal Amount ($)',
-      };
-      if (v.mode === 'goal-timeline') return {
-        initial_deposit: 'Current Savings ($)',
-        recurring_deposit: 'Recurring Deposit ($)',
-        interest_rate: 'Annual Interest Rate (%)',
-        target_goal: 'Target Goal Amount ($)',
-      };
-      if (v.mode === 'hysa-real-yield') return {
-        initial_deposit: 'HYSA Balance ($)',
-        recurring_deposit: 'Monthly Deposit ($)',
-        interest_rate: 'HYSA APY (%)',
-      };
-      if (v.mode === 'emergency-fund') return {
-        initial_deposit: 'Current Emergency Savings ($)',
-        interest_rate: 'Savings Account APY (%)',
-        target_goal: 'Custom Buffer Goal ($) (optional)',
-      };
-      return {};
-    },
-    calculate(v) {
-      const P0 = safeNum(v.initial_deposit, 0);
-      const M  = safeNum(v.recurring_deposit, 0);
-      const rate = safeNum(v.interest_rate, 0);
-      const rNom = rate / 100;
-      const t   = Math.round(safeNum(v.duration_years, 5));
-      const G   = safeNum(v.target_goal, 0);
-      const E   = safeNum(v.essential_expenses, 0);
-      const tau = safeNum(v.tax_rate, 0) / 100;
-      const pi = safeNum(v.inflation_rate, 0) / 100;
-      const freq = safeStr(v.deposit_frequency);
-      const ppyMap = { monthly: 12, biweekly: 26, weekly: 52 };
-      const k = ppyMap[freq] || 12;
-      const rp = rNom / k;
-
-      function fv(p0, pmt, rpPeriods, n) {
-        if (rpPeriods === 0) return roundTo(p0 + pmt * n, 2);
-        const gf = Math.pow(1 + rpPeriods, n);
-        return roundTo(p0 * gf + pmt * (gf - 1) / rpPeriods, 2);
-      }
-
-      function monthName(m) {
-        const d = new Date();
-        d.setMonth(d.getMonth() + m);
-        return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-      }
-
-      if (v.mode === 'biweekly-monthly') {
-        const nB = 26 * t;
-        const nH = 12 * t;
-        const pmtB = M / 2;
-        const pmtM = M;
-        const fvB = fv(P0, pmtB, rNom / 26, nB);
-        const fvH = fv(P0, pmtM, rNom / 12, nH);
-        const deltaTotal = roundTo(fvB - fvH, 2);
-        const deltaDeposits = roundTo((pmtB * nB) - (pmtM * nH), 2);
-        const deltaInterest = roundTo(deltaTotal - deltaDeposits, 2);
-        const intB = roundTo(fvB - P0 - pmtB * nB, 2);
-        const intH = roundTo(fvH - P0 - pmtM * nH, 2);
-
-        const labels = [];
-        for (let y = 1; y <= t; y++) labels.push('Year ' + y);
-        const biweeklyData = [];
-        const monthlyData = [];
-        for (let y = 1; y <= t; y++) {
-          biweeklyData.push(fv(P0, pmtB, rNom / 26, 26 * y));
-          monthlyData.push(fv(P0, pmtM, rNom / 12, 12 * y));
-        }
-
-        return {
-          stats: [
-            { label: 'Biweekly Final Balance', value: fmt(fvB), highlight: true },
-            { label: 'Monthly Final Balance', value: fmt(fvH) },
-            { label: 'Biweekly Advantage (Extra Growth)', value: fmt(deltaTotal), highlight: true },
-            { label: 'Extra Deposits (1 payment/yr x t)', value: fmt(deltaDeposits) },
-            { label: 'Extra Compounding Interest', value: fmt(deltaInterest) },
-            { label: 'Biweekly Total Interest Earned', value: fmt(intB) },
-            { label: 'Monthly Total Interest Earned', value: fmt(intH) },
-            { label: 'Time Horizon', value: t + ' years' },
-          ],
-          chart: {
-            type: 'line',
-            labels,
-            datasets: [
-              { label: 'Biweekly', data: biweeklyData, color: '#10B981' },
-              { label: 'Monthly', data: monthlyData, color: '#6366F1' },
-            ],
-            yLabel: 'Balance ($)',
-            title: 'Biweekly vs Monthly Growth',
-          },
-          table: {
-            mode: 'comparison',
-            title: 'Strategy Comparison (' + t + ' Years)',
-            columns: [
-              { key: 'metric', label: 'Metric', format: 'text' },
-              { key: 'monthly', label: 'Monthly', format: 'currency' },
-              { key: 'biweekly', label: 'Biweekly', format: 'currency', emphasis: true },
-              { key: 'advantage', label: 'Advantage', format: 'currency', emphasis: true },
-            ],
-            rows: [
-              { metric: 'Annual Deposits', monthly: fmt(M * 12), biweekly: fmt(pmtB * 26), advantage: fmt(pmtB * 26 - M * 12) },
-              { metric: 'Total Deposits (' + t + ' Years)', monthly: fmt(pmtM * 12 * t), biweekly: fmt(pmtB * 26 * t), advantage: fmt(pmtB * 26 * t - pmtM * 12 * t) },
-              { metric: 'Total Interest Earned', monthly: fmt(intH), biweekly: fmt(intB), advantage: fmt(intB - intH) },
-              { metric: 'Final Balance', monthly: fmt(fvH), biweekly: fmt(fvB), advantage: fmt(deltaTotal) },
-            ],
-          },
-          insight: {
-            tone: deltaTotal > 0 ? 'positive' : 'neutral',
-            icon: 'fa-arrow-trend-up',
-            headline: 'Biweekly deposits beat monthly by ' + fmt(deltaTotal) + ' over ' + t + ' years.',
-      if (v.mode === 'hysa-real-yield') {
-        const rNet = rNom * (1 - tau);
-        const rReal = (1 + rNet) / (1 + pi) - 1;
-        const rNetDisplay = roundTo(rNet * 100, 4);
-        const rRealDisplay = roundTo(rReal * 100, 4);
-        const inflationDrag = roundTo(rNet - rReal, 4);
-        const tUse = Math.max(t, 1);
-        const fvNom = fv(P0, M, rNom / k, k * tUse);
-        const fvPost = fv(P0, M, rNet / k, k * tUse);
-        const fvReal = roundTo(fvPost / Math.pow(1 + pi, tUse), 2);
-
-        const labels = [];
-        for (let y = 1; y <= tUse; y++) labels.push('Year ' + y);
-        const nominalData = [];
-        const postTaxData = [];
-        const realData = [];
-        for (let y = 1; y <= tUse; y++) {
-          nominalData.push(fv(P0, M, rNom / k, k * y));
-          postTaxData.push(fv(P0, M, rNet / k, k * y));
-          realData.push(roundTo(fv(P0, M, rNet / k, k * y) / Math.pow(1 + pi, y), 2));
-        }
-
-        const rowsSchedule = [];
-        let running = P0;
-        for (let y = 1; y <= tUse; y++) {
-          const startB = running;
-          const dep = M * k;
-          const nomEnd = fv(P0, M, rNom / k, k * y);
-          const postEnd = fv(P0, M, rNet / k, k * y);
-          const realEnd = roundTo(postEnd / Math.pow(1 + pi, y), 2);
-          rowsSchedule.push({
-            year: 'Year ' + y,
-            startBalance: fmt(startB),
-            deposits: fmt(dep),
-            nominalEnd: fmt(nomEnd),
-            postTaxEnd: fmt(postEnd),
-            realEndTodayDollars: fmt(realEnd),
-          });
-          running = nomEnd;
-        }
-
-        return {
-          stats: [
-            { label: 'Real Return (Post-Tax, Post-Inflation)', value: pct(rReal / 100), highlight: true },
-            { label: 'Advertised APY', value: pct(rNom) },
-            { label: 'Post-Tax Nominal Return', value: pct(rNet / 100) },
-            { label: 'Inflation Drag', value: pct(inflationDrag / 100), warn: true },
-            { label: 'Real Future Value (Today\'s $)', value: fmt(fvReal) },
-            { label: 'Post-Tax Future Value (Nominal $)', value: fmt(fvPost) },
-            { label: 'Nominal Future Value (Pre-Tax $)', value: fmt(fvNom) },
-          ],
-          chart: {
-            type: 'bar',
-            labels: ['Advertised APY', 'Post-Tax', 'Real Return'],
-            datasets: [
-              { label: 'Yield %', data: [rate, rNetDisplay, rRealDisplay], color: '#6366F1' },
-            ],
-            yLabel: 'Annual Yield (%)',
-            title: 'APY vs Real Purchasing-Power Yield',
-          },
-          table: {
-            mode: 'schedule',
-            title: 'Year-by-Year Real Value Projection',
-            columns: [
-              { key: 'year', label: 'Year', format: 'text' },
-              { key: 'startBalance', label: 'Start Balance', format: 'currency' },
-              { key: 'deposits', label: 'Deposits', format: 'currency' },
-              { key: 'nominalEnd', label: 'Nominal End', format: 'currency' },
-              { key: 'postTaxEnd', label: 'Post-Tax End', format: 'currency' },
-              { key: 'realEndTodayDollars', label: 'Real (Today\'s $)', format: 'currency', emphasis: true },
-            ],
-            rows: rowsSchedule,
-          },
-          insight: {
-            tone: 'warning',
-            icon: 'fa-percent',
-            headline: 'Your bank advertises ' + pct(rNom) + ' APY, but your real return is only ' + pct(rRealDisplay / 100) + '.',
-            detail: 'After ' + pct(tau) + ' tax and ' + pct(pi) + ' inflation, your purchasing-power yield collapses to ' + pct(rRealDisplay / 100) + '. Over ' + tUse + ' years, ' + fmt(P0) + ' plus ' + fmt(M) + '/month grows to ' + fmt(fvReal) + ' in today\'s dollars — versus the ' + fmt(fvNom) + ' the headline rate implies.',
-      if (v.mode === 'goal-timeline') {
-        const rm = rNom / 12;
-        const monthlyPmt = freq === 'biweekly' ? M * 26 / 12 : freq === 'weekly' ? M * 52 / 12 : M;
-        let nStar = 0;
-        let bal = P0;
-        const cap = 1200;
-        while (bal < G && nStar < cap) {
-          nStar++;
-          bal = fv(P0, monthlyPmt, rm, nStar);
-        }
-        const reached = bal >= G;
-        const yr = Math.floor(nStar / 12);
-        const mo = nStar % 12;
-        const balR = roundTo(bal, 2);
-        const contribs = roundTo(P0 + monthlyPmt * nStar, 2);
-        const interestEarned = roundTo(balR - contribs, 2);
-
-        const data = [];
-        const step = nStar <= 66 ? 1 : Math.max(1, Math.floor(nStar / 60));
-        for (let m = step; m <= nStar; m += step) {
-          data.push(fv(P0, monthlyPmt, rm, m));
-        }
-        if (!data.length || data[data.length - 1] !== balR) data.push(balR);
-        const labels = [];
-        for (let i = 0; i < data.length; i++) {
-          const monthNum = i * step + step;
-          labels.push(monthNum <= 12 ? 'Month ' + monthNum : monthNum + ' mo');
-        }
-
-        let stats;
-        if (P0 >= G && G > 0) {
-          stats = [
-            { label: 'Goal Reached In', value: '0 yr 0 mo', highlight: true },
-            { label: 'Projected Completion Date', value: monthName(0), highlight: true },
-            { label: 'Total Months', value: '0' },
-            { label: 'Balance at Goal', value: fmt(P0) },
-            { label: 'Total Contributions by Goal', value: fmt(P0) },
-            { label: 'Interest Earned by Goal', value: fmt(0) },
-            { label: 'Monthly Deposit Used', value: fmt(monthlyPmt) },
-          ];
-        } else if (!reached) {
-          stats = [
-            { label: 'Goal Reachable?', value: 'Not reached within 100 years', warn: true, highlight: true },
-            { label: 'Monthly Deposit Used', value: fmt(monthlyPmt) },
-            { label: 'Current Balance at ' + cap + ' months', value: fmt(balR) },
-          ];
-        } else {
-          stats = [
-            { label: 'Goal Reached In', value: yr + ' yr ' + mo + ' mo', highlight: true },
-            { label: 'Projected Completion Date', value: monthName(nStar), highlight: true },
-            { label: 'Total Months', value: String(nStar) },
-            { label: 'Balance at Goal', value: fmt(balR) },
-            { label: 'Total Contributions by Goal', value: fmt(contribs) },
-            { label: 'Interest Earned by Goal', value: fmt(interestEarned) },
-            { label: 'Monthly Deposit Used', value: fmt(monthlyPmt) },
-          ];
-        }
-
-        const scheduleRows = [];
-        const sStep = nStar <= 60 ? 1 : Math.max(1, Math.floor(nStar / 30));
-        for (let m = sStep; m <= nStar; m += sStep) {
-          const curBal = fv(P0, monthlyPmt, rm, m);
-          const prevBal = fv(P0, monthlyPmt, rm, m - sStep);
-          const intPart = roundTo(curBal - prevBal - monthlyPmt * sStep, 2);
-          scheduleRows.push({
-            period: m === nStar ? 'Month ' + m + ' — Goal Reached' : 'Month ' + m,
-            deposit: fmt(monthlyPmt * sStep),
-            interest: fmt(Math.max(0, intPart)),
-            balance: fmt(curBal),
-          });
-        }
-
-        return {
-          stats,
-          chart: {
-            type: 'line',
-            labels,
-            datasets: [
-              { label: 'Balance', data: data, color: '#6366F1' },
-              { label: 'Goal', data: new Array(data.length).fill(G), color: '#EF4444' },
-            ],
-            yLabel: 'Balance ($)',
-            title: 'Path to ' + fmt(G),
-          },
-          table: {
-            mode: 'schedule',
-            title: 'Milestone Schedule',
-            columns: [
-              { key: 'period', label: 'Period', format: 'text' },
-              { key: 'deposit', label: 'Deposit', format: 'currency' },
-              { key: 'interest', label: 'Interest', format: 'currency' },
-              { key: 'balance', label: 'Balance', format: 'currency', emphasis: true },
-            ],
-            rows: scheduleRows,
-          },
-          insight: {
-            tone: 'positive',
-            icon: 'fa-bullseye',
-            headline: P0 >= G ? 'You have already reached your ' + fmt(G) + ' goal.' : 'You will reach ' + fmt(G) + ' in ' + yr + ' yr ' + mo + ' mo — projected ' + monthName(nStar) + '.',
-            detail: P0 >= G ? 'Your current savings of ' + fmt(P0) + ' meet or exceed the target today.' : 'That is ' + nStar + ' months of ' + fmt(monthlyPmt) + '/month deposits plus compounded interest. Raising your monthly deposit shortens the timeline; use the slider to test scenarios.',
-          },
-        };
-      }
-
-          },
-        };
-      }
-
-            detail: 'Of that, ' + fmt(deltaDeposits) + ' comes from one extra monthly payment per year and ' + fmt(deltaInterest) + ' is pure compounding edge. Switching to biweekly paycheck deposits accelerates your savings without raising your per-paycheck amount.',
-          },
-        };
-      }
-
-
 
     // ── SEO Article Content
     article: {
@@ -1465,6 +1102,230 @@
       },
     ],
   },
+  'savings-calculator': {
+    name: 'Savings & Strategy Calculator',
+    category: 'Finance',
+    icon: 'fa-piggy-bank',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.',
+    metaTitle: 'Savings Calculator | Biweekly vs Monthly & HYSA Growth — GetCalcu',
+    metaDescription: 'Free online Savings Calculator. Compare biweekly vs monthly deposits, estimate real HYSA returns after tax and inflation, and pinpoint your exact goal completion timeline.',
+    keywords: [
+      'biweekly vs monthly savings calculator',
+      'hysa inflation calculator',
+      'emergency fund months calculator',
+      'savings goal timeline calculator',
+      'interest calculator with tax',
+    ],
+    fields: [
+      { id: 'mode', label: 'Savings Strategy Mode', type: 'select', default: 'biweekly-monthly',
+        options: [
+          { value: 'biweekly-monthly', label: 'Biweekly vs Monthly Growth Comparison' },
+          { value: 'goal-timeline', label: 'Target Goal & Exact Date Timeline' },
+          { value: 'hysa-real-yield', label: 'HYSA Net Return (Tax & Inflation Adjusted)' },
+          { value: 'emergency-fund', label: 'Emergency Fund Expenses Calculator' },
+        ],
+        hint: 'Choose a savings strategy to model. Each mode surfaces only the inputs it needs.' },
+      { id: 'initial_deposit', label: 'Initial Deposit / Current Savings ($)', type: 'number', default: 5000, min: 0, step: 100,
+        hint: 'Your starting balance or current savings today. Use 0 if you are starting from scratch.' },
+      { id: 'recurring_deposit', label: 'Monthly-Equivalent Deposit ($)', type: 'number', default: 250, min: 0, step: 25,
+        condition: v => ['biweekly-monthly','goal-timeline','hysa-real-yield'].includes(v.mode),
+        hint: 'The amount you deposit per paycheck cycle. In Biweekly vs Monthly mode this is the monthly-equivalent payment.' },
+      { id: 'deposit_frequency', label: 'Deposit Frequency', type: 'select', default: 'biweekly',
+        condition: v => ['biweekly-monthly','goal-timeline','hysa-real-yield'].includes(v.mode),
+        options: [
+          { value: 'biweekly', label: 'Biweekly (26/yr)' },
+          { value: 'monthly', label: 'Monthly (12/yr)' },
+          { value: 'weekly', label: 'Weekly (52/yr)' },
+        ],
+        hint: 'How often you contribute. Used for compounding cadence in Growth and Goal modes.' },
+      { id: 'target_goal', label: 'Target Goal Amount ($)', type: 'number', default: 25000, min: 0, step: 500,
+        condition: v => ['goal-timeline','emergency-fund'].includes(v.mode),
+        hint: 'The total balance you want to reach. The calculator projects the exact month and year you cross this line.' },
+      { id: 'essential_expenses', label: 'Essential Monthly Expenses ($)', type: 'number', default: 3500, min: 0, step: 100,
+        condition: v => v.mode === 'emergency-fund',
+        hint: 'Non-negotiable monthly costs: rent/mortgage, utilities, food, insurance, and minimum debt payments.' },
+      { id: 'interest_rate', label: 'Annual Interest Rate / HYSA APY (%)', type: 'number', default: 4.5, min: 0, max: 30, step: 0.1,
+        hint: 'Stated annual yield. For a High-Yield Savings Account use the advertised APY (commonly 3-5%).' },
+      { id: 'tax_rate', label: 'Marginal Income Tax Rate (%)', type: 'number', default: 22, min: 0, max: 50, step: 1,
+        condition: v => v.mode === 'hysa-real-yield',
+        hint: 'Your marginal federal + state income tax bracket applied to interest earned.' },
+      { id: 'inflation_rate', label: 'Expected Inflation Rate (%)', type: 'number', default: 2.5, min: 0, max: 15, step: 0.1,
+        condition: v => v.mode === 'hysa-real-yield',
+        hint: 'Expected annual price increase that erodes purchasing power. US long-run average is about 2.5-3%.' },
+      { id: 'duration_years', label: 'Savings Duration (Years)', type: 'number', default: 5, min: 1, max: 50, step: 1,
+        condition: v => ['biweekly-monthly','hysa-real-yield'].includes(v.mode),
+        hint: 'The planning horizon over which growth, compounding, and real-yield erosion are measured.' },
+    ],
+
+    fieldLabels(v) {
+      if (v.mode === 'biweekly-monthly') return { initial_deposit: 'Initial Deposit / Current Savings ($)', recurring_deposit: 'Monthly-Equivalent Deposit ($)', interest_rate: 'Annual Interest Rate (%)', target_goal: 'Target Goal Amount ($)' };
+      if (v.mode === 'goal-timeline') return { initial_deposit: 'Current Savings ($)', recurring_deposit: 'Recurring Deposit ($)', interest_rate: 'Annual Interest Rate (%)', target_goal: 'Target Goal Amount ($)' };
+      if (v.mode === 'hysa-real-yield') return { initial_deposit: 'HYSA Balance ($)', recurring_deposit: 'Monthly Deposit ($)', interest_rate: 'HYSA APY (%)' };
+      if (v.mode === 'emergency-fund') return { initial_deposit: 'Current Emergency Savings ($)', interest_rate: 'Savings Account APY (%)', target_goal: 'Custom Buffer Goal ($) (optional)' };
+      return {};
+    },
+    calculate(v) {
+      const P0 = safeNum(v.initial_deposit, 0);
+      const M  = safeNum(v.recurring_deposit, 0);
+      const rate = safeNum(v.interest_rate, 0);
+      const rNom = rate / 100;
+      const t   = Math.round(safeNum(v.duration_years, 5));
+      const G   = safeNum(v.target_goal, 0);
+      const E   = safeNum(v.essential_expenses, 0);
+      const tau = safeNum(v.tax_rate, 0) / 100;
+      const pi = safeNum(v.inflation_rate, 0) / 100;
+      const freq = safeStr(v.deposit_frequency);
+      const k = { monthly: 12, biweekly: 26, weekly: 52 }[freq] || 12;
+      function fv(p0, pmt, rp, n) { if (rp === 0) return roundTo(p0 + pmt * n, 2); const gf = Math.pow(1 + rp, n); return roundTo(p0 * gf + pmt * (gf - 1) / rp, 2); }
+      function monthName(m) { const d = new Date(); d.setMonth(d.getMonth() + m); return d.toLocaleString('en-US', { month: 'long', year: 'numeric' }); }
+      if (v.mode === 'biweekly-monthly') {
+        const fvB = fv(P0, M/2, rNom/26, 26*t);
+        const fvH = fv(P0, M, rNom/12, 12*t);
+        const dTot = roundTo(fvB - fvH, 2);
+        const dDep = roundTo((M/2 * 26*t) - (M * 12*t), 2);
+        const dInt = roundTo(dTot - dDep, 2);
+        const intB = roundTo(fvB - P0 - M/2 * 26*t, 2);
+        const intH = roundTo(fvH - P0 - M * 12*t, 2);
+        const labels = []; const bData = []; const mData = [];
+        for (let y = 1; y <= t; y++) { labels.push('Year ' + y); bData.push(fv(P0, M/2, rNom/26, 26*y)); mData.push(fv(P0, M, rNom/12, 12*y)); }
+        return { stats: [
+          { label: 'Biweekly Final Balance', value: fmt(fvB), highlight: true },
+          { label: 'Monthly Final Balance', value: fmt(fvH) },
+          { label: 'Biweekly Advantage (Extra Growth)', value: fmt(dTot), highlight: true },
+          { label: 'Extra Deposits (1 payment/yr x t)', value: fmt(dDep) },
+          { label: 'Extra Compounding Interest', value: fmt(dInt) },
+          { label: 'Biweekly Total Interest Earned', value: fmt(intB) },
+          { label: 'Monthly Total Interest Earned', value: fmt(intH) },
+          { label: 'Time Horizon', value: t + ' years' },
+        ], chart: { type: 'line', labels, datasets: [ { label: 'Biweekly', data: bData, color: '#10B981' }, { label: 'Monthly', data: mData, color: '#6366F1' } ], yLabel: 'Balance ($)', title: 'Biweekly vs Monthly Growth' },
+        table: { mode: 'comparison', title: 'Strategy Comparison (' + t + ' Years)', columns: [
+          { key: 'metric', label: 'Metric', format: 'text' }, { key: 'monthly', label: 'Monthly', format: 'currency' },
+          { key: 'biweekly', label: 'Biweekly', format: 'currency', emphasis: true }, { key: 'advantage', label: 'Advantage', format: 'currency', emphasis: true } ],
+        rows: [ { metric: 'Annual Deposits', monthly: fmt(M*12), biweekly: fmt(M/2*26), advantage: fmt(M/2*26 - M*12) },
+          { metric: 'Total Deposits (' + t + ' Years)', monthly: fmt(M*12*t), biweekly: fmt(M/2*26*t), advantage: fmt(M/2*26*t - M*12*t) },
+          { metric: 'Total Interest Earned', monthly: fmt(intH), biweekly: fmt(intB), advantage: fmt(intB - intH) },
+          { metric: 'Final Balance', monthly: fmt(fvH), biweekly: fmt(fvB), advantage: fmt(dTot) } ] },
+        insight: { tone: dTot > 0 ? 'positive' : 'neutral', icon: 'fa-arrow-trend-up',
+          headline: 'Biweekly deposits beat monthly by ' + fmt(dTot) + ' over ' + t + ' years.',
+          detail: 'Of that, ' + fmt(dDep) + ' comes from one extra monthly payment per year and ' + fmt(dInt) + ' is pure compounding edge. Switching to biweekly paycheck deposits accelerates your savings without raising your per-paycheck amount.' } };
+      }
+
+      if (v.mode === 'hysa-real-yield') {
+        const rNet = rNom * (1 - tau);
+        const rReal = (1 + rNet) / (1 + pi) - 1;
+        const rNetD = roundTo(rNet * 100, 4);
+        const rRealD = roundTo(rReal * 100, 4);
+        const tUse = Math.max(t, 1);
+        const fvNom = fv(P0, M, rNom/k, k*tUse);
+        const fvPost = fv(P0, M, rNet/k, k*tUse);
+        const fvReal = roundTo(fvPost / Math.pow(1 + pi, tUse), 2);
+        const rowsS = []; let run = P0;
+        for (let y = 1; y <= tUse; y++) {
+          const sB = run; const dep = M * k;
+          const nE = fv(P0, M, rNom/k, k*y); const pE = fv(P0, M, rNet/k, k*y);
+          const rE = roundTo(pE / Math.pow(1 + pi, y), 2);
+          rowsS.push({ year: 'Year ' + y, startBalance: fmt(sB), deposits: fmt(dep), nominalEnd: fmt(nE), postTaxEnd: fmt(pE), realEndTodayDollars: fmt(rE) });
+          run = nE;
+        }
+        return { stats: [
+          { label: 'Real Return (Post-Tax, Post-Inflation)', value: pct(rReal/100), highlight: true },
+          { label: 'Advertised APY', value: pct(rNom) },
+          { label: 'Post-Tax Nominal Return', value: pct(rNet/100) },
+          { label: 'Inflation Drag', value: pct(roundTo(rNet - rReal, 4)/100), warn: true },
+          { label: "Real Future Value (Today's $)", value: fmt(fvReal) },
+          { label: 'Post-Tax Future Value (Nominal $)', value: fmt(fvPost) },
+          { label: 'Nominal Future Value (Pre-Tax $)', value: fmt(fvNom) },
+        ], chart: { type: 'bar', labels: ['Advertised APY', 'Post-Tax', 'Real Return'], datasets: [ { label: 'Yield %', data: [rate, rNetD, rRealD], color: '#6366F1' } ], yLabel: 'Annual Yield (%)', title: 'APY vs Real Purchasing-Power Yield' },
+        table: { mode: 'schedule', title: 'Year-by-Year Real Value Projection', columns: [
+          { key: 'year', label: 'Year', format: 'text' }, { key: 'startBalance', label: 'Start Balance', format: 'currency' },
+          { key: 'deposits', label: 'Deposits', format: 'currency' }, { key: 'nominalEnd', label: 'Nominal End', format: 'currency' },
+          { key: 'postTaxEnd', label: 'Post-Tax End', format: 'currency' }, { key: 'realEndTodayDollars', label: "Real (Today's $)", format: 'currency', emphasis: true } ], rows: rowsS },
+        insight: { tone: 'warning', icon: 'fa-percent',
+          headline: 'Your bank advertises ' + pct(rNom) + ' APY, but your real return is only ' + pct(rRealD/100) + '.',
+          detail: 'After ' + pct(tau) + ' tax and ' + pct(pi) + ' inflation, your purchasing-power yield collapses to ' + pct(rRealD/100) + '. Over ' + tUse + ' years, ' + fmt(P0) + ' plus ' + fmt(M) + '/month grows to ' + fmt(fvReal) + " in today's dollars." } };
+      }
+
+      if (v.mode === 'goal-timeline') {
+        const rm = rNom / 12;
+        const mPmt = freq === 'biweekly' ? M * 26 / 12 : freq === 'weekly' ? M * 52 / 12 : M;
+        let nStar = 0; let bal = P0; const cap = 1200;
+        while (bal < G && nStar < cap) { nStar++; bal = fv(P0, mPmt, rm, nStar); }
+        const reached = bal >= G;
+        const yr = Math.floor(nStar / 12); const mo = nStar % 12;
+        const balR = roundTo(bal, 2);
+        const contribs = roundTo(P0 + mPmt * nStar, 2);
+        const intEarned = roundTo(balR - contribs, 2);
+        const data = []; const step = nStar <= 66 ? 1 : Math.max(1, Math.floor(nStar / 60));
+        for (let m = step; m <= nStar; m += step) data.push(fv(P0, mPmt, rm, m));
+        if (!data.length || data[data.length - 1] !== balR) data.push(balR);
+        const labels = []; for (let i = 0; i < data.length; i++) { const mn = i * step + step; labels.push(mn <= 12 ? 'Month ' + mn : mn + ' mo'); }
+        let stats;
+        if (P0 >= G && G > 0) { stats = [ { label: 'Goal Reached In', value: '0 yr 0 mo', highlight: true }, { label: 'Projected Completion Date', value: monthName(0), highlight: true }, { label: 'Total Months', value: '0' }, { label: 'Balance at Goal', value: fmt(P0) }, { label: 'Total Contributions by Goal', value: fmt(P0) }, { label: 'Interest Earned by Goal', value: fmt(0) }, { label: 'Monthly Deposit Used', value: fmt(mPmt) } ]; }
+        else if (!reached) { stats = [ { label: 'Goal Reachable?', value: 'Not reached within 100 years', warn: true, highlight: true }, { label: 'Monthly Deposit Used', value: fmt(mPmt) }, { label: 'Current Balance at ' + cap + ' months', value: fmt(balR) } ]; }
+        else { stats = [ { label: 'Goal Reached In', value: yr + ' yr ' + mo + ' mo', highlight: true }, { label: 'Projected Completion Date', value: monthName(nStar), highlight: true }, { label: 'Total Months', value: String(nStar) }, { label: 'Balance at Goal', value: fmt(balR) }, { label: 'Total Contributions by Goal', value: fmt(contribs) }, { label: 'Interest Earned by Goal', value: fmt(intEarned) }, { label: 'Monthly Deposit Used', value: fmt(mPmt) } ]; }
+        const sRows = []; const sStep = nStar <= 60 ? 1 : Math.max(1, Math.floor(nStar / 30));
+        for (let m = sStep; m <= nStar; m += sStep) { const cB = fv(P0, mPmt, rm, m); const pB = fv(P0, mPmt, rm, m - sStep); const iP = roundTo(cB - pB - mPmt * sStep, 2); sRows.push({ period: m === nStar ? 'Month ' + m + ' — Goal Reached' : 'Month ' + m, deposit: fmt(mPmt * sStep), interest: fmt(Math.max(0, iP)), balance: fmt(cB) }); }
+        return { stats, chart: { type: 'line', labels, datasets: [ { label: 'Balance', data: data, color: '#6366F1' }, { label: 'Goal', data: new Array(data.length).fill(G), color: '#EF4444' } ], yLabel: 'Balance ($)', title: 'Path to ' + fmt(G) },
+        table: { mode: 'schedule', title: 'Milestone Schedule', columns: [ { key: 'period', label: 'Period', format: 'text' }, { key: 'deposit', label: 'Deposit', format: 'currency' }, { key: 'interest', label: 'Interest', format: 'currency' }, { key: 'balance', label: 'Balance', format: 'currency', emphasis: true } ], rows: sRows },
+        insight: { tone: 'positive', icon: 'fa-bullseye', headline: P0 >= G ? 'You have already reached your ' + fmt(G) + ' goal.' : 'You will reach ' + fmt(G) + ' in ' + yr + ' yr ' + mo + ' mo — projected ' + monthName(nStar) + '.', detail: P0 >= G ? 'Your current savings of ' + fmt(P0) + ' meet or exceed the target today.' : 'That is ' + nStar + ' months of ' + fmt(mPmt) + '/month deposits plus compounded interest. Raising your monthly deposit shortens the timeline.' } };
+      }
+
+      if (v.mode === 'emergency-fund') {
+        if (E <= 0) return { stats: [ { label: 'Months of Coverage', value: '—', warn: true, highlight: true }, { label: 'Enter Essential Expenses', value: 'Required to calculate coverage', warn: true } ], bars: [], insight: { tone: 'warning', icon: 'fa-shield-halved', headline: 'Enter your essential monthly expenses to calculate coverage.', detail: 'This mode needs your monthly cost of living to convert savings into months of runway.' } };
+        const mc = roundTo(P0 / E, 2);
+        const G3 = roundTo(3 * E, 2); const G6 = roundTo(6 * E, 2);
+        const s3 = roundTo(Math.max(0, G3 - P0), 2); const s6 = roundTo(Math.max(0, G6 - P0), 2);
+        const hasC = G > 0; const sC = hasC ? roundTo(Math.max(0, G - P0), 2) : 0;
+        const stats = [ { label: 'Months of Coverage', value: mc.toFixed(1) + ' months', highlight: true }, { label: 'Current Savings', value: fmt(P0) }, { label: '3-Month Buffer Target', value: fmt(G3) }, { label: 'Shortfall to 3 Months', value: fmt(s3), warn: s3 > 0 }, { label: '6-Month Buffer Target', value: fmt(G6) }, { label: 'Shortfall to 6 Months', value: fmt(s6), warn: s6 > 0, highlight: true } ];
+        if (hasC) { stats.push({ label: 'Custom Buffer Target', value: fmt(G) }); stats.push({ label: 'Shortfall to Custom', value: fmt(sC), warn: sC > 0 }); }
+        const bars = [ { label: '3-Month Buffer', value: P0, target: G3, color: s3 > 0 ? '#EF4444' : '#10B981', caption: s3 > 0 ? fmt(s3) + ' short' : 'Funded' }, { label: '6-Month Buffer', value: P0, target: G6, color: s6 > 0 ? '#EF4444' : '#10B981', caption: s6 > 0 ? fmt(s6) + ' short' : 'Funded' } ];
+        if (hasC) bars.push({ label: 'Custom Buffer', value: P0, target: G, color: sC > 0 ? '#EF4444' : '#10B981', caption: sC > 0 ? fmt(sC) + ' short' : 'Funded' });
+        const tone = mc < 3 ? 'warning' : mc < 6 ? 'neutral' : 'positive';
+        const insight = { tone, icon: 'fa-shield-halved', headline: 'Your savings cover ' + mc.toFixed(1) + ' months of expenses.', detail: 'You are ' + fmt(s6) + ' short of a 6-month buffer (' + fmt(G6) + '). A 3-month minimum buffer (' + fmt(G3) + ') needs ' + fmt(s3) + ' more. Advisors recommend 3-6 months in a liquid HYSA.' };
+        if (mc >= 6) { insight.headline = 'Fully funded: ' + mc.toFixed(1) + ' months of expenses covered.'; insight.detail = 'You exceed the 6-month buffer target of ' + fmt(G6) + '. Keep it in a high-yield, accessible account.'; }
+        return { stats, bars, insight };
+      }
+      return errorResult('Unknown mode selected.');
+    },
+    howTo: [
+      'Choose a strategy mode - Biweekly vs Monthly, Target Goal & Date, HYSA Net Return, or Emergency Fund. Only the inputs that mode needs appear.',
+      'Enter your current savings or initial deposit. Use 0 if you are starting from scratch.',
+      'Add your recurring deposit amount and how often you contribute (biweekly, monthly, or weekly).',
+      'For goal and HYSA modes, set your target amount, HYSA APY, marginal tax rate, and expected inflation.',
+      'For the emergency-fund mode, enter your essential monthly expenses; the tool sizes 3- and 6-month buffers automatically.',
+      'Read the headline insight, then review the stat tiles, growth chart, and schedule/comparison table for the full picture.',
+      'Use "Copy Results" to grab the numbers or "Save Result" to store the scenario to your GetCalcu history.',
+    ],
+
+    examples: [
+      { title: 'Biweekly edge over 5 years', input: '$5,000 start, $250/mo-equivalent, 4.5% APY, 5 years', result: 'Biweekly $24,466 vs Monthly $23,046 → +$1,421 extra (≈$171 pure compounding)' },
+      { title: 'HYSA real return reality check', input: '$5,000 at 4.5% APY, 22% tax, 2.5% inflation, $250/mo, 5 years', result: 'Real return ≈ 0.99% — $5,000 → ≈$19,735 in today\'s dollars' },
+      { title: 'Goal timeline to $25,000', input: '$5,000 start, $250/mo, 4.5% APY, goal $25,000', result: 'Reached in 66 months (5 yr 6 mo) — projected Jan 2032' },
+      { title: 'Emergency fund gap', input: '$5,000 saved, $3,500/mo essential expenses', result: '1.4 months covered · $16,000 short of a 6-month buffer' },
+    ],
+    formula: 'Biweekly vs Monthly: FV = P0(1+r/k)^(kt) + PMT * [((1+r/k)^(kt)-1)/(r/k)] with k=26 (biweekly) vs k=12 (monthly) | Post-Tax Real Yield: r_net = r_nominal*(1-tau) and r_real = (1+r_net)/(1+pi)-1 | Goal Months: smallest n with P0(1+r_m)^n + PMT_m*(((1+r_m)^n-1)/r_m) >= G | Emergency Coverage: Months = P0/E, G3=3E, G6=6E',
+
+    article: {
+      heading: 'Smart Savings Strategies: Biweekly Acceleration, HYSA Net Yields & Timelines',
+      intro: 'Most savings calculators stop at a single compound-interest projection — but real-world wealth building is shaped by forces those tools ignore. The GetCalcu Savings & Strategy Calculator models the factors that actually move your balance: biweekly paycheck timing that sneaks in an extra deposit each year, income tax that clips your HYSA interest, and inflation that quietly erodes what those dollars can buy. Across four focused modes, it shows your true trajectory instead of a rosy headline number.',
+      sections: [
+        { heading: 'Why basic savings calculators fall short', body: 'A standard calculator applies one rate to one contribution schedule and prints a future value. That ignores how you actually get paid. If you are paid biweekly, you receive 26 checks a year — and contributing from every check means 26 half-deposits, the equivalent of 13 monthly payments instead of 12. It also ignores that HYSA interest is ordinary income, taxed at your marginal bracket, and that inflation shrinks the purchasing power of every dollar you keep. Without accounting for tax and inflation, an advertised 4.5% APY can quietly become a sub-1% real return.' },
+        { heading: 'The math behind your real HYSA return', body: 'Two steps convert a bank\'s advertised APY into your true purchasing-power yield. First, tax the interest: your after-tax nominal return is r_net = r_nominal x (1 - Tax Rate). Second, remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + Inflation Rate) - 1. The result is what your savings actually earn in today\'s dollars. At a 4.5% APY, 22% tax, and 2.5% inflation, the real return is under 1% — a number most savers never see because their bank only displays the gross rate.' },
+        { heading: 'Biweekly acceleration, goal timelines, and emergency funds', body: 'The same compounding engine powers the other three modes. Biweekly acceleration quantifies the edge from one extra monthly payment per year. The goal-timeline engine walks your balance forward month by month until it crosses your target, then projects the exact calendar month and year you will arrive. And the emergency-fund mode translates a lump sum into months of essential-expense coverage, sizing the 3- and 6-month buffers most advisors recommend holding in a liquid, high-yield account.' },
+      ],
+    },
+
+    faqs: [
+      { q: 'Does saving biweekly build money faster than saving monthly?', a: 'Yes. Because a year contains 52 weeks, saving biweekly results in 26 half-deposits—equivalent to 13 full monthly payments per year. This extra deposit accelerates compounding and builds wealth faster over multi-year horizons.' },
+      { q: 'Is interest earned from a High-Yield Savings Account (HYSA) taxable?', a: 'Yes. In most jurisdictions, interest earned from bank savings accounts and HYSAs is classified as ordinary income and subject to taxation at your marginal income tax bracket.' },
+      { q: 'How many months of expenses should be in an emergency fund?', a: 'Financial advisors typically recommend holding 3 to 6 months of essential living expenses (rent/mortgage, utilities, food, debt minimums) in a liquid, accessible account like a High-Yield Savings Account.' },
+      { q: 'How do you calculate the real return on a savings account after tax and inflation?', a: 'First reduce the advertised APY by your tax rate to get the post-tax nominal return: r_net = APY x (1 - tax rate). Then remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + inflation) - 1. For a 4.5% APY at a 22% tax bracket with 2.5% inflation, the post-tax return is 3.51% and the real return is about 0.99%.' },
+      { q: 'How long will it take to reach my savings goal?', a: 'Divide the problem into months: project your balance forward each month as initial savings grown by the monthly rate plus your monthly contribution, and stop at the first month the balance meets or exceeds your goal. The Savings & Strategy Calculator performs this month-by-month walk and converts the result into an exact calendar month and year, so you see not just "5 years 6 months" but a projected completion date like January 2032.' },
+    ],
+  },
+
 };
 
 
@@ -1496,107 +1357,3 @@ function buildAmortization(principal, r, n, payment) {
   return rows;
 }
 function fmtCurrency(n) { return fmt(n); }
-      if (v.mode === 'emergency-fund') {
-        if (E <= 0) {
-          return {
-            stats: [
-              { label: 'Months of Coverage', value: '—', warn: true, highlight: true },
-              { label: 'Enter Essential Expenses', value: 'Required to calculate coverage', warn: true },
-            ],
-            bars: [],
-            insight: {
-              tone: 'warning',
-              icon: 'fa-shield-halved',
-              headline: 'Enter your essential monthly expenses to calculate coverage.',
-              detail: 'This mode needs your monthly cost of living to convert savings into months of runway.',
-            },
-          };
-        }
-        const monthsCovered = roundTo(P0 / E, 2);
-        const G3 = roundTo(3 * E, 2);
-        const G6 = roundTo(6 * E, 2);
-        const short3 = roundTo(Math.max(0, G3 - P0), 2);
-        const short6 = roundTo(Math.max(0, G6 - P0), 2);
-        const hasCustom = G > 0;
-        const shortCustom = hasCustom ? roundTo(Math.max(0, G - P0), 2) : 0;
-
-        const stats = [
-          { label: 'Months of Coverage', value: monthsCovered.toFixed(1) + ' months', highlight: true },
-          { label: 'Current Savings', value: fmt(P0) },
-          { label: '3-Month Buffer Target', value: fmt(G3) },
-          { label: 'Shortfall to 3 Months', value: fmt(short3), warn: short3 > 0 },
-          { label: '6-Month Buffer Target', value: fmt(G6) },
-          { label: 'Shortfall to 6 Months', value: fmt(short6), warn: short6 > 0, highlight: true },
-        ];
-        if (hasCustom) {
-          stats.push({ label: 'Custom Buffer Target', value: fmt(G) });
-          stats.push({ label: 'Shortfall to Custom', value: fmt(shortCustom), warn: shortCustom > 0 });
-        }
-
-        const bars = [
-          { label: '3-Month Buffer', value: P0, target: G3, color: short3 > 0 ? '#EF4444' : '#10B981', caption: short3 > 0 ? fmt(short3) + ' short' : 'Funded' },
-          { label: '6-Month Buffer', value: P0, target: G6, color: short6 > 0 ? '#EF4444' : '#10B981', caption: short6 > 0 ? fmt(short6) + ' short' : 'Funded' },
-        ];
-        if (hasCustom) {
-          bars.push({ label: 'Custom Buffer', value: P0, target: G, color: shortCustom > 0 ? '#EF4444' : '#10B981', caption: shortCustom > 0 ? fmt(shortCustom) + ' short' : 'Funded' });
-        }
-
-        const tone = monthsCovered < 3 ? 'warning' : monthsCovered < 6 ? 'neutral' : 'positive';
-        const insight = {
-          tone,
-          icon: 'fa-shield-halved',
-          headline: 'Your savings cover ' + monthsCovered.toFixed(1) + ' months of expenses.',
-          detail: 'You are ' + fmt(short6) + ' short of a 6-month buffer (' + fmt(G6) + '). A 3-month minimum buffer (' + fmt(G3) + ') needs ' + fmt(short3) + ' more. Advisors recommend 3-6 months in a liquid HYSA.',
-        };
-        if (monthsCovered >= 6) {
-          insight.headline = 'Fully funded: ' + monthsCovered.toFixed(1) + ' months of expenses covered.';
-          insight.detail = 'You exceed the 6-month buffer target of ' + fmt(G6) + '. Keep it in a high-yield, accessible account.';
-        }
-
-        return { stats, bars, insight };
-      }
-
-      return errorResult('Unknown mode selected.');
-    },
-    // ── How-To Guide
-    howTo: [
-      'Choose a strategy mode - Biweekly vs Monthly, Target Goal & Date, HYSA Net Return, or Emergency Fund. Only the inputs that mode needs appear.',
-      'Enter your current savings or initial deposit. Use 0 if you are starting from scratch.',
-      'Add your recurring deposit amount and how often you contribute (biweekly, monthly, or weekly).',
-      'For goal and HYSA modes, set your target amount, HYSA APY, marginal tax rate, and expected inflation.',
-      'For the emergency-fund mode, enter your essential monthly expenses; the tool sizes 3- and 6-month buffers automatically.',
-      'Read the headline insight, then review the stat tiles, growth chart, and schedule/comparison table for the full picture.',
-      'Use "Copy Results" to grab the numbers or "Save Result" to store the scenario to your GetCalcu history.',
-    ],
-
-    // ── Real-World Examples
-    examples: [
-      { title: 'Biweekly edge over 5 years', input: '\,000 start, \/mo-equivalent, 4.5% APY, 5 years', result: 'Biweekly \,466 vs Monthly \,046 → +\,421 extra (≈\ pure compounding)' },
-      { title: 'HYSA real return reality check', input: '\,000 at 4.5% APY, 22% tax, 2.5% inflation, \/mo, 5 years', result: 'Real return ≈ 0.99% — \,000 → ≈\,735 in today\'s dollars' },
-      { title: 'Goal timeline to \,000', input: '\,000 start, \/mo, 4.5% APY, goal \,000', result: 'Reached in 66 months (5 yr 6 mo) — projected Jan 2032' },
-      { title: 'Emergency fund gap', input: '\,000 saved, \,500/mo essential expenses', result: '1.4 months covered · \,000 short of a 6-month buffer' },
-    ],
-
-    formula: 'Biweekly vs Monthly: FV = P0(1+r/k)^(kt) + PMT * [((1+r/k)^(kt)-1)/(r/k)] with k=26 (biweekly) vs k=12 (monthly) | Post-Tax Real Yield: r_net = r_nominal*(1-tau) and r_real = (1+r_net)/(1+pi)-1 | Goal Months: smallest n with P0(1+r_m)^n + PMT_m*(((1+r_m)^n-1)/r_m) >= G | Emergency Coverage: Months = P0/E, G3=3E, G6=6E',
-
-    // ── SEO Article Content
-    article: {
-      heading: 'Smart Savings Strategies: Biweekly Acceleration, HYSA Net Yields & Timelines',
-      intro: 'Most savings calculators stop at a single compound-interest projection — but real-world wealth building is shaped by forces those tools ignore. The GetCalcu Savings & Strategy Calculator models the factors that actually move your balance: biweekly paycheck timing that sneaks in an extra deposit each year, income tax that clips your HYSA interest, and inflation that quietly erodes what those dollars can buy. Across four focused modes, it shows your true trajectory instead of a rosy headline number.',
-      sections: [
-        { heading: 'Why basic savings calculators fall short', body: 'A standard calculator applies one rate to one contribution schedule and prints a future value. That ignores how you actually get paid. If you are paid biweekly, you receive 26 checks a year — and contributing from every check means 26 half-deposits, the equivalent of 13 monthly payments instead of 12. It also ignores that HYSA interest is ordinary income, taxed at your marginal bracket, and that inflation shrinks the purchasing power of every dollar you keep. Without accounting for tax and inflation, an advertised 4.5% APY can quietly become a sub-1% real return.' },
-        { heading: 'The math behind your real HYSA return', body: 'Two steps convert a bank\'s advertised APY into your true purchasing-power yield. First, tax the interest: your after-tax nominal return is r_net = r_nominal x (1 - Tax Rate). Second, remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + Inflation Rate) - 1. The result is what your savings actually earn in today\'s dollars. At a 4.5% APY, 22% tax, and 2.5% inflation, the real return is under 1% — a number most savers never see because their bank only displays the gross rate.' },
-        { heading: 'Biweekly acceleration, goal timelines, and emergency funds', body: 'The same compounding engine powers the other three modes. Biweekly acceleration quantifies the edge from one extra monthly payment per year. The goal-timeline engine walks your balance forward month by month until it crosses your target, then projects the exact calendar month and year you will arrive. And the emergency-fund mode translates a lump sum into months of essential-expense coverage, sizing the 3- and 6-month buffers most advisors recommend holding in a liquid, high-yield account.' },
-      ],
-    },
-
-    // ── Schema-Ready FAQs (targets Google Featured Snippets / PAA)
-    faqs: [
-      { q: 'Does saving biweekly build money faster than saving monthly?', a: 'Yes. Because a year contains 52 weeks, saving biweekly results in 26 half-deposits—equivalent to 13 full monthly payments per year. This extra deposit accelerates compounding and builds wealth faster over multi-year horizons.' },
-      { q: 'Is interest earned from a High-Yield Savings Account (HYSA) taxable?', a: 'Yes. In most jurisdictions, interest earned from bank savings accounts and HYSAs is classified as ordinary income and subject to taxation at your marginal income tax bracket.' },
-      { q: 'How many months of expenses should be in an emergency fund?', a: 'Financial advisors typically recommend holding 3 to 6 months of essential living expenses (rent/mortgage, utilities, food, debt minimums) in a liquid, accessible account like a High-Yield Savings Account.' },
-      { q: 'How do you calculate the real return on a savings account after tax and inflation?', a: 'First reduce the advertised APY by your tax rate to get the post-tax nominal return: r_net = APY x (1 - tax rate). Then remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + inflation) - 1. For a 4.5% APY at a 22% tax bracket with 2.5% inflation, the post-tax return is 3.51% and the real return is about 0.99%.' },
-      { q: 'How long will it take to reach my savings goal?', a: 'Divide the problem into months: project your balance forward each month as initial savings grown by the monthly rate plus your monthly contribution, and stop at the first month the balance meets or exceeds your goal. The Savings & Strategy Calculator performs this month-by-month walk and converts the result into an exact calendar month and year, so you see not just "5 years 6 months" but a projected completion date like January 2032.' },
-    ],
-  },
-};
