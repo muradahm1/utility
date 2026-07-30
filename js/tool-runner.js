@@ -156,6 +156,79 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>`).join('');
     }
 
+    function buildInsightHtml(insight) {
+        if (!insight) return '';
+        const toneMap = { positive: '#10B981', neutral: '#6366F1', warning: '#EF4444' };
+        const color = toneMap[insight.tone] || toneMap.neutral;
+        return `
+            <div class="insight-callout" style="border-left:4px solid ${color};background:var(--bg-main);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;">
+                <i class="fa-solid ${esc(insight.icon)}" style="color:${color};margin-top:2px;font-size:16px;"></i>
+                <div>
+                    <div style="font-weight:700;font-size:14px;color:var(--text-primary);line-height:1.4;">${esc(insight.headline)}</div>
+                    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;line-height:1.6;">${esc(insight.detail)}</div>
+                </div>
+            </div>`;
+    }
+
+    function buildBarsHtml(bars) {
+        if (!bars || !bars.length) return '';
+        return `
+            <div class="coverage-bars" style="margin-top:8px;">
+                ${bars.map(bar => {
+                    const pct = Math.min(100, (safeNum(bar.value,0) / safeNum(bar.target,1)) * 100);
+                    const color = bar.color || '#10B981';
+                    return `
+                    <div style="margin-bottom:14px;">
+                        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
+                            <span style="font-weight:600;color:var(--text-primary);">${esc(bar.label)}</span>
+                            <span style="color:var(--text-secondary);">${safeStr(bar.caption) ? esc(bar.caption) : pct.toFixed(0) + '%'}</span>
+                        </div>
+                        <div style="width:100%;height:10px;background:var(--border-color);border-radius:5px;overflow:hidden;">
+                            <div style="width:${pct}%;height:100%;background:${color};border-radius:5px;"></div>
+                        </div>
+                    </div>`;
+                }).join('')}
+            </div>`;
+    }
+
+    function fmtCell(value, format) {
+        if (value === null || value === undefined) return '';
+        if (format === 'currency') return fmt(value);
+        if (format === 'percent') return pct(value / 100);
+        if (format === 'number') return fmtN(value);
+        return esc(value);
+    }
+
+    function buildTableSpecHtml(tbl) {
+        if (!tbl || !tbl.columns) return '';
+        const headerCells = tbl.columns.map(c =>
+            `<th${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${esc(c.label)}</th>`
+        ).join('');
+        const dataRows = (tbl.rows || []).map(r => {
+            const cells = tbl.columns.map(c => {
+                const raw = r[c.key];
+                const formatted = c.format === 'currency' ? fmt(raw) : c.format === 'percent' ? pct(raw / 100) : c.format === 'number' ? fmtN(raw) : esc(raw);
+                return `<td${c.emphasis ? ' style="font-weight:600;color:var(--text-primary);"' : ''}>${formatted}</td>`;
+            }).join('');
+            return `<tr>${cells}</tr>`;
+        }).join('');
+        const footerRow = tbl.footer ? `<tr style="font-weight:700;border-top:2px solid var(--border-color);">${tbl.columns.map(c => {
+            const raw = tbl.footer[c.key];
+            const formatted = c.format === 'currency' ? fmt(raw) : c.format === 'percent' ? pct(raw / 100) : c.format === 'number' ? fmtN(raw) : esc(raw);
+            return `<td${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${formatted}</td>`;
+        }).join('')}</tr>` : '';
+        return `
+            <div class="result-table-container">
+                <h4>${esc(tbl.title)}</h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr>${headerCells}</tr></thead>
+                        <tbody>${dataRows}${footerRow}</tbody>
+                    </table>
+                </div>
+            </div>`;
+    }
+
     function buildFormHtml() {
         return tool.fields.map(field => {
             const labels = tool.fieldLabels ? tool.fieldLabels(values) : {};
@@ -200,13 +273,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!card) return;
 
         card.innerHTML =
+            (result.error ? '' : buildInsightHtml(result.insight)) +
             buildBmiGaugeHtml(result.bmiGauge) +
             buildStatsHtml(result.stats) +
+            (result.bars ? buildBarsHtml(result.bars) : '') +
             (result.chart ? '<div class="chart-container"><canvas id="result-chart"></canvas></div>' : '') +
             buildCopyBtn();
 
-        const tbody = document.querySelector('.result-table-container tbody');
-        if (tbody && result.table) tbody.innerHTML = buildTableRowsHtml(result.table);
+        if (result.table) {
+            const container = document.querySelector('.result-table-container');
+            if (container) {
+                if (result.table.mode) {
+                    container.outerHTML = buildTableSpecHtml(result.table);
+                } else {
+                    const tbody = container.querySelector('tbody');
+                    if (tbody) tbody.innerHTML = buildTableRowsHtml(result.table);
+                }
+            }
+        }
 
         if (result.chart) renderChart(result.chart);
         bindCopyBtn(result.stats);
@@ -286,16 +370,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const periodLabel = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year' : 'Month';
         const scheduleTitle = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year-by-Year Schedule' : 'Amortization Schedule';
-        const tableHtml = result.table ? `
-            <div class="result-table-container">
-                <h4>${scheduleTitle}</h4>
-                <div class="table-wrapper">
-                    <table>
-                        <thead><tr><th>${periodLabel}</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
-                        <tbody>${buildTableRowsHtml(result.table)}</tbody>
-                    </table>
-                </div>
-            </div>` : '';
+        let tableHtml = '';
+        if (result.table) {
+            if (result.table.mode) {
+                tableHtml = buildTableSpecHtml(result.table);
+            } else {
+                tableHtml = `
+                    <div class="result-table-container">
+                        <h4>${scheduleTitle}</h4>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead><tr><th>${periodLabel}</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+                                <tbody>${buildTableRowsHtml(result.table)}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }
+        }
 
         container.innerHTML = `
             <div class="tool-runner-card">
@@ -306,8 +397,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="tool-grid-workspace">
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
                     <div class="calculator-results-card">
+                        ${result.error ? '' : buildInsightHtml(result.insight)}
                         ${buildBmiGaugeHtml(result.bmiGauge)}
                         ${buildStatsHtml(result.stats)}
+                        ${result.bars ? buildBarsHtml(result.bars) : ''}
                         ${result.chart ? '<div class="chart-container"><canvas id="result-chart"></canvas></div>' : ''}
                         ${buildCopyBtn()}
                     </div>
@@ -501,23 +594,84 @@ document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById('result-chart');
         if (!canvas) return;
         if (chartInstance) chartInstance.destroy();
+
+        const type = chartData.type || 'doughnut';
+        const isLine = type === 'line';
+        const isBar = type === 'bar';
+        const isDoughnut = !type || type === 'doughnut';
+
+        if (isDoughnut) {
+            chartInstance = new Chart(canvas.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Principal', 'Total Interest'],
+                    datasets: [{ data: [chartData.principal, chartData.totalInterest], backgroundColor: ['#6366F1', '#F59E0B'], borderWidth: 0 }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => `${ctx.label}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(ctx.parsed)}`,
+                            },
+                        },
+                    },
+                },
+            });
+            return;
+        }
+
+        const datasets = (chartData.datasets || []).map(ds => {
+            const base = {
+                label: ds.label,
+                data: ds.data,
+                borderColor: ds.color || '#6366F1',
+                backgroundColor: ds.color || '#6366F1',
+                tension: 0.25,
+                pointRadius: isLine ? (chartData.labels && chartData.labels.length > 30 ? 0 : 3) : 0,
+                pointHoverRadius: isLine ? 5 : 0,
+                fill: ds.fill || false,
+                borderWidth: isLine ? 2.5 : 1,
+                borderRadius: isBar ? 6 : 0,
+                borderSkipped: false,
+            };
+            if (isBar) {
+                base.backgroundColor = chartData.datasets[0].data.map((_, i) => ['#6366F1', '#10B981', '#F59E0B', '#EF4444'][i % 4]);
+                base.borderColor = base.backgroundColor;
+            }
+            return base;
+        });
+
         chartInstance = new Chart(canvas.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Principal', 'Total Interest'],
-                datasets: [{ data: [chartData.principal, chartData.totalInterest], backgroundColor: ['#6366F1', '#F59E0B'], borderWidth: 0 }],
-            },
+            type: type,
+            data: { labels: chartData.labels || [], datasets },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 16, color: 'var(--text-secondary)' } },
                     tooltip: {
                         callbacks: {
-                            label: ctx => `${ctx.label}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(ctx.parsed)}`,
+                            label: ctx => {
+                                const val = ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed;
+                                const suffix = chartData.tooltipSuffix || (chartData.yLabel && chartData.yLabel.includes('%') ? '%' : '');
+                                if (chartData.yLabel && chartData.yLabel.includes('Yield') && chartData.yLabel.includes('%')) {
+                                    return ctx.dataset.label + ': ' + val.toFixed(2) + '%';
+                                }
+                                if (chartData.yLabel && chartData.yLabel.includes('Yield')) {
+                                    return ctx.dataset.label + ': ' + new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+                                }
+                                return ctx.dataset.label + ': ' + new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+                            },
                         },
                     },
                 },
+                scales: isLine || isBar ? {
+                    x: { ticks: { color: 'var(--text-secondary)', font: { size: 11 } }, grid: { display: false } },
+                    y: { ticks: { color: 'var(--text-secondary)', font: { size: 11 }, callback: v => chartData.yLabel && chartData.yLabel.includes('%') ? v + '%' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }, grid: { color: 'var(--border-color)' } },
+                } : undefined,
             },
         });
     }
