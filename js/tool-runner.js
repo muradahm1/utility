@@ -201,20 +201,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function buildTableSpecHtml(tbl) {
         if (!tbl || !tbl.columns) return '';
+        function fmtCell(raw, format) {
+            if (raw === null || raw === undefined || raw === '') return '';
+            // If the value is already a string, it's pre-formatted — escape it directly
+            if (typeof raw === 'string') return esc(raw);
+            // Only apply numeric formatting to actual numbers
+            if (format === 'currency') return fmt(raw);
+            if (format === 'percent') return pct(raw / 100);
+            if (format === 'number') return fmtN(raw);
+            return esc(raw);
+        }
         const headerCells = tbl.columns.map(c =>
             `<th${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${esc(c.label)}</th>`
         ).join('');
         const dataRows = (tbl.rows || []).map(r => {
             const cells = tbl.columns.map(c => {
-                const raw = r[c.key];
-                const formatted = c.format === 'currency' ? fmt(raw) : c.format === 'percent' ? pct(raw / 100) : c.format === 'number' ? fmtN(raw) : esc(raw);
+                const formatted = fmtCell(r[c.key], c.format);
                 return `<td${c.emphasis ? ' style="font-weight:600;color:var(--text-primary);"' : ''}>${formatted}</td>`;
             }).join('');
             return `<tr>${cells}</tr>`;
         }).join('');
         const footerRow = tbl.footer ? `<tr style="font-weight:700;border-top:2px solid var(--border-color);">${tbl.columns.map(c => {
-            const raw = tbl.footer[c.key];
-            const formatted = c.format === 'currency' ? fmt(raw) : c.format === 'percent' ? pct(raw / 100) : c.format === 'number' ? fmtN(raw) : esc(raw);
+            const formatted = fmtCell(tbl.footer[c.key], c.format);
             return `<td${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${formatted}</td>`;
         }).join('')}</tr>` : '';
         return `
