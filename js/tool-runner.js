@@ -25,14 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ── SEO ───────────────────────────────────────────────────
     const pageUrl = `https://www.getcalcu.com/tool?slug=${slug}`;
-    const fullTitle = `${tool.name} — Free Online Calculator | GetCalcu`;
-    document.title = fullTitle.length > 60
-        ? `${tool.name} | Free Calculator — GetCalcu`
-        : fullTitle;
+    document.title = tool.metaTitle
+        ? tool.metaTitle
+        : (`${tool.name} — Free Online Calculator | GetCalcu`.length > 60
+            ? `${tool.name} | Free Calculator — GetCalcu`
+            : `${tool.name} — Free Online Calculator | GetCalcu`);
 
     // Null-safe meta tag updates
     const descMeta = document.querySelector('meta[name="description"]');
     if (descMeta) descMeta.setAttribute('content', tool.metaDescription);
+
+    // Inject a keywords meta tag when a tool defines them (additive, SEO-friendly)
+    if (tool.keywords && tool.keywords.length) {
+        let kwMeta = document.querySelector('meta[name="keywords"]');
+        if (!kwMeta) { kwMeta = document.createElement('meta'); kwMeta.setAttribute('name', 'keywords'); document.head.appendChild(kwMeta); }
+        kwMeta.setAttribute('content', tool.keywords.join(', '));
+    }
 
     const canonicalTag = document.getElementById('canonical-tag');
     if (canonicalTag) canonicalTag.setAttribute('href', pageUrl);

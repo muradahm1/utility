@@ -2391,6 +2391,9 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
 .bp-table tr:last-child td { border-bottom: none; }
 .bp-table tbody tr:hover { background: var(--primary-light-2); }
 
+/* Credit Card Payoff Calculator — guarantee horizontal scrolling for wide payoff schedules & strategy-comparison tables on every viewport (additive; preserves existing vertical scroll) */
+.table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
 /* -- Responsive -------------------------------------------- */
 @media (max-width: 1024px) {
     .bp-main-grid { grid-template-columns: 1fr; }

@@ -1322,7 +1322,379 @@
       { q: 'Is interest earned from a High-Yield Savings Account (HYSA) taxable?', a: 'Yes. In most jurisdictions, interest earned from bank savings accounts and HYSAs is classified as ordinary income and subject to taxation at your marginal income tax bracket.' },
       { q: 'How many months of expenses should be in an emergency fund?', a: 'Financial advisors typically recommend holding 3 to 6 months of essential living expenses (rent/mortgage, utilities, food, debt minimums) in a liquid, accessible account like a High-Yield Savings Account.' },
       { q: 'How do you calculate the real return on a savings account after tax and inflation?', a: 'First reduce the advertised APY by your tax rate to get the post-tax nominal return: r_net = APY x (1 - tax rate). Then remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + inflation) - 1. For a 4.5% APY at a 22% tax bracket with 2.5% inflation, the post-tax return is 3.51% and the real return is about 0.99%.' },
-      { q: 'How long will it take to reach my savings goal?', a: 'Divide the problem into months: project your balance forward each month as initial savings grown by the monthly rate plus your monthly contribution, and stop at the first month the balance meets or exceeds your goal. The Savings & Strategy Calculator performs this month-by-month walk and converts the result into an exact calendar month and year, so you see not just "5 years 6 months" but a projected completion date like January 2032.' },
+            { q: 'How long will it take to reach my savings goal?', a: 'Divide the problem into months: project your balance forward each month as initial savings grown by the monthly rate plus your monthly contribution, and stop at the first month the balance meets or exceeds your goal. The Savings & Strategy Calculator performs this month-by-month walk and converts the result into an exact calendar month and year, so you see not just "5 years 6 months" but a projected completion date like January 2032.' },
+    ],
+  },
+
+  // ── Credit Card Payoff & Strategy Calculator ───────────────────────────────
+  'credit-card-payoff-calculator': {
+    name: 'Credit Card Payoff & Strategy Calculator',
+    category: 'Finance',
+    icon: 'fa-credit-card',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate credit card debt payoff dates, expose minimum payment interest traps, analyze 0% APR balance transfer fees, and compare Avalanche vs Snowball payoff strategies.',
+    metaTitle: 'Credit Card Payoff Calculator | Minimum Payment Trap & 0% APR - GetCalcu',
+    metaDescription: 'Free online Credit Card Payoff Calculator. Calculate exact debt-free dates, compare minimum payment costs vs extra monthly deposits, and analyze 0% APR balance transfer savings.',
+    keywords: [
+      'credit card payoff calculator',
+      'credit card minimum payment trap calculator',
+      '0 apr balance transfer fee calculator',
+      'credit card debt free date calculator',
+      'avalanche vs snowball debt payoff calculator',
+    ],
+    fields: [
+      { id: 'mode', label: 'Strategy Mode', type: 'select', default: 'min-payment',
+        options: [
+          { value: 'min-payment',        label: 'Minimum Payment Trap & Fixed Monthly Payoff' },
+          { value: 'target-date',        label: 'Exact Target Debt-Free Date Goal' },
+          { value: 'balance-transfer',   label: '0% APR Balance Transfer Savings' },
+          { value: 'avalanche-snowball', label: 'Avalanche vs Snowball Multi-Card Strategy' },
+        ],
+        hint: 'Choose what to analyze. Each mode exposes a different cost of carrying credit card debt.' },
+      { id: 'balance', label: 'Total Credit Card Balance ($)', type: 'number', default: 7500, min: 0, step: 100,
+        hint: 'The total outstanding balance across the card(s) you want to pay off.' },
+      { id: 'apr', label: 'Annual Interest Rate / APR (%)', type: 'number', default: 21.5, min: 0, max: 40, step: 0.1,
+        hint: 'The stated Annual Percentage Rate. Credit card APRs commonly range from 18% to 29% and accrue interest daily.' },
+      { id: 'min_pct', label: 'Minimum Payment Percentage (%)', type: 'number', default: 2.5, min: 1, max: 10, step: 0.5,
+        condition: v => v.mode === 'min-payment' || v.mode === 'avalanche-snowball',
+        hint: 'The percent of the balance your lender sets as the minimum each month (typically 2%-3%). Lenders also apply a $25 floor.' },
+      { id: 'monthly_payment', label: 'Planned Monthly Payment ($)', type: 'number', default: 250, min: 0, step: 25,
+        condition: v => v.mode === 'min-payment' || v.mode === 'balance-transfer' || v.mode === 'avalanche-snowball',
+        hint: 'The amount you commit to paying each month. Must exceed the monthly interest charge to actually reduce the balance.' },
+      { id: 'target_months', label: 'Target Debt-Free Timeframe (Months)', type: 'number', default: 24, min: 1, max: 120, step: 1,
+        condition: v => v.mode === 'target-date',
+        hint: 'The number of months within which you want to be 100% debt-free. The calculator solves for the exact monthly payment required.' },
+      { id: 'transfer_fee', label: 'Balance Transfer Fee (%)', type: 'number', default: 3, min: 0, max: 10, step: 0.5,
+        condition: v => v.mode === 'balance-transfer',
+        hint: 'The upfront one-time fee the new card charges to move your balance (typically 3%-5%). Charged immediately on top of your balance.' },
+      { id: 'promo_months', label: 'Promotional 0% APR Duration (Months)', type: 'number', default: 18, min: 3, max: 36, step: 1,
+        condition: v => v.mode === 'balance-transfer',
+        hint: 'The intro 0% interest window (commonly 12-21 months). Any balance left after this reverts to the regular APR.' },
+    ],
+    fieldLabels(v) {
+      if (v.mode === 'min-payment')        return { monthly_payment: 'Planned Fixed Monthly Payment ($)' };
+      if (v.mode === 'balance-transfer')   return { monthly_payment: 'Monthly Payment You Can Afford ($)', apr: 'Current Card APR (%)' };
+      if (v.mode === 'avalanche-snowball') return { monthly_payment: 'Total Monthly Debt Budget ($)', balance: 'Total Multi-Card Balance ($)' };
+      return {};
+    },
+    calculate(v) {
+      const B = safeNum(v.balance, 0);
+      const APR = safeNum(v.apr, 0);
+      const iDaily = APR / 100 / 365;
+      const iM = Math.pow(1 + iDaily, 30) - 1;
+      const FLOOR = 25;
+      const curMode = v.mode;
+
+      function yrs(m) {
+        if (m >= 1200) return '100+ yr';
+        const y = Math.floor(m / 12), mo = m % 12;
+        if (y > 0 && mo > 0) return y + ' yr ' + mo + ' mo';
+        if (y > 0) return y + ' yr';
+        return mo + ' mo';
+      }
+      function pctOf(x, tot) { return tot > 0 ? (x / tot * 100).toFixed(0) + '%' : '0%'; }
+      function addMonths(d, n) { const x = new Date(d); x.setMonth(x.getMonth() + n); return x; }
+      function fmtDate(d) { return d.toLocaleString('en-US', { month: 'short', year: 'numeric' }); }
+      function reqPmt(bal, rate, n) { return rate === 0 ? bal / n : bal * rate / (1 - Math.pow(1 + rate, -n)); }
+
+      function simMin(startBal, rate, minPct) {
+        let bal = startBal, m = 0, ti = 0, runaway = false; const path = [bal];
+        while (bal > 0.005 && m < 1200) {
+          const interest = bal * rate;
+          let pay = Math.max(FLOOR, bal * minPct / 100);
+          if (pay <= interest) { runaway = true; break; }
+          pay = Math.min(pay, bal + interest);
+          ti += interest; bal += interest - pay; m++; path.push(bal);
+        }
+        return { months: m, totalInterest: roundTo(ti, 2), runaway, balance: bal, path };
+      }
+      function simFixed(startBal, rate, pay) {
+        let bal = startBal, m = 0, ti = 0, runaway = false; const path = [bal];
+        if (pay <= 0 || (rate > 0 && pay <= rate * startBal)) return { months: 0, totalInterest: 0, runaway: true, balance: bal, path };
+        while (bal > 0.005 && m < 1200) {
+          const interest = bal * rate;
+          const p = Math.min(pay, bal + interest);
+          ti += interest; bal += interest - p; m++; path.push(bal);
+        }
+        return { months: m, totalInterest: roundTo(ti, 2), runaway, balance: bal, path };
+      }
+      function samplePath(path, maxPts) {
+        if (path.length <= maxPts) return path.map((b, i) => ({ m: i, b: roundTo(b, 2) }));
+        const out = [{ m: 0, b: roundTo(path[0], 2) }];
+        for (let k = 1; k < maxPts - 1; k++) {
+          const idx = Math.round(k * (path.length - 1) / (maxPts - 1));
+          out.push({ m: idx, b: roundTo(path[idx], 2) });
+        }
+        out.push({ m: path.length - 1, b: roundTo(path[path.length - 1], 2) });
+        return out;
+      }
+      function scheduleTable(path, rate, pay) {
+        const cols = [
+          { key: 'period', label: 'Month', format: 'text' },
+          { key: 'payment', label: 'Payment', format: 'currency' },
+          { key: 'principal', label: 'Principal', format: 'currency' },
+          { key: 'interest', label: 'Interest', format: 'currency' },
+          { key: 'balance', label: 'Balance', format: 'currency', emphasis: true },
+        ];
+        const n = path.length - 1;
+        const picks = new Set([0, n]);
+        const want = Math.min(40, n);
+        for (let k = 1; k < want - 1; k++) picks.add(Math.round(k * n / (want - 1)));
+        const rows = [...picks].sort((a, b) => a - b).map(i => {
+          const prev = i > 0 ? path[i - 1] : path[0];
+          const interest = roundTo(prev * rate, 2);
+          const principal = roundTo(Math.max(0, prev - path[i]), 2);
+          const payment = roundTo(Math.min(pay, prev + interest), 2);
+          return { period: i === n ? 'Month ' + i + ' — Paid Off' : 'Month ' + i, payment, principal, interest, balance: roundTo(path[i], 2) };
+        });
+        return { mode: 'schedule', title: 'Payoff Schedule', columns: cols, rows };
+      }
+
+      if (curMode === 'min-payment') {
+        if (B <= 0) return errorResult('Enter a credit card balance greater than $0.');
+        const minPct = safeNum(v.min_pct, 2.5);
+        const P = safeNum(v.monthly_payment, 0);
+        const min = simMin(B, iM, minPct);
+        const fix = simFixed(B, iM, P);
+        const stats = [];
+        if (min.runaway) {
+          stats.push({ label: 'Minimum Payment', value: 'Never pays off', warn: true, highlight: true });
+          stats.push({ label: 'Why?', value: 'Min does not cover monthly interest', warn: true });
+        } else {
+          stats.push({ label: 'Min-Payment Time', value: yrs(min.months), warn: true });
+          stats.push({ label: 'Min-Payment Interest', value: fmt(min.totalInterest), warn: true });
+        }
+        if (fix.runaway) {
+          stats.push({ label: 'Fixed Payment', value: 'Never pays off', warn: true, highlight: true });
+          stats.push({ label: 'Required Minimum', value: 'Pay more than ' + fmt(iM * B) + '/mo (monthly interest)', warn: true });
+        } else {
+          stats.push({ label: 'Fixed-Payment Time', value: yrs(fix.months), highlight: true });
+          stats.push({ label: 'Fixed-Payment Interest', value: fmt(fix.totalInterest) });
+        }
+        if (!min.runaway && !fix.runaway) {
+          stats.push({ label: 'Interest Saved', value: fmt(roundTo(min.totalInterest - fix.totalInterest, 2)), highlight: true });
+          stats.push({ label: 'Time Saved', value: yrs(min.months - fix.months), highlight: true });
+        }
+        const maxInt = Math.max(min.totalInterest, fix.totalInterest, 1) + 1;
+        const maxT = Math.max(min.months, fix.months, 1) + 1;
+        const bars = [
+          { label: 'Interest: Minimum Only', value: min.totalInterest, target: maxInt, color: '#EF4444', caption: min.runaway ? 'Runaway' : fmt(min.totalInterest) },
+          { label: 'Interest: Fixed Payment', value: fix.totalInterest, target: maxInt, color: '#10B981', caption: fix.runaway ? 'Runaway' : fmt(fix.totalInterest) },
+          { label: 'Time: Minimum Only', value: min.months, target: maxT, color: '#EF4444', caption: min.runaway ? '∞' : min.months + ' mo' },
+          { label: 'Time: Fixed Payment', value: fix.months, target: maxT, color: '#10B981', caption: fix.runaway ? '∞' : fix.months + ' mo' },
+        ];
+        const sMin = samplePath(min.path, 30), sFix = samplePath(fix.path, 30);
+        const len = Math.max(sMin.length, sFix.length);
+        const stepM = Math.max(1, Math.round(Math.max(min.path.length, fix.path.length) / len));
+        const chartLabels = [], dataMin = [], dataFix = [];
+        for (let i = 0; i < len; i++) { chartLabels.push('Mo ' + (i * stepM)); dataMin.push(i < sMin.length ? sMin[i].b : 0); dataFix.push(i < sFix.length ? sFix[i].b : 0); }
+        const chart = { type: 'line', labels: chartLabels, yLabel: 'Balance ($)', title: 'Balance Over Time: Minimum vs Fixed',
+          datasets: [ { label: 'Minimum Only', data: dataMin, color: '#EF4444' }, { label: 'Fixed Payment', data: dataFix, color: '#10B981', fill: true } ] };
+        const table = fix.runaway ? null : scheduleTable(fix.path, iM, P);
+        let insight;
+        if (min.runaway && fix.runaway) {
+          insight = { tone: 'warning', icon: 'fa-triangle-exclamation', headline: 'Neither strategy pays off this balance.', detail: 'Your minimum payment does not cover the monthly interest of ' + fmt(iM * B) + ', and your fixed ' + fmt(P) + '/mo payment is also too low. Raise your monthly payment above ' + fmt(iM * B + 1) + ' to start reducing the principal.' };
+        } else if (min.runaway) {
+          insight = { tone: 'warning', icon: 'fa-triangle-exclamation', headline: 'Minimum payments will never clear this balance.', detail: 'At ' + minPct + '% minimums the payment does not cover the ' + fmt(iM * B) + ' monthly interest, so the balance grows forever. Your fixed ' + fmt(P) + '/mo payment pays it off in ' + yrs(fix.months) + ' with ' + fmt(fix.totalInterest) + ' in interest.' };
+        } else if (fix.runaway) {
+          insight = { tone: 'warning', icon: 'fa-triangle-exclamation', headline: 'Your fixed payment is too low to pay off the balance.', detail: 'Paying ' + fmt(P) + '/mo does not cover the monthly interest of ' + fmt(iM * B) + '. Increase it above that break-even. For comparison, paying only the minimum (' + minPct + '%) takes ' + yrs(min.months) + ' and costs ' + fmt(min.totalInterest) + ' in interest.' };
+        } else {
+          const saved = roundTo(min.totalInterest - fix.totalInterest, 2);
+          insight = { tone: 'positive', icon: 'fa-circle-check', headline: 'Paying ' + fmt(P) + '/mo saves ' + fmt(saved) + ' in interest and ' + yrs(min.months - fix.months) + ' vs minimums.', detail: 'Minimum payments of ' + minPct + '% take ' + yrs(min.months) + ' and cost ' + fmt(min.totalInterest) + ' in interest. Your fixed payment clears it in ' + yrs(fix.months) + ' for ' + fmt(fix.totalInterest) + ' — interest is ' + pctOf(fix.totalInterest, B) + ' of principal instead of ' + pctOf(min.totalInterest, B) + '.' };
+        }
+        return { stats, bars, chart, table, insight };
+      }
+      if (curMode === 'target-date') {
+        if (B <= 0) return errorResult('Enter a credit card balance greater than $0.');
+        const t = Math.round(safeNum(v.target_months, 24));
+        if (t < 1) return errorResult('Target timeframe must be at least 1 month.');
+        const P = reqPmt(B, iM, t);
+        const sim = simFixed(B, iM, P);
+        const totalPaid = roundTo(P * sim.months, 2);
+        const totalInterest = roundTo(totalPaid - B, 2);
+        const debtFree = addMonths(new Date(), t);
+        const breakEven = iM * B;
+        const stats = [
+          { label: 'Required Monthly Payment', value: fmt(P), highlight: true },
+          { label: 'Total Interest', value: fmt(totalInterest), warn: totalInterest > 0 },
+          { label: 'Total Paid', value: fmt(totalPaid) },
+          { label: 'Debt-Free Date', value: fmtDate(debtFree), highlight: true },
+          { label: 'Target Timeframe', value: t + ' months (' + yrs(t) + ')' },
+          { label: 'Monthly Interest (now)', value: fmt(breakEven) },
+        ];
+        const bars = [
+          { label: 'Required Payment', value: P, target: Math.max(P, breakEven) + 1, color: '#10B981', caption: fmt(P) + '/mo' },
+          { label: 'Interest-Only Break-Even', value: breakEven, target: Math.max(P, breakEven) + 1, color: '#F59E0B', caption: fmt(breakEven) + '/mo' },
+        ];
+        const sFix = samplePath(sim.path, 30);
+        const chart = { type: 'line', labels: sFix.map(p => 'Mo ' + p.m), yLabel: 'Balance ($)', title: 'Path to Debt-Free in ' + t + ' Months',
+          datasets: [ { label: 'Balance', data: sFix.map(p => p.b), color: '#6366F1', fill: true } ] };
+        const table = scheduleTable(sim.path, iM, P);
+        const insight = { tone: 'positive', icon: 'fa-bullseye', headline: 'Pay ' + fmt(P) + '/mo to be 100% debt-free by ' + fmtDate(debtFree) + '.', detail: 'To eliminate the full ' + fmt(B) + ' balance in ' + t + ' months (' + yrs(t) + '), pay ' + fmt(P) + ' per month - ' + fmt(P - breakEven) + ' above the ' + fmt(breakEven) + ' monthly interest break-even. Total interest cost: ' + fmt(totalInterest) + '.' };
+        return { stats, bars, chart, table, insight };
+      }
+      if (curMode === 'balance-transfer') {
+        if (B <= 0) return errorResult('Enter a credit card balance greater than $0.');
+        const feePct = safeNum(v.transfer_fee, 3);
+        const promo = Math.round(safeNum(v.promo_months, 18));
+        const P = safeNum(v.monthly_payment, 0);
+        const fee = roundTo(B * feePct / 100, 2);
+        const newBal = roundTo(B + fee, 2);
+        const reqPay = reqPmt(newBal, 0, promo);
+        const stay = simFixed(B, iM, P);
+        const stayMonths = stay.runaway ? 9999 : stay.months;
+        const stayInterest = stay.runaway ? 99999 : stay.totalInterest;
+        const promoInterest = promo * iM * B;
+        const netSavings = roundTo(stayInterest - fee - promoInterest, 2);
+        const stats = [
+          { label: 'Transfer Fee', value: fmt(fee), warn: true },
+          { label: 'New Balance (incl. fee)', value: fmt(newBal) },
+          { label: 'Stay-Card Interest (if no promo)', value: stay.runaway ? 'Runaway' : fmt(stayInterest), warn: true },
+          { label: 'Net Savings (approx)', value: netSavings > 0 ? fmt(netSavings) : '$0' },
+          { label: 'Promo Duration', value: promo + ' months' },
+          { label: 'Required Promo Payment', value: fmt(roundTo(reqPay, 2)), highlight: true },
+        ];
+        const bars = [
+          { label: 'Transfer Fee', value: fee, target: Math.max(fee, newBal) + 1, color: '#EF4444', caption: fmt(fee) },
+          { label: 'Stay-Card Interest (promo window)', value: Math.min(promoInterest, stayInterest), target: Math.max(fee, promoInterest, stayInterest, 1) + 1, color: '#EF4444', caption: fmt(Math.min(promoInterest, stayInterest)) },
+          { label: 'Net Savings', value: Math.max(netSavings, 0), target: Math.max(netSavings, fee, 1) + 1, color: '#10B981', caption: fmt(Math.max(netSavings, 0)) },
+        ];
+        const labels = [], dataStay = [], dataTransfer = [];
+        for (let i = 0; i <= promo; i++) {
+          labels.push('Mo ' + i);
+          const s = i === 0 ? B : Math.max(0, B - P * i + i * iM * B);
+          dataStay.push(roundTo(s, 2));
+          dataTransfer.push(roundTo(Math.max(0, newBal - reqPay * i), 2));
+        }
+        const chart = { type: 'line', labels, yLabel: 'Balance ($)', title: 'Current Card vs Transfer (Promo Period)',
+          datasets: [ { label: 'Current Card (' + fmt(APR) + '% APR)', data: dataStay, color: '#EF4444' }, { label: 'Transfer (' + feePct + '% fee, 0% APR)', data: dataTransfer, color: '#10B981' } ] };
+        const table = { mode: 'schedule', title: 'Break-Even & Promo Analysis', columns: [
+          { key: 'month', label: 'Month', format: 'text' },
+          { key: 'current', label: 'Current Balance', format: 'currency' },
+          { key: 'transferred', label: 'Transfer Balance', format: 'currency', emphasis: true },
+          { key: 'delta', label: 'Difference', format: 'currency' },
+        ], rows: labels.map((l, i) => ({ month: l, current: dataStay[i], transferred: dataTransfer[i], delta: fmt(roundTo(dataStay[i] - dataTransfer[i], 2)) })) };
+        let insight;
+        if (P <= 0) {
+          insight = { tone: 'warning', icon: 'fa-triangle-exclamation', headline: 'Enter the monthly payment you can afford.', detail: 'The critical number: pay at least ' + fmt(roundTo(reqPay, 2)) + '/mo to clear the ' + fmt(newBal) + ' balance (including the ' + feePct + '% fee) before the ' + promo + '-month promo ends.' };
+        } else if (P < reqPay) {
+          const leftover = roundTo(newBal - reqPay * promo, 2);
+          insight = { tone: 'warning', icon: 'fa-triangle-exclamation', headline: 'At ' + fmt(P) + '/mo you will not clear the promo period.', detail: 'You need at least ' + fmt(reqPay) + '/mo to zero the balance before interest reverts. At ' + fmt(P) + '/mo roughly ' + fmt(leftover) + ' would remain on the card when the 0% APR expires, exposing it to ' + fmt(APR) + '% APR again.' };
+        } else {
+          const ideal = feePct <= 3 && promo >= 15;
+          insight = { tone: ideal ? 'positive' : 'neutral', icon: 'fa-circle-check', headline: 'Net savings of up to ' + fmt(netSavings) + ' if you clear the balance in time.', detail: feePct <= 3 ? 'The ' + feePct + '% fee is low. Pay at least ' + fmt(reqPay) + '/mo to clear the ' + fmt(newBal) + ' before the ' + promo + ' months are up. Do not miss the deadline or the ' + fmt(APR) + '% APR kicks back in.' : 'With a ' + feePct + '% fee, run the numbers carefully. The transfer still wins only if the saved interest exceeds ' + fmt(fee) + ' and you clear the balance within ' + promo + ' months.' };
+        }
+        return { stats, bars, chart, table, insight };
+      }
+      if (curMode === 'avalanche-snowball') {
+        if (B <= 0) return errorResult('Enter a total credit card balance greater than $0.');
+        const minPct = safeNum(v.min_pct, 2.5);
+        const P = safeNum(v.monthly_payment, 0);
+
+        function simulateStrategy(order) {
+          const b1 = roundTo(B * 0.55, 2), r1 = iM;
+          const b2 = roundTo(B - b1, 2), r2 = roundTo(iM * 0.85, 2);
+          const min1 = Math.max(FLOOR, b1 * minPct / 100);
+          const min2 = Math.max(FLOOR, b2 * minPct / 100);
+          const highIdx = r1 >= r2 ? 0 : 1;
+          const smallIdx = b1 <= b2 ? 0 : 1;
+          const target = order === 'avalanche' ? highIdx : smallIdx;
+          let bal = [b1, b2], m = 0, ti = 0;
+          const snaps = [{ m: 0, total: B }];
+          while ((bal[0] > 0.005 || bal[1] > 0.005) && m < 1200) {
+            const i0 = bal[0] * r1, i1 = bal[1] * r2;
+            ti += i0 + i1;
+            const mins = [Math.max(FLOOR, bal[0] * minPct / 100), Math.max(FLOOR, bal[1] * minPct / 100)];
+            const minsTotal = mins[0] + mins[1];
+            const extra = Math.max(0, P - minsTotal);
+            const idx = target;
+            const oth = 1 - idx;
+            const ir = idx === 0 ? i0 : i1;
+            const payHere = Math.min(bal[idx] + ir, mins[idx] + extra);
+            const remaining = extra - Math.max(0, payHere - mins[idx]);
+            bal[idx] = Math.max(0, bal[idx] + ir - payHere);
+            bal[oth] = Math.max(0, bal[oth] + (oth === 0 ? i0 : i1) - mins[oth]);
+            if (bal[oth] > 0.005 && remaining > 0) {
+              const extraOth = Math.min(remaining, bal[oth]);
+              bal[oth] = Math.max(0, bal[oth] - extraOth);
+            }
+            m++;
+            if (m % 2 === 0) snaps.push({ m, total: roundTo(bal[0] + bal[1], 2) });
+          }
+          return { months: m, totalInterest: roundTo(ti, 2), snapshots: snaps };
+        }
+
+        const avalanche = simulateStrategy('avalanche');
+        const snowball = simulateStrategy('snowball');
+        const interestSaved = roundTo(snowball.totalInterest - avalanche.totalInterest, 2);
+        const timeSaved = snowball.months - avalanche.months;
+        const maxInt = Math.max(avalanche.totalInterest, snowball.totalInterest, 1) + 1;
+        const stats = [
+          { label: 'Avalanche Interest', value: fmt(avalanche.totalInterest) },
+          { label: 'Snowball Interest', value: fmt(snowball.totalInterest), warn: true },
+          { label: 'Interest Saved', value: fmt(interestSaved), highlight: true },
+          { label: 'Avalanche Months', value: avalanche.months + ' mo' },
+          { label: 'Snowball Months', value: snowball.months + ' mo' },
+          { label: 'Time Saved', value: timeSaved + ' mo', highlight: true },
+        ];
+        const bars = [
+          { label: 'Avalanche Interest', value: avalanche.totalInterest, target: maxInt, color: '#10B981', caption: fmt(avalanche.totalInterest) },
+          { label: 'Snowball Interest', value: snowball.totalInterest, target: maxInt, color: '#F59E0B', caption: fmt(snowball.totalInterest) },
+        ];
+        const maxM = Math.max(avalanche.snapshots[avalanche.snapshots.length - 1].m, snowball.snapshots[snowball.snapshots.length - 1].m, 1);
+        const labels = [], dataA = [], dataS = [];
+        for (let m = 0; m <= maxM; m += 2) {
+          labels.push('Mo ' + m);
+          const a = avalanche.snapshots.find(s => s.m >= m);
+          dataA.push(a ? a.total : 0);
+          const s = snowball.snapshots.find(s => s.m >= m);
+          dataS.push(s ? s.total : 0);
+        }
+        const chart = { type: 'line', labels, yLabel: 'Total Balance ($)', title: 'Avalanche vs Snowball Balance Over Time',
+          datasets: [ { label: 'Avalanche', data: dataA, color: '#10B981' }, { label: 'Snowball', data: dataS, color: '#F59E0B' } ] };
+        const table = { mode: 'schedule', title: 'Strategy Comparison', columns: [
+          { key: 'period', label: 'Month', format: 'text' },
+          { key: 'avalanche', label: 'Avalanche Balance', format: 'currency' },
+          { key: 'snowball', label: 'Snowball Balance', format: 'currency' },
+          { key: 'diff', label: 'Difference', format: 'currency', emphasis: true },
+        ], rows: labels.map((l, i) => ({ period: l, avalanche: dataA[i], snowball: dataS[i], diff: fmt(roundTo((dataS[i] || 0) - (dataA[i] || 0), 2)) })) };
+        const insight = { tone: 'positive', icon: 'fa-scale-balanced', headline: 'Debt Avalanche saves ' + fmt(interestSaved) + ' in interest vs Snowball.', detail: 'Both methods require ' + fmt(P) + '/mo and pay minimums on every card. The Avalanche targets the higher-APR card first and wins on interest. The Snowball targets the smaller balance first for a quicker win but costs more interest over a nearly identical timeline.' };
+        return { stats, bars, chart, table, insight };
+      }
+      return errorResult('Unknown mode selected.');
+    },
+    howTo: [
+      'Pick a Strategy Mode — each reveals a different cost of carrying debt: the minimum-payment trap, a target debt-free date, a 0% balance transfer, or Avalanche vs Snowball.',
+      'Enter your total credit card balance and APR. Only the inputs the selected mode needs will appear.',
+      'For minimum-payment and strategy modes, set your minimum payment % and the monthly amount you can actually pay.',
+      'Read the insight callout for the plain-language verdict, then review the stat tiles, comparison bars, and payoff schedule.',
+      'Adjust the monthly payment or target timeframe to see exactly how much interest and time you can cut.',
+    ],
+    examples: [
+      { title: 'The minimum-payment trap', input: 'Balance $7,500, APR 21.5%, Min 2.5%, Pay $250/mo', result: 'Minimums take decades and cost thousands in interest; a fixed $250/mo payment clears it in ~3 years and saves thousands.' },
+      { title: 'Target debt-free in 24 months', input: 'Balance $7,500, APR 21.5%, Goal 24 months', result: 'Required payment ~$391/mo to be 100% debt-free in 2 years.' },
+      { title: 'Is a 0% balance transfer worth it?', input: 'Balance $7,500, APR 21.5%, Pay $250/mo, 3% fee, 18-mo promo', result: 'Net savings after the upfront fee, plus the ~$417/mo needed to clear the balance before the promo expires.' },
+      { title: 'Avalanche beats Snowball on interest', input: 'Total $7,500, APR 21.5%, Min 2.5%, Budget $300/mo', result: 'Avalanche saves more in interest than Snowball for a near-identical payoff timeline.' },
+    ],
+    formula: 'Daily periodic rate: i_daily = APR / 365 | Monthly factor (daily compounding): i_month = (1 + i_daily)^30 - 1 | Monthly interest: I = Balance x i_month | Fixed payoff payment: PMT = (B x i_month) / (1 - (1 + i_month)^-n) | Transfer fee: Fee = B x (transferFee% / 100) | Net transfer savings = Interest(stay) - Fee - Interest(post-promo) | Minimum payment: max($25 floor, Balance x minPct%)',
+    article: {
+      heading: 'Breaking Credit Card Debt: Minimum Payment Traps, APR Math & Payoff Strategies',
+      intro: "Carrying a high-APR credit card balance compounds aggressively against you. Because most cards accrue interest daily, every day you carry a balance adds to the principal that next month's interest is charged on. Minimum payment structures are engineered by lenders to keep borrowers paying for decades — often costing more in interest than the original purchase. Strategic payoff planning reverses that drag. The GetCalcu Credit Card Payoff Calculator models the exact math behind your balance and exposes four high-leverage strategies: escaping the minimum-payment trap, hitting a target debt-free date, evaluating a 0% APR balance transfer, and comparing the Debt Avalanche versus Debt Snowball methods.",
+      sections: [
+        { heading: 'How credit card interest actually compounds', body: 'Credit cards use a daily periodic rate: i_daily = APR ÷ 365. Interest accrues each day, so the effective monthly rate is i_month = (1 + i_daily)^30 - 1 — slightly higher than simply dividing the APR by 12. Each month, interest is added to your balance before your payment is applied; whatever remains rolls forward and is charged interest again. This is why a payment that barely covers interest makes almost no progress on the principal.' },
+        { heading: 'The minimum payment trap, quantified', body: 'A minimum payment is usually 2%-3% of the balance (with a $25 floor). On a $7,500 balance at 21.5% APR, the minimum starts near $188 while the monthly interest is about $128, so only roughly $60 reduces principal. As the balance shrinks the minimum shrinks too, stretching payoff to 25-30 years and pushing total interest past the original balance. Paying a fixed amount instead of the declining minimum collapses that timeline.' },
+        { heading: 'Solving for a target debt-free date', body: "To be debt-free in exactly n months, solve the amortization formula for the payment: PMT = (B × i_month) ÷ (1 − (1 + i_month)^−n). This is the payment that, applied every month, drives the balance to exactly zero at month n. It must exceed the first month's interest (the break-even) or the balance never declines." },
+        { heading: 'Are 0% APR balance transfers worth the fee?', body: 'A transfer charges an upfront fee of 3%-5% of the balance but sets interest to 0% for a promotional window (often 12-21 months). The transfer wins when the interest you would have paid on the current card exceeds the fee plus any residual interest after the promo. The critical number is the payment needed to clear the balance before the promo ends: Balance ÷ promo months. Fall short and the leftover reverts to a high regular APR.' },
+        { heading: 'Debt Avalanche vs Debt Snowball', body: 'Both methods pay minimums on every card, then funnel all extra cash at one target card. The Debt Avalanche targets the highest-APR card first — mathematically optimal, it minimizes total interest. The Debt Snowball targets the smallest balance first — it costs slightly more interest but delivers quicker psychological wins as cards disappear, which raises the odds of sticking with the plan. With multiple cards, the Avalanche typically saves hundreds more for a near-identical timeline.' },
+      ],
+    },
+    faqs: [
+      { q: 'How long does it take to pay off a credit card by making minimum payments?', a: 'Paying only the minimum on a typical credit card (2% to 3% of balance at 21% APR) can take between 15 and 30 years to fully clear, resulting in interest costs that often exceed the original principal. Use the minimum-payment mode to see your exact timeline.' },
+      { q: 'What is the difference between the Debt Avalanche and Debt Snowball payoff methods?', a: 'The Debt Avalanche method targets cards with the highest APR first to minimize total interest cost. The Debt Snowball method targets the smallest balance first to build momentum through quick psychological wins. The Avalanche typically saves more in interest; the Snowball can improve adherence for some borrowers.' },
+      { q: 'Is a 0% APR balance transfer worth the upfront transfer fee?', a: 'Yes, provided the interest saved over the promotional period (usually 12 to 21 months) significantly exceeds the 3% to 5% upfront transfer fee, and the balance is paid off before the promo period ends. If any balance remains when the promo expires, it is typically charged the full regular APR from the original transfer date.' },
+      { q: 'What is the "minimum payment trap"?', a: 'The minimum-payment trap describes how small minimum payments (often 2%-3% of balance with a $25 floor) barely cover monthly interest, causing the principal to decline extremely slowly. On a $7,500 balance at 21.5% APR, paying only the minimum can stretch payoff to decades and cost more in interest than the original purchase.' },
+      { q: 'How do I calculate the exact monthly payment needed to be debt-free by a target date?', a: 'Solve the amortization formula for the payment: PMT = (B × i_month) ÷ (1 − (1 + i_month)^−n). This payment, applied every month, drives the balance to exactly zero at month n. It must exceed the first month\'s interest break-even or the balance never declines.' },
     ],
   },
 
