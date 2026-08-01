@@ -239,6 +239,7 @@ function initSearchModal() {
             { name: 'Date Calculator',              slug: 'date-calculator',        cat: 'Math'    },
             { name: 'Budget Planner & Expense Tracker', slug: 'budget-planner',     cat: 'Finance' },
             { name: 'Retirement Calculator',        slug: 'retirement-calculator',           cat: 'Finance' },
+            { name: 'Rent vs. Buy Calculator',      slug: 'rent-vs-buy-calculator',          cat: 'Finance' },
         ];
 
     function openModal() {
