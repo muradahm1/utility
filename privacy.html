@@ -20,19 +20,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        .toc {
-            background: var(--bg-main);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
-            margin-bottom: 24px;
-        }
-        .toc p { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
-        .toc ol { padding-left: 18px; margin: 0; }
-        .toc li { font-size: 13px; margin-bottom: 4px; }
-        .toc a { color: var(--primary-color); text-decoration: none; }
-        .toc a:hover { text-decoration: underline; }
-    </style>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -74,6 +61,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <main class="main-wrapper">
             <header class="top-header">
+                <button class="back-btn" id="back-btn" aria-label="Go back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
                 <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
                     <i class="fa-solid fa-bars"></i>
                 </button>

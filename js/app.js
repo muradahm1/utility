@@ -7,12 +7,50 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initAuthUI();
     initFooterYear();
+    initBackButton();
 });
 
 // ── Footer Year ────────────────────────────────────────────────
 function initFooterYear() {
     const yearEl = document.getElementById('footer-year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
+}
+
+// ── Back Button (Mobile Navigation) ───────────────────────────
+function initBackButton() {
+    const backBtn = document.getElementById('back-btn');
+    if (!backBtn) return;
+
+    // Only show on non-home pages on mobile
+    const path = window.location.pathname;
+    const isHomePage = path === '/' || path === '/index.html';
+    const isToolPage = path === '/tool' || path === '/tool.html';
+    
+    // Show back button on static pages (privacy, terms, etc.) and tool pages
+    const showBackButton = !isHomePage;
+    
+    if (showBackButton && window.innerWidth <= 768) {
+        backBtn.style.display = 'block';
+    }
+
+    backBtn.addEventListener('click', () => {
+        // Try browser history first
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Fallback to home
+            window.location.href = '/';
+        }
+    });
+
+    // Handle resize to show/hide back button
+    window.addEventListener('resize', () => {
+        if (showBackButton && window.innerWidth <= 768) {
+            backBtn.style.display = 'block';
+        } else {
+            backBtn.style.display = 'none';
+        }
+    });
 }
 
 // Category Page Rendering
