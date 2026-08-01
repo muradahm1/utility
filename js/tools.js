@@ -1954,6 +1954,7 @@
       // ── FINAL TOTALS ──
       const finalBuy = buyData[buyData.length - 1];
       const finalRent = rentData[rentData.length - 1];
+      const finalSellingCosts = roundTo(finalBuy.homeValue * sellingCostsPct, 2);
 
       const buyingNetCost = roundTo(finalBuy.mortgagePaid + finalBuy.taxes + finalBuy.insurance + finalBuy.maintenance + finalBuy.hoa + finalBuy.pmi - finalBuy.equity, 2);
       const rentingNetCost = roundTo(finalRent.rentPaid + finalRent.insurance, 2);
@@ -2041,7 +2042,7 @@
         { label: 'Maintenance Paid', value: fmt(finalBuy.maintenance) },
         { label: 'HOA Total', value: fmt(finalBuy.hoa) },
         { label: 'PMI Total', value: fmt(finalBuy.pmi) },
-        { label: 'Selling Costs', value: fmt(sellingCosts) },
+        { label: 'Selling Costs', value: fmt(finalSellingCosts) },
         { label: 'Investment Growth', value: fmt(finalRent.investmentValue) },
         { label: 'Opportunity Cost', value: fmt(roundTo(totalInvestmentGains, 2)) },
         { label: 'Estimated Net Worth', value: fmt(roundTo(finalBuy.netWorth + finalBuy.equity, 2)), highlight: true },
