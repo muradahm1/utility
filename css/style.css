@@ -1899,6 +1899,13 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     box-shadow: var(--shadow-focus);
 }
 
+/* Show back button on all non-home pages */
+.back-btn.visible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Mobile sidebar overlay */
 .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9; }
 .sidebar-overlay.active { display: block; }

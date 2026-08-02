@@ -21,35 +21,20 @@ function initBackButton() {
     const backBtn = document.getElementById('back-btn');
     if (!backBtn) return;
 
-    // Only show on non-home pages on mobile
+    // Show on all non-home pages
     const path = window.location.pathname;
     const isHomePage = path === '/' || path === '/index.html';
-    const isToolPage = path === '/tool' || path === '/tool.html';
     
-    // Show back button on static pages (privacy, terms, etc.) and tool pages
+    // Show back button on all non-home pages (static pages, tool pages, etc.)
     const showBackButton = !isHomePage;
     
-    if (showBackButton && window.innerWidth <= 768) {
-        backBtn.style.display = 'block';
+    if (showBackButton) {
+        backBtn.classList.add('visible');
     }
 
     backBtn.addEventListener('click', () => {
-        // Try browser history first
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            // Fallback to home
-            window.location.href = '/';
-        }
-    });
-
-    // Handle resize to show/hide back button
-    window.addEventListener('resize', () => {
-        if (showBackButton && window.innerWidth <= 768) {
-            backBtn.style.display = 'block';
-        } else {
-            backBtn.style.display = 'none';
-        }
+        // Always navigate to home page
+        window.location.href = '/';
     });
 }
 
