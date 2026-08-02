@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${esc(r.pct + '%')}</td>
                 </tr>`).join('');
             html += `
-            <div class="result-table-container">
+            <div class="result-table-container breakdown-table-container">
                 <h4>Asset Breakdown</h4>
                 <div class="table-wrapper">
                     <table>
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${esc(r.pct + '%')}</td>
                 </tr>`).join('');
             html += `
-            <div class="result-table-container">
+            <div class="result-table-container breakdown-table-container">
                 <h4>Liability Breakdown</h4>
                 <div class="table-wrapper">
                     <table>

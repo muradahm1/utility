@@ -346,27 +346,37 @@ input:checked + .slider:before { transform: translateX(20px); }
 .home-nav-btn {
     display: none;
     align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
+    gap: 7px;
+    padding: 8px 14px;
     border-radius: 999px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-card);
-    color: var(--text-primary);
+    border: none;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: #fff;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all var(--transition-base);
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.home-nav-btn i {
+    font-size: 14px;
+    line-height: 1;
 }
 .home-nav-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-    background: var(--primary-light);
     transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+}
+.home-nav-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
 }
 .home-nav-btn:focus-visible {
     outline: none;
-    box-shadow: var(--shadow-focus);
+    box-shadow: var(--shadow-focus), 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
 .back-to-top-btn {
@@ -417,11 +427,12 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
     .home-nav-btn {
         display: inline-flex;
-        padding: 8px 10px;
+        padding: 7px 12px;
         font-size: 12px;
+        min-height: 36px;
     }
     .home-nav-btn span {
-        display: none;
+        display: inline;
     }
     .back-to-top-btn {
         right: 14px;
@@ -2579,3 +2590,112 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
 [data-theme="dark"] .bp-table th { background: var(--bg-card); }
 [data-theme="dark"] .bp-table tbody tr:hover { background: rgba(99,102,241,0.08); }
 [data-theme="dark"] .bp-select { background: var(--bg-card); }
+
+/* ── Enhanced Mobile Home Button (≤480px: icon-only for space) ── */
+@media (max-width: 480px) {
+    .home-nav-btn {
+        padding: 8px 10px;
+        gap: 0;
+    }
+    .home-nav-btn span {
+        display: none;
+    }
+}
+
+/* ── Net Worth Calculator & Multi-Field Tools: Responsive Enhancements ── */
+
+/* Breakdown tables (3-column) fit phone screens without forced horizontal scroll */
+@media (max-width: 768px) {
+    .breakdown-table-container .table-wrapper {
+        overflow-x: auto;
+    }
+    .breakdown-table-container table {
+        min-width: 0 !important; /* Override the global 600px min-width */
+        width: 100%;
+    }
+    .breakdown-table-container th,
+    .breakdown-table-container td {
+        padding: 8px 6px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .breakdown-table-container th:first-child,
+    .breakdown-table-container td:first-child {
+        white-space: normal;
+        word-break: break-word;
+        min-width: 90px;
+    }
+}
+
+@media (max-width: 480px) {
+    .breakdown-table-container th,
+    .breakdown-table-container td {
+        padding: 7px 5px;
+        font-size: 11px;
+    }
+    .breakdown-table-container h4 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+}
+
+/* Multi-field forms (e.g. Net Worth): 2-column grid on tablet portrait */
+@media (min-width: 481px) and (max-width: 768px) {
+    .calculator-form-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+    }
+    /* Section headers span both columns */
+    .calculator-form-inputs .form-section-header {
+        grid-column: 1 / -1;
+        margin-top: 8px;
+    }
+    .calculator-form-inputs .form-section-header:first-child {
+        margin-top: 0;
+    }
+    .calculator-form-inputs .form-group {
+        margin-bottom: 0;
+    }
+}
+
+/* Result stats: 2-column grid on tablet portrait to reduce vertical length */
+@media (min-width: 481px) and (max-width: 768px) {
+    .calculator-results-card .result-stat-box {
+        margin-top: 10px;
+    }
+}
+
+/* Charts: taller on mobile for better readability of doughnut + bar charts */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 200px;
+    }
+    .charts-side-by-side .chart-container {
+        min-height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 180px;
+        padding: 10px;
+    }
+    .charts-side-by-side .chart-container {
+        min-height: 180px;
+    }
+}
+
+/* Insight callout: better text wrapping on mobile */
+@media (max-width: 480px) {
+    .insight-callout {
+        padding: 12px 14px !important;
+        gap: 10px !important;
+    }
+    .insight-callout > div > div:first-child {
+        font-size: 13px !important;
+    }
+    .insight-callout > div > div:last-child {
+        font-size: 12px !important;
+    }
+}
