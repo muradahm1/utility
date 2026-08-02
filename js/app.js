@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initAuthUI();
     initFooterYear();
-    initBackButton();
+    initQuickNav();
+    initBackToTop();
 });
 
 // ── Footer Year ────────────────────────────────────────────────
@@ -16,26 +17,57 @@ function initFooterYear() {
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 }
 
-// ── Back Button (Mobile Navigation) ───────────────────────────
-function initBackButton() {
-    const backBtn = document.getElementById('back-btn');
-    if (!backBtn) return;
+// Quick navigation: home shortcut for non-home pages
+function initQuickNav() {
+    const header = document.querySelector('.top-header');
+    if (!header) return;
 
-    // Show on all non-home pages
-    const path = window.location.pathname;
-    const isHomePage = path === '/' || path === '/index.html';
-    
-    // Show back button on all non-home pages (static pages, tool pages, etc.)
-    const showBackButton = !isHomePage;
-    
-    if (showBackButton) {
-        backBtn.classList.add('visible');
+    const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+    if (isHomePage) return;
+
+    let btn = document.getElementById('home-nav-btn');
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'home-nav-btn';
+        btn.className = 'home-nav-btn';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Go to home');
+        btn.innerHTML = '<i class="fa-solid fa-house"></i><span>Home</span>';
+        btn.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        const hamburger = header.querySelector('.hamburger-btn');
+        if (hamburger) {
+            header.insertBefore(btn, hamburger);
+        } else {
+            header.prepend(btn);
+        }
+    }
+}
+
+// Floating back-to-top button
+function initBackToTop() {
+    let btn = document.getElementById('back-to-top-btn');
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'back-to-top-btn';
+        btn.className = 'back-to-top-btn';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Back to top');
+        btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        btn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        document.body.appendChild(btn);
     }
 
-    backBtn.addEventListener('click', () => {
-        // Always navigate to home page
-        window.location.href = '/';
-    });
+    const toggleVisibility = () => {
+        btn.classList.toggle('visible', window.scrollY > 480);
+    };
+
+    toggleVisibility();
+    window.addEventListener('scroll', toggleVisibility, { passive: true });
 }
 
 // Category Page Rendering

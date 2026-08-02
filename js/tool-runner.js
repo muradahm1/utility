@@ -178,6 +178,64 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
+    function buildChartsHtml(result) {
+        const charts = [];
+        if (result.chart) charts.push('<div class="chart-container"><canvas id="result-chart"></canvas></div>');
+        if (result.chart2) charts.push('<div class="chart-container"><canvas id="result-chart-2"></canvas></div>');
+        if (result.compareChart) charts.push('<div class="chart-container"><canvas id="result-chart-3"></canvas></div>');
+        if (!charts.length) return '';
+
+        if (result.chart && result.chart2) {
+            const firstTwo = charts.slice(0, 2).join('');
+            const rest = charts.slice(2).join('');
+            return `<div class="charts-side-by-side">${firstTwo}</div>${rest}`;
+        }
+
+        return charts.join('');
+    }
+
+    function buildBreakdownTablesHtml(result) {
+        if (!result.assetTable && !result.liabilityTable) return '';
+        let html = '';
+        if (result.assetTable) {
+            const rows = result.assetTable.map(r => `
+                <tr>
+                    <td>${esc(r.category)}</td>
+                    <td>${esc(fmt(r.amount))}</td>
+                    <td>${esc(r.pct + '%')}</td>
+                </tr>`).join('');
+            html += `
+            <div class="result-table-container">
+                <h4>Asset Breakdown</h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Category</th><th>Amount</th><th>% of Assets</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>`;
+        }
+        if (result.liabilityTable) {
+            const rows = result.liabilityTable.map(r => `
+                <tr>
+                    <td>${esc(r.category)}</td>
+                    <td>${esc(fmt(r.amount))}</td>
+                    <td>${esc(r.pct + '%')}</td>
+                </tr>`).join('');
+            html += `
+            <div class="result-table-container">
+                <h4>Liability Breakdown</h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Category</th><th>Amount</th><th>% of Liabilities</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>`;
+        }
+        return html;
+    }
+
     function buildBarsHtml(bars) {
         if (!bars || !bars.length) return '';
         return `
@@ -234,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return `<td${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${formatted}</td>`;
         }).join('')}</tr>` : '';
         return `
-            <div class="result-table-container">
+            <div class="result-table-container calc-data-table">
                 <h4>${esc(tbl.title)}</h4>
                 <div class="table-wrapper">
                     <table>
@@ -255,6 +313,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 field.max  !== undefined ? `max="${field.max}"`   : '',
                 field.step !== undefined ? `step="${field.step}"` : '',
             ].join(' ');
+
+            // Form section header — groups related inputs with an icon + label
+            if (field.type === 'section') return `
+                <div class="form-section-header" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
+                    <i class="fa-solid ${field.icon || 'fa-circle'}"></i>
+                    <span>${esc(label)}</span>
+                </div>`;
 
             if (field.type === 'select') return `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
@@ -293,11 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
             buildBmiGaugeHtml(result.bmiGauge) +
             buildStatsHtml(result.stats) +
             (result.bars ? buildBarsHtml(result.bars) : '') +
-            (result.chart ? '<div class="chart-container"><canvas id="result-chart"></canvas></div>' : '') +
+            buildChartsHtml(result) +
+            buildBreakdownTablesHtml(result) +
             buildCopyBtn();
 
         if (result.table) {
-            const container = document.querySelector('.result-table-container');
+            const container = document.querySelector('.calc-data-table');
             if (container) {
                 if (result.table.mode) {
                     container.outerHTML = buildTableSpecHtml(result.table);
@@ -309,16 +375,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (result.chart) renderChart(result.chart);
+        if (result.chart2) renderChart(result.chart2, 'result-chart-2');
+        if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
         bindCopyBtn(result.stats);
 
-        // Conditional field visibility + label updates
+        // Conditional field + section visibility + label updates
         tool.fields.forEach(field => {
             const group = document.querySelector(`.form-group[data-field="${field.id}"]`);
-            if (!group) return;
-            if (field.condition) group.style.display = field.condition(values) ? '' : 'none';
-            if (tool.fieldLabels) {
-                const lbl = tool.fieldLabels(values)[field.id];
-                if (lbl) group.querySelector('label').textContent = lbl;
+            if (group) {
+                if (field.condition) group.style.display = field.condition(values) ? '' : 'none';
+                if (tool.fieldLabels) {
+                    const lbl = tool.fieldLabels(values)[field.id];
+                    if (lbl) group.querySelector('label').textContent = lbl;
+                }
+                return;
+            }
+            if (field.type === 'section') {
+                const section = document.querySelector(`.form-section-header[data-field="${field.id}"]`);
+                if (section && field.condition) {
+                    section.style.display = field.condition(values) ? '' : 'none';
+                }
             }
         });
     }
@@ -392,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tableHtml = buildTableSpecHtml(result.table);
             } else {
                 tableHtml = `
-                    <div class="result-table-container">
+                    <div class="result-table-container calc-data-table amortization-result-table">
                         <h4>${scheduleTitle}</h4>
                         <div class="table-wrapper">
                             <table>
@@ -417,7 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${buildBmiGaugeHtml(result.bmiGauge)}
                         ${buildStatsHtml(result.stats)}
                         ${result.bars ? buildBarsHtml(result.bars) : ''}
-                        ${result.chart ? '<div class="chart-container"><canvas id="result-chart"></canvas></div>' : ''}
+                        ${buildChartsHtml(result)}
+                        ${buildBreakdownTablesHtml(result)}
                         ${buildCopyBtn()}
                     </div>
                 </div>
@@ -433,6 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ${buildRelatedToolsHtml()}`;
 
         if (result.chart) renderChart(result.chart);
+        if (result.chart2) renderChart(result.chart2, 'result-chart-2');
+        if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
         bindCopyBtn(result.stats);
         initSaveButton();
     }
@@ -605,32 +684,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ── Chart ─────────────────────────────────────────────────
-    let chartInstance = null;
-    function renderChart(chartData) {
-        const canvas = document.getElementById('result-chart');
+    let chartInstances = {};
+    function renderChart(chartData, canvasId) {
+        const id = canvasId || 'result-chart';
+        const canvas = document.getElementById(id);
         if (!canvas) return;
-        if (chartInstance) chartInstance.destroy();
+        if (chartInstances[id]) chartInstances[id].destroy();
 
         const type = chartData.type || 'doughnut';
         const isLine = type === 'line';
         const isBar = type === 'bar';
+        const isHBar = type === 'horizontalBar';
         const isDoughnut = !type || type === 'doughnut';
 
         if (isDoughnut) {
-            chartInstance = new Chart(canvas.getContext('2d'), {
+            // Custom multi-slice doughnut (labels/colors/data) or default principal/interest
+            const labels = chartData.labels || ['Principal', 'Total Interest'];
+            const data = chartData.data || [chartData.principal, chartData.totalInterest];
+            const colors = chartData.colors || ['#6366F1', '#F59E0B'];
+            chartInstances[id] = new Chart(canvas.getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Principal', 'Total Interest'],
-                    datasets: [{ data: [chartData.principal, chartData.totalInterest], backgroundColor: ['#6366F1', '#F59E0B'], borderWidth: 0 }],
+                    labels: labels,
+                    datasets: [{ data: data, backgroundColor: colors, borderWidth: 2, borderColor: 'var(--bg-card)' }],
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: chartData.cutout || '62%',
                     plugins: {
-                        legend: { position: 'bottom' },
+                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 14, color: 'var(--text-secondary)' } },
                         tooltip: {
                             callbacks: {
-                                label: ctx => `${ctx.label}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(ctx.parsed)}`,
+                                label: ctx => {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : '0';
+                                    return `${ctx.label}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(ctx.parsed)} (${pct}%)`;
+                                },
                             },
                         },
                     },
@@ -650,22 +740,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 pointHoverRadius: isLine ? 5 : 0,
                 fill: ds.fill || false,
                 borderWidth: isLine ? 2.5 : 1,
-                borderRadius: isBar ? 6 : 0,
+                borderRadius: isBar || isHBar ? 6 : 0,
                 borderSkipped: false,
             };
             if (isBar) {
                 base.backgroundColor = chartData.datasets[0].data.map((_, i) => ['#6366F1', '#10B981', '#F59E0B', '#EF4444'][i % 4]);
                 base.borderColor = base.backgroundColor;
             }
+            if (isHBar) {
+                base.backgroundColor = ds.colors || chartData.colors || ['#10B981', '#EF4444'];
+                base.borderColor = base.backgroundColor;
+                base.borderRadius = 8;
+            }
             return base;
         });
 
-        chartInstance = new Chart(canvas.getContext('2d'), {
-            type: type,
+        chartInstances[id] = new Chart(canvas.getContext('2d'), {
+            type: isHBar ? 'bar' : type,
             data: { labels: chartData.labels || [], datasets },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                indexAxis: isHBar ? 'y' : undefined,
                 plugins: {
                     legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 16, color: 'var(--text-secondary)' } },
                     tooltip: {
@@ -684,8 +780,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                     },
                 },
-                scales: isLine || isBar ? {
-                    x: { ticks: { color: 'var(--text-secondary)', font: { size: 11 } }, grid: { display: false } },
+                scales: isLine || isBar || isHBar ? {
+                    x: { ticks: { color: 'var(--text-secondary)', font: { size: 11 }, callback: isHBar ? v => '$' + Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }) : undefined }, grid: { display: isHBar ? false : undefined } },
                     y: { ticks: { color: 'var(--text-secondary)', font: { size: 11 }, callback: v => chartData.yLabel && chartData.yLabel.includes('%') ? v + '%' : '$' + Number(v).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }, grid: { color: 'var(--border-color)' } },
                 } : undefined,
             },

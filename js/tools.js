@@ -2590,6 +2590,213 @@
       }
     },
   },
+
+  // ── Net Worth Calculator ─────────────────────────────────────
+  'net-worth-calculator': {
+    name: 'Net Worth Calculator',
+    category: 'Finance',
+    icon: 'fa-scale-balanced',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate your total net worth by tracking all assets and liabilities. See your asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights.',
+    metaTitle: 'Net Worth Calculator | Track Assets & Liabilities — GetCalcu',
+    metaDescription: 'Free Net Worth Calculator — instantly calculate your total net worth, asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights. Track cash, investments, property, retirement, and debts.',
+    keywords: [
+      'net worth calculator',
+      'calculate net worth',
+      'net worth tracker',
+      'assets and liabilities calculator',
+      'personal net worth',
+      'wealth calculator',
+      'debt to asset ratio calculator',
+      'how to calculate net worth',
+      'net worth formula',
+      'financial health calculator',
+    ],
+    fields: [
+      // ── ASSETS ──
+      { id: 'sec_assets', type: 'section', label: 'Assets — What You Own', icon: 'fa-arrow-trend-up' },
+      { id: 'cash_savings',    label: 'Cash & Savings ($)',    type: 'number', default: 15000,  min: 0, step: 100,  hint: 'Checking accounts, savings accounts, cash on hand, and emergency funds.' },
+      { id: 'investments',     label: 'Investments ($)',       type: 'number', default: 45000,  min: 0, step: 100,  hint: 'Stocks, bonds, mutual funds, ETFs, and brokerage accounts (not retirement).' },
+      { id: 'retirement',      label: 'Retirement Accounts ($)', type: 'number', default: 60000, min: 0, step: 100,  hint: '401(k), IRA, Roth IRA, 403(b), and pension values.' },
+      { id: 'home_value',      label: 'Home Value ($)',        type: 'number', default: 350000, min: 0, step: 1000, hint: 'Current market value of your primary residence or real estate.' },
+      { id: 'vehicles',        label: 'Vehicles ($)',          type: 'number', default: 20000,  min: 0, step: 500,  hint: 'Current resale value of cars, motorcycles, boats, or RVs.' },
+      { id: 'other_assets',    label: 'Other Assets ($)',      type: 'number', default: 10000,  min: 0, step: 100,  hint: 'Business equity, collectibles, jewelry, and other valuables.' },
+
+      // ── LIABILITIES ──
+      { id: 'sec_liabilities', type: 'section', label: 'Liabilities — What You Owe', icon: 'fa-arrow-trend-down' },
+      { id: 'credit_cards',    label: 'Credit Card Debt ($)',  type: 'number', default: 5000,   min: 0, step: 100,  hint: 'Total outstanding balance across all credit cards.' },
+      { id: 'personal_loans',  label: 'Personal Loans ($)',    type: 'number', default: 8000,   min: 0, step: 100,  hint: 'Personal, student, or auto loans you are repaying.' },
+      { id: 'mortgage',        label: 'Mortgage Balance ($)',  type: 'number', default: 250000, min: 0, step: 1000, hint: 'Remaining principal on your home mortgage.' },
+      { id: 'other_debt',      label: 'Other Debt ($)',        type: 'number', default: 2000,   min: 0, step: 100,  hint: 'Medical bills, tax debt, and any other outstanding obligations.' },
+    ],
+    calculate(v) {
+      // ── Assets ──
+      const cash       = safeNum(v.cash_savings, 0);
+      const invest     = safeNum(v.investments, 0);
+      const retire     = safeNum(v.retirement, 0);
+      const home       = safeNum(v.home_value, 0);
+      const vehicles   = safeNum(v.vehicles, 0);
+      const other      = safeNum(v.other_assets, 0);
+      const totalAssets = roundTo(cash + invest + retire + home + vehicles + other, 2);
+
+      // ── Liabilities ──
+      const cc         = safeNum(v.credit_cards, 0);
+      const loans      = safeNum(v.personal_loans, 0);
+      const mortgage   = safeNum(v.mortgage, 0);
+      const otherDebt  = safeNum(v.other_debt, 0);
+      const totalLiabilities = roundTo(cc + loans + mortgage + otherDebt, 2);
+
+      // ── Net worth ──
+      const netWorth = roundTo(totalAssets - totalLiabilities, 2);
+
+      // ── Ratios ──
+      const debtToAsset = totalAssets > 0 ? roundTo((totalLiabilities / totalAssets) * 100, 1) : 0;
+      const assetToLiability = totalLiabilities > 0 ? roundTo(totalAssets / totalLiabilities, 2) : (totalAssets > 0 ? 999 : 0);
+      const liquidAssets = roundTo(cash + invest, 2);
+      const liquidRatio = totalLiabilities > 0 ? roundTo((liquidAssets / totalLiabilities) * 100, 1) : 0;
+
+      // ── Status assessment ──
+      let status, statusColor, insight;
+      if (netWorth < 0) {
+        status = 'Negative Net Worth';
+        statusColor = '#EF4444';
+        insight = {
+          tone: 'warning',
+          icon: 'fa-triangle-exclamation',
+          headline: 'Your liabilities exceed your assets by ' + fmt(Math.abs(netWorth)) + '.',
+          detail: 'Focus on paying down high-interest debt first (credit cards and personal loans). Even small extra payments accelerate progress. Track this monthly — the trend matters more than any single snapshot.'
+        };
+      } else if (debtToAsset > 50) {
+        status = 'Debt-Heavy';
+        statusColor = '#F59E0B';
+        insight = {
+          tone: 'warning',
+          icon: 'fa-scale-unbalanced',
+          headline: 'Your debt is ' + debtToAsset + '% of your assets.',
+          detail: 'A healthy debt-to-asset ratio is typically under 50%. Prioritize reducing high-interest debt while maintaining your emergency fund. Your net worth of ' + fmt(netWorth) + ' is positive — build on it.'
+        };
+      } else if (debtToAsset > 30) {
+        status = 'Building Wealth';
+        statusColor = '#3B82F6';
+        insight = {
+          tone: 'neutral',
+          icon: 'fa-chart-line',
+          headline: 'Solid foundation — net worth of ' + fmt(netWorth) + '.',
+          detail: 'Your debt-to-asset ratio of ' + debtToAsset + '% is manageable. Consider accelerating debt payoff and increasing retirement contributions to grow your net worth faster.'
+        };
+      } else {
+        status = 'Strong Financial Health';
+        statusColor = '#10B981';
+        insight = {
+          tone: 'positive',
+          icon: 'fa-circle-check',
+          headline: 'Excellent! Your net worth is ' + fmt(netWorth) + ' with a healthy ' + debtToAsset + '% debt-to-asset ratio.',
+          detail: 'You are in a strong position. Keep investing consistently, maintain your emergency fund, and consider diversifying into growth assets to compound your wealth.'
+        };
+      }
+
+      // ── Asset breakdown chart (doughnut) ──
+      const assetLabels = ['Cash & Savings', 'Investments', 'Retirement', 'Home', 'Vehicles', 'Other'];
+      const assetData = [cash, invest, retire, home, vehicles, other];
+      const assetColors = ['#10B981', '#6366F1', '#8B5CF6', '#F59E0B', '#3B82F6', '#EC4899'];
+
+      // ── Liability breakdown chart (doughnut) ──
+      const liabilityLabels = ['Credit Cards', 'Personal Loans', 'Mortgage', 'Other Debt'];
+      const liabilityData = [cc, loans, mortgage, otherDebt];
+      const liabilityColors = ['#EF4444', '#F97316', '#F59E0B', '#94A3B8'];
+
+      // ── Assets vs Liabilities horizontal bar ──
+      const compareChart = {
+        type: 'horizontalBar',
+        labels: ['Assets', 'Liabilities'],
+        datasets: [{
+          label: 'Amount',
+          data: [totalAssets, totalLiabilities],
+          colors: ['#10B981', '#EF4444'],
+        }],
+        yLabel: 'Amount ($)',
+        title: 'Assets vs Liabilities',
+      };
+
+      // ── Asset allocation table ──
+      const assetRows = [
+        { category: 'Cash & Savings', amount: cash, pct: totalAssets > 0 ? roundTo((cash / totalAssets) * 100, 1) : 0 },
+        { category: 'Investments',    amount: invest, pct: totalAssets > 0 ? roundTo((invest / totalAssets) * 100, 1) : 0 },
+        { category: 'Retirement',     amount: retire, pct: totalAssets > 0 ? roundTo((retire / totalAssets) * 100, 1) : 0 },
+        { category: 'Home',           amount: home, pct: totalAssets > 0 ? roundTo((home / totalAssets) * 100, 1) : 0 },
+        { category: 'Vehicles',       amount: vehicles, pct: totalAssets > 0 ? roundTo((vehicles / totalAssets) * 100, 1) : 0 },
+        { category: 'Other Assets',   amount: other, pct: totalAssets > 0 ? roundTo((other / totalAssets) * 100, 1) : 0 },
+      ];
+      const liabilityRows = [
+        { category: 'Credit Cards',   amount: cc, pct: totalLiabilities > 0 ? roundTo((cc / totalLiabilities) * 100, 1) : 0 },
+        { category: 'Personal Loans', amount: loans, pct: totalLiabilities > 0 ? roundTo((loans / totalLiabilities) * 100, 1) : 0 },
+        { category: 'Mortgage',       amount: mortgage, pct: totalLiabilities > 0 ? roundTo((mortgage / totalLiabilities) * 100, 1) : 0 },
+        { category: 'Other Debt',     amount: otherDebt, pct: totalLiabilities > 0 ? roundTo((otherDebt / totalLiabilities) * 100, 1) : 0 },
+      ];
+
+      return {
+        stats: [
+          { label: 'Net Worth',            value: fmt(netWorth),        highlight: true, color: netWorth >= 0 ? '#10B981' : '#EF4444' },
+          { label: 'Total Assets',         value: fmt(totalAssets) },
+          { label: 'Total Liabilities',    value: fmt(totalLiabilities), warn: totalLiabilities > 0 },
+          { label: 'Status',               value: status,               color: statusColor },
+          { label: 'Debt-to-Asset Ratio',  value: debtToAsset + '%',    warn: debtToAsset > 50 },
+          { label: 'Asset-to-Liability',   value: assetToLiability === 999 ? '∞' : assetToLiability + 'x' },
+          { label: 'Liquid Assets',        value: fmt(liquidAssets) },
+          { label: 'Liquid-to-Debt Ratio', value: liquidRatio + '%' },
+        ],
+        insight,
+        chart: {
+          labels: assetLabels,
+          data: assetData,
+          colors: assetColors,
+          cutout: '58%',
+        },
+        chart2: {
+          labels: liabilityLabels,
+          data: liabilityData,
+          colors: liabilityColors,
+          cutout: '58%',
+        },
+        compareChart,
+        assetTable: assetRows,
+        liabilityTable: liabilityRows,
+      };
+    },
+
+    howTo: [
+      'Enter the value of each asset you own — cash, investments, retirement accounts, home, vehicles, and other valuables.',
+      'Enter the balance of each liability you owe — credit cards, personal loans, mortgage, and other debt.',
+      'Your net worth is calculated instantly as Total Assets minus Total Liabilities.',
+      'Review the asset and liability breakdown charts to see where your wealth is concentrated.',
+      'Check your debt-to-asset ratio and liquid-to-debt ratio to assess financial health.',
+      'Use the insight callout for a personalized recommendation on improving your net worth.',
+    ],
+    examples: [
+      { title: 'Early Career Professional', input: 'Cash: $15k, Investments: $45k, Retirement: $60k, Home: $350k, Vehicles: $20k | Debt: $5k CC, $8k Loans, $250k Mortgage', result: 'Net Worth: ~$227,000 | Debt-to-Asset: 50%' },
+      { title: 'Debt-Heavy Situation', input: 'Cash: $5k, Investments: $10k, Home: $200k | Debt: $15k CC, $20k Loans, $180k Mortgage', result: 'Net Worth: $0 | Debt-to-Asset: 88% — Focus on debt' },
+      { title: 'Strong Financial Health', input: 'Cash: $50k, Investments: $150k, Retirement: $200k, Home: $500k | Debt: $0 CC, $0 Loans, $150k Mortgage', result: 'Net Worth: ~$750,000 | Debt-to-Asset: 17%' },
+    ],
+    formula: 'Net Worth = Total Assets − Total Liabilities | Debt-to-Asset Ratio = (Total Liabilities ÷ Total Assets) × 100 | Asset-to-Liability Ratio = Total Assets ÷ Total Liabilities | Liquid-to-Debt Ratio = (Cash + Investments) ÷ Total Liabilities × 100',
+    article: {
+      heading: 'How to Calculate Your Net Worth and Build Lasting Wealth',
+      intro: 'Your net worth is the single clearest number that captures your financial position — everything you own minus everything you owe. The GetCalcu Net Worth Calculator makes it effortless to track this number, understand where your wealth is concentrated, and identify the fastest path to growing it.',
+      sections: [
+        { heading: 'Why Net Worth Matters More Than Income', body: 'Income is what you earn; net worth is what you keep. Two people earning the same salary can have wildly different net worths depending on how much they save, invest, and owe. Tracking net worth monthly reveals whether your financial habits are actually building wealth or just cycling money through your accounts.' },
+        { heading: 'Assets vs Liabilities: The Core Equation', body: 'Assets are anything you own that has value — cash, investments, retirement accounts, real estate, vehicles, and valuables. Liabilities are what you owe — credit cards, loans, and mortgages. Net worth is simply assets minus liabilities. A positive net worth means you own more than you owe; a negative one signals it is time to prioritize debt reduction.' },
+        { heading: 'Using Ratios to Assess Financial Health', body: 'Beyond the headline number, ratios reveal the quality of your balance sheet. The debt-to-asset ratio (liabilities ÷ assets) shows how leveraged you are — under 30% is healthy, over 50% is debt-heavy. The liquid-to-debt ratio (cash + investments ÷ liabilities) shows whether you could cover your debts with liquid assets in an emergency.' },
+      ],
+    },
+    faqs: [
+      { q: 'How do I calculate my net worth?', a: 'Net worth is calculated as Total Assets minus Total Liabilities. Add up everything you own (cash, investments, retirement accounts, home value, vehicles, and other valuables), then subtract everything you owe (credit card debt, personal loans, mortgage balance, and other debts). The result is your net worth.' },
+      { q: 'What is a good net worth for my age?', a: 'A common benchmark is to have a net worth equal to 1x your annual income by age 30, 3x by 40, 6x by 50, and 8x by 60. However, these are rough guidelines — what matters most is the trend. If your net worth is growing each month, you are on the right track regardless of your starting point.' },
+      { q: 'What is a healthy debt-to-asset ratio?', a: 'A debt-to-asset ratio under 30% is generally considered healthy, 30-50% is manageable, and above 50% is debt-heavy. The ratio is calculated as Total Liabilities ÷ Total Assets × 100. A lower ratio means you own a larger share of your assets outright.' },
+      { q: 'Should I include my home and mortgage in net worth?', a: 'Yes. Your home is an asset at its current market value, and your mortgage is a liability at its remaining balance. Including both gives an accurate picture of your true net worth. Many people are surprised to find their home equity is their largest single asset.' },
+      { q: 'How often should I track my net worth?', a: 'Most financial experts recommend tracking net worth monthly. This cadence is frequent enough to catch problems early (like rising debt) but not so frequent that market fluctuations create noise. Monthly tracking also lets you see the compounding effect of consistent saving and investing.' },
+      { q: 'What is the difference between net worth and income?', a: 'Income is the money you earn over a period (monthly or annually), while net worth is the total value of what you own minus what you owe at a single point in time. You can have a high income and low net worth if you spend everything, or a modest income and growing net worth through disciplined saving and investing.' },
+    ],
+  },
 };
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
