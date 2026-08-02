@@ -344,7 +344,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .home-nav-btn {
-    display: inline-flex;
+    display: none;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
@@ -416,6 +416,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         order: 2;
     }
     .home-nav-btn {
+        display: inline-flex;
         padding: 8px 10px;
         font-size: 12px;
     }
