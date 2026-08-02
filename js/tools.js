@@ -2481,6 +2481,114 @@
         },
       ]
     },
+
+    renderResults(results, container) {
+      if (results.error) {
+        container.innerHTML = '<div class="error-message">' + results.stats[0].value + '</div>';
+        return;
+      }
+
+      const statsHtml = results.stats.map(stat => {
+        const highlightClass = stat.highlight ? 'highlight' : '';
+        const warnClass = stat.warn ? 'warn' : '';
+        const colorStyle = stat.color ? 'style="color:' + stat.color + '"' : '';
+        return '<div class="stat-card ' + highlightClass + ' ' + warnClass + '">' +
+          '<div class="stat-label">' + stat.label + '</div>' +
+          '<div class="stat-value" ' + colorStyle + '>' + stat.value + '</div>' +
+        '</div>';
+      }).join('');
+
+      let tableHtml = '';
+      if (results.table) {
+        const rows = results.table.rows.map(row => {
+          const cells = results.table.columns.map(col => {
+            const val = row[col.key];
+            const emph = col.emphasis ? 'emphasis' : '';
+            return '<td class="' + emph + '">' + val + '</td>';
+          }).join('');
+          return '<tr>' + cells + '</tr>';
+        }).join('');
+
+        const headers = results.table.columns.map(col => {
+          const emph = col.emphasis ? 'emphasis' : '';
+          return '<th class="' + emph + '">' + col.label + '</th>';
+        }).join('');
+
+        tableHtml = '<div class="cookie-table-container" style="overflow-x: auto;">' +
+          '<table class="results-table">' +
+            '<thead><tr>' + headers + '</tr></thead>' +
+            '<tbody>' + rows + '</tbody>' +
+          '</table>' +
+        '</div>';
+      }
+
+      container.innerHTML = '<div class="results-container">' +
+        '<div class="stats-grid">' + statsHtml + '</div>' +
+        '<div class="chart-wrapper"><canvas id="chart-' + container.id + '"></canvas></div>' +
+        (tableHtml ? '<div class="table-section"><h3>' + results.table.title + '</h3>' + tableHtml + '</div>' : '') +
+      '</div>';
+
+      if (results.chart) {
+        this.renderChart(results, 'chart-' + container.id);
+      }
+    },
+
+    renderChart(results, canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || !results.chart) return;
+
+      const ctx = canvas.getContext('2d');
+      const chartData = results.chart;
+
+      // Doughnut chart for monthly housing breakdown
+      if (chartData.principal !== undefined && !chartData.type) {
+        const labels = ['Principal & Interest', 'Property Taxes', 'Homeowners Insurance', 'HOA Fees'];
+        const data = [
+          chartData.principal || 0,
+          chartData.propertyTax || 0,
+          chartData.insurance || 0,
+          chartData.hoa || 0,
+        ];
+        const colors = ['#6366F1', '#10B981', '#F59E0B', '#EF4444'];
+
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: colors,
+              borderWidth: 2,
+              borderColor: '#fff',
+            }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 15,
+                  font: { size: 12 },
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const value = context.parsed || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const pct = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                    return label + ': $' + value.toFixed(2) + ' (' + pct + '%)';
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+    },
   },
 };
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
