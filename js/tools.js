@@ -2231,9 +2231,258 @@
       },
     ],
   },
-};
 
-function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
+  // ── House Affordability Calculator ─────────────────────────────────────
+  'house-affordability-calculator': {
+    name: 'House Affordability Calculator',
+    category: 'Finance',
+    icon: 'fa-house',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.',
+    metaDescription: 'Free house affordability calculator — determine your maximum home purchase price based on DTI ratios, income, debt, and down payment.',
+    keywords: ['house affordability calculator', 'how much house can i afford', 'dti calculator', '28 36 rule', 'fha loan calculator'],
+    fields: [
+      { id: 'annual_income', label: 'Annual Gross Household Income ($)', type: 'number', default: 105000, min: 0, step: 1000, hint: 'Total yearly household income before taxes.' },
+      { id: 'monthly_debt', label: 'Monthly Debt Payments ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'Car loans, student loans, credit cards, etc.' },
+      { id: 'down_payment', label: 'Cash Saved for Down Payment ($)', type: 'number', default: 60000, min: 0, step: 1000, hint: 'Cash available for down payment.' },
+      { id: 'loan_term', label: 'Loan Term (Years)', type: 'select', default: 30, options: [15,20,30].map(v => ({ value: v, label: v + ' years' })), hint: 'How long to repay the mortgage.' },
+      { id: 'mortgage_rate', label: 'Estimated Mortgage Rate (%)', type: 'number', default: 6.75, min: 0.01, max: 20, step: 0.05, hint: 'Expected annual interest rate (APR).' },
+      { id: 'property_tax_rate', label: 'Annual Property Tax Rate (%)', type: 'number', default: 1.2, min: 0, max: 5, step: 0.1, hint: 'Effective annual property tax rate (typically 0.5-2%).' },
+      { id: 'home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1500, min: 0, step: 100, hint: 'Yearly homeowners insurance premium.' },
+      { id: 'hoa_fees', label: 'Monthly HOA / Co-op Fee ($)', type: 'number', default: 0, min: 0, step: 25, hint: 'Monthly HOA or co-op fees.' },
+      { id: 'lender_rule', label: 'Lender Rule Preference', type: 'select', default: 'conventional', options: [
+        { value: 'conventional', label: 'Conventional 28/36 Rule' },
+        { value: 'fha', label: 'FHA Loan 31/43 Rule' },
+        { value: 'va', label: 'VA Loan 41% DTI' },
+        { value: 'aggressive', label: 'Aggressive 36/45 Rule' },
+      ], hint: 'Choose the lender guideline to use.' },
+    ],
+    calculate(v) {
+      const annualIncome = safeNum(v.annual_income, 0);
+      const monthlyDebt = safeNum(v.monthly_debt, 0);
+      const downPayment = safeNum(v.down_payment, 0);
+      const loanTerm = Math.round(safeNum(v.loan_term, 30));
+      const mortgageRate = safeNum(v.mortgage_rate, 0) / 100;
+      const propertyTaxRate = safeNum(v.property_tax_rate, 0) / 100;
+      const homeInsurance = safeNum(v.home_insurance, 0);
+      const hoaFees = safeNum(v.hoa_fees, 0);
+      const lenderRule = safeStr(v.lender_rule);
+
+      if (annualIncome <= 0) return errorResult('Please enter a valid annual income.');
+
+      const grossMonthlyIncome = annualIncome / 12;
+
+      let frontEndRatio, backEndRatio;
+      switch (lenderRule) {
+        case 'fha': frontEndRatio = 0.31; backEndRatio = 0.43; break;
+        case 'va': frontEndRatio = 0.41; backEndRatio = 0.41; break;
+        case 'aggressive': frontEndRatio = 0.36; backEndRatio = 0.45; break;
+        default: frontEndRatio = 0.28; backEndRatio = 0.36; break;
+      }
+
+      const monthlyPropertyTax = (propertyTaxRate * annualIncome) / 12;
+      const monthlyInsurance = homeInsurance / 12;
+      const maxHousingPayment = grossMonthlyIncome * frontEndRatio;
+      const maxTotalDebtPayment = grossMonthlyIncome * backEndRatio;
+      const availableForHousing = maxTotalDebtPayment - monthlyDebt;
+      const maxMonthlyHousing = Math.min(maxHousingPayment, availableForHousing);
+      const availableForPI = maxMonthlyHousing - monthlyPropertyTax - monthlyInsurance - hoaFees;
+
+      if (availableForPI <= 0) {
+        return errorResult('Your debt obligations exceed the allowed DTI ratio. Consider reducing monthly debt or increasing income.');
+      }
+
+      const monthlyRate = mortgageRate / 12;
+      const numPayments = loanTerm * 12;
+      let maxLoanAmount;
+      if (monthlyRate === 0) {
+        maxLoanAmount = availableForPI * numPayments;
+      } else {
+        maxLoanAmount = availableForPI * (1 - Math.pow(1 + monthlyRate, -numPayments)) / monthlyRate;
+      }
+      maxLoanAmount = Math.max(0, roundTo(maxLoanAmount, 2));
+      const recommendedHomePrice = maxLoanAmount + downPayment;
+
+      let monthlyPI;
+      if (monthlyRate === 0) {
+        monthlyPI = maxLoanAmount / numPayments;
+      } else {
+        monthlyPI = maxLoanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+      }
+      monthlyPI = roundTo(monthlyPI, 2);
+      const totalMonthlyPayment = roundTo(monthlyPI + monthlyPropertyTax + monthlyInsurance + hoaFees, 2);
+
+      const actualFrontEndDTI = (totalMonthlyPayment / grossMonthlyIncome) * 100;
+      const actualBackEndDTI = ((totalMonthlyPayment + monthlyDebt) / grossMonthlyIncome) * 100;
+
+      const conservativeFrontEnd = grossMonthlyIncome * 0.25;
+      const conservativeBackEnd = grossMonthlyIncome * 0.35;
+      const conservativeHousing = Math.min(conservativeFrontEnd, conservativeBackEnd - monthlyDebt);
+      const conservativePI = Math.max(0, conservativeHousing - monthlyPropertyTax - monthlyInsurance - hoaFees);
+      let conservativeLoan;
+      if (monthlyRate === 0) {
+        conservativeLoan = conservativePI * numPayments;
+      } else {
+        conservativeLoan = conservativePI * (1 - Math.pow(1 + monthlyRate, -numPayments)) / monthlyRate;
+      }
+      conservativeLoan = Math.max(0, roundTo(conservativeLoan, 2));
+      const conservativePrice = conservativeLoan + downPayment;
+
+      const aggressiveFrontEnd = grossMonthlyIncome * 0.35;
+      const aggressiveBackEnd = grossMonthlyIncome * 0.45;
+      const aggressiveHousing = Math.min(aggressiveFrontEnd, aggressiveBackEnd - monthlyDebt);
+      const aggressivePI = Math.max(0, aggressiveHousing - monthlyPropertyTax - monthlyInsurance - hoaFees);
+      let aggressiveLoan;
+      if (monthlyRate === 0) {
+        aggressiveLoan = aggressivePI * numPayments;
+      } else {
+        aggressiveLoan = aggressivePI * (1 - Math.pow(1 + monthlyRate, -numPayments)) / monthlyRate;
+      }
+      aggressiveLoan = Math.max(0, roundTo(aggressiveLoan, 2));
+      const aggressivePrice = aggressiveLoan + downPayment;
+
+      return {
+        stats: [
+          { label: 'Recommended Affordable Home Price', value: fmt(recommendedHomePrice), highlight: true },
+          { label: 'Max Loan Amount', value: fmt(maxLoanAmount) },
+          { label: 'Total Monthly Housing Payment', value: fmt(totalMonthlyPayment) },
+          { label: 'Principal & Interest', value: fmt(monthlyPI) },
+          { label: 'Property Taxes (monthly)', value: fmt(roundTo(monthlyPropertyTax, 2)) },
+          { label: 'Homeowners Insurance (monthly)', value: fmt(roundTo(monthlyInsurance, 2)) },
+          { label: 'HOA / Co-op Fees', value: fmt(hoaFees) },
+          { label: 'Front-End DTI', value: actualFrontEndDTI.toFixed(1) + '%' },
+          { label: 'Back-End DTI', value: actualBackEndDTI.toFixed(1) + '%' },
+          { label: 'Down Payment', value: fmt(downPayment) },
+          { label: 'Gross Monthly Income', value: fmt(grossMonthlyIncome) },
+        ],
+        chart: {
+          principal: monthlyPI,
+          propertyTax: roundTo(monthlyPropertyTax, 2),
+          insurance: roundTo(monthlyInsurance, 2),
+          hoa: hoaFees,
+        },
+        table: {
+          mode: 'comparison',
+          title: 'Purchase Capability Breakdown',
+          columns: [
+            { key: 'scenario', label: 'Scenario', format: 'text' },
+            { key: 'homePrice', label: 'Home Price', format: 'currency', emphasis: true },
+            { key: 'loanAmount', label: 'Loan Amount', format: 'currency' },
+            { key: 'monthlyPayment', label: 'Monthly Payment', format: 'currency' },
+            { key: 'frontDTI', label: 'Front-End DTI', format: 'text' },
+            { key: 'backDTI', label: 'Back-End DTI', format: 'text' },
+          ],
+          rows: [
+            { scenario: 'Conservative (25/35)', homePrice: fmt(conservativePrice), loanAmount: fmt(conservativeLoan), monthlyPayment: fmt(roundTo(conservativePI + monthlyPropertyTax + monthlyInsurance + hoaFees, 2)), frontDTI: '25%', backDTI: pct((conservativePI + monthlyPropertyTax + monthlyInsurance + hoaFees + monthlyDebt) / grossMonthlyIncome) },
+            { scenario: 'Target (28/36) - Recommended', homePrice: fmt(recommendedHomePrice), loanAmount: fmt(maxLoanAmount), monthlyPayment: fmt(totalMonthlyPayment), frontDTI: actualFrontEndDTI.toFixed(1) + '%', backDTI: actualBackEndDTI.toFixed(1) + '%' },
+            { scenario: 'Aggressive (35/45)', homePrice: fmt(aggressivePrice), loanAmount: fmt(aggressiveLoan), monthlyPayment: fmt(roundTo(aggressivePI + monthlyPropertyTax + monthlyInsurance + hoaFees, 2)), frontDTI: '35%', backDTI: pct((aggressivePI + monthlyPropertyTax + monthlyInsurance + hoaFees + monthlyDebt) / grossMonthlyIncome) },
+          ],
+        },
+      };
+    },
+
+    howTo: [
+      'Enter your annual gross household income and monthly debt payments (car loans, student loans, credit cards).',
+      'Add your down payment savings, loan term, and estimated mortgage rate.',
+      'Set your property tax rate, home insurance, and any HOA fees.',
+      'Choose your lender rule preference — Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45.',
+      'Review your recommended affordable home price, max loan amount, and monthly payment breakdown.',
+      'Check the three-scenario comparison table to see conservative, target, and aggressive purchase limits.',
+    ],
+
+    examples: [
+      { title: 'Typical First-Time Buyer', input: 'Income: $105,000, Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr', result: 'Affordable home: ~$350,000 | Monthly PITI: ~$2,400 | Front DTI: 28% | Back DTI: 36%' },
+      { title: 'FHA Loan with Higher DTI', input: 'Income: $80,000, Debt: $800/mo, Down: $20,000, Rate: 6.5%, 30yr, FHA', result: 'Affordable home: ~$280,000 | Monthly PITI: ~$1,900 | Front DTI: 31% | Back DTI: 43%' },
+      { title: 'VA Loan Zero Down', input: 'Income: $90,000, Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA', result: 'Affordable home: ~$320,000 | Monthly PITI: ~$2,100 | Back DTI: 41%' },
+    ],
+    formula: 'Max Housing Payment = Gross Monthly Income × Front-End Ratio | Available for Housing = (Gross Monthly Income × Back-End Ratio) − Monthly Debt | Max Loan = PV of Available for PI | Recommended Price = Max Loan + Down Payment',
+
+    article: {
+      heading: 'The Complete Guide to House Affordability and DTI Ratios',
+      intro: 'Lenders use two key ratios to determine how much house you can afford: the front-end DTI (housing ratio) and back-end DTI (total debt ratio). The GetCalcu House Affordability Calculator applies these rules — including the 28/36 conventional standard, FHA 31/43 limits, VA 41% back-end focus, and aggressive 36/45 scenarios — to show you exactly what home price fits your financial situation.',
+      sections: [
+        { heading: 'Understanding Front-End vs Back-End DTI', body: 'Front-end DTI measures housing costs (principal, interest, taxes, insurance, HOA) as a percentage of gross monthly income. Back-end DTI measures all monthly debt obligations — including the new mortgage payment — as a percentage of gross monthly income. Lenders use the more restrictive of the two to ensure you are not overextended.' },
+        { heading: 'The 28/36 Rule (Conventional Loans)', body: 'Conventional loans typically require front-end DTI ≤ 28% and back-end DTI ≤ 36%. That means your total housing payment should not exceed 28% of your gross monthly income, and all debt combined (housing plus car loans, student loans, credit cards) should not exceed 36%. If your existing debt is high, the back-end ratio becomes the binding constraint.' },
+        { heading: 'FHA 31/43 and VA 41% Rules', body: 'FHA loans allow higher ratios — 31% front-end and 43% back-end — making them accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). VA loans focus primarily on the back-end DTI (41%) and do not require a down payment, but they do require the residual income test to ensure you can cover living expenses after paying the mortgage.' },
+        { heading: 'How Down Payment and Interest Rate Affect Affordability', body: 'A larger down payment directly increases your affordable home price by reducing the loan amount. A lower interest rate increases your purchasing power by lowering the monthly payment for a given loan size. Use the calculator to test different down-payment and rate scenarios to find your optimal buying window.' },
+      ],
+    },
+
+    faqs: [
+      { q: 'Can I afford a $500k house on $100k income?', a: 'With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario.' },
+      { q: 'What is the 28/36 rule in home buying?', a: 'The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment.' },
+      { q: 'How does monthly debt affect home buying power?', a: 'Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power.' },
+      { q: 'What is the difference between FHA 31/43 and Conventional 28/36?', a: 'FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas.' },
+      { q: 'How much income is needed for a $400k home?', a: 'For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark.' },
+      { q: 'Do HOA fees count toward DTI?', a: 'Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit.' },
+      { q: 'Can I get a mortgage with a 50% DTI?', a: 'Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage.' },
+    ],
+
+    faqSchema: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can I afford a $500k house on $100k income?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the 28/36 rule in home buying?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does monthly debt affect home buying power?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between FHA 31/43 and Conventional 28/36?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much income is needed for a $400k home?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do HOA fees count toward DTI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I get a mortgage with a 50% DTI?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage."
+          }
+        },
+      ]
+    },
+  },
+};
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
 function safeStr(val) { if (val === null || val === undefined) return ""; return String(val).trim(); }
 function fmt(n) { const num = safeNum(n, 0); return "$" + num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
