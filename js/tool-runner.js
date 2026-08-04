@@ -330,6 +330,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     </select>
                 </div>`;
 
+            if (field.type === 'range') return `
+                <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
+                    <label for="${field.id}">${label}</label>
+                    ${field.hint ? `<span class="field-hint">${field.hint}</span>` : ''}
+                    <div class="range-input-wrap">
+                        <input type="number" id="${field.id}" data-id="${field.id}"
+                               value="${values[field.id]}" ${attrs}>
+                        <input type="range" id="${field.id}-range" data-range-for="${field.id}"
+                               value="${values[field.id]}" ${attrs}>
+                    </div>
+                    <span class="field-error hidden" data-error="${field.id}"></span>
+                </div>`;
+
             return `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
                     <label for="${field.id}">${label}</label>
@@ -557,8 +570,24 @@ document.addEventListener('DOMContentLoaded', () => {
         updateResults();
     }
 
+    // Sync range slider with its paired number input
+    function handleRangeInput(e) {
+        const rangeFor = e.target.dataset.rangeFor;
+        if (!rangeFor) return;
+        const field = tool.fields.find(f => f.id === rangeFor);
+        if (!field) return;
+
+        const numInput = document.getElementById(rangeFor);
+        if (numInput) numInput.value = e.target.value;
+
+        values[rangeFor] = parseFloat(e.target.value);
+        updateResults();
+    }
+
     container.addEventListener('input',  handleInputChange);
     container.addEventListener('change', handleInputChange);
+    container.addEventListener('input',  handleRangeInput);
+    container.addEventListener('change', handleRangeInput);
 
     // ── Save result ───────────────────────────────────────────
     function initSaveButton() {

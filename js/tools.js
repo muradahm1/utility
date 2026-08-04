@@ -2591,6 +2591,188 @@
     },
   },
 
+  // ── Inflation Calculator ─────────────────────────────────────
+  'inflation-calculator': {
+    id: 'inflation-calculator',
+    name: 'Inflation Calculator',
+    category: 'Finance',
+    icon: 'fa-arrow-trend-up',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate how inflation impacts your money\'s purchasing power over time and find out how much you will need in the future.',
+    metaTitle: 'Inflation Calculator – Future Purchasing Power & Purchasing Loss | GetCalcu',
+    metaDescription: 'Free interactive Inflation Calculator. See how inflation reduces your money\'s buying power over time with dynamic charts and real-time scenario sliders.',
+    keywords: [
+      'inflation calculator',
+      'purchasing power calculator',
+      'future value of money inflation',
+      'inflation adjustment calculator',
+      'historical inflation rate calculator',
+      'inflation rate calculator',
+      'buying power calculator',
+      'inflation impact on savings',
+      'future cost calculator',
+      'inflation adjusted value',
+    ],
+    fields: [
+      { id: 'mode', label: 'Calculation Mode', type: 'select', default: 'future-cost',
+        options: [
+          { value: 'future-cost', label: 'Future Cost / Eroded Value' },
+          { value: 'target-power', label: 'Target Purchasing Power Needed' },
+        ],
+        hint: 'Choose whether to see how much a current amount will be worth in the future, or how much you need in the future to match today\'s buying power.' },
+      { id: 'initial_amount', label: 'Initial Amount ($)', type: 'range', default: 1000, min: 100, max: 1000000, step: 100,
+        hint: 'The amount of money you want to analyze. Drag the slider or type a value.' },
+      { id: 'inflation_rate', label: 'Annual Inflation Rate (%)', type: 'range', default: 3.5, min: 0.1, max: 20, step: 0.1,
+        hint: 'The expected yearly inflation rate. The US long-run average is about 2.5-3.5%.' },
+      { id: 'years', label: 'Time Horizon (Years)', type: 'range', default: 10, min: 1, max: 50, step: 1,
+        hint: 'How many years into the future you want to project. Longer horizons show more dramatic erosion.' },
+    ],
+    fieldLabels(v) {
+      if (v.mode === 'target-power') return { initial_amount: 'Today\'s Purchasing Power ($)' };
+      return {};
+    },
+    calculate(v) {
+      const amount = safeNum(v.initial_amount, 1000);
+      const rate = safeNum(v.inflation_rate, 3.5) / 100;
+      const years = Math.round(safeNum(v.years, 10));
+      const mode = v.mode || 'future-cost';
+
+      if (amount <= 0) return errorResult('Please enter an amount greater than zero.');
+      if (years < 1) return errorResult('Time horizon must be at least 1 year.');
+
+      const growthFactor = Math.pow(1 + rate, years);
+      const futureCost = roundTo(amount * growthFactor, 2);
+      const purchasingPowerLoss = roundTo(futureCost - amount, 2);
+      const lossPct = roundTo((purchasingPowerLoss / futureCost) * 100, 2);
+      const realValue = roundTo(amount / growthFactor, 2);
+      const cumulativeInflation = roundTo((growthFactor - 1) * 100, 2);
+      const targetNeeded = roundTo(amount * growthFactor, 2);
+
+      const schedule = [];
+      for (let y = 1; y <= years; y++) {
+        const gf = Math.pow(1 + rate, y);
+        const yearCost = roundTo(amount * gf, 2);
+        const yearLoss = roundTo(yearCost - amount, 2);
+        const yearReal = roundTo(amount / gf, 2);
+        const yearCumInfl = roundTo((gf - 1) * 100, 2);
+        schedule.push({ month: y, payment: 0, principal: roundTo(amount, 2), interest: roundTo(yearLoss, 2), balance: yearCost, realValue: yearReal, cumulativeInflation: yearCumInfl });
+      }
+
+      const labels = [];
+      const erosionData = [];
+      const nominalData = [];
+      const realData = [];
+      for (let y = 0; y <= years; y++) {
+        const gf = Math.pow(1 + rate, y);
+        labels.push('Year ' + y);
+        erosionData.push(roundTo(amount / gf, 2));
+        nominalData.push(roundTo(amount, 2));
+        realData.push(roundTo(amount * gf, 2));
+      }
+
+      const rateDisplay = roundTo(rate * 100, 2);
+      let stats;
+      if (mode === 'target-power') {
+        stats = [
+          { label: 'Future Amount Needed', value: fmt(targetNeeded), highlight: true },
+          { label: 'Today\'s Purchasing Power', value: fmt(amount) },
+          { label: 'Cumulative Inflation', value: cumulativeInflation + '%' },
+          { label: 'Annual Inflation Rate', value: rateDisplay + '%' },
+          { label: 'Time Horizon', value: years + ' year' + (years > 1 ? 's' : '') },
+          { label: 'Real Value of Future Amount', value: fmt(realValue) },
+          { label: 'Purchasing Power Loss', value: fmt(purchasingPowerLoss), warn: true },
+          { label: 'Purchasing Power Loss %', value: lossPct + '%', warn: true },
+        ];
+      } else {
+        stats = [
+          { label: 'Future Equivalent Cost', value: fmt(futureCost), highlight: true },
+          { label: 'Purchasing Power Loss', value: fmt(purchasingPowerLoss), warn: true },
+          { label: 'Purchasing Power Loss %', value: lossPct + '%', warn: true },
+          { label: 'Real Purchasing Power Remaining', value: fmt(realValue) },
+          { label: 'Cumulative Inflation', value: cumulativeInflation + '%' },
+          { label: 'Initial Amount', value: fmt(amount) },
+          { label: 'Annual Inflation Rate', value: rateDisplay + '%' },
+          { label: 'Time Horizon', value: years + ' year' + (years > 1 ? 's' : '') },
+        ];
+      }
+
+      return {
+        stats,
+        chart: {
+          type: 'line',
+          labels,
+          yLabel: 'Value ($)',
+          title: 'Purchasing Power Erosion & Future Cost',
+          datasets: [
+            { label: 'Real Purchasing Power', data: erosionData, color: '#EF4444', fill: true },
+            { label: 'Nominal Cash Value', data: nominalData, color: '#3B82F6' },
+            { label: 'Future Cost (Inflation-Adjusted)', data: realData, color: '#10B981' },
+          ],
+        },
+        table: {
+          mode: 'schedule',
+          title: 'Year-by-Year Inflation Impact',
+          columns: [
+            { key: 'month', label: 'Year', format: 'text' },
+            { key: 'principal', label: 'Initial Amount', format: 'currency' },
+            { key: 'balance', label: 'Future Cost', format: 'currency', emphasis: true },
+            { key: 'interest', label: 'Purchasing Power Loss', format: 'currency' },
+            { key: 'realValue', label: 'Real Value (Today\'s $)', format: 'currency' },
+            { key: 'cumulativeInflation', label: 'Cumulative Inflation', format: 'text' },
+          ],
+          rows: schedule.map(r => ({
+            month: 'Year ' + r.month,
+            principal: r.principal,
+            balance: r.balance,
+            interest: r.interest,
+            realValue: r.realValue,
+            cumulativeInflation: r.cumulativeInflation + '%',
+          })),
+        },
+        insight: {
+          tone: purchasingPowerLoss > 0 ? 'warning' : 'positive',
+          icon: purchasingPowerLoss > 0 ? 'fa-arrow-trend-down' : 'fa-circle-check',
+          headline: mode === 'target-power'
+            ? 'You will need ' + fmt(futureCost) + ' in ' + years + ' years to match today\'s buying power of ' + fmt(amount) + '.'
+            : 'Your ' + fmt(amount) + ' will only buy ' + fmt(realValue) + ' worth of goods in ' + years + ' years.',
+          detail: 'At a ' + (rate * 100) + '% annual inflation rate, your purchasing power erodes by ' + fmt(purchasingPowerLoss) + ' (' + lossPct + '%). Over ' + years + ' years, cumulative inflation reaches ' + cumulativeInflation + '%.',
+        },
+      };
+    },
+    howTo: [
+      'Enter the amount of money you want to analyze — use the slider or type directly.',
+      'Set the annual inflation rate (default 3.5%, the US historical average).',
+      'Choose your time horizon — how many years into the future to project.',
+      'Switch between "Future Cost" mode and "Target Purchasing Power" mode to see different perspectives.',
+      'Review the purchasing power loss, real value remaining, and cumulative inflation stats.',
+      'Scroll down to see the year-by-year breakdown table and the interactive chart.',
+    ],
+    examples: [
+      { title: 'Inflation Erodes $1,000 Over 10 Years', input: 'Amount: $1,000, Rate: 3.5%, Years: 10', result: 'Future Cost: ~$1,411 | Real Value: ~$709 | Loss: ~$302 (21.4%)' },
+      { title: 'High Inflation Scenario', input: 'Amount: $10,000, Rate: 8%, Years: 15', result: 'Future Cost: ~$31,722 | Real Value: ~$3,152 | Loss: ~$21,722 (68.5%)' },
+      { title: 'Long-Term Erosion Over 30 Years', input: 'Amount: $50,000, Rate: 3%, Years: 30', result: 'Future Cost: ~$121,363 | Real Value: ~$20,599 | Loss: ~$71,363 (58.8%)' },
+    ],
+    formula: 'FV = PV × (1 + i)^n | Real Value = PV / (1 + i)^n | Purchasing Power Loss = FV − PV | Cumulative Inflation = (1 + i)^n − 1',
+    article: {
+      heading: 'How Inflation Erodes Your Purchasing Power and What You Can Do About It',
+      intro: 'Inflation is the silent thief of wealth — it steadily reduces what your money can buy over time. The GetCalcu Inflation Calculator shows you exactly how much purchasing power your money will lose at any inflation rate, over any time horizon, with interactive sliders and a dynamic chart that makes the erosion visible.',
+      sections: [
+        { heading: 'The Mathematical Formula Behind Inflation', body: 'The future value of money under inflation is calculated using the compound interest formula in reverse: FV = PV × (1 + i)^n, where PV is today\'s amount, i is the annual inflation rate, and n is the number of years. At a 3.5% inflation rate, money loses roughly half its purchasing power every 20 years — a dollar today is worth about 50 cents in 20 years.' },
+        { heading: 'How Inflation Affects Different Assets', body: 'Cash and savings accounts are hit hardest by inflation because they earn little to no interest. Real estate historically appreciates at or above inflation rates. The stock market, over long periods, has returned 7-10% annually, significantly outpacing inflation. Bonds and fixed-income investments can struggle during high inflation periods, as their fixed payments lose real value.' },
+        { heading: 'Actionable Steps to Hedge Against Inflation', body: 'To protect your purchasing power, consider: (1) High-Yield Savings Accounts (HYSA) earning 4-5% APY to at least keep pace with inflation. (2) Treasury Inflation-Protected Securities (TIPS) that adjust with CPI. (3) Low-cost index funds tracking the S&P 500, which have historically returned 7-10% annually. (4) Real estate investments that appreciate and provide rental income. (5) I-Bonds that offer inflation-adjusted returns.' },
+      ],
+    },
+    faqs: [
+      { q: 'How is inflation calculated and how does it affect my money?', a: 'Inflation is calculated as the percentage increase in the general price level of goods and services over time, typically measured by the Consumer Price Index (CPI). It affects your money by reducing purchasing power — the same dollar buys fewer goods tomorrow than it does today. The formula FV = PV × (1 + i)^n shows how much money you will need in the future to maintain the same standard of living.' },
+      { q: 'What is the average inflation rate in the United States?', a: 'The US long-run average inflation rate is approximately 2.5% to 3.5% per year, based on CPI data dating back to 1913. The Federal Reserve targets a 2% annual inflation rate as optimal for economic growth. However, rates can vary significantly — from deflation during the Great Depression to double-digit inflation in the late 1970s and early 1980s.' },
+      { q: 'How much will $1,000 be worth in 10 years with inflation?', a: 'At a 3.5% average annual inflation rate, $1,000 today will be worth approximately $709 in today\'s purchasing power after 10 years. You would need about $1,411 in future dollars to buy what $1,000 buys today. This means inflation erodes about $302 (21.4%) of the future value.' },
+      { q: 'What is the difference between nominal and real value?', a: 'Nominal value is the face value of money in future dollars — the number printed on the bill. Real value adjusts for inflation to show what that money is actually worth in today\'s purchasing power. For example, $1,411 in 10 years is the nominal amount, but its real value (purchasing power equivalent to today\'s dollars) is only $1,000.' },
+      { q: 'How does inflation impact retirement savings?', a: 'Inflation significantly impacts retirement savings by reducing the real value of your nest egg over time. A $1,000,000 retirement fund at age 65 will have the purchasing power of only about $412,000 in 30 years at 3% inflation. This is why retirement calculators use inflation-adjusted returns and why financial advisors recommend growth-oriented investments for long-term retirement goals.' },
+      { q: 'What investments perform best during high inflation?', a: 'Historically, the best-performing assets during high inflation include: real estate (property values and rents rise with inflation), commodities (gold, oil, agricultural products), Treasury Inflation-Protected Securities (TIPS), I-Bonds, and stocks in sectors with pricing power (energy, healthcare, consumer staples). Cash and long-term fixed-rate bonds tend to perform poorly during high inflation.' },
+    ],
+  },
+
   // ── Net Worth Calculator ─────────────────────────────────────
   'net-worth-calculator': {
     name: 'Net Worth Calculator',
@@ -2614,7 +2796,6 @@
       'financial health calculator',
     ],
     fields: [
-      // ── ASSETS ──
       { id: 'sec_assets', type: 'section', label: 'Assets — What You Own', icon: 'fa-arrow-trend-up' },
       { id: 'cash_savings',    label: 'Cash & Savings ($)',    type: 'number', default: 15000,  min: 0, step: 100,  hint: 'Checking accounts, savings accounts, cash on hand, and emergency funds.' },
       { id: 'investments',     label: 'Investments ($)',       type: 'number', default: 45000,  min: 0, step: 100,  hint: 'Stocks, bonds, mutual funds, ETFs, and brokerage accounts (not retirement).' },
@@ -2622,8 +2803,6 @@
       { id: 'home_value',      label: 'Home Value ($)',        type: 'number', default: 350000, min: 0, step: 1000, hint: 'Current market value of your primary residence or real estate.' },
       { id: 'vehicles',        label: 'Vehicles ($)',          type: 'number', default: 20000,  min: 0, step: 500,  hint: 'Current resale value of cars, motorcycles, boats, or RVs.' },
       { id: 'other_assets',    label: 'Other Assets ($)',      type: 'number', default: 10000,  min: 0, step: 100,  hint: 'Business equity, collectibles, jewelry, and other valuables.' },
-
-      // ── LIABILITIES ──
       { id: 'sec_liabilities', type: 'section', label: 'Liabilities — What You Owe', icon: 'fa-arrow-trend-down' },
       { id: 'credit_cards',    label: 'Credit Card Debt ($)',  type: 'number', default: 5000,   min: 0, step: 100,  hint: 'Total outstanding balance across all credit cards.' },
       { id: 'personal_loans',  label: 'Personal Loans ($)',    type: 'number', default: 8000,   min: 0, step: 100,  hint: 'Personal, student, or auto loans you are repaying.' },
@@ -2631,7 +2810,6 @@
       { id: 'other_debt',      label: 'Other Debt ($)',        type: 'number', default: 2000,   min: 0, step: 100,  hint: 'Medical bills, tax debt, and any other outstanding obligations.' },
     ],
     calculate(v) {
-      // ── Assets ──
       const cash       = safeNum(v.cash_savings, 0);
       const invest     = safeNum(v.investments, 0);
       const retire     = safeNum(v.retirement, 0);
@@ -2639,87 +2817,40 @@
       const vehicles   = safeNum(v.vehicles, 0);
       const other      = safeNum(v.other_assets, 0);
       const totalAssets = roundTo(cash + invest + retire + home + vehicles + other, 2);
-
-      // ── Liabilities ──
       const cc         = safeNum(v.credit_cards, 0);
       const loans      = safeNum(v.personal_loans, 0);
       const mortgage   = safeNum(v.mortgage, 0);
       const otherDebt  = safeNum(v.other_debt, 0);
       const totalLiabilities = roundTo(cc + loans + mortgage + otherDebt, 2);
-
-      // ── Net worth ──
       const netWorth = roundTo(totalAssets - totalLiabilities, 2);
-
-      // ── Ratios ──
       const debtToAsset = totalAssets > 0 ? roundTo((totalLiabilities / totalAssets) * 100, 1) : 0;
       const assetToLiability = totalLiabilities > 0 ? roundTo(totalAssets / totalLiabilities, 2) : (totalAssets > 0 ? 999 : 0);
       const liquidAssets = roundTo(cash + invest, 2);
       const liquidRatio = totalLiabilities > 0 ? roundTo((liquidAssets / totalLiabilities) * 100, 1) : 0;
 
-      // ── Status assessment ──
       let status, statusColor, insight;
       if (netWorth < 0) {
-        status = 'Negative Net Worth';
-        statusColor = '#EF4444';
-        insight = {
-          tone: 'warning',
-          icon: 'fa-triangle-exclamation',
-          headline: 'Your liabilities exceed your assets by ' + fmt(Math.abs(netWorth)) + '.',
-          detail: 'Focus on paying down high-interest debt first (credit cards and personal loans). Even small extra payments accelerate progress. Track this monthly — the trend matters more than any single snapshot.'
-        };
+        status = 'Negative Net Worth'; statusColor = '#EF4444';
+        insight = { tone: 'warning', icon: 'fa-triangle-exclamation', headline: 'Your liabilities exceed your assets by ' + fmt(Math.abs(netWorth)) + '.', detail: 'Focus on paying down high-interest debt first (credit cards and personal loans). Even small extra payments accelerate progress. Track this monthly — the trend matters more than any single snapshot.' };
       } else if (debtToAsset > 50) {
-        status = 'Debt-Heavy';
-        statusColor = '#F59E0B';
-        insight = {
-          tone: 'warning',
-          icon: 'fa-scale-unbalanced',
-          headline: 'Your debt is ' + debtToAsset + '% of your assets.',
-          detail: 'A healthy debt-to-asset ratio is typically under 50%. Prioritize reducing high-interest debt while maintaining your emergency fund. Your net worth of ' + fmt(netWorth) + ' is positive — build on it.'
-        };
+        status = 'Debt-Heavy'; statusColor = '#F59E0B';
+        insight = { tone: 'warning', icon: 'fa-scale-unbalanced', headline: 'Your debt is ' + debtToAsset + '% of your assets.', detail: 'A healthy debt-to-asset ratio is typically under 50%. Prioritize reducing high-interest debt while maintaining your emergency fund. Your net worth of ' + fmt(netWorth) + ' is positive — build on it.' };
       } else if (debtToAsset > 30) {
-        status = 'Building Wealth';
-        statusColor = '#3B82F6';
-        insight = {
-          tone: 'neutral',
-          icon: 'fa-chart-line',
-          headline: 'Solid foundation — net worth of ' + fmt(netWorth) + '.',
-          detail: 'Your debt-to-asset ratio of ' + debtToAsset + '% is manageable. Consider accelerating debt payoff and increasing retirement contributions to grow your net worth faster.'
-        };
+        status = 'Building Wealth'; statusColor = '#3B82F6';
+        insight = { tone: 'neutral', icon: 'fa-chart-line', headline: 'Solid foundation — net worth of ' + fmt(netWorth) + '.', detail: 'Your debt-to-asset ratio of ' + debtToAsset + '% is manageable. Consider accelerating debt payoff and increasing retirement contributions to grow your net worth faster.' };
       } else {
-        status = 'Strong Financial Health';
-        statusColor = '#10B981';
-        insight = {
-          tone: 'positive',
-          icon: 'fa-circle-check',
-          headline: 'Excellent! Your net worth is ' + fmt(netWorth) + ' with a healthy ' + debtToAsset + '% debt-to-asset ratio.',
-          detail: 'You are in a strong position. Keep investing consistently, maintain your emergency fund, and consider diversifying into growth assets to compound your wealth.'
-        };
+        status = 'Strong Financial Health'; statusColor = '#10B981';
+        insight = { tone: 'positive', icon: 'fa-circle-check', headline: 'Excellent! Your net worth is ' + fmt(netWorth) + ' with a healthy ' + debtToAsset + '% debt-to-asset ratio.', detail: 'You are in a strong position. Keep investing consistently, maintain your emergency fund, and consider diversifying into growth assets to compound your wealth.' };
       }
 
-      // ── Asset breakdown chart (doughnut) ──
       const assetLabels = ['Cash & Savings', 'Investments', 'Retirement', 'Home', 'Vehicles', 'Other'];
       const assetData = [cash, invest, retire, home, vehicles, other];
       const assetColors = ['#10B981', '#6366F1', '#8B5CF6', '#F59E0B', '#3B82F6', '#EC4899'];
-
-      // ── Liability breakdown chart (doughnut) ──
       const liabilityLabels = ['Credit Cards', 'Personal Loans', 'Mortgage', 'Other Debt'];
       const liabilityData = [cc, loans, mortgage, otherDebt];
       const liabilityColors = ['#EF4444', '#F97316', '#F59E0B', '#94A3B8'];
+      const compareChart = { type: 'horizontalBar', labels: ['Assets', 'Liabilities'], datasets: [{ label: 'Amount', data: [totalAssets, totalLiabilities], colors: ['#10B981', '#EF4444'] }], yLabel: 'Amount ($)', title: 'Assets vs Liabilities' };
 
-      // ── Assets vs Liabilities horizontal bar ──
-      const compareChart = {
-        type: 'horizontalBar',
-        labels: ['Assets', 'Liabilities'],
-        datasets: [{
-          label: 'Amount',
-          data: [totalAssets, totalLiabilities],
-          colors: ['#10B981', '#EF4444'],
-        }],
-        yLabel: 'Amount ($)',
-        title: 'Assets vs Liabilities',
-      };
-
-      // ── Asset allocation table ──
       const assetRows = [
         { category: 'Cash & Savings', amount: cash, pct: totalAssets > 0 ? roundTo((cash / totalAssets) * 100, 1) : 0 },
         { category: 'Investments',    amount: invest, pct: totalAssets > 0 ? roundTo((invest / totalAssets) * 100, 1) : 0 },
@@ -2742,23 +2873,13 @@
           { label: 'Total Liabilities',    value: fmt(totalLiabilities), warn: totalLiabilities > 0 },
           { label: 'Status',               value: status,               color: statusColor },
           { label: 'Debt-to-Asset Ratio',  value: debtToAsset + '%',    warn: debtToAsset > 50 },
-          { label: 'Asset-to-Liability',   value: assetToLiability === 999 ? '∞' : assetToLiability + 'x' },
+          { label: 'Asset-to-Liability',   value: assetToLiability === 999 ? '\u221e' : assetToLiability + 'x' },
           { label: 'Liquid Assets',        value: fmt(liquidAssets) },
           { label: 'Liquid-to-Debt Ratio', value: liquidRatio + '%' },
         ],
         insight,
-        chart: {
-          labels: assetLabels,
-          data: assetData,
-          colors: assetColors,
-          cutout: '58%',
-        },
-        chart2: {
-          labels: liabilityLabels,
-          data: liabilityData,
-          colors: liabilityColors,
-          cutout: '58%',
-        },
+        chart: { labels: assetLabels, data: assetData, colors: assetColors, cutout: '58%' },
+        chart2: { labels: liabilityLabels, data: liabilityData, colors: liabilityColors, cutout: '58%' },
         compareChart,
         assetTable: assetRows,
         liabilityTable: liabilityRows,
@@ -2778,20 +2899,20 @@
       { title: 'Debt-Heavy Situation', input: 'Cash: $5k, Investments: $10k, Home: $200k | Debt: $15k CC, $20k Loans, $180k Mortgage', result: 'Net Worth: $0 | Debt-to-Asset: 88% — Focus on debt' },
       { title: 'Strong Financial Health', input: 'Cash: $50k, Investments: $150k, Retirement: $200k, Home: $500k | Debt: $0 CC, $0 Loans, $150k Mortgage', result: 'Net Worth: ~$750,000 | Debt-to-Asset: 17%' },
     ],
-    formula: 'Net Worth = Total Assets − Total Liabilities | Debt-to-Asset Ratio = (Total Liabilities ÷ Total Assets) × 100 | Asset-to-Liability Ratio = Total Assets ÷ Total Liabilities | Liquid-to-Debt Ratio = (Cash + Investments) ÷ Total Liabilities × 100',
+    formula: 'Net Worth = Total Assets \u2212 Total Liabilities | Debt-to-Asset Ratio = (Total Liabilities \u00f7 Total Assets) \u00d7 100 | Asset-to-Liability Ratio = Total Assets \u00f7 Total Liabilities | Liquid-to-Debt Ratio = (Cash + Investments) \u00f7 Total Liabilities \u00d7 100',
     article: {
       heading: 'How to Calculate Your Net Worth and Build Lasting Wealth',
       intro: 'Your net worth is the single clearest number that captures your financial position — everything you own minus everything you owe. The GetCalcu Net Worth Calculator makes it effortless to track this number, understand where your wealth is concentrated, and identify the fastest path to growing it.',
       sections: [
         { heading: 'Why Net Worth Matters More Than Income', body: 'Income is what you earn; net worth is what you keep. Two people earning the same salary can have wildly different net worths depending on how much they save, invest, and owe. Tracking net worth monthly reveals whether your financial habits are actually building wealth or just cycling money through your accounts.' },
         { heading: 'Assets vs Liabilities: The Core Equation', body: 'Assets are anything you own that has value — cash, investments, retirement accounts, real estate, vehicles, and valuables. Liabilities are what you owe — credit cards, loans, and mortgages. Net worth is simply assets minus liabilities. A positive net worth means you own more than you owe; a negative one signals it is time to prioritize debt reduction.' },
-        { heading: 'Using Ratios to Assess Financial Health', body: 'Beyond the headline number, ratios reveal the quality of your balance sheet. The debt-to-asset ratio (liabilities ÷ assets) shows how leveraged you are — under 30% is healthy, over 50% is debt-heavy. The liquid-to-debt ratio (cash + investments ÷ liabilities) shows whether you could cover your debts with liquid assets in an emergency.' },
+        { heading: 'Using Ratios to Assess Financial Health', body: 'Beyond the headline number, ratios reveal the quality of your balance sheet. The debt-to-asset ratio (liabilities \u00f7 assets) shows how leveraged you are — under 30% is healthy, over 50% is debt-heavy. The liquid-to-debt ratio (cash + investments \u00f7 liabilities) shows whether you could cover your debts with liquid assets in an emergency.' },
       ],
     },
     faqs: [
       { q: 'How do I calculate my net worth?', a: 'Net worth is calculated as Total Assets minus Total Liabilities. Add up everything you own (cash, investments, retirement accounts, home value, vehicles, and other valuables), then subtract everything you owe (credit card debt, personal loans, mortgage balance, and other debts). The result is your net worth.' },
       { q: 'What is a good net worth for my age?', a: 'A common benchmark is to have a net worth equal to 1x your annual income by age 30, 3x by 40, 6x by 50, and 8x by 60. However, these are rough guidelines — what matters most is the trend. If your net worth is growing each month, you are on the right track regardless of your starting point.' },
-      { q: 'What is a healthy debt-to-asset ratio?', a: 'A debt-to-asset ratio under 30% is generally considered healthy, 30-50% is manageable, and above 50% is debt-heavy. The ratio is calculated as Total Liabilities ÷ Total Assets × 100. A lower ratio means you own a larger share of your assets outright.' },
+      { q: 'What is a healthy debt-to-asset ratio?', a: 'A debt-to-asset ratio under 30% is generally considered healthy, 30-50% is manageable, and above 50% is debt-heavy. The ratio is calculated as Total Liabilities \u00f7 Total Assets \u00d7 100. A lower ratio means you own a larger share of your assets outright.' },
       { q: 'Should I include my home and mortgage in net worth?', a: 'Yes. Your home is an asset at its current market value, and your mortgage is a liability at its remaining balance. Including both gives an accurate picture of your true net worth. Many people are surprised to find their home equity is their largest single asset.' },
       { q: 'How often should I track my net worth?', a: 'Most financial experts recommend tracking net worth monthly. This cadence is frequent enough to catch problems early (like rising debt) but not so frequent that market fluctuations create noise. Monthly tracking also lets you see the compounding effect of consistent saving and investing.' },
       { q: 'What is the difference between net worth and income?', a: 'Income is the money you earn over a period (monthly or annually), while net worth is the total value of what you own minus what you owe at a single point in time. You can have a high income and low net worth if you spend everything, or a modest income and growing net worth through disciplined saving and investing.' },
