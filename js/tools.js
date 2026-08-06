@@ -2918,6 +2918,380 @@
       { q: 'What is the difference between net worth and income?', a: 'Income is the money you earn over a period (monthly or annually), while net worth is the total value of what you own minus what you owe at a single point in time. You can have a high income and low net worth if you spend everything, or a modest income and growing net worth through disciplined saving and investing.' },
     ],
   },
+
+  // ── FIRE Calculator ─────────────────────────────────────
+  'fire-calculator': {
+    id: 'fire-calculator',
+    name: 'FIRE Calculator',
+    category: 'Finance',
+    icon: 'fa-fire',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.',
+    metaTitle: 'FIRE Calculator – Financial Independence & Early Retirement',
+    metaDescription: 'Free FIRE Calculator. Calculate your FIRE number, retirement timeline, investment growth, passive income, and financial independence progress with interactive charts.',
+    keywords: [
+      'fire calculator',
+      'financial independence calculator',
+      'early retirement calculator',
+      'coast fire calculator',
+      'fi number calculator',
+      'financial freedom calculator',
+      'retirement savings calculator',
+      'years until retirement calculator',
+      'fire number',
+      '4 percent rule calculator',
+    ],
+    fields: [
+      { id: 'annual_income',       label: 'Annual After-Tax Income ($)', type: 'range', default: 80000,  min: 10000,  max: 500000,  step: 1000,  hint: 'Your total yearly income after taxes. Used to calculate your savings rate.' },
+      { id: 'annual_expenses',     label: 'Annual Expenses ($)',         type: 'range', default: 40000,  min: 5000,   max: 300000,  step: 500,   hint: 'Your total yearly spending. The difference between income and expenses is your annual savings.' },
+      { id: 'current_portfolio',   label: 'Current Investment Portfolio ($)', type: 'range', default: 100000, min: 0, max: 10000000, step: 1000, hint: 'Your current total invested assets across all accounts (401k, IRA, brokerage, etc.).' },
+      { id: 'monthly_contribution',label: 'Monthly Investment Contribution ($)', type: 'range', default: 2000, min: 0, max: 25000, step: 100, hint: 'How much you add to your investments each month.' },
+      { id: 'annual_return',       label: 'Expected Annual Investment Return (%)', type: 'range', default: 7, min: 1, max: 15, step: 0.1, hint: 'Expected average yearly return. S&P 500 long-term average: about 7-10%. <a href="#faqs">See realistic return rates ↓</a>' },
+      { id: 'inflation_rate',      label: 'Inflation Rate (%)',          type: 'range', default: 2.5, min: 0, max: 10, step: 0.1, hint: 'Expected annual inflation rate. US historical average: 2.5-3%. <a href="#faqs">See how inflation affects FIRE ↓</a>' },
+      { id: 'withdrawal_rate',     label: 'Safe Withdrawal Rate (%)',    type: 'range', default: 4, min: 2, max: 6, step: 0.1, hint: 'The percentage of your portfolio you withdraw annually in retirement. The 4% rule is the standard benchmark. <a href="#faqs">See the 4% rule explained ↓</a>' },
+      { id: 'retirement_spending', label: 'Retirement Spending Adjustment', type: 'select', default: 'same',
+        options: [
+          { value: 'same',     label: 'Same Spending' },
+          { value: 'increase', label: 'Increase Spending (+20%)' },
+          { value: 'reduce',   label: 'Reduce Spending (-20%)' },
+        ], hint: 'Adjust your retirement expenses relative to your current spending. Many retirees spend less, but some plan for more travel and leisure.' },
+      { id: 'fire_mode',           label: 'Calculation Mode',            type: 'select', default: 'standard',
+        options: [
+          { value: 'standard', label: 'Standard FIRE' },
+          { value: 'lean',     label: 'Lean FIRE' },
+          { value: 'fat',      label: 'Fat FIRE' },
+          { value: 'coast',    label: 'Coast FIRE' },
+          { value: 'barista',  label: 'Barista FIRE' },
+        ], hint: 'Choose your FIRE strategy. Each mode adjusts assumptions to match different retirement lifestyles. <a href="#faqs">See FIRE types explained ↓</a>' },
+    ],
+    calculate(v) {
+      // ── Extract & validate inputs
+      const income = safeNum(v.annual_income, 80000);
+      const expenses = safeNum(v.annual_expenses, 40000);
+      const portfolio = safeNum(v.current_portfolio, 100000);
+      const monthlyContrib = safeNum(v.monthly_contribution, 2000);
+      const annualReturn = safeNum(v.annual_return, 7) / 100;
+      const inflationRate = safeNum(v.inflation_rate, 2.5) / 100;
+      const withdrawalRate = safeNum(v.withdrawal_rate, 4) / 100;
+      const spendingAdj = safeStr(v.retirement_spending) || 'same';
+      const fireMode = safeStr(v.fire_mode) || 'standard';
+
+      if (income <= 0) return errorResult('Annual income must be greater than zero.');
+      if (expenses < 0) return errorResult('Annual expenses cannot be negative.');
+      if (expenses >= income) return errorResult('Annual expenses must be less than annual income to save for FIRE. Increase income or reduce expenses.');
+
+      // ── Savings rate
+      const savingsRate = (income - expenses) / income * 100;
+
+      // ── Apply FIRE mode adjustments
+      let modeMultiplier = 1;
+      let modeLabel = 'Standard FIRE';
+      let modeDesc = 'Standard FIRE targets your current lifestyle with no adjustment to expenses.';
+      switch (fireMode) {
+        case 'lean':
+          modeMultiplier = 0.75;
+          modeLabel = 'Lean FIRE';
+          modeDesc = 'Lean FIRE assumes a minimalist lifestyle with 25% lower expenses.';
+          break;
+        case 'fat':
+          modeMultiplier = 1.5;
+          modeLabel = 'Fat FIRE';
+          modeDesc = 'Fat FIRE assumes a more luxurious lifestyle with 50% higher expenses.';
+          break;
+        case 'coast':
+          modeMultiplier = 1;
+          modeLabel = 'Coast FIRE';
+          modeDesc = 'Coast FIRE means your current portfolio will grow to your FIRE number without additional contributions.';
+          break;
+        case 'barista':
+          modeMultiplier = 0.85;
+          modeLabel = 'Barista FIRE';
+          modeDesc = 'Barista FIRE assumes part-time work covers 50% of expenses, reducing the FIRE number needed.';
+          break;
+      }
+
+      // ── Apply spending adjustment
+      let spendingMultiplier = 1;
+      switch (spendingAdj) {
+        case 'increase': spendingMultiplier = 1.2; break;
+        case 'reduce':   spendingMultiplier = 0.8; break;
+      }
+
+      // ── Effective retirement expenses
+      let effectiveExpenses = expenses * modeMultiplier * spendingMultiplier;
+      if (fireMode === 'barista') effectiveExpenses = effectiveExpenses * 0.5; // part-time covers 50%
+
+      // ── FIRE Number
+      const fireNumber = effectiveExpenses / withdrawalRate;
+
+      // ── Coast FIRE number (amount needed today to grow to FIRE number)
+      let coastNumber = 0;
+      if (fireMode === 'coast') {
+        const coastYears = 30;
+        coastNumber = fireNumber / Math.pow(1 + annualReturn, coastYears);
+      }
+
+      // ── Calculate years until FIRE (iterative monthly projection)
+      const monthlyRate = annualReturn / 12;
+      const maxMonths = 1200; // 100 years max
+      let runningPortfolio = portfolio;
+      let totalContributions = portfolio;
+      let totalGains = 0;
+      let monthsToFire = 0;
+      let yearsToFire = 0;
+
+      // Growth projection data
+      const growthData = [{ year: 0, portfolio: roundTo(portfolio, 2), contributions: roundTo(portfolio, 2), gains: 0 }];
+
+      for (let m = 1; m <= maxMonths; m++) {
+        const interest = runningPortfolio * monthlyRate;
+        runningPortfolio += interest + monthlyContrib;
+        totalContributions += monthlyContrib;
+        totalGains += interest;
+
+        if (m % 12 === 0) {
+          const year = m / 12;
+          growthData.push({
+            year,
+            portfolio: roundTo(runningPortfolio, 2),
+            contributions: roundTo(totalContributions, 2),
+            gains: roundTo(totalGains, 2),
+          });
+        }
+
+        if (runningPortfolio >= fireNumber) {
+          monthsToFire = m;
+          yearsToFire = m / 12;
+          break;
+        }
+      }
+
+      if (monthsToFire === 0) {
+        yearsToFire = maxMonths / 12;
+      }
+
+      // ── Inflation-adjusted FIRE number
+      const inflationAdjustedFireNumber = fireNumber * Math.pow(1 + inflationRate, yearsToFire);
+
+      // ── Passive income
+      const annualPassiveIncome = runningPortfolio * withdrawalRate;
+      const monthlyPassiveIncome = annualPassiveIncome / 12;
+
+      // ── Retirement date estimate
+      const today = new Date();
+      const retirementDate = new Date(today);
+      retirementDate.setFullYear(today.getFullYear() + Math.floor(yearsToFire));
+      const retirementDateStr = retirementDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      // ── Progress percentage
+      const progressPct = Math.min(100, (portfolio / fireNumber) * 100);
+
+      // ── Retirement Readiness Score (0-100)
+      const savingsScore = Math.min(1, savingsRate / 50);
+      const progressScore = progressPct / 100;
+      const timeScore = Math.max(0, 1 - yearsToFire / 40);
+      const returnScore = Math.min(1, annualReturn / 0.10);
+      const withdrawalScore = withdrawalRate <= 0.04 ? 1 : Math.max(0, 1 - (withdrawalRate - 0.04) / 0.02);
+
+      const readinessScore = Math.round(
+        savingsScore * 30 + progressScore * 25 + timeScore * 20 + returnScore * 15 + withdrawalScore * 10
+      );
+
+      let readinessLabel, readinessColor;
+      if (readinessScore >= 80)      { readinessLabel = 'Excellent';        readinessColor = '#10B981'; }
+      else if (readinessScore >= 65) { readinessLabel = 'Very Good';         readinessColor = '#3B82F6'; }
+      else if (readinessScore >= 50) { readinessLabel = 'Good';              readinessColor = '#F59E0B'; }
+      else if (readinessScore >= 30) { readinessLabel = 'Needs Improvement'; readinessColor = '#F97316'; }
+      else                           { readinessLabel = 'Getting Started';   readinessColor = '#EF4444'; }
+
+      // ── Chart 1: Portfolio Growth Timeline
+      const chartLabels = growthData.map(d => 'Year ' + d.year);
+      const portfolioData = growthData.map(d => d.portfolio);
+      const fireTargetData = growthData.map(() => fireNumber);
+      const contributionsData = growthData.map(d => d.contributions);
+
+      const chart = {
+        type: 'line',
+        labels: chartLabels,
+        yLabel: 'Portfolio Value ($)',
+        title: 'Portfolio Growth Timeline',
+        datasets: [
+          { label: 'Future Portfolio', data: portfolioData, color: '#6366F1', fill: true },
+          { label: 'FIRE Target',      data: fireTargetData, color: '#EF4444' },
+          { label: 'Total Contributions', data: contributionsData, color: '#10B981' },
+        ],
+      };
+
+      // ── Chart 2: Portfolio Composition (doughnut)
+      const chart2 = {
+        labels: ['Contributions', 'Investment Gains'],
+        data: [roundTo(totalContributions, 2), roundTo(Math.max(0, totalGains), 2)],
+        colors: ['#6366F1', '#10B981'],
+        cutout: '62%',
+      };
+
+      // ── Chart 3: Progress to FIRE (doughnut gauge)
+      const compareChart = {
+        labels: ['Progress to FIRE', 'Remaining'],
+        data: [roundTo(progressPct, 2), roundTo(Math.max(0, 100 - progressPct), 2)],
+        colors: ['#10B981', '#E2E8F0'],
+        cutout: '70%',
+      };
+
+      // ── Scenario Comparison Table
+      // Optimized plan: 25% higher contributions, 1% higher return, 10% lower expenses
+      const altMonthlyContrib = monthlyContrib * 1.25;
+      const altReturn = Math.min(annualReturn + 0.01, 0.15);
+      const altExpenses = expenses * 0.9;
+      const altEffectiveExpenses = altExpenses * modeMultiplier * spendingMultiplier;
+      const altFireNumber = altEffectiveExpenses / withdrawalRate;
+
+      let altPortfolio = portfolio;
+      let altMonthsToFire = 0;
+      const altMonthlyRate = altReturn / 12;
+      for (let m = 1; m <= maxMonths; m++) {
+        altPortfolio = altPortfolio * (1 + altMonthlyRate) + altMonthlyContrib;
+        if (altPortfolio >= altFireNumber) {
+          altMonthsToFire = m;
+          break;
+        }
+      }
+      const altYearsToFire = altMonthsToFire > 0 ? altMonthsToFire / 12 : 100;
+      const yearsSaved = Math.max(0, yearsToFire - altYearsToFire);
+
+      const table = {
+        mode: 'comparison',
+        title: 'Scenario Comparison: Current Plan vs Optimized Plan',
+        columns: [
+          { key: 'metric', label: 'Metric', format: 'text' },
+          { key: 'current', label: 'Current Plan', format: 'text' },
+          { key: 'optimized', label: 'Optimized Plan', format: 'text', emphasis: true },
+          { key: 'difference', label: 'Difference', format: 'text' },
+        ],
+        rows: [
+          { metric: 'FIRE Number', current: fmt(fireNumber), optimized: fmt(altFireNumber), difference: fmt(altFireNumber - fireNumber) },
+          { metric: 'Years to FIRE', current: yearsToFire >= 100 ? '100+ yrs' : yearsToFire.toFixed(1) + ' yrs', optimized: altYearsToFire >= 100 ? '100+ yrs' : altYearsToFire.toFixed(1) + ' yrs', difference: yearsSaved > 0 ? yearsSaved.toFixed(1) + ' yrs saved' : '—' },
+          { metric: 'Monthly Contribution', current: fmt(monthlyContrib), optimized: fmt(altMonthlyContrib), difference: fmt(altMonthlyContrib - monthlyContrib) },
+          { metric: 'Annual Return', current: (annualReturn * 100).toFixed(1) + '%', optimized: (altReturn * 100).toFixed(1) + '%', difference: ((altReturn - annualReturn) * 100).toFixed(1) + '%' },
+          { metric: 'Annual Expenses', current: fmt(expenses), optimized: fmt(altExpenses), difference: fmt(altExpenses - expenses) },
+        ],
+      };
+
+      // ── Insight callout
+      let insightTone = 'positive';
+      let insightIcon = 'fa-fire';
+      let insightHeadline, insightDetail;
+
+      if (yearsToFire >= 100) {
+        insightTone = 'warning';
+        insightIcon = 'fa-triangle-exclamation';
+        insightHeadline = 'Your current plan will not reach FIRE within 100 years.';
+        insightDetail = 'Your savings rate of ' + savingsRate.toFixed(1) + '% is too low to reach your FIRE number of ' + fmt(fireNumber) + '. Consider increasing your monthly contribution or reducing expenses.';
+      } else if (progressPct >= 100) {
+        insightTone = 'positive';
+        insightIcon = 'fa-circle-check';
+        insightHeadline = 'Congratulations! You have already reached your FIRE number of ' + fmt(fireNumber) + '.';
+        insightDetail = 'Your current portfolio of ' + fmt(portfolio) + ' exceeds your FIRE target. You are financially independent and can retire early if you choose.';
+      } else {
+        insightTone = 'positive';
+        insightIcon = 'fa-fire';
+        insightHeadline = 'You are ' + progressPct.toFixed(1) + '% of the way to your FIRE number of ' + fmt(fireNumber) + '.';
+        insightDetail = 'At your current savings rate of ' + savingsRate.toFixed(1) + '%, you can reach financial independence in approximately ' + yearsToFire.toFixed(1) + ' years (' + retirementDateStr + '). Your portfolio would generate ' + fmt(annualPassiveIncome) + ' per year in passive income.';
+      }
+
+      const insight = { tone: insightTone, icon: insightIcon, headline: insightHeadline, detail: insightDetail };
+
+      // ── Build stats
+      const stats = [
+        { label: 'FIRE Number', value: fmt(fireNumber), highlight: true },
+        { label: 'Current Progress', value: progressPct.toFixed(1) + '%', color: progressPct >= 100 ? '#10B981' : '#6366F1' },
+        { label: 'Current Net Worth', value: fmt(portfolio) },
+        { label: 'Years Until FIRE', value: yearsToFire >= 100 ? '100+ years' : yearsToFire.toFixed(1) + ' years', highlight: true },
+        { label: 'Retirement Date Estimate', value: retirementDateStr },
+        { label: 'Annual Passive Income', value: fmt(annualPassiveIncome) },
+        { label: 'Monthly Passive Income', value: fmt(monthlyPassiveIncome) },
+        { label: 'Savings Rate', value: savingsRate.toFixed(1) + '%' },
+        { label: 'Total Contributions', value: fmt(totalContributions) },
+        { label: 'Total Investment Growth', value: fmt(totalGains) },
+        { label: 'Inflation-Adjusted FIRE Number', value: fmt(inflationAdjustedFireNumber) },
+        { label: 'Retirement Readiness', value: readinessLabel + ' (' + readinessScore + '/100)', color: readinessColor },
+      ];
+
+      return { stats, chart, chart2, compareChart, table, insight };
+    },
+
+    // ── How-To Guide
+    howTo: [
+      'Enter your annual after-tax income and annual expenses — the calculator instantly computes your savings rate.',
+      'Add your current investment portfolio value and monthly contribution amount.',
+      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and inflation rate (2.5-3% historical average).',
+      'Choose your safe withdrawal rate — the 4% rule is the standard benchmark for a 30-year retirement.',
+      'Select your retirement spending adjustment and FIRE mode (Standard, Lean, Fat, Coast, or Barista) to match your lifestyle goals.',
+      'Review your FIRE number, years until financial independence, passive income projections, and readiness score.',
+      'Use the scenario comparison table to see how increasing contributions, boosting returns, or cutting expenses accelerates your timeline.',
+    ],
+
+    // ── Real-World Examples
+    examples: [
+      {
+        title: 'Standard FIRE at 45',
+        input: 'Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7%, Inflation: 2.5%, Withdrawal: 4%',
+        result: 'FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50%',
+      },
+      {
+        title: 'Lean FIRE with Minimalist Lifestyle',
+        input: 'Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Lean FIRE',
+        result: 'FIRE Number: ~$468,750 | Years to FIRE: ~14 years | Savings Rate: 58%',
+      },
+      {
+        title: 'Coast FIRE — Let Compounding Do the Work',
+        input: 'Income: $100,000, Expenses: $50,000, Portfolio: $200,000, Monthly: $2,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Coast FIRE',
+        result: 'Coast Number: ~$131,000 | Current portfolio exceeds coast number — compounding alone reaches FIRE',
+      },
+      {
+        title: 'Aggressive Early Retirement at 40',
+        input: 'Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8%, Inflation: 2.5%, Withdrawal: 4%',
+        result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12 years | Savings Rate: 62.5%',
+      },
+    ],
+    formula: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r] | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years | Monthly Passive Income = Portfolio × Withdrawal Rate ÷ 12',
+
+    // ── SEO Article Content
+    article: {
+      heading: 'The Complete Guide to FIRE: Financial Independence, Retire Early',
+      intro: 'The FIRE (Financial Independence, Retire Early) movement has transformed how millions of people think about work, savings, and life. Instead of working until 65, FIRE practitioners aggressively save and invest a large portion of their income — often 50% or more — to build a portfolio large enough to fund their lifestyle indefinitely. The GetCalcu FIRE Calculator helps you determine your FIRE number, estimate how long it will take to reach financial independence, and visualize your journey with interactive charts.',
+      sections: [
+        { heading: 'What is FIRE?', body: 'FIRE stands for Financial Independence, Retire Early. It is a lifestyle movement focused on saving aggressively (typically 50-70% of income) and investing those savings in low-cost index funds or other growth assets. The goal is to build a portfolio large enough that its investment returns can cover your living expenses indefinitely — giving you the freedom to retire decades earlier than the traditional retirement age of 65.' },
+        { heading: 'How FIRE Works', body: 'FIRE works through three interconnected principles: saving aggressively, investing consistently, and letting compound growth do the heavy lifting. By saving 50% or more of your income, you dramatically shorten the time needed to reach financial independence. Your investments grow through compound returns — each year\'s gains earn gains in future years. Once your portfolio reaches roughly 25 times your annual expenses (the 4% rule), you can safely withdraw 4% per year indefinitely.' },
+        { heading: 'Understanding the 4% Rule', body: 'The 4% rule originated from the Trinity Study, a landmark 1998 research paper that analyzed historical stock and bond returns. It found that withdrawing 4% of your portfolio in the first year of retirement, then adjusting for inflation each year, had a high probability of lasting 30 years. This translates to a FIRE number of 25 times your annual expenses. While the 4% rule has limitations — it assumes a 30-year retirement and historical market conditions — it remains the most widely used benchmark in the FIRE community.' },
+        { heading: 'Types of FIRE', body: 'The FIRE movement has evolved into several distinct strategies. Standard FIRE targets your current lifestyle with a 4% withdrawal rate. Lean FIRE assumes a minimalist lifestyle with significantly lower expenses (often 25-50% less). Fat FIRE targets a more luxurious retirement with higher spending. Coast FIRE means your current portfolio will grow to your FIRE number without additional contributions — you just need to cover current expenses. Barista FIRE combines part-time work with a smaller portfolio, where part-time income covers a portion of expenses.' },
+        { heading: 'How to Reach FIRE Faster', body: 'Accelerating your path to FIRE requires a multi-pronged approach. Increasing your income through career advancement, side hustles, or freelancing gives you more to save. Reducing expenses through mindful spending, downsizing, or geo-arbitrage (living in lower-cost areas) boosts your savings rate. Investing in low-cost index funds with 7-10% historical returns maximizes compound growth. Tax efficiency — using 401(k)s, IRAs, HSAs, and taxable accounts strategically — keeps more of your returns. Diversification across asset classes reduces risk. Automating your savings ensures consistency. And taking advantage of employer retirement plan matches is essentially free money.' },
+        { heading: 'Common FIRE Mistakes', body: 'Even well-intentioned FIRE practitioners make mistakes. Ignoring inflation can leave you short in retirement — always use inflation-adjusted returns. Unrealistic return assumptions (expecting 12%+ annually) can derail your plan. Spending creep — gradually increasing expenses as income rises — undermines your savings rate. Poor diversification concentrates risk in a single asset class. Early withdrawals from retirement accounts trigger penalties and taxes. And underestimating healthcare costs — especially before Medicare eligibility — is one of the most common FIRE planning errors.' },
+        { heading: 'FIRE Calculation Formula', body: 'The core FIRE formula is: FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate. For example, if your annual expenses are $50,000 and you use a 4% withdrawal rate, your FIRE number is $1,250,000. To project portfolio growth, use the compound interest formula: FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r], where P is your current portfolio, r is the monthly return rate, n is the number of months, and PMT is your monthly contribution. The inflation-adjusted FIRE number accounts for rising costs: Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation Rate)^Years.' },
+        { heading: 'Example Calculation', body: 'Consider a realistic scenario: You earn $80,000 after taxes, spend $40,000 annually, have $100,000 invested, and contribute $2,000 monthly. Your savings rate is 50%. Using a 4% withdrawal rate, your FIRE number is $1,000,000. With a 7% annual return, your portfolio grows to $1,000,000 in approximately 17.5 years. At that point, your portfolio generates $40,000 per year in passive income — exactly matching your expenses. Adjusting for 2.5% inflation, you would need approximately $1,540,000 in future dollars to maintain the same purchasing power.' },
+      ],
+    },
+
+    // ── Schema-Ready FAQs
+    faqs: [
+      { q: 'What is a good FIRE number?', a: 'A good FIRE number is typically 25 times your annual retirement expenses, based on the 4% rule. For example, if you plan to spend $40,000 per year in retirement, your FIRE number is $1,000,000. However, your specific FIRE number depends on your lifestyle, withdrawal rate, and expected retirement duration. Use our FIRE Calculator to find your personalized number.' },
+      { q: 'Is the 4% rule still valid?', a: 'The 4% rule, derived from the Trinity Study, remains a widely used benchmark but has limitations. It assumes a 30-year retirement, a 50/50 stock-bond portfolio, and historical market conditions. Some financial experts suggest a 3-3.5% withdrawal rate for longer retirements (40+ years) or conservative portfolios. The 4% rule is a useful starting point, but you should stress-test your plan with different scenarios.' },
+      { q: 'How much should I save for FIRE?', a: 'The amount you need to save depends on your target FIRE number and timeline. A common benchmark is saving 50% of your after-tax income, which typically allows FIRE in 15-20 years. Saving 25% takes about 30 years, while saving 70% can achieve FIRE in under 10 years. Use our FIRE Calculator to see how your savings rate affects your timeline.' },
+      { q: 'Can I retire at 40?', a: 'Yes, retiring at 40 is achievable with aggressive saving and investing. To retire at 40, you typically need a savings rate of 50-70% of your income and a portfolio of 25-30 times your annual expenses. For example, with $50,000 annual expenses, you would need $1.25-1.5 million. Starting early, maximizing income, and keeping expenses low are the keys to early retirement.' },
+      { q: 'What is Coast FIRE?', a: 'Coast FIRE is a FIRE strategy where your current portfolio is large enough that it will grow to your FIRE number by retirement age without any additional contributions. You "coast" on compound growth while working to cover current expenses. For example, if you need $1,000,000 at age 60 and have 30 years to grow at 7%, you only need about $131,000 today to reach that goal.' },
+      { q: 'What is Lean FIRE?', a: 'Lean FIRE is a FIRE strategy that targets a minimalist lifestyle with significantly lower expenses — often 25-50% less than a standard lifestyle. Lean FIRE practitioners typically aim for a FIRE number of $500,000-$750,000, which supports $20,000-$30,000 in annual spending at a 4% withdrawal rate. This approach requires frugal living but can be achieved much faster.' },
+      { q: 'How accurate is this calculator?', a: 'This FIRE Calculator uses standard financial formulas (compound interest, the 4% rule, inflation adjustment) and provides accurate projections based on your inputs. However, all financial projections involve uncertainty — actual market returns, inflation, and expenses will vary. Use conservative assumptions and review your plan regularly. The calculator is a planning tool, not a guarantee.' },
+      { q: 'Should inflation be included in FIRE calculations?', a: 'Yes, absolutely. Inflation erodes purchasing power over time — at 2.5% annual inflation, $1,000,000 today will only buy about $477,000 worth of goods in 30 years. Our FIRE Calculator shows both your nominal FIRE number and the inflation-adjusted amount you will actually need in future dollars.' },
+      { q: 'What investment return should I assume?', a: 'For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation, or 4-7% after inflation. A conservative planning assumption is 6-7% nominal or 4-5% real return. For a balanced 60/40 portfolio, use 5-7%. Always use a rate you are comfortable with and stress-test with lower returns.' },
+      { q: 'What happens if markets decline?', a: 'Market declines are normal and expected — the stock market has experienced 10-20% drawdowns roughly every 3-5 years. During the accumulation phase, market declines are actually beneficial because your contributions buy more shares at lower prices. The risk is highest during the withdrawal phase, which is why the 4% rule and having a cash buffer are important. Consider a bond tent or cash reserve to weather early-retirement market downturns.' },
+      { q: 'What is Barista FIRE?', a: 'Barista FIRE is a hybrid strategy where you retire from your full-time career but continue working part-time (like at a coffee shop, hence the name) to cover a portion of your expenses. This reduces the FIRE number you need, since part-time income covers some costs. It also provides health insurance benefits in some cases, which can be a significant advantage before Medicare eligibility.' },
+      { q: 'How does the savings rate affect my FIRE timeline?', a: 'Your savings rate is the single most powerful factor in your FIRE timeline. At a 10% savings rate, FIRE takes about 51 years. At 25%, it takes about 32 years. At 50%, it takes about 17 years. At 70%, it takes about 9 years. The relationship is exponential — small increases in savings rate near the high end dramatically shorten your timeline.' },
+      { q: 'What is the difference between FIRE and traditional retirement?', a: 'Traditional retirement typically means working until age 65-67, relying on Social Security, pensions, and retirement accounts. FIRE means achieving financial independence much earlier — often in your 30s, 40s, or 50s — by saving aggressively and living on investment income. FIRE gives you the freedom to choose how you spend your time, whether that means retiring completely, working part-time, or pursuing passion projects.' },
+      { q: 'How do taxes affect my FIRE plan?', a: 'Taxes can significantly impact your FIRE journey. Using tax-advantaged accounts (401(k), IRA, HSA) reduces your current tax burden and accelerates growth. In retirement, strategically withdrawing from taxable, tax-deferred, and tax-free accounts can minimize your tax bill. Consider Roth conversion ladders to access retirement funds before age 59.5 without penalties. Our calculator uses after-tax income, so your savings rate already reflects your tax situation.' },
+      { q: 'What is the 25x rule?', a: 'The 25x rule is a quick way to estimate your FIRE number: multiply your annual expenses by 25. This is derived from the 4% rule — if you can withdraw 4% of your portfolio annually, you need 25 times your annual expenses (1 ÷ 0.04 = 25). For example, $40,000 in annual expenses × 25 = $1,000,000 FIRE number.' },
+    ],
+  },
 };
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
