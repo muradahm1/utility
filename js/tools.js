@@ -3292,6 +3292,554 @@
       { q: 'What is the 25x rule?', a: 'The 25x rule is a quick way to estimate your FIRE number: multiply your annual expenses by 25. This is derived from the 4% rule — if you can withdraw 4% of your portfolio annually, you need 25 times your annual expenses (1 ÷ 0.04 = 25). For example, $40,000 in annual expenses × 25 = $1,000,000 FIRE number.' },
     ],
   },
+
+  // ── Amortization Calculator ─────────────────────────────────────
+  'amortization-calculator': {
+    id: 'amortization-calculator',
+    name: 'Amortization Calculator',
+    category: 'Finance',
+    icon: 'fa-chart-simple',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate loan payments, generate a complete amortization schedule, visualize principal and interest over time, and analyze the impact of extra payments.',
+    metaTitle: 'Amortization Calculator – Loan Payment & Schedule | GetCalcu',
+    metaDescription: 'Free Amortization Calculator with interactive charts, payment schedule, extra payment analysis, and downloadable loan repayment tables. Compare scenarios and see how extra payments save interest.',
+    keywords: [
+      'amortization calculator',
+      'loan amortization calculator',
+      'mortgage amortization calculator',
+      'loan payment calculator',
+      'amortization schedule',
+      'mortgage payment calculator',
+      'principal and interest calculator',
+      'extra payment calculator',
+      'monthly loan payment calculator',
+      'loan repayment calculator',
+    ],
+    fields: [
+      // ── Loan Details Section ──
+      { id: 'sec_loan', type: 'section', label: 'Loan Details', icon: 'fa-file-invoice' },
+      { id: 'loan_amount',     label: 'Loan Amount ($)',               type: 'range', default: 300000, min: 1000,   max: 5000000, step: 1000,  hint: 'The total amount you are borrowing (the principal).' },
+      { id: 'interest_rate',   label: 'Annual Interest Rate (%)',      type: 'range', default: 6.5,    min: 0,      max: 25,      step: 0.05,  hint: 'The yearly interest rate (APR) on your loan.' },
+      { id: 'loan_term',       label: 'Loan Term',                     type: 'select', default: 30,
+        options: [5,10,15,20,25,30,40].map(v => ({ value: v, label: `${v} Years` })), hint: 'How long you have to repay the loan in full.' },
+      { id: 'payment_freq',    label: 'Payment Frequency',             type: 'select', default: 'monthly',
+        options: [
+          { value: 'monthly',  label: 'Monthly (12/yr)' },
+          { value: 'biweekly', label: 'Bi-Weekly (26/yr)' },
+          { value: 'weekly',   label: 'Weekly (52/yr)' },
+        ], hint: 'How often you make payments. More frequent payments reduce total interest.' },
+      { id: 'compounding_freq', label: 'Compounding Frequency',        type: 'select', default: 'monthly',
+        options: [
+          { value: 'monthly',      label: 'Monthly (12/yr)' },
+          { value: 'quarterly',    label: 'Quarterly (4/yr)' },
+          { value: 'semi-annual',  label: 'Semi-Annual (2/yr)' },
+          { value: 'annually',     label: 'Annual (1/yr)' },
+        ], hint: 'How often interest is compounded. Monthly is standard for most loans.' },
+      { id: 'loan_start_date', label: 'Loan Start Date',               type: 'date', default: () => {
+        const d = new Date(); d.setMonth(d.getMonth() - 3); return d.toISOString().split('T')[0];
+      }, hint: 'When the loan begins. Used to generate the payment schedule with dates.' },
+
+      // ── Extra Payments Section ──
+      { id: 'sec_extra', type: 'section', label: 'Extra Payments', icon: 'fa-bolt' },
+      { id: 'extra_monthly',   label: 'Extra Monthly Payment ($)',     type: 'range', default: 0,      min: 0,      max: 10000,   step: 50,    hint: 'Additional amount paid each month to reduce principal faster.' },
+      { id: 'extra_one_time',  label: 'One-Time Extra Payment ($)',    type: 'number', default: 0,     min: 0,      step: 100,    hint: 'A single lump-sum extra payment made at a specific date.' },
+      { id: 'extra_one_time_date', label: 'One-Time Payment Date',     type: 'date', default: () => {
+        const d = new Date(); d.setMonth(d.getMonth() + 12); return d.toISOString().split('T')[0];
+      }, condition: v => safeNum(v.extra_one_time, 0) > 0, hint: 'When the one-time extra payment is made.' },
+      { id: 'extra_annual',    label: 'Annual Extra Payment ($)',      type: 'number', default: 0,     min: 0,      step: 100,    hint: 'An extra payment made once every year (e.g. from a bonus or tax refund).' },
+
+      // ── Taxes & Insurance Section ──
+      { id: 'sec_tax_ins', type: 'section', label: 'Taxes & Insurance', icon: 'fa-shield' },
+      { id: 'include_tax_insurance', label: 'Include Taxes & Insurance', type: 'select', default: 'no',
+        options: [
+          { value: 'no',  label: 'No — Show Principal & Interest Only' },
+          { value: 'yes', label: 'Yes — Include Full Monthly Housing Payment' },
+        ], hint: 'Toggle to include property taxes, insurance, HOA, and PMI in your monthly payment.' },
+      { id: 'annual_property_tax',  label: 'Annual Property Tax ($)',  type: 'number', default: 4800,  min: 0,      step: 100,   condition: v => v.include_tax_insurance === 'yes', hint: 'Yearly property tax, spread across monthly payments.' },
+      { id: 'annual_home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1200, min: 0,     step: 100,   condition: v => v.include_tax_insurance === 'yes', hint: 'Yearly homeowners insurance premium.' },
+      { id: 'hoa_fees',        label: 'Monthly HOA Fees ($)',          type: 'number', default: 0,     min: 0,      step: 25,    condition: v => v.include_tax_insurance === 'yes', hint: 'Monthly homeowners association fees.' },
+      { id: 'pmi',             label: 'Monthly PMI ($)',               type: 'number', default: 0,     min: 0,      step: 10,    condition: v => v.include_tax_insurance === 'yes', hint: 'Private Mortgage Insurance (required when down payment is less than 20%).' },
+
+      // ── Comparison Mode Section ──
+      { id: 'sec_compare', type: 'section', label: 'Comparison Mode', icon: 'fa-not-equal' },
+      { id: 'comparison_mode', label: 'Comparison Mode', type: 'select', default: 'single',
+        options: [
+          { value: 'single',  label: 'Single Scenario' },
+          { value: 'compare', label: 'Compare Two Scenarios' },
+        ], hint: 'Compare two loan scenarios side by side to see the difference in payments and interest.' },
+      { id: 'compare_loan_amount',  label: 'Scenario B: Loan Amount ($)',    type: 'number', default: 300000, min: 1000,  step: 1000, condition: v => v.comparison_mode === 'compare', hint: 'Loan amount for the second scenario.' },
+      { id: 'compare_interest_rate', label: 'Scenario B: Interest Rate (%)', type: 'number', default: 5.9,   min: 0,     step: 0.05, condition: v => v.comparison_mode === 'compare', hint: 'Annual interest rate for the second scenario.' },
+      { id: 'compare_loan_term',     label: 'Scenario B: Loan Term',         type: 'select', default: 15,
+        options: [5,10,15,20,25,30,40].map(v => ({ value: v, label: `${v} Years` })), condition: v => v.comparison_mode === 'compare', hint: 'Loan term for the second scenario.' },
+      { id: 'compare_extra_monthly', label: 'Scenario B: Extra Monthly ($)', type: 'number', default: 0,     min: 0,     step: 50,   condition: v => v.comparison_mode === 'compare', hint: 'Extra monthly payment for the second scenario.' },
+    ],
+    fieldLabels(v) {
+      return {};
+    },
+    calculate(v) {
+      // ── Helper: compute per-period interest rate ──
+      function getPeriodicRate(annualRate, ppy, compoundingFreq) {
+        const cpY = { monthly: 12, quarterly: 4, 'semi-annual': 2, annually: 1 }[compoundingFreq] || 12;
+        // Convert annual rate to effective rate given compounding frequency, then to period rate
+        const effectiveAnnual = Math.pow(1 + annualRate / 100 / cpY, cpY) - 1;
+        const periodicRate = Math.pow(1 + effectiveAnnual, 1 / ppy) - 1;
+        return periodicRate;
+      }
+
+      // ── Helper: generate amortization schedule ──
+      function generateSchedule(principal, payment, periodicRate, ppy, totalPayments, extraMonthly, extraOneTime, extraOneTimeDate, extraAnnual, loanStartDate, includeTaxIns, taxMonthly, insMonthly, hoaMonthly, pmiMonthly) {
+        const rows = [];
+        let balance = principal;
+        let totalInterest = 0;
+        let totalPrincipal = 0;
+        let totalExtraPayments = 0;
+        let currentDate = new Date(loanStartDate);
+        const oneTimeDate = extraOneTime > 0 && extraOneTimeDate ? new Date(extraOneTimeDate) : null;
+
+        for (let i = 1; i <= totalPayments && balance > 0.005; i++) {
+          const interest = roundTo(balance * periodicRate, 2);
+          let scheduledPrincipal = roundTo(payment - interest, 2);
+          if (scheduledPrincipal > balance) scheduledPrincipal = balance;
+
+          let extraPayment = 0;
+          // Extra monthly payment
+          if (extraMonthly > 0) {
+            extraPayment = Math.min(extraMonthly, balance - scheduledPrincipal);
+          }
+          // One-time extra payment
+          if (oneTimeDate && extraOneTime > 0) {
+            const dateStr = currentDate.toISOString().split('T')[0];
+            const otDateStr = oneTimeDate.toISOString().split('T')[0];
+            if (dateStr === otDateStr) {
+              const otExtra = Math.min(extraOneTime, balance - scheduledPrincipal - extraPayment);
+              extraPayment += otExtra;
+            }
+          }
+          // Annual extra payment (once per year, on the payment that corresponds to the anniversary)
+          if (extraAnnual > 0 && i % ppy === 0) {
+            const annExtra = Math.min(extraAnnual, balance - scheduledPrincipal - extraPayment);
+            extraPayment += annExtra;
+          }
+
+          const totalPrincipalPaid = roundTo(scheduledPrincipal + extraPayment, 2);
+          if (totalPrincipalPaid > balance) {
+            extraPayment = Math.max(0, balance - scheduledPrincipal);
+          }
+
+          totalInterest += interest;
+          totalPrincipal += scheduledPrincipal;
+          totalExtraPayments += extraPayment;
+          balance = roundTo(balance - scheduledPrincipal - extraPayment, 2);
+          if (balance < 0) balance = 0;
+
+          const paymentAmount = roundTo(payment + extraPayment + (includeTaxIns ? (taxMonthly + insMonthly + hoaMonthly + pmiMonthly) : 0), 2);
+          const taxInsAmount = includeTaxIns ? roundTo(taxMonthly + insMonthly + hoaMonthly + pmiMonthly, 2) : 0;
+
+          rows.push({
+            month: i,
+            payment: paymentAmount,
+            principal: roundTo(scheduledPrincipal, 2),
+            interest: roundTo(interest, 2),
+            extraPayment: roundTo(extraPayment, 2),
+            balance: Math.max(0, balance),
+            taxInsurance: taxInsAmount,
+            date: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          });
+
+          // Advance date
+          if (ppy === 12) {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+          } else if (ppy === 26) {
+            currentDate.setDate(currentDate.getDate() + 14);
+          } else if (ppy === 52) {
+            currentDate.setDate(currentDate.getDate() + 7);
+          }
+
+          if (balance <= 0) break;
+        }
+
+        return { rows, totalInterest, totalPrincipal, totalExtraPayments, totalPaymentsMade: rows.length };
+      }
+
+      // ── Extract inputs ──
+      const principal = safeNum(v.loan_amount, 300000);
+      const annualRate = safeNum(v.interest_rate, 6.5);
+      const loanTerm = Math.round(safeNum(v.loan_term, 30));
+      const paymentFreq = safeStr(v.payment_freq) || 'monthly';
+      const compoundingFreq = safeStr(v.compounding_freq) || 'monthly';
+      const loanStartDate = safeStr(v.loan_start_date) || new Date().toISOString().split('T')[0];
+      const extraMonthly = safeNum(v.extra_monthly, 0);
+      const extraOneTime = safeNum(v.extra_one_time, 0);
+      const extraOneTimeDate = safeStr(v.extra_one_time_date) || '';
+      const extraAnnual = safeNum(v.extra_annual, 0);
+      const includeTaxIns = safeStr(v.include_tax_insurance) === 'yes';
+      const taxMonthly = includeTaxIns ? safeNum(v.annual_property_tax, 0) / 12 : 0;
+      const insMonthly = includeTaxIns ? safeNum(v.annual_home_insurance, 0) / 12 : 0;
+      const hoaMonthly = includeTaxIns ? safeNum(v.hoa_fees, 0) : 0;
+      const pmiMonthly = includeTaxIns ? safeNum(v.pmi, 0) : 0;
+
+      if (principal <= 0) return errorResult('Loan amount must be greater than zero.');
+      if (annualRate < 0) return errorResult('Interest rate cannot be negative.');
+      if (loanTerm < 1) return errorResult('Loan term must be at least 1 year.');
+
+      // ── Payment frequency adjustments ──
+      const ppy = { monthly: 12, biweekly: 26, weekly: 52 }[paymentFreq] || 12;
+      const totalPayments = loanTerm * ppy;
+      const periodicRate = annualRate === 0 ? 0 : getPeriodicRate(annualRate, ppy, compoundingFreq);
+
+      // ── Calculate payment ──
+      let payment;
+      if (periodicRate === 0) {
+        payment = principal / totalPayments;
+      } else {
+        payment = principal * (periodicRate * Math.pow(1 + periodicRate, totalPayments)) / (Math.pow(1 + periodicRate, totalPayments) - 1);
+      }
+      payment = roundTo(payment, 2);
+
+      // ── Generate schedule ──
+      const scheduleData = generateSchedule(principal, payment, periodicRate, ppy, totalPayments, extraMonthly, extraOneTime, extraOneTimeDate, extraAnnual, loanStartDate, includeTaxIns, taxMonthly, insMonthly, hoaMonthly, pmiMonthly);
+      const { rows, totalInterest, totalPrincipal, totalExtraPayments, totalPaymentsMade } = scheduleData;
+
+      // ── Calculate totals ──
+      const totalPaid = roundTo(totalPrincipal + totalInterest, 2);
+      const totalWithExtras = roundTo(totalPaid + totalExtraPayments, 2);
+      const totalTaxInsPaid = includeTaxIns ? roundTo((taxMonthly + insMonthly + hoaMonthly + pmiMonthly) * totalPaymentsMade, 2) : 0;
+      const totalMonthlyPayment = includeTaxIns ? roundTo(payment + extraMonthly + taxMonthly + insMonthly + hoaMonthly + pmiMonthly, 2) : roundTo(payment + extraMonthly, 2);
+      const baseMonthlyPayment = roundTo(payment, 2);
+      const effectiveRate = annualRate > 0 ? roundTo((Math.pow(1 + periodicRate, ppy) - 1) * 100, 2) : 0;
+
+      // ── Payoff date ──
+      const startDate = new Date(loanStartDate);
+      let payoffDate = new Date(startDate);
+      if (paymentFreq === 'monthly') {
+        payoffDate.setMonth(payoffDate.getMonth() + totalPaymentsMade);
+      } else if (paymentFreq === 'biweekly') {
+        payoffDate.setDate(payoffDate.getDate() + totalPaymentsMade * 14);
+      } else {
+        payoffDate.setDate(payoffDate.getDate() + totalPaymentsMade * 7);
+      }
+      const payoffDateStr = payoffDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      // ── Interest saved vs no extra payments ──
+      let interestSaved = 0;
+      let monthsSaved = 0;
+      let noExtraPayoffDate = null;
+      let noExtraPayoffDateStr = '';
+
+      if (extraMonthly > 0 || extraOneTime > 0 || extraAnnual > 0) {
+        // Generate schedule without extra payments to compare
+        const noExtraData = generateSchedule(principal, payment, periodicRate, ppy, totalPayments, 0, 0, '', 0, loanStartDate, false, 0, 0, 0, 0);
+        interestSaved = roundTo(noExtraData.totalInterest - totalInterest, 2);
+        monthsSaved = noExtraData.totalPaymentsMade - totalPaymentsMade;
+
+        const nePayoffDate = new Date(startDate);
+        if (paymentFreq === 'monthly') {
+          nePayoffDate.setMonth(nePayoffDate.getMonth() + noExtraData.totalPaymentsMade);
+        } else if (paymentFreq === 'biweekly') {
+          nePayoffDate.setDate(nePayoffDate.getDate() + noExtraData.totalPaymentsMade * 14);
+        } else {
+          nePayoffDate.setDate(nePayoffDate.getDate() + noExtraData.totalPaymentsMade * 7);
+        }
+        noExtraPayoffDate = nePayoffDate;
+        noExtraPayoffDateStr = nePayoffDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      }
+
+      // ── Build stats ──
+      const stats = [
+        { label: 'Monthly Payment', value: fmt(baseMonthlyPayment), highlight: true },
+        { label: 'Total Monthly Payment', value: fmt(totalMonthlyPayment), highlight: includeTaxIns },
+        { label: 'Principal & Interest', value: fmt(baseMonthlyPayment) },
+        { label: 'Total Interest Paid', value: fmt(totalInterest), warn: true },
+        { label: 'Total Loan Cost', value: fmt(totalPaid) },
+        { label: 'Loan Payoff Date', value: payoffDateStr, highlight: true },
+        { label: 'Total Payments', value: fmtN(totalPaymentsMade) },
+        { label: 'Extra Payments Made', value: fmt(totalExtraPayments) },
+        { label: 'Effective Interest Rate', value: effectiveRate + '%' },
+        { label: 'Remaining Balance', value: fmt(0) },
+      ];
+
+      if (interestSaved > 0) {
+        stats.push({ label: 'Interest Saved', value: fmt(interestSaved), highlight: true });
+        stats.push({ label: 'Time Saved', value: monthsSaved >= 12 ? (Math.floor(monthsSaved / 12) + ' yr ' + (monthsSaved % 12) + ' mo') : monthsSaved + ' months', highlight: true });
+        stats.push({ label: 'Original Payoff Date', value: noExtraPayoffDateStr });
+      }
+
+      if (includeTaxIns) {
+        const fullMonthly = roundTo(baseMonthlyPayment + extraMonthly + taxMonthly + insMonthly + hoaMonthly + pmiMonthly, 2);
+        stats.push({ label: 'Property Tax (monthly)', value: fmt(taxMonthly) });
+        stats.push({ label: 'Insurance (monthly)', value: fmt(insMonthly) });
+        stats.push({ label: 'HOA Fees (monthly)', value: fmt(hoaMonthly) });
+        stats.push({ label: 'PMI (monthly)', value: fmt(pmiMonthly) });
+        stats.push({ label: 'Total Housing Payment', value: fmt(fullMonthly), highlight: true });
+      }
+
+      // ── Chart data ──
+      // Chart 1: Loan Balance Over Time (sample ~120 points for performance)
+      const balanceChartLabels = [];
+      const balanceChartData = [];
+      const step = Math.max(1, Math.floor(rows.length / 120));
+      for (let i = 0; i < rows.length; i += step) {
+        balanceChartLabels.push('Pmt ' + rows[i].month);
+        balanceChartData.push(rows[i].balance);
+      }
+      // Always include last point
+      if (rows.length > 0 && (rows.length - 1) % step !== 0) {
+        balanceChartLabels.push('Pmt ' + rows[rows.length - 1].month);
+        balanceChartData.push(0);
+      }
+
+      // Chart 2: Principal vs Interest (Stacked Bar - annual summary)
+      const annualSummary = {};
+      rows.forEach(row => {
+        const year = Math.ceil(row.month / ppy);
+        if (!annualSummary[year]) annualSummary[year] = { principal: 0, interest: 0, year };
+        annualSummary[year].principal += row.principal;
+        annualSummary[year].interest += row.interest;
+      });
+      const yearLabels = Object.keys(annualSummary).map(y => 'Year ' + y);
+      const principalData = Object.values(annualSummary).map(d => roundTo(d.principal, 2));
+      const interestData = Object.values(annualSummary).map(d => roundTo(d.interest, 2));
+
+      // Chart 3: Payment Breakdown (Doughnut)
+      const doughnutData = includeTaxIns
+        ? [totalPrincipal, totalInterest, roundTo(taxMonthly * totalPaymentsMade, 2), roundTo(insMonthly * totalPaymentsMade, 2), roundTo(pmiMonthly * totalPaymentsMade, 2)]
+        : [totalPrincipal, totalInterest];
+      const doughnutLabels = includeTaxIns
+        ? ['Principal', 'Interest', 'Property Taxes', 'Insurance', 'PMI']
+        : ['Principal', 'Interest'];
+      const doughnutColors = includeTaxIns
+        ? ['#6366F1', '#F59E0B', '#EF4444', '#10B981', '#8B5CF6']
+        : ['#6366F1', '#F59E0B'];
+
+      // Chart 4: Cumulative Interest Paid (Area)
+      const cumInterestData = [];
+      let cumInt = 0;
+      const cumStep = Math.max(1, Math.floor(rows.length / 80));
+      const cumLabels = [];
+      for (let i = 0; i < rows.length; i += cumStep) {
+        cumInt += rows[i].interest;
+        cumInterestData.push(roundTo(cumInt, 2));
+        cumLabels.push('Pmt ' + rows[i].month);
+      }
+      if (rows.length > 0) {
+        const totalCumInt = rows.reduce((s, r) => s + r.interest, 0);
+        if ((rows.length - 1) % cumStep !== 0) {
+          cumLabels.push('Pmt ' + rows[rows.length - 1].month);
+          cumInterestData.push(roundTo(totalCumInt, 2));
+        }
+      }
+
+      // ── Comparison Mode ──
+      let comparisonResult = null;
+      if (v.comparison_mode === 'compare') {
+        const cPrincipal = safeNum(v.compare_loan_amount, 300000);
+        const cRate = safeNum(v.compare_interest_rate, 5.9);
+        const cTerm = Math.round(safeNum(v.compare_loan_term, 15));
+        const cExtra = safeNum(v.compare_extra_monthly, 0);
+        const cTotalPayments = cTerm * ppy;
+        const cPeriodicRate = cRate === 0 ? 0 : getPeriodicRate(cRate, ppy, compoundingFreq);
+        let cPayment;
+        if (cPeriodicRate === 0) {
+          cPayment = cPrincipal / cTotalPayments;
+        } else {
+          cPayment = cPrincipal * (cPeriodicRate * Math.pow(1 + cPeriodicRate, cTotalPayments)) / (Math.pow(1 + cPeriodicRate, cTotalPayments) - 1);
+        }
+        cPayment = roundTo(cPayment, 2);
+        const cSchedule = generateSchedule(cPrincipal, cPayment, cPeriodicRate, ppy, cTotalPayments, cExtra, 0, '', 0, loanStartDate, false, 0, 0, 0, 0);
+        const cTotalInterest = roundTo(cSchedule.totalInterest, 2);
+        const cTotalPaid = roundTo(cPrincipal + cTotalInterest, 2);
+        const cMonthlyPayment = roundTo(cPayment + cExtra, 2);
+        const cMonthsSaved = totalPaymentsMade - cSchedule.totalPaymentsMade;
+        const cInterestSaved = roundTo(totalInterest - cTotalInterest, 2);
+
+        const diffMonthly = roundTo(totalMonthlyPayment - cMonthlyPayment, 2);
+        const diffInterest = roundTo(totalInterest - cTotalInterest, 2);
+        const diffTotalCost = roundTo(totalPaid - cTotalPaid, 2);
+        const diffTime = totalPaymentsMade - cSchedule.totalPaymentsMade;
+
+        comparisonResult = {
+          stats: [
+            { label: 'Scenario A: Monthly Payment', value: fmt(totalMonthlyPayment), highlight: true },
+            { label: 'Scenario B: Monthly Payment', value: fmt(cMonthlyPayment), highlight: true },
+            { label: 'Difference (Monthly)', value: diffMonthly > 0 ? fmt(diffMonthly) + ' (A > B)' : fmt(Math.abs(diffMonthly)) + ' (B > A)' },
+            { label: 'Scenario A: Total Interest', value: fmt(totalInterest), warn: true },
+            { label: 'Scenario B: Total Interest', value: fmt(cTotalInterest), warn: true },
+            { label: 'Difference (Interest)', value: diffInterest > 0 ? fmt(diffInterest) + ' (A > B)' : fmt(Math.abs(diffInterest)) + ' (B > A)' },
+            { label: 'Scenario A: Total Cost', value: fmt(totalPaid) },
+            { label: 'Scenario B: Total Cost', value: fmt(cTotalPaid) },
+            { label: 'Scenario A: Payoff Time', value: totalPaymentsMade + ' payments' },
+            { label: 'Scenario B: Payoff Time', value: cSchedule.totalPaymentsMade + ' payments' },
+            { label: 'Time Difference', value: diffTime > 0 ? diffTime + ' payments (A > B)' : Math.abs(diffTime) + ' payments (B > A)' },
+          ],
+          table: {
+            mode: 'comparison',
+            title: 'Scenario Comparison',
+            columns: [
+              { key: 'metric', label: 'Metric', format: 'text' },
+              { key: 'scenarioA', label: 'Scenario A', format: 'currency', emphasis: true },
+              { key: 'scenarioB', label: 'Scenario B', format: 'currency' },
+              { key: 'difference', label: 'Difference', format: 'text' },
+            ],
+            rows: [
+              { metric: 'Monthly Payment', scenarioA: totalMonthlyPayment, scenarioB: cMonthlyPayment, difference: fmt(Math.abs(diffMonthly)) + (diffMonthly > 0 ? ' (A > B)' : ' (B > A)') },
+              { metric: 'Total Interest', scenarioA: totalInterest, scenarioB: cTotalInterest, difference: fmt(Math.abs(diffInterest)) + (diffInterest > 0 ? ' (A > B)' : ' (B > A)') },
+              { metric: 'Total Cost', scenarioA: totalPaid, scenarioB: cTotalPaid, difference: fmt(Math.abs(diffTotalCost)) + (diffTotalCost > 0 ? ' (A > B)' : ' (B > A)') },
+              { metric: 'Payoff Time', scenarioA: totalPaymentsMade + ' pmts', scenarioB: cSchedule.totalPaymentsMade + ' pmts', difference: diffTime > 0 ? diffTime + ' pmts (A > B)' : Math.abs(diffTime) + ' pmts (B > A)' },
+              { metric: 'Loan Amount', scenarioA: principal, scenarioB: cPrincipal, difference: fmt(Math.abs(principal - cPrincipal)) },
+              { metric: 'Interest Rate', scenarioA: annualRate + '%', scenarioB: cRate + '%', difference: (annualRate - cRate).toFixed(2) + '%' },
+              { metric: 'Loan Term', scenarioA: loanTerm + ' yr', scenarioB: cTerm + ' yr', difference: (loanTerm - cTerm) + ' yr' },
+            ],
+          },
+        };
+      }
+
+      // ── Build return object ──
+      const result = {
+        stats,
+        chart: {
+          type: 'line',
+          labels: balanceChartLabels,
+          yLabel: 'Balance ($)',
+          title: 'Loan Balance Over Time',
+          datasets: [
+            { label: 'Remaining Balance', data: balanceChartData, color: '#6366F1', fill: true },
+          ],
+        },
+        chart2: {
+          type: 'bar',
+          labels: yearLabels,
+          yLabel: 'Amount ($)',
+          title: 'Principal vs Interest by Year',
+          datasets: [
+            { label: 'Principal', data: principalData, color: '#6366F1' },
+            { label: 'Interest', data: interestData, color: '#F59E0B' },
+          ],
+          tooltipSuffix: '',
+        },
+        compareChart: {
+          labels: doughnutLabels,
+          data: doughnutData,
+          colors: doughnutColors,
+          cutout: '62%',
+        },
+        chart3: {
+          type: 'line',
+          labels: cumLabels,
+          yLabel: 'Cumulative Interest ($)',
+          title: 'Cumulative Interest Paid',
+          datasets: [
+            { label: 'Cumulative Interest', data: cumInterestData, color: '#EF4444', fill: true },
+          ],
+        },
+        table: {
+          mode: 'schedule',
+          title: 'Full Amortization Schedule',
+          columns: [
+            { key: 'month', label: 'Payment #', format: 'text' },
+            { key: 'date', label: 'Date', format: 'text' },
+            { key: 'payment', label: 'Payment', format: 'currency' },
+            { key: 'principal', label: 'Principal', format: 'currency' },
+            { key: 'interest', label: 'Interest', format: 'currency' },
+            { key: 'extraPayment', label: 'Extra Payment', format: 'currency' },
+            { key: 'balance', label: 'Remaining Balance', format: 'currency', emphasis: true },
+          ],
+          rows: rows,
+        },
+        insight: {
+          tone: extraMonthly > 0 || extraOneTime > 0 || extraAnnual > 0 ? 'positive' : 'neutral',
+          icon: extraMonthly > 0 || extraOneTime > 0 || extraAnnual > 0 ? 'fa-circle-check' : 'fa-circle-info',
+          headline: extraMonthly > 0 || extraOneTime > 0 || extraAnnual > 0
+            ? `Extra payments save ` + fmt(interestSaved) + ` in interest and cut ` + (monthsSaved >= 12 ? (Math.floor(monthsSaved / 12) + ' yr ' + (monthsSaved % 12) + ' mo') : monthsSaved + ' months') + ` off your loan.`
+            : `Your ` + fmt(baseMonthlyPayment) + ` monthly payment pays off ` + fmt(principal) + ` over ` + loanTerm + ` years, costing ` + fmt(totalInterest) + ` in total interest.`,
+          detail: extraMonthly > 0 || extraOneTime > 0 || extraAnnual > 0
+            ? `With ` + fmt(totalExtraPayments) + ` in extra payments, you pay off the loan by ` + payoffDateStr + ` instead of ` + noExtraPayoffDateStr + `. Total interest drops from ` + fmt(roundTo(totalInterest + interestSaved, 2)) + ` to ` + fmt(totalInterest) + `.`
+            : `Your effective interest rate is ` + effectiveRate + `%. The loan will be fully paid off by ` + payoffDateStr + `. ` + (includeTaxIns ? `Including taxes, insurance, HOA, and PMI, your total monthly housing payment is ` + fmt(totalMonthlyPayment) + `.` : ``),
+        },
+      };
+
+      if (comparisonResult && comparisonResult.stats) {
+        result.stats = result.stats.concat(comparisonResult.stats);
+        result.table = comparisonResult.table;
+      }
+
+      return result;
+    },
+
+    // ── How-To Guide ──
+    howTo: [
+      'Enter the loan amount you are borrowing, the annual interest rate (APR), and choose your loan term from the dropdown.',
+      'Select your payment frequency — monthly, bi-weekly, or weekly. More frequent payments reduce total interest.',
+      'Choose the compounding frequency (monthly is standard for most loans) and set the loan start date.',
+      'Add any extra payments — monthly, one-time, or annual — to see how much interest and time you can save.',
+      'Optionally toggle "Include Taxes & Insurance" to add property tax, insurance, HOA, and PMI for a full monthly housing payment.',
+      'Enable "Comparison Mode" to compare two loan scenarios side by side, such as a 30-year vs 15-year term.',
+      'Review the KPI dashboard, interactive charts, and the full amortization schedule. Export the schedule as CSV if needed.',
+    ],
+
+    // ── Real-World Examples ──
+    examples: [
+      {
+        title: '30-Year Fixed Mortgage',
+        input: 'Loan: $300,000, Rate: 6.5%, Term: 30 years, Monthly payments',
+        result: 'Monthly Payment: ~$1,896 | Total Interest: ~$382,000 | Payoff: 30 years',
+      },
+      {
+        title: '15-Year vs 30-Year Comparison',
+        input: 'Scenario A: $300,000 at 6.5% for 30yr vs Scenario B: $300,000 at 5.9% for 15yr',
+        result: '15yr saves ~$280,000 in interest and pays off 15 years earlier, but monthly payment is ~$1,000 higher',
+      },
+      {
+        title: 'Extra Monthly Payments Save Thousands',
+        input: 'Loan: $300,000, Rate: 6.5%, Term: 30 years, Extra: $200/mo',
+        result: 'Interest Saved: ~$78,000 | Time Saved: ~5 years | Payoff: ~25 years',
+      },
+      {
+        title: 'Bi-Weekly Payments Accelerate Payoff',
+        input: 'Loan: $300,000, Rate: 6.5%, Term: 30 years, Bi-Weekly payments',
+        result: 'Interest Saved: ~$64,000 | Time Saved: ~4 years vs monthly payments',
+      },
+    ],
+
+    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | r = periodic rate = (1 + APR/compounding periods)^(compounding periods/payments per year) − 1 | Total Interest = (M × n) − P | Interest Savings = Total Interest(no extras) − Total Interest(with extras)',
+
+    // ── SEO Article Content ──
+    article: {
+      heading: 'How to Calculate Loan Amortization and Save Thousands in Interest',
+      intro: 'Loan amortization is the process of spreading out a loan into a series of fixed payments over time. Each payment covers both interest and principal, with the interest portion decreasing as the principal is paid down. The GetCalcu Amortization Calculator not only computes your monthly payment but also generates a complete payment-by-payment schedule, showing exactly how much goes to principal versus interest over the life of the loan. It also models the powerful impact of extra payments — helping you understand how paying just a little more each month can save tens of thousands of dollars in interest.',
+      sections: [
+        { heading: 'What Is Loan Amortization?', body: 'Amortization is the process of gradually paying off a debt through regular, scheduled payments. Each payment is split into two parts: the interest portion (the cost of borrowing) and the principal portion (the amount that reduces your loan balance). In the early years of a loan, most of each payment goes toward interest because the outstanding balance is largest. As the principal declines, the interest portion shrinks, and more of your payment goes toward reducing the principal. By the final payment, the entire loan balance reaches zero.' },
+        { heading: 'How Amortization Works', body: 'The amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] calculates the fixed payment amount needed to fully repay a loan over its term. In this formula, P is the loan principal (the amount borrowed), r is the periodic interest rate (annual rate divided by payments per year, adjusted for compounding), and n is the total number of payments. For a $300,000 loan at 6.5% over 30 years with monthly payments, the monthly payment is approximately $1,896. The first payment applies about $1,625 to interest and only $271 to principal. By year 15, the split is roughly $1,200 interest and $696 principal. By the final year, nearly the entire payment goes to principal.' },
+        { heading: 'Understanding the Amortization Formula', body: 'The standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] calculates the fixed payment M. Let\'s break down each variable: P (Principal) is the total amount borrowed, $300,000 in our example. r (Periodic Interest Rate) is the annual rate divided by the number of payments per year, adjusted for compounding frequency. For a 6.5% annual rate with monthly compounding and monthly payments, the periodic rate is approximately 0.5417% (6.5% ÷ 12). n (Total Payments) is the loan term in years multiplied by payments per year — 360 for a 30-year monthly loan. The term (1+r)^n is the compound growth factor. For our example, (1 + 0.005417)^360 ≈ 6.99. Plugging this in: M = 300,000 × [0.005417 × 6.99] / [6.99 − 1] = 300,000 × 0.03787 / 5.99 ≈ $1,896. This is the amount you pay every month for 30 years to fully repay the loan.' },
+        { heading: 'Why Early Payments Save Money', body: 'Extra payments made early in the loan term have an outsized impact because they reduce the principal balance that future interest is calculated on. A single extra payment of $200 in the first month reduces the principal by $200, which saves the interest that $200 would have generated over the remaining 359 months. At 6.5%, that $200 saves approximately $200 × (1.005417^359 − 1) ≈ $1,200 in interest over the life of the loan. This is the power of compound interest working in reverse — paying down principal early prevents compound interest from accumulating on that principal. Making $200 extra each month on a $300,000 loan at 6.5% saves approximately $78,000 in interest and cuts the loan term by 5 years.' },
+        { heading: 'Mortgage vs Auto vs Personal Loans', body: 'Amortization works the same way for all types of installment loans, but the numbers differ dramatically. Mortgages typically have the longest terms (15-30 years) and the largest loan amounts, making them the most sensitive to interest rates and extra payments. Auto loans typically run 3-7 years with moderate rates (5-10%). Personal loans are usually 2-5 years with higher rates (6-36%). The shorter the term, the less total interest you pay, but the higher the monthly payment. Our calculator works for all loan types — just adjust the loan amount, rate, and term to match your specific situation.' },
+        { heading: 'Fixed vs Adjustable Rate Loans', body: 'Fixed-rate loans lock in your interest rate for the entire loan term, giving you predictable payments that never change. Adjustable-rate mortgages (ARMs) start with a lower rate for an initial period (typically 3-10 years), then adjust periodically based on market indices. ARMs can save money if you plan to sell or refinance before the rate adjusts, but they carry the risk of higher payments if rates rise. Our calculator models fixed-rate loans accurately. For ARMs, you would need to recalculate after each rate adjustment period using the new rate.' },
+        { heading: 'Common Loan Repayment Mistakes', body: 'The most common mistake is paying only the minimum payment, which maximizes total interest. Ignoring refinancing opportunities when rates drop can cost tens of thousands. Missing payments not only incurs late fees but also damages your credit score, making future borrowing more expensive. Choosing an unnecessarily long term to minimize monthly payments often results in paying more than double the original loan amount in interest. Finally, not understanding how extra payments are applied — some lenders apply extra payments to future payments rather than reducing principal — can undermine your payoff strategy.' },
+        { heading: 'Tips to Pay Off Loans Faster', body: 'Making extra monthly payments is the most effective strategy — even $50 extra per month on a $300,000 mortgage saves over $30,000 in interest. Switching to bi-weekly payments (half the monthly payment every two weeks) results in 26 half-payments per year, equivalent to 13 full monthly payments — one extra payment annually. Applying lump-sum payments from bonuses, tax refunds, or gifts directly to principal accelerates payoff. Refinancing to a lower rate or shorter term can also save interest, but factor in closing costs. Finally, optimizing your budget to free up even $100 per month for debt repayment can save thousands over the life of your loan.' },
+        { heading: 'Example Amortization Schedule', body: 'Consider a $300,000 loan at 6.5% interest over 30 years with monthly payments. The first payment of $1,896 consists of $271 in principal and $1,625 in interest. After 5 years (60 payments), the remaining balance is approximately $278,000, and the interest portion has dropped to about $1,506. After 15 years (180 payments), the balance is approximately $189,000, and the interest portion is about $1,025. After 25 years (300 payments), the balance is approximately $67,000, and the interest portion is about $365. The final payment brings the balance to zero. This progressive shift from interest-heavy to principal-heavy payments is the hallmark of amortization. Our calculator generates this complete schedule for any loan scenario.' },
+        { heading: 'Frequently Asked Questions', body: 'What is an amortization schedule? It is a table showing each payment\'s split between principal and interest over the loan term. How is loan interest calculated? Interest for each period is calculated as the remaining balance multiplied by the periodic interest rate. Why do early payments contain more interest? Because the loan balance is largest at the start, so the interest charged on that balance is higher. Can I pay off my mortgage early? Yes, most mortgages allow early repayment without penalty, but check your loan agreement for prepayment penalties. Do extra payments reduce interest? Absolutely — every dollar of extra principal paid early saves the interest that dollar would have accrued over the remaining loan term. How often should I make extra payments? Monthly extra payments are most effective because they reduce the balance sooner. What happens if interest rates change? For fixed-rate loans, the rate stays the same. For ARMs, the rate adjusts periodically. Can I export the schedule? Yes, the amortization schedule can be copied or exported. Is this calculator accurate? It uses standard amortization formulas and is accurate for any fixed-rate loan. Does it work for auto loans? Yes, simply enter your auto loan amount, rate, and term.' },
+      ],
+    },
+
+    // ── Schema-Ready FAQs ──
+    faqs: [
+      { q: 'What is an amortization schedule?', a: 'An amortization schedule is a complete table showing every payment over the life of a loan, broken down into principal and interest portions. It shows the remaining balance after each payment, how much interest you pay each period, and how much of your payment goes toward reducing the principal. Our calculator generates a full amortization schedule for any loan scenario, including extra payments.' },
+      { q: 'How is loan interest calculated?', a: 'Loan interest for each payment period is calculated by multiplying the current outstanding loan balance by the periodic interest rate. The periodic rate is the annual percentage rate (APR) divided by the number of payment periods per year, adjusted for compounding frequency. For example, on a $300,000 loan at 6.5% APR with monthly payments, the first month\'s interest is $300,000 × (6.5% ÷ 12) = $1,625.' },
+      { q: 'Why do early payments contain more interest?', a: 'Early payments contain more interest because the loan balance is at its highest at the beginning of the loan term. Interest is calculated on the outstanding balance, so a larger balance generates more interest. As the principal is gradually paid down, the interest portion of each payment decreases, and more of the fixed payment goes toward reducing the principal.' },
+      { q: 'Can I pay off my mortgage early?', a: 'Yes, most mortgages allow early repayment without penalty. However, some loans have prepayment penalties, typically 1-3% of the outstanding balance if paid off within the first 3-5 years. Always check your loan agreement or ask your lender. Our calculator shows how extra payments accelerate your payoff and save interest.' },
+      { q: 'Do extra payments reduce interest?', a: 'Yes, every extra dollar you pay toward principal reduces the balance that future interest is calculated on. This creates a compounding effect — paying $200 extra in the first month of a $300,000 loan at 6.5% saves approximately $1,200 in interest over the remaining 30 years. The earlier you make extra payments, the more interest you save.' },
+      { q: 'How often should I make extra payments?', a: 'Monthly extra payments are the most effective because they reduce the principal balance sooner, giving you the maximum interest savings. However, any extra payment — whether monthly, one-time, or annual — saves interest. Switching to bi-weekly payments (half your monthly payment every two weeks) effectively makes one extra payment per year, which can save thousands in interest.' },
+      { q: 'What happens if interest rates change?', a: 'For fixed-rate loans, the interest rate is locked for the entire loan term, so your payment never changes. For adjustable-rate mortgages (ARMs), the rate adjusts periodically based on market indices. Our calculator models fixed-rate amortization. For ARMs, you would need to recalculate after each adjustment period using the new rate.' },
+      { q: 'Can I export the amortization schedule?', a: 'Yes, the amortization schedule generated by our calculator can be copied to your clipboard using the "Copy Results" button. You can paste it into a spreadsheet application like Excel or Google Sheets for further analysis, filtering, or printing.' },
+      { q: 'Is this calculator accurate?', a: 'Yes, this calculator uses the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] and accurately computes the payment breakdown for any fixed-rate loan. It accounts for different payment frequencies, compounding frequencies, and extra payments. The results are suitable for mortgages, auto loans, personal loans, student loans, and business loans.' },
+      { q: 'Does it work for auto loans?', a: 'Yes, simply enter your auto loan amount, interest rate, and loan term. Auto loans typically have shorter terms (3-7 years) and are fully amortizing, meaning they are paid off by the end of the term. Our calculator handles any loan amount, rate, and term combination.' },
+      { q: 'What is the difference between simple interest and amortized interest?', a: 'Simple interest is calculated only on the original principal amount, while amortized interest is calculated on the declining balance. Most installment loans (mortgages, auto loans, personal loans) use amortized interest, where each payment covers the interest accrued since the last payment plus a portion of principal. This is why early payments are mostly interest — the balance is highest at the start.' },
+      { q: 'How does payment frequency affect total interest?', a: 'More frequent payments reduce total interest because principal is paid down sooner, reducing the balance that interest accrues on. Bi-weekly payments (26 per year) are equivalent to 13 monthly payments per year (one extra payment annually), which can save thousands in interest and shorten the loan term by several years. Weekly payments save even more.' },
+      { q: 'What is the effective interest rate?', a: 'The effective interest rate (also called the annual equivalent rate or APR) accounts for the effect of compounding frequency. It represents the true annual cost of borrowing. For example, a loan with a 6.5% nominal rate compounded monthly has an effective rate of approximately 6.70%. Our calculator displays both the nominal and effective rate.' },
+      { q: 'How does compounding frequency affect my loan?', a: 'Compounding frequency determines how often interest is calculated and added to the loan balance. More frequent compounding (daily or monthly) results in slightly more total interest compared to less frequent compounding (quarterly or annually). Most mortgages use monthly compounding, while some personal loans may use daily or quarterly compounding. Our calculator accurately models any compounding frequency.' },
+      { q: 'Can I compare two loan scenarios?', a: 'Yes, our calculator includes a built-in comparison mode that lets you compare two loan scenarios side by side. You can compare different loan amounts, interest rates, terms, and extra payment amounts. The comparison shows the difference in monthly payment, total interest, total cost, and payoff time.' },
+    ],
+  },
 };
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }

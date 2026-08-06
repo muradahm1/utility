@@ -183,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (result.chart) charts.push('<div class="chart-container"><canvas id="result-chart"></canvas></div>');
         if (result.chart2) charts.push('<div class="chart-container"><canvas id="result-chart-2"></canvas></div>');
         if (result.compareChart) charts.push('<div class="chart-container"><canvas id="result-chart-3"></canvas></div>');
+        if (result.chart3) charts.push('<div class="chart-container"><canvas id="result-chart-4"></canvas></div>');
         if (!charts.length) return '';
 
         if (result.chart && result.chart2) {
@@ -390,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (result.chart) renderChart(result.chart);
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
         if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
+        if (result.chart3) renderChart(result.chart3, 'result-chart-4');
         bindCopyBtn(result.stats);
 
         // Conditional field + section visibility + label updates
@@ -525,6 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (result.chart) renderChart(result.chart);
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
         if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
+        if (result.chart3) renderChart(result.chart3, 'result-chart-4');
         bindCopyBtn(result.stats);
         initSaveButton();
     }
