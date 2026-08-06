@@ -1717,38 +1717,63 @@
       'opportunity cost calculator',
       'rent or buy decision',
       'home buying vs renting',
+      'rent vs buy 2026',
+      'is it better to rent or buy',
+      'home equity calculator',
+      'rent vs buy net worth',
+      'buying a house vs renting calculator',
+    ],
+    related: [
+      'house-affordability-calculator',
+      'mortgage-calculator',
+      'amortization-calculator',
+      'budget-planner',
+      'retirement-calculator',
+      'savings-calculator',
+      'investment-calculator',
+      'compound-interest-calculator',
+      'inflation-calculator',
     ],
     fields: [
-      // Basic Inputs
-      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'number', default: 400000, min: 10000, step: 5000, hint: 'The total purchase price of the home you are considering buying.' },
-      { id: 'down_payment_type', label: 'Down Payment Type', type: 'select', default: 'percent',
+      // ── Basic Inputs ──
+      { id: 'basic_section', type: 'section', label: 'Basic Inputs', icon: 'fa-sliders' },
+      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'range', default: 450000, min: 50000, max: 5000000, step: 5000, hint: 'The total purchase price of the home you are considering buying.' },
+      { id: 'down_payment_type', label: 'Down Payment Mode', type: 'select', default: 'percent',
         options: [
           { value: 'percent', label: 'Percentage (%)' },
           { value: 'dollar', label: 'Dollar Amount ($)' },
-        ], hint: 'Choose whether to enter your down payment as a percentage of the home price or as a specific dollar amount.' },
-      { id: 'down_payment', label: 'Down Payment', type: 'number', default: 20, min: 0, max: 100, step: 0.5, hint: 'The cash you pay upfront. 20% is standard to avoid PMI. The calculator converts this to a dollar amount based on the home price.' },
-      { id: 'mortgage_rate', label: 'Mortgage Interest Rate (%)', type: 'number', default: 7.0, min: 0.01, max: 20, step: 0.05, hint: 'The annual interest rate (APR) on your mortgage. Current 30-year fixed rates typically range 6-8%.' },
-      { id: 'loan_term', label: 'Loan Term (years)', type: 'select', default: 30,
-        options: [10,15,20,25,30].map(v => ({ value: v, label: `${v} years` })), hint: 'How long you will take to repay the mortgage. Shorter terms build equity faster but have higher monthly payments.' },
-      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 4800, min: 0, step: 100, hint: 'Yearly property tax based on your local government rate. Typically 1-2% of home value annually.' },
-      { id: 'home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1200, min: 0, step: 100, hint: 'Yearly homeowners insurance premium. Covers damage, liability, and personal property.' },
-      { id: 'annual_maintenance', label: 'Annual Maintenance ($)', type: 'number', default: 4000, min: 0, step: 100, hint: 'Estimated yearly maintenance and repairs. A common rule is 1-2% of home value annually.' },
-      { id: 'current_rent', label: 'Current Monthly Rent ($)', type: 'number', default: 2000, min: 0, step: 50, hint: 'What you currently pay (or would pay) for rent each month.' },
-      { id: 'rent_increase', label: 'Expected Annual Rent Increase (%)', type: 'number', default: 3.0, min: 0, max: 15, step: 0.1, hint: 'The average yearly percentage increase in rent. Historical average is about 2-4% annually.' },
-      { id: 'home_appreciation', label: 'Expected Home Appreciation (%)', type: 'number', default: 3.0, min: -5, max: 15, step: 0.1, hint: 'Expected annual increase in home value. Historical US average is about 3-5% per year.' },
-      { id: 'investment_return', label: 'Expected Investment Return (%)', type: 'number', default: 7.0, min: 0, max: 20, step: 0.1, hint: 'The annual return you could earn by investing your down payment and closing costs instead of buying. S&P 500 long-term average: 7-10%.' },
-      { id: 'analysis_period', label: 'Analysis Period (years)', type: 'number', default: 10, min: 1, max: 50, step: 1, hint: 'How many years to compare renting vs buying. Longer periods generally favor buying due to equity buildup.' },
+        ], hint: 'Switch between entering your down payment as a percentage or a specific dollar amount.' },
+      { id: 'down_payment', label: 'Down Payment', type: 'range', default: 20, min: 0, max: 100, step: 0.5, hint: 'The cash you pay upfront. 20% is standard to avoid PMI. The calculator converts this to a dollar amount based on the home price.' },
+      { id: 'mortgage_rate', label: 'Mortgage Interest Rate (%)', type: 'range', default: 6.25, min: 0, max: 20, step: 0.05, hint: 'The annual interest rate (APR) on your mortgage. Current 30-year fixed rates typically range 6-8%.' },
+      { id: 'loan_term', label: 'Loan Term', type: 'select', default: 30,
+        options: [
+          { value: 15, label: '15 Years' },
+          { value: 20, label: '20 Years' },
+          { value: 30, label: '30 Years' },
+        ], hint: 'How long you will take to repay the mortgage. Shorter terms build equity faster but have higher monthly payments.' },
+      { id: 'current_rent', label: 'Current Monthly Rent ($)', type: 'range', default: 2200, min: 0, max: 20000, step: 50, hint: 'What you currently pay (or would pay) for rent each month.' },
+      { id: 'years_staying', label: 'Expected Years Staying in the Home', type: 'range', default: 8, min: 1, max: 40, step: 1, hint: 'This is one of the most influential variables. Buying has high upfront costs that take several years to recover. The longer you stay, the more equity you build and the more buying tends to win. If you plan to move within 3-5 years, renting is often cheaper.' },
+      { id: 'rent_increase', label: 'Expected Annual Rent Increase (%)', type: 'range', default: 3.0, min: 0, max: 15, step: 0.1, hint: 'The average yearly percentage increase in rent. Historical average is about 2-4% annually.' },
+      { id: 'home_appreciation', label: 'Expected Home Appreciation (%)', type: 'range', default: 3.5, min: -5, max: 15, step: 0.1, hint: 'Expected annual increase in home value. Historical US average is about 3-5% per year.' },
+      { id: 'investment_return', label: 'Expected Investment Return (%)', type: 'range', default: 7.0, min: 0, max: 20, step: 0.1, hint: 'The annual return you could earn by investing your down payment and closing costs instead of buying. S&P 500 long-term average: 7-10%.' },
 
-      // Advanced Options (collapsible)
-      { id: 'closing_costs', label: 'Closing Costs ($)', type: 'number', default: 12000, min: 0, step: 500, hint: 'One-time costs when buying: loan origination, appraisal, title insurance, attorney fees. Typically 2-5% of home price.' },
-      { id: 'selling_costs', label: 'Selling Costs (%)', type: 'number', default: 6.0, min: 0, max: 15, step: 0.1, hint: 'Costs when selling: realtor commission (typically 5-6%), closing fees, capital gains tax if applicable.' },
+      // ── Advanced Options (collapsible) ──
+      { id: 'advanced_section', type: 'section', label: 'Advanced Options', icon: 'fa-gear', collapsible: true },
+      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 5400, min: 0, step: 100, hint: 'Yearly property tax based on your local government rate. Typically 1-2% of home value annually.' },
+      { id: 'property_tax_growth', label: 'Property Tax Growth (%)', type: 'number', default: 2.0, min: 0, max: 10, step: 0.1, hint: 'Annual increase in property taxes. Often matches or exceeds inflation.' },
+      { id: 'home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1400, min: 0, step: 100, hint: 'Yearly homeowners insurance premium. Covers damage, liability, and personal property.' },
+      { id: 'insurance_growth', label: 'Insurance Growth (%)', type: 'number', default: 3.0, min: 0, max: 10, step: 0.1, hint: 'Annual increase in home insurance premiums.' },
       { id: 'hoa_fees', label: 'Monthly HOA Fees ($)', type: 'number', default: 0, min: 0, step: 25, hint: 'Monthly homeowners association fees for common area maintenance (condos, townhomes, some neighborhoods).' },
       { id: 'pmi', label: 'Monthly PMI ($)', type: 'number', default: 0, min: 0, step: 10, hint: 'Private Mortgage Insurance when down payment is less than 20%. Typically 0.5-1% of loan amount annually, divided by 12.' },
+      { id: 'annual_maintenance', label: 'Annual Maintenance ($)', type: 'number', default: 4500, min: 0, step: 100, hint: 'Estimated yearly maintenance and repairs. A common rule is 1-2% of home value annually.' },
+      { id: 'maintenance_growth', label: 'Maintenance Growth (%)', type: 'number', default: 2.5, min: 0, max: 10, step: 0.1, hint: 'Annual increase in maintenance costs as the home ages.' },
+      { id: 'closing_costs', label: 'Closing Costs ($)', type: 'number', default: 13500, min: 0, step: 500, hint: 'One-time costs when buying: loan origination, appraisal, title insurance, attorney fees. Typically 2-5% of home price.' },
+      { id: 'selling_costs', label: 'Selling Costs (%)', type: 'number', default: 6.0, min: 0, max: 15, step: 0.1, hint: 'Costs when selling: realtor commission (typically 5-6%), closing fees, capital gains tax if applicable.' },
       { id: 'mortgage_origination', label: 'Mortgage Origination Fee (%)', type: 'number', default: 1.0, min: 0, max: 5, step: 0.1, hint: 'Lender fee for processing the mortgage, typically 0.5-1.5% of loan amount.' },
       { id: 'inflation_rate', label: 'Annual Inflation Rate (%)', type: 'number', default: 3.0, min: 0, max: 10, step: 0.1, hint: 'Expected annual inflation rate. Affects future costs and the real value of money over time.' },
-      { id: 'property_tax_growth', label: 'Property Tax Growth (%)', type: 'number', default: 2.0, min: 0, max: 10, step: 0.1, hint: 'Annual increase in property taxes. Often matches or exceeds inflation.' },
-      { id: 'insurance_growth', label: 'Insurance Growth (%)', type: 'number', default: 3.0, min: 0, max: 10, step: 0.1, hint: 'Annual increase in home insurance premiums.' },
-      { id: 'maintenance_growth', label: 'Maintenance Growth (%)', type: 'number', default: 2.5, min: 0, max: 10, step: 0.1, hint: 'Annual increase in maintenance costs as the home ages.' },
+      { id: 'discount_rate', label: 'Discount Rate (%)', type: 'number', default: 3.0, min: 0, max: 15, step: 0.1, hint: 'The rate used to discount future cash flows to present value. Often set near the inflation rate for a real-terms comparison.' },
+      { id: 'realtor_commission', label: 'Realtor Commission (%)', type: 'number', default: 5.0, min: 0, max: 10, step: 0.1, hint: 'The portion of the sale price paid to real estate agents when selling. Typically 5-6%.' },
+      { id: 'misc_ownership', label: 'Miscellaneous Ownership Costs ($/yr)', type: 'number', default: 500, min: 0, step: 100, hint: 'Other annual ownership costs: pest control, landscaping, appliance repairs, etc.' },
       { id: 'investment_tax_rate', label: 'Investment Tax Rate (%)', type: 'number', default: 15, min: 0, max: 50, step: 1, hint: 'Tax rate on investment gains (capital gains tax). Long-term gains are typically 15% for most investors.' },
       { id: 'marginal_tax_rate', label: 'Marginal Tax Rate (%)', type: 'number', default: 24, min: 0, max: 50, step: 1, hint: 'Your federal + state marginal tax bracket. Affects the tax deductibility of mortgage interest.' },
       { id: 'renters_insurance', label: 'Annual Renters Insurance ($)', type: 'number', default: 200, min: 0, step: 50, hint: 'Yearly renters insurance to cover personal belongings and liability while renting.' },
@@ -1761,7 +1786,7 @@
       return {};
     },
     calculate(v) {
-      // ── Extract and validate inputs
+      // ── Extract and validate inputs ──
       const homePrice = safeNum(v.home_price, 0);
       if (homePrice <= 0) return errorResult('Please enter a valid home purchase price.');
 
@@ -1775,43 +1800,46 @@
       }
       downPayment = Math.min(downPayment, homePrice);
 
-      const mortgageRate = safeNum(v.mortgage_rate, 7) / 100;
+      const mortgageRate = safeNum(v.mortgage_rate, 6.25) / 100;
       const loanTerm = Math.round(safeNum(v.loan_term, 30));
       const loanAmount = homePrice - downPayment;
       const monthlyRate = mortgageRate / 12;
       const numPayments = loanTerm * 12;
 
-      // Property tax and insurance with growth
+      // Ownership costs with growth
       const annualPropertyTax = safeNum(v.property_tax, 0);
       const annualHomeInsurance = safeNum(v.home_insurance, 0);
       const annualMaintenance = safeNum(v.annual_maintenance, 0);
       const propertyTaxGrowth = safeNum(v.property_tax_growth, 2) / 100;
       const insuranceGrowth = safeNum(v.insurance_growth, 3) / 100;
       const maintenanceGrowth = safeNum(v.maintenance_growth, 2.5) / 100;
+      const miscOwnership = safeNum(v.misc_ownership, 0);
 
       // Rent parameters
       const currentRent = safeNum(v.current_rent, 0);
       const rentIncrease = safeNum(v.rent_increase, 3) / 100;
       const rentersInsurance = safeNum(v.renters_insurance, 200);
 
-      // Investment parameters
-      const homeAppreciation = safeNum(v.home_appreciation, 3) / 100;
+      // Investment & market parameters
+      const homeAppreciation = safeNum(v.home_appreciation, 3.5) / 100;
       const investmentReturn = safeNum(v.investment_return, 7) / 100;
       const investmentTaxRate = safeNum(v.investment_tax_rate, 15) / 100;
       const marginalTaxRate = safeNum(v.marginal_tax_rate, 24) / 100;
       const inflationRate = safeNum(v.inflation_rate, 3) / 100;
+      const discountRate = safeNum(v.discount_rate, 3) / 100;
 
       // Costs
       const closingCosts = safeNum(v.closing_costs, 0);
       const sellingCostsPct = safeNum(v.selling_costs, 6) / 100;
+      const realtorCommission = safeNum(v.realtor_commission, 5) / 100;
       const monthlyHOA = safeNum(v.hoa_fees, 0);
       const monthlyPMI = safeNum(v.pmi, 0);
       const mortgageOrigination = safeNum(v.mortgage_origination, 1) / 100;
       const movingCosts = safeNum(v.moving_costs, 0);
 
-      const analysisPeriod = Math.round(safeNum(v.analysis_period, 10));
+      const analysisPeriod = Math.max(1, Math.round(safeNum(v.years_staying, 8)));
 
-      // ── Calculate monthly mortgage payment (P&I)
+      // ── Calculate monthly mortgage payment (P&I) ──
       let monthlyPI;
       if (monthlyRate === 0) {
         monthlyPI = loanAmount / numPayments;
@@ -1820,11 +1848,10 @@
       }
       monthlyPI = roundTo(monthlyPI, 2);
 
-      // ── Year-by-year calculations
+      // ── Year-by-year calculations ──
       const buyData = [];
       const rentData = [];
       let breakEvenYear = null;
-      let minDifference = Infinity;
 
       let remainingBalance = loanAmount;
       let totalInterestPaid = 0;
@@ -1834,14 +1861,21 @@
       let totalMaintenancePaid = 0;
       let totalHOAPaid = 0;
       let totalPMIPaid = 0;
-      let totalSellingCosts = 0;
+      let totalMiscPaid = 0;
+      let totalClosingCosts = closingCosts + movingCosts + (loanAmount * mortgageOrigination);
 
-      let investmentBalance = downPayment + closingCosts + movingCosts;
+      // Investment portfolio for the renter (down payment + closing costs + moving costs invested)
+      let investmentBalance = downPayment + closingCosts + movingCosts + (loanAmount * mortgageOrigination);
+      let totalInvestedCapital = investmentBalance;
       let totalInvestmentGains = 0;
+      let totalMonthlySavingsInvested = 0;
 
       let currentRentMonthly = currentRent;
       let totalRentPaid = 0;
       let totalRentersInsurancePaid = 0;
+
+      // Track monthly cash-flow savings invested by the renter
+      let renterMonthlySavings = 0;
 
       for (let year = 1; year <= analysisPeriod; year++) {
         // ── BUYING CALCULATIONS ──
@@ -1852,13 +1886,13 @@
         let yearMaintenance = annualMaintenance * Math.pow(1 + maintenanceGrowth, year - 1);
         let yearHOA = monthlyHOA * 12;
         let yearPMI = monthlyPMI * 12;
+        let yearMisc = miscOwnership;
 
         // Calculate mortgage payments for this year (12 months)
         for (let month = 0; month < 12 && remainingBalance > 0; month++) {
           const interestPayment = remainingBalance * monthlyRate;
           let principalPayment = monthlyPI - interestPayment;
           if (principalPayment > remainingBalance) principalPayment = remainingBalance;
-
           yearInterest += interestPayment;
           yearPrincipal += principalPayment;
           remainingBalance -= principalPayment;
@@ -1872,17 +1906,18 @@
         totalMaintenancePaid += yearMaintenance;
         totalHOAPaid += yearHOA;
         totalPMIPaid += yearPMI;
+        totalMiscPaid += yearMisc;
 
         // Home value and equity
         const homeValue = homePrice * Math.pow(1 + homeAppreciation, year);
         const equity = homeValue - remainingBalance;
 
-        // Selling costs (if selling at this year)
-        const sellingCosts = homeValue * sellingCostsPct;
+        // Selling costs (realtor commission + closing fees)
+        const sellingCosts = homeValue * (sellingCostsPct + realtorCommission);
         const netProceeds = equity - sellingCosts;
 
-        // Total buying costs this year
-        const totalBuyingCost = yearPrincipal + yearInterest + yearPropertyTax + yearInsurance + yearMaintenance + yearHOA + yearPMI;
+        // Total buying cash outflow this year (P&I + taxes + insurance + maintenance + HOA + PMI + misc)
+        const totalBuyingCost = yearPrincipal + yearInterest + yearPropertyTax + yearInsurance + yearMaintenance + yearHOA + yearPMI + yearMisc;
 
         // ── RENTING CALCULATIONS ──
         const yearRent = currentRentMonthly * 12;
@@ -1890,26 +1925,37 @@
         totalRentersInsurancePaid += rentersInsurance;
         const totalRentingCost = yearRent + rentersInsurance;
 
+        // Monthly cash-flow difference: if renting costs less than owning, invest the savings
+        const monthlyBuyCost = totalBuyingCost / 12;
+        const monthlyRentCost = totalRentingCost / 12;
+        const monthlyDiff = monthlyRentCost - monthlyBuyCost;
+        if (monthlyDiff > 0) {
+          renterMonthlySavings += monthlyDiff;
+          totalMonthlySavingsInvested += monthlyDiff;
+        }
+
         // Increase rent for next year
         currentRentMonthly *= (1 + rentIncrease);
 
         // ── INVESTMENT OPPORTUNITY COST ──
-        // What the down payment + closing costs + moving costs would be worth if invested
-        const opportunityCost = investmentBalance * Math.pow(1 + investmentReturn, year) - investmentBalance;
-        totalInvestmentGains = investmentBalance * Math.pow(1 + investmentReturn, year) - investmentBalance;
+        // Down payment + closing costs + moving costs + origination invested at investmentReturn
+        const grossInvestment = investmentBalance * Math.pow(1 + investmentReturn, year);
+        const gainsBeforeTax = grossInvestment - investmentBalance;
+        const taxOnGains = gainsBeforeTax * investmentTaxRate;
+        const netInvestmentValue = grossInvestment - taxOnGains;
+        totalInvestmentGains = netInvestmentValue - investmentBalance;
 
         // ── NET WORTH CALCULATIONS ──
-        const buyingNetWorth = equity - totalBuyingCost - closingCosts - movingCosts - sellingCosts;
-        const rentingNetWorth = totalInvestmentGains - totalRentingCost;
+        // Buyer net worth = home equity - cumulative ownership costs (excluding principal which builds equity)
+        const buyingNetWorth = equity - (totalInterestPaid + totalPropertyTaxPaid + totalInsurancePaid + totalMaintenancePaid + totalHOAPaid + totalPMIPaid + totalMiscPaid + totalClosingCosts + sellingCosts);
+        // Renter net worth = investment portfolio value - cumulative rent costs
+        const rentingNetWorth = netInvestmentValue - (totalRentPaid + totalRentersInsurancePaid);
 
         const difference = buyingNetWorth - rentingNetWorth;
 
-        // Track break-even year
+        // Track break-even year (when buying net worth exceeds renting)
         if (breakEvenYear === null && difference > 0) {
           breakEvenYear = year;
-        }
-        if (Math.abs(difference) < Math.abs(minDifference)) {
-          minDifference = difference;
         }
 
         buyData.push({
@@ -1923,6 +1969,7 @@
           maintenance: roundTo(totalMaintenancePaid, 2),
           hoa: roundTo(totalHOAPaid, 2),
           pmi: roundTo(totalPMIPaid, 2),
+          misc: roundTo(totalMiscPaid, 2),
           homeValue: roundTo(homeValue, 2),
           equity: roundTo(equity, 2),
           netProceeds: roundTo(netProceeds, 2),
@@ -1942,10 +1989,11 @@
           maintenance: 0,
           hoa: 0,
           pmi: 0,
+          misc: 0,
           homeValue: 0,
           equity: 0,
           netProceeds: 0,
-          investmentValue: roundTo(totalInvestmentGains, 2),
+          investmentValue: roundTo(netInvestmentValue, 2),
           netWorth: roundTo(rentingNetWorth, 2),
           difference: roundTo(-difference, 2),
         });
@@ -1954,13 +2002,17 @@
       // ── FINAL TOTALS ──
       const finalBuy = buyData[buyData.length - 1];
       const finalRent = rentData[rentData.length - 1];
-      const finalSellingCosts = roundTo(finalBuy.homeValue * sellingCostsPct, 2);
+      const finalSellingCosts = roundTo(finalBuy.homeValue * (sellingCostsPct + realtorCommission), 2);
 
-      const buyingNetCost = roundTo(finalBuy.mortgagePaid + finalBuy.taxes + finalBuy.insurance + finalBuy.maintenance + finalBuy.hoa + finalBuy.pmi - finalBuy.equity, 2);
-      const rentingNetCost = roundTo(finalRent.rentPaid + finalRent.insurance, 2);
+      // Net cost of buying = total cash outflows - equity (net proceeds after selling)
+      const buyingNetCost = roundTo(
+        finalBuy.mortgagePaid + finalBuy.taxes + finalBuy.insurance + finalBuy.maintenance + finalBuy.hoa + finalBuy.pmi + finalBuy.misc + totalClosingCosts + finalSellingCosts - finalBuy.equity,
+        2
+      );
+      // Net cost of renting = total rent + renters insurance - investment portfolio value
+      const rentingNetCost = roundTo(finalRent.rentPaid + finalRent.insurance - finalRent.investmentValue, 2);
 
       // ── GENERATE RECOMMENDATION ──
-      const savings = Math.abs(rentingNetCost - buyingNetCost);
       const winner = buyingNetCost < rentingNetCost ? 'buy' : 'rent';
       const savingsAmount = roundTo(Math.abs(buyingNetCost - rentingNetCost), 2);
 
@@ -2025,14 +2077,25 @@
         savings: fmt(savingsAmount),
         reasons,
         risks,
-        breakEvenYear: breakEvenYear || 'Not within analysis period',
+        breakEvenYear: breakEvenYear ? `Year ${breakEvenYear}` : 'Not within analysis period',
+      };
+
+      // ── EXECUTIVE SUMMARY (KPI Dashboard) ──
+      const summary = {
+        kpis: [
+          { label: 'Winner', value: winner === 'buy' ? 'Buying' : 'Renting', highlight: true, color: winner === 'buy' ? '#10B981' : '#6366F1' },
+          { label: 'Financial Advantage', value: fmt(savingsAmount), highlight: true },
+          { label: 'Break-even Year', value: breakEvenYear ? `Year ${breakEvenYear}` : 'Not reached', highlight: true },
+          { label: 'Net Worth Difference', value: fmt(roundTo(Math.abs(finalBuy.netWorth - finalRent.netWorth), 2)) },
+          { label: 'Total Housing Cost Diff', value: fmt(roundTo(Math.abs((finalBuy.mortgagePaid + finalBuy.taxes + finalBuy.insurance + finalBuy.maintenance + finalBuy.hoa + finalBuy.pmi + finalBuy.misc) - (finalRent.rentPaid + finalRent.insurance)), 2)) },
+        ],
       };
 
       // ── BUILD OUTPUT STATS ──
       const stats = [
         { label: 'Buying Net Cost', value: fmt(buyingNetCost), warn: winner === 'rent' },
         { label: 'Renting Net Cost', value: fmt(rentingNetCost), warn: winner === 'buy' },
-        { label: 'Difference', value: fmt(savingsAmount), highlight: true },
+        { label: 'Financial Advantage', value: fmt(savingsAmount), highlight: true },
         { label: 'Break-even Year', value: breakEvenYear ? `Year ${breakEvenYear}` : 'Not within period', highlight: true },
         { label: 'Home Equity', value: fmt(finalBuy.equity) },
         { label: 'Total Interest Paid', value: fmt(finalBuy.interest), warn: true },
@@ -2043,7 +2106,7 @@
         { label: 'HOA Total', value: fmt(finalBuy.hoa) },
         { label: 'PMI Total', value: fmt(finalBuy.pmi) },
         { label: 'Selling Costs', value: fmt(finalSellingCosts) },
-        { label: 'Investment Growth', value: fmt(finalRent.investmentValue) },
+        { label: 'Investment Portfolio', value: fmt(finalRent.investmentValue) },
         { label: 'Opportunity Cost', value: fmt(roundTo(totalInvestmentGains, 2)) },
         { label: 'Estimated Net Worth', value: fmt(roundTo(finalBuy.netWorth + finalBuy.equity, 2)), highlight: true },
       ];
@@ -2052,11 +2115,16 @@
       const chartLabels = buyData.map(d => `Year ${d.year}`);
       const netWorthBuyData = buyData.map(d => d.netWorth + d.equity);
       const netWorthRentData = rentData.map(d => d.netWorth);
-      const buyCostData = buyData.map(d => d.mortgagePaid + d.taxes + d.insurance + d.maintenance + d.hoa + d.pmi);
+      const buyCostData = buyData.map(d => d.mortgagePaid + d.taxes + d.insurance + d.maintenance + d.hoa + d.pmi + d.misc);
       const rentCostData = rentData.map(d => d.rentPaid + d.insurance);
       const equityData = buyData.map(d => d.equity);
+      const principalData = buyData.map(d => d.principal);
+      const appreciationData = buyData.map(d => roundTo(d.homeValue - homePrice, 2));
       const investmentData = rentData.map(d => d.investmentValue);
+      const monthlyBuyCashFlow = buyData.map(d => roundTo((d.mortgagePaid + d.taxes + d.insurance + d.maintenance + d.hoa + d.pmi + d.misc) / d.year, 2));
+      const monthlyRentCashFlow = rentData.map(d => roundTo((d.rentPaid + d.insurance) / d.year, 2));
 
+      // Chart 1: Net Worth Over Time
       const chart = {
         type: 'line',
         labels: chartLabels,
@@ -2068,7 +2136,8 @@
         title: 'Net Worth Over Time',
       };
 
-      const costChart = {
+      // Chart 2: Cumulative Housing Cost
+      const chart2 = {
         type: 'line',
         labels: chartLabels,
         datasets: [
@@ -2076,7 +2145,32 @@
           { label: 'Renting Cumulative Cost', data: rentCostData, color: '#F59E0B' },
         ],
         yLabel: 'Cumulative Cost ($)',
-        title: 'Cost Over Time',
+        title: 'Cumulative Housing Cost',
+      };
+
+      // Chart 3: Home Equity Growth (principal + appreciation + total equity)
+      const compareChart = {
+        type: 'line',
+        labels: chartLabels,
+        datasets: [
+          { label: 'Principal Paid', data: principalData, color: '#3B82F6' },
+          { label: 'Appreciation', data: appreciationData, color: '#10B981' },
+          { label: 'Total Equity', data: equityData, color: '#8B5CF6' },
+        ],
+        yLabel: 'Equity ($)',
+        title: 'Home Equity Growth',
+      };
+
+      // Chart 4: Opportunity Cost Growth (invested cash if renting)
+      const chart3 = {
+        type: 'line',
+        labels: chartLabels,
+        datasets: [
+          { label: 'Investment Portfolio', data: investmentData, color: '#6366F1' },
+          { label: 'Invested Capital', data: investmentData.map(() => totalInvestedCapital), color: '#94A3B8', fill: true },
+        ],
+        yLabel: 'Investment Value ($)',
+        title: 'Opportunity Cost Growth (Renting)',
       };
 
       // ── BUILD COMPARISON TABLE ──
@@ -2126,10 +2220,10 @@
       let insightHeadline, insightDetail;
 
       if (winner === 'buy') {
-        insightHeadline = `Buying saves approximately ${fmt(savingsAmount)} over ${analysisPeriod} years.`;
+        insightHeadline = `Buying is projected to increase your net worth by approximately ${fmt(savingsAmount)} over ${analysisPeriod} years.`;
         insightDetail = `Home appreciation exceeds ownership costs, and principal payments build equity. ${breakEvenYear ? `Break-even occurs in Year ${breakEvenYear}.` : ''} ${confidence === 'High' ? 'This is a strong financial decision if you plan to stay at least 5-7 years.' : 'Consider your time horizon and local market conditions.'}`;
       } else {
-        insightHeadline = `Renting saves approximately ${fmt(savingsAmount)} over ${analysisPeriod} years.`;
+        insightHeadline = `Renting is projected to save you approximately ${fmt(savingsAmount)} over ${analysisPeriod} years.`;
         insightDetail = `The opportunity cost of your down payment and closing costs exceeds the equity you would build. ${confidence === 'High' ? 'This is financially prudent if you value flexibility or plan to move within 5 years.' : 'Consider your career stability, local market conditions, and desire for flexibility.'}`;
       }
 
@@ -2140,66 +2234,146 @@
         detail: insightDetail,
       };
 
+      // ── PERSONALIZED FINANCIAL INSIGHTS ──
+      const insights = [];
+      const downPct = homePrice > 0 ? (downPayment / homePrice) * 100 : 0;
+      const monthlyBuy = roundTo((finalBuy.mortgagePaid + finalBuy.taxes + finalBuy.insurance + finalBuy.maintenance + finalBuy.hoa + finalBuy.pmi + finalBuy.misc) / analysisPeriod / 12, 2);
+      const monthlyRent = roundTo((finalRent.rentPaid + finalRent.insurance) / analysisPeriod / 12, 2);
+
+      if (analysisPeriod >= 7) {
+        insights.push(`Staying longer than 7 years strongly favors buying — your break-even is reached in ${breakEvenYear ? `Year ${breakEvenYear}` : 'the analysis period'}, after which equity growth accelerates.`);
+      } else if (analysisPeriod <= 5) {
+        insights.push(`With a ${analysisPeriod}-year horizon, high upfront buying costs (closing, moving, origination) are hard to recover. Consider whether you can commit to staying longer before buying.`);
+      }
+
+      if (downPct < 20) {
+        insights.push(`Your down payment of ${downPct.toFixed(1)}% is below 20%, which typically triggers PMI. Increasing your down payment to 20% could eliminate PMI and reduce total interest.`);
+      } else if (downPct < 25) {
+        const extraDown = homePrice * 0.25 - downPayment;
+        insights.push(`Increasing your down payment to 25% (an additional ${fmt(extraDown)}) would reduce your loan balance and total interest paid over the life of the mortgage.`);
+      }
+
+      if (monthlyBuy > 0 && monthlyRent > 0) {
+        const diff = Math.abs(monthlyBuy - monthlyRent);
+        if (monthlyBuy < monthlyRent) {
+          insights.push(`Your monthly ownership cost (${fmt(monthlyBuy)}) is ${fmt(diff)} less than your rent (${fmt(monthlyRent)}), so buying improves monthly cash flow while building equity.`);
+        } else {
+          insights.push(`Your monthly ownership cost (${fmt(monthlyBuy)}) is ${fmt(diff)} more than rent (${fmt(monthlyRent)}). The renter can invest this difference, which partially offsets the equity you build.`);
+        }
+      }
+
+      if (rentIncrease >= 0.05) {
+        insights.push(`With annual rent inflation at ${(rentIncrease * 100).toFixed(1)}%, buying becomes financially favorable earlier because rent costs compound quickly.`);
+      }
+
+      if (mortgageRate >= 0.07) {
+        insights.push(`At a ${(mortgageRate * 100).toFixed(2)}% mortgage rate, a significant portion of early payments goes to interest. A lower rate would substantially improve the buying outcome.`);
+      }
+
+      if (investmentReturn >= 0.08) {
+        insights.push(`Investing while renting only tends to outperform buying under optimistic market return assumptions (${(investmentReturn * 100).toFixed(0)}%+). At more conservative returns, home equity usually wins over long horizons.`);
+      }
+
+      // ── FINANCIAL JOURNEY (next-step calculators) ──
+      const journey = winner === 'buy'
+        ? [
+            { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', icon: 'fa-house-circle-check', iconClass: 'icon-finance', description: 'Determine an affordable home price based on your income.' },
+            { slug: 'mortgage-calculator', name: 'Mortgage Calculator', icon: 'fa-house', iconClass: 'icon-finance', description: 'Estimate monthly mortgage payments for your target home.' },
+            { slug: 'amortization-calculator', name: 'Amortization Calculator', icon: 'fa-table-list', iconClass: 'icon-finance', description: 'Visualize the loan repayment schedule and equity growth.' },
+            { slug: 'budget-planner', name: 'Budget Planner', icon: 'fa-wallet', iconClass: 'icon-finance', description: 'Understand how homeownership affects your monthly finances.' },
+            { slug: 'retirement-calculator', name: 'Retirement Calculator', icon: 'fa-umbrella', iconClass: 'icon-finance', description: 'Evaluate the long-term impact of purchasing a home on retirement goals.' },
+          ]
+        : [
+            { slug: 'savings-calculator', name: 'Savings Calculator', icon: 'fa-piggy-bank', iconClass: 'icon-finance', description: 'Plan how quickly to build a larger down payment.' },
+            { slug: 'investment-calculator', name: 'Investment Calculator', icon: 'fa-chart-line', iconClass: 'icon-finance', description: 'Estimate how investing the down payment could grow over time.' },
+            { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', icon: 'fa-chart-line', iconClass: 'icon-finance', description: 'Visualize long-term investment growth.' },
+            { slug: 'inflation-calculator', name: 'Inflation Calculator', icon: 'fa-arrow-trend-up', iconClass: 'icon-finance', description: 'Understand how rising housing costs may affect future affordability.' },
+          ];
+
       return {
         stats,
+        summary,
         chart,
-        costChart,
+        chart2,
+        compareChart,
+        chart3,
         table,
         insight,
         recommendation,
+        insights,
+        journey,
       };
     },
 
     // ── How-To Guide
     howTo: [
-      'Enter the home purchase price and choose your down payment type (percentage or dollar amount).',
-      'Set your mortgage rate, loan term, and annual property tax, insurance, and maintenance costs.',
-      'Input your current rent and expected annual rent increase.',
-      'Set your expected home appreciation rate and investment return rate.',
-      'Choose your analysis period (how many years to compare).',
-      'Click "Advanced Options" to customize closing costs, HOA fees, PMI, inflation, and more.',
-      'Review the recommendation, stat cards, charts, and year-by-year comparison table.',
-      'Adjust assumptions to see how changes affect the break-even point and net worth.',
+      'Enter the home purchase price using the slider or type a specific amount.',
+      'Choose your down payment mode — percentage or dollar amount — and set the value.',
+      'Set your mortgage rate, loan term, current rent, and how many years you plan to stay.',
+      'Adjust expected rent increase, home appreciation, and investment return.',
+      'Expand "Advanced Options" to customize property tax, insurance, HOA, PMI, maintenance, closing costs, and more.',
+      'Review the executive dashboard, recommendation, charts, and year-by-year comparison table.',
+      'Read the personalized insights to understand which assumptions matter most.',
+      'Follow the suggested next-step calculators based on your result.',
     ],
 
     // ── Real-World Examples
     examples: [
       {
+        title: 'Young Professional (Rent)',
+        input: '$350,000 home, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return',
+        result: 'Renting wins. High upfront costs and a short horizon make buying uneconomical; investing the down payment outperforms.',
+      },
+      {
+        title: 'Growing Family (Buy)',
+        input: '$500,000 home, 20% down, 6% rate, $2,400 rent, 15-year horizon, 3% appreciation',
+        result: 'Buying wins strongly. Long tenure recovers costs and builds substantial equity and appreciation.',
+      },
+      {
+        title: 'High Mortgage Rate Environment',
+        input: '$450,000 home, 20% down, 7.5% rate, $2,200 rent, 8-year horizon',
+        result: 'Higher rates delay break-even. Compare 5%, 6%, 7%, and 8% to see how the recommendation shifts.',
+      },
+      {
         title: 'Typical 20% Down Purchase',
-        input: '$400,000 home, 20% down, 7% rate, 30yr, $2,000 rent, 3% appreciation, 7% investment return, 10 years',
-        result: 'Buying wins by ~$45,000. Break-even at Year 4. High confidence if staying 7+ years.',
+        input: '$450,000 home, 20% down, 6.25% rate, 30yr, $2,200 rent, 3.5% appreciation, 7% investment return, 8 years',
+        result: 'Buying wins by ~$36,800. Break-even around Year 4-5. High confidence if staying 7+ years.',
       },
       {
         title: 'Low Down Payment Scenario',
-        input: '$400,000 home, 5% down, PMI required, 7% rate, 30yr, $2,000 rent, 10 years',
+        input: '$450,000 home, 5% down, PMI required, 6.5% rate, 30yr, $2,200 rent, 8 years',
         result: 'PMI and higher loan costs delay break-even to Year 6-7. Still favorable long-term with appreciation.',
       },
       {
         title: 'High Rent Growth Market',
-        input: '$400,000 home, 20% down, $2,500 rent, 5% annual rent increases, 10 years',
+        input: '$450,000 home, 20% down, $2,500 rent, 5% annual rent increases, 8 years',
         result: 'Buying wins by ~$78,000. Rapid rent growth makes buying advantageous by Year 3.',
       },
       {
         title: 'Short Time Horizon',
-        input: '$400,000 home, 20% down, plan to move in 3 years, $2,000 rent, 10 years',
+        input: '$450,000 home, 20% down, plan to move in 3 years, $2,200 rent, 8 years',
         result: 'Renting likely wins. Transaction costs (closing + selling) erase equity gains in under 5 years.',
       },
     ],
-    formula: 'Monthly P&I = P × [r(1+r)^n] / [(1+r)^n − 1] | Equity = Home Value − Remaining Balance | Net Proceeds = Equity − Selling Costs | Opportunity Cost = Invested Capital × (1 + Return)^t | Net Worth (Buy) = Equity − Cumulative Costs | Net Worth (Rent) = Investment Gains − Cumulative Rent',
+    formula: 'Monthly P&I = P × [r(1+r)^n] / [(1+r)^n − 1] | Equity = Home Value − Remaining Balance | Net Proceeds = Equity − Selling Costs | Opportunity Cost = Invested Capital × (1 + Return)^t | Net Worth (Buy) = Equity − Cumulative Costs | Net Worth (Rent) = Investment Portfolio − Cumulative Rent',
 
     // ── SEO Article Content
     article: {
       heading: 'The Complete Guide to the Rent vs. Buy Decision',
       intro: 'The rent vs. buy question is one of the most significant financial decisions most people will make. It involves far more than comparing a monthly rent check to a mortgage payment — it requires understanding equity buildup, opportunity cost, tax implications, transaction costs, and how time in the market changes the math. The GetCalcu Rent vs. Buy Calculator models all of these factors to give you a clear, data-driven answer tailored to your situation.',
       sections: [
-        { heading: 'Why the Rent vs. Buy Decision Is So Complex', body: 'Most people compare rent to their monthly mortgage payment, but that is just the starting point. Buying involves upfront closing costs (typically 2-5% of the home price), ongoing property taxes, homeowners insurance, maintenance (1-2% of home value annually), and potentially HOA fees and PMI. When you sell, realtor commissions and closing fees eat 6-10% of the sale price. Renting has none of these costs, but you also build no equity and are exposed to annual rent increases. The calculator models all of these cash flows year by year.' },
-        { heading: 'How Opportunity Cost Changes the Math', body: 'When you buy, you tie up a large down payment (often 20% of the home price) plus closing costs. That capital could otherwise be invested. If you invest $80,000 plus $12,000 in closing costs at a 7% annual return, it grows to over $200,000 in 10 years. The calculator compares that investment growth against the equity you build in the home, revealing which strategy creates more wealth.' },
-        { heading: 'The Break-Even Point and Why Time Horizon Matters', body: 'Buying has high fixed costs — closing costs, selling costs, and the first few years of mortgage interest are front-loaded. It typically takes 3-7 years for equity buildup and appreciation to overcome these upfront costs. If you plan to move within 3-5 years, renting is often cheaper. If you plan to stay 7+ years, buying usually wins. The calculator shows your exact break-even year based on your assumptions.' },
-        { heading: 'How Home Appreciation and Rent Inflation Affect the Decision', body: 'In hot markets where home values rise 5-7% annually, buying builds wealth faster through appreciation. In markets with high rent growth (5%+ annually), buying provides payment stability while renters face escalating costs. Conversely, in stagnant or declining markets, appreciation may not offset ownership costs, and low rent growth favors renting. The calculator lets you model both scenarios.' },
+        { heading: 'When Buying Makes Financial Sense', body: 'Buying typically wins when you plan to stay 7+ years, home appreciation is steady, rent inflation is high, and your mortgage payment is close to your current rent. Over long horizons, fixed mortgage payments stay stable while rents compound upward, and principal payments build equity that you keep when you sell. The calculator shows your exact break-even year.' },
+        { heading: 'When Renting Is the Better Decision', body: 'Renting often wins for short time horizons (under 5 years), when you value flexibility to relocate, when the opportunity cost of your down payment is high, or when home prices are stagnant. Renting avoids transaction costs, maintenance, and property taxes, and frees up capital that can be invested. Our calculator compares both strategies fairly.' },
+        { heading: 'Understanding Opportunity Cost', body: 'When you buy, you tie up a large down payment (often 20% of the home price) plus closing costs. That capital could otherwise be invested. If you invest $90,000 plus $13,500 in closing costs at a 7% annual return, it grows substantially over 10 years. The calculator compares that investment growth against the equity you build in the home, revealing which strategy creates more wealth.' },
+        { heading: 'The 5% Rule Explained', body: 'The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. Multiply the home price by 5% and compare to your annual rent. If rent is lower, renting wins on pure cash flow — but this rule ignores equity and appreciation, so use the full calculator for the complete picture.' },
+        { heading: 'Building Home Equity', body: 'Each mortgage payment splits into interest and principal. Early payments are mostly interest; later payments are mostly principal. As you pay down the loan and the home appreciates, your equity grows. When you sell, you keep the equity minus selling costs. The calculator charts your principal, appreciation, and total equity year by year.' },
+        { heading: 'Hidden Costs of Homeownership', body: 'Beyond the mortgage, owners pay closing costs (2-5% of price), property taxes, homeowners insurance, maintenance (1-2% of value annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell). These hidden costs can add tens of thousands of dollars and are why buying is not always cheaper than renting.' },
+        { heading: 'Common Mistakes People Make', body: 'The most common mistakes are buying too early (before you can afford it or before you plan to stay long enough), ignoring opportunity cost, underestimating maintenance, staying too short a time to recover transaction costs, and overestimating appreciation. Our calculator helps you avoid these by modeling realistic assumptions.' },
+        { heading: 'How Home Appreciation and Rent Inflation Affect the Decision', body: 'In hot markets where home values rise 5-7% annually, buying builds wealth faster through appreciation. In markets with high rent growth (5%+ annually), buying provides payment stability while renters face escalating costs. Conversely, in stagnant or declining markets, appreciation may not offset ownership costs, and low rent growth favors renting.' },
       ],
     },
 
-    // ── Schema-Ready FAQs
+    // ── Schema-Ready FAQs (15-20)
     faqs: [
       {
         q: 'What is the 5% rule for renting vs buying?',
@@ -2228,6 +2402,58 @@
       {
         q: 'Does buying always build wealth?',
         a: 'No. Buying builds wealth when home appreciation plus equity buildup exceeds the total cost of ownership (mortgage interest, taxes, insurance, maintenance, transaction costs). In scenarios with low appreciation, high transaction costs, or short time horizons, renting and investing the down payment can create more net worth. Our calculator objectively compares both strategies to show which creates more wealth in your specific situation.',
+      },
+      {
+        q: 'What is the break-even point in a rent vs buy decision?',
+        a: 'The break-even point is the year when the cumulative net worth of buying (home equity minus ownership costs) exceeds the cumulative net worth of renting (investment portfolio minus rent paid). Before this point, renting is financially ahead; after it, buying wins. It typically falls between years 3 and 7. Our calculator identifies your exact break-even year based on your assumptions.',
+      },
+      {
+        q: 'How does the down payment affect the rent vs buy decision?',
+        a: 'A larger down payment reduces your loan amount, lowers monthly payments, and can eliminate PMI (at 20%+). However, it also increases the opportunity cost — more capital tied up that could be invested. A smaller down payment preserves liquidity but adds PMI and higher interest costs. The optimal down payment balances these trade-offs; our calculator lets you test different amounts.',
+      },
+      {
+        q: 'What is opportunity cost in the context of buying a home?',
+        a: 'Opportunity cost is the potential return you give up by tying up capital in a home instead of investing it. When you put $90,000 down and pay $13,500 in closing costs, that $103,500 could instead grow in the stock market. If it earns 7% annually, it compounds significantly over a decade. The calculator compares this forgone investment growth against the equity you build in the home.',
+      },
+      {
+        q: 'How do mortgage rates affect the rent vs buy decision?',
+        a: 'Higher mortgage rates increase monthly payments and total interest, delaying the break-even point and making renting more attractive. At 5% vs 8%, the difference on a $360,000 loan is hundreds of dollars per month and tens of thousands in total interest. In high-rate environments, renting and investing may outperform buying, especially over shorter horizons. Use our calculator to compare rate scenarios.',
+      },
+      {
+        q: 'Should I include maintenance costs when comparing rent vs buy?',
+        a: 'Absolutely. Maintenance is a real, ongoing ownership cost that renters do not pay. A common rule is 1-2% of home value annually — on a $450,000 home, that is $4,500-$9,000 per year. Over 10 years, that is $45,000-$90,000. Underestimating maintenance is one of the most common mistakes in rent vs buy comparisons. Our calculator includes it by default.',
+      },
+      {
+        q: 'What are the hidden costs of buying a home?',
+        a: 'Hidden costs include closing costs (2-5% of price: origination, appraisal, title, attorney), property taxes, homeowners insurance, maintenance (1-2% annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell: realtor commission, closing fees). These can add tens of thousands of dollars and are why buying is not always cheaper than renting.',
+      },
+      {
+        q: 'How do selling costs affect the rent vs buy decision?',
+        a: 'Selling costs — typically 6-10% of the sale price (realtor commission plus closing fees) — are deducted from your equity when you sell. On a $500,000 home, that is $30,000-$50,000. These costs are why buying is risky for short horizons: if you sell within a few years, selling costs can erase all your equity gains. Our calculator includes selling costs in the net cost of buying.',
+      },
+      {
+        q: 'Is it better to rent and invest the difference?',
+        a: 'Sometimes, yes. If your monthly ownership cost exceeds rent, the renter can invest the difference. Combined with investing the down payment, this can outperform home equity — especially with high investment returns, low appreciation, or short horizons. However, over long horizons with steady appreciation, home equity usually wins because you benefit from both principal paydown and appreciation. Our calculator models both paths.',
+      },
+      {
+        q: 'How does the expected years staying affect the decision?',
+        a: 'The number of years you stay is one of the most influential variables. Buying has high upfront costs (closing, moving, origination) that take 3-7 years to recover. If you stay fewer than 5 years, renting is often cheaper. If you stay 7+ years, buying typically builds more wealth. The longer you stay, the more equity and appreciation accumulate, and the more buying wins.',
+      },
+      {
+        q: 'What is PMI and how does it affect the decision?',
+        a: 'Private Mortgage Insurance (PMI) protects the lender when you put down less than 20%. It typically costs 0.5-1% of the loan amount annually, added to your monthly payment. On a $400,000 loan, that is $2,000-$4,000 per year. PMI increases ownership costs and delays the break-even point, making renting relatively more attractive for low-down-payment buyers.',
+      },
+      {
+        q: 'How do HOA fees factor into the rent vs buy comparison?',
+        a: 'HOA fees cover common-area maintenance in condos, townhomes, and some neighborhoods. They can range from $100 to $1,000+ per month and typically rise over time. These are real ownership costs that renters do not pay. Our calculator includes monthly HOA fees in the total cost of buying, so you get an accurate comparison.',
+      },
+      {
+        q: 'What is the difference between net cost of buying and net cost of renting?',
+        a: 'The net cost of buying is your total cash outflows (mortgage payments, taxes, insurance, maintenance, HOA, PMI, closing costs, selling costs) minus the equity you keep when you sell. The net cost of renting is your total rent plus renters insurance minus the value of your investment portfolio (down payment + savings invested). The option with the lower net cost is financially better.',
+      },
+      {
+        q: 'How should I use this calculator to make my decision?',
+        a: 'Start with realistic assumptions for your situation, then test sensitivity: try different time horizons, mortgage rates, appreciation rates, and rent increases. Look at the break-even year and the financial advantage. Read the personalized insights to understand which variables matter most. Finally, use the suggested next-step calculators to plan your budget, mortgage, or savings strategy.',
       },
     ],
   },

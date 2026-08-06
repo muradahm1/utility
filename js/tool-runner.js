@@ -178,6 +178,94 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
     }
 
+    function buildRecommendationHtml(rec) {
+        if (!rec) return '';
+        const isBuy = rec.winner === 'buy';
+        const accent = isBuy ? '#10B981' : '#6366F1';
+        const icon = isBuy ? 'fa-house-chimney' : 'fa-key';
+        const winnerLabel = isBuy ? 'Buying' : 'Renting';
+        const reasonsHtml = (rec.reasons || []).map(r => `
+            <li style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;">
+                <i class="fa-solid fa-circle-check" style="color:#10B981;margin-top:3px;font-size:12px;"></i>
+                <span>${esc(r)}</span>
+            </li>`).join('');
+        const risksHtml = (rec.risks || []).map(r => `
+            <li style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;">
+                <i class="fa-solid fa-triangle-exclamation" style="color:#F59E0B;margin-top:3px;font-size:12px;"></i>
+                <span>${esc(r)}</span>
+            </li>`).join('');
+        return `
+            <div class="recommendation-card" style="border:1px solid ${accent}33;background:linear-gradient(135deg, ${accent}0D, transparent);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <div style="width:44px;height:44px;border-radius:50%;background:${accent}1A;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="fa-solid ${icon}" style="color:${accent};font-size:18px;"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:${accent};">Recommendation</div>
+                        <div style="font-size:18px;font-weight:800;color:var(--text-primary);line-height:1.3;">${winnerLabel} is projected to ${rec.savings ? `save you approximately <span style="color:${accent};">${esc(rec.savings)}</span>` : 'be the better financial choice'} over the analysis period.</div>
+                    </div>
+                </div>
+                ${rec.confidence ? `<div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;"><i class="fa-solid fa-gauge-high" style="color:${accent};"></i> Confidence: ${esc(rec.confidence)}</div>` : ''}
+                ${rec.breakEvenYear ? `<div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;margin-left:8px;"><i class="fa-solid fa-flag-checkered" style="color:${accent};"></i> Break-even: ${esc(rec.breakEvenYear)}</div>` : ''}
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:8px;"><i class="fa-solid fa-lightbulb" style="color:#F59E0B;margin-right:6px;"></i>Why?</div>
+                        <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--text-secondary);line-height:1.6;">${reasonsHtml}</ul>
+                    </div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:8px;"><i class="fa-solid fa-shield-halved" style="color:#EF4444;margin-right:6px;"></i>Risks to Consider</div>
+                        <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--text-secondary);line-height:1.6;">${risksHtml}</ul>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    function buildInsightsHtml(insights) {
+        if (!insights || !insights.length) return '';
+        const items = insights.map(ins => `
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border-color);">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary-color);margin-top:3px;font-size:14px;flex-shrink:0;"></i>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">${esc(ins)}</div>
+            </div>`).join('');
+        return `
+            <div class="insights-card" style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px 18px;margin-top:16px;">
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px;"><i class="fa-solid fa-brain" style="color:var(--primary-color);margin-right:8px;"></i>Personalized Financial Insights</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;">AI-like observations based on your specific numbers.</div>
+                ${items}
+            </div>`;
+    }
+
+    function buildJourneyHtml(journey) {
+        if (!journey || !journey.length) return '';
+        const cards = journey.map(j => `
+            <a href="/tool?slug=${encodeURIComponent(j.slug)}" class="tool-card" style="text-decoration:none;">
+                <div class="tool-icon ${esc(j.iconClass || 'icon-finance')}"><i class="fa-solid ${esc(j.icon || 'fa-calculator')}"></i></div>
+                <h3 style="font-size:14px;margin-bottom:4px;">${esc(j.name)}</h3>
+                <p style="font-size:12px;color:var(--text-secondary);">${esc(j.description)}</p>
+                <span class="tag tag-finance">Finance</span>
+            </a>`).join('');
+        return `
+            <div class="tool-runner-card" style="margin-top:24px;">
+                <h2 style="font-size:18px;font-weight:700;margin-bottom:6px;"><i class="fa-solid fa-route" style="color:var(--primary-color);margin-right:8px;"></i>Your Next Financial Step</h2>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Based on your results, these calculators will help you take the next step in your financial journey.</p>
+                <div class="tools-grid">${cards}</div>
+            </div>`;
+    }
+
+    function buildSummaryHtml(summary) {
+        if (!summary) return '';
+        const kpis = (summary.kpis || []).map(k => `
+            <div class="result-stat-box" style="margin-top:0;">
+                <span class="res-label">${esc(k.label)}</span>
+                <span class="res-val ${k.highlight ? 'highlight' : ''}" style="${k.color ? `color:${esc(k.color)}` : ''}">${esc(k.value)}</span>
+            </div>`).join('');
+        return `
+            <div class="executive-summary" style="margin-bottom:16px;">
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;"><i class="fa-solid fa-gauge-high" style="color:var(--primary-color);margin-right:8px;"></i>Executive Results Dashboard</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">${kpis}</div>
+            </div>`;
+    }
+
     function buildChartsHtml(result) {
         const charts = [];
         if (result.chart) charts.push('<div class="chart-container"><canvas id="result-chart"></canvas></div>');
@@ -305,7 +393,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function buildFormHtml() {
-        return tool.fields.map(field => {
+        let html = '';
+        let inCollapsible = false;
+        for (const field of tool.fields) {
             const labels = tool.fieldLabels ? tool.fieldLabels(values) : {};
             const label  = labels[field.id] || field.label;
             const hidden = field.condition && !field.condition(values);
@@ -316,13 +406,34 @@ document.addEventListener('DOMContentLoaded', () => {
             ].join(' ');
 
             // Form section header — groups related inputs with an icon + label
-            if (field.type === 'section') return `
-                <div class="form-section-header" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
-                    <i class="fa-solid ${field.icon || 'fa-circle'}"></i>
-                    <span>${esc(label)}</span>
-                </div>`;
+            if (field.type === 'section') {
+                // Close any open collapsible section before starting a new one
+                if (inCollapsible) {
+                    html += '</div></details>';
+                    inCollapsible = false;
+                }
+                if (field.collapsible) {
+                    html += `
+                    <details class="advanced-section" ${field.open ? 'open' : ''} data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
+                        <summary class="form-section-header advanced-section-summary">
+                            <i class="fa-solid ${field.icon || 'fa-circle'}"></i>
+                            <span>${esc(label)}</span>
+                            <i class="fa-solid fa-chevron-down advanced-chevron"></i>
+                        </summary>
+                        <div class="advanced-section-body">`;
+                    inCollapsible = true;
+                } else {
+                    html += `
+                    <div class="form-section-header" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
+                        <i class="fa-solid ${field.icon || 'fa-circle'}"></i>
+                        <span>${esc(label)}</span>
+                    </div>`;
+                }
+                continue;
+            }
 
-            if (field.type === 'select') return `
+            if (field.type === 'select') {
+                html += `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
                     <label for="${field.id}">${label}</label>
                     ${field.hint ? `<span class="field-hint">${field.hint}</span>` : ''}
@@ -330,8 +441,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${field.options.map(o => `<option value="${o.value}" ${values[field.id] == o.value ? 'selected' : ''}>${o.label}</option>`).join('')}
                     </select>
                 </div>`;
+                continue;
+            }
 
-            if (field.type === 'range') return `
+            if (field.type === 'range') {
+                html += `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
                     <label for="${field.id}">${label}</label>
                     ${field.hint ? `<span class="field-hint">${field.hint}</span>` : ''}
@@ -343,8 +457,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <span class="field-error hidden" data-error="${field.id}"></span>
                 </div>`;
+                continue;
+            }
 
-            return `
+            html += `
                 <div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}>
                     <label for="${field.id}">${label}</label>
                     ${field.hint ? `<span class="field-hint">${field.hint}</span>` : ''}
@@ -352,7 +468,12 @@ document.addEventListener('DOMContentLoaded', () => {
                            value="${values[field.id]}" ${attrs}>
                     <span class="field-error hidden" data-error="${field.id}"></span>
                 </div>`;
-        }).join('');
+        }
+        // Close any open collapsible section at the end
+        if (inCollapsible) {
+            html += '</div></details>';
+        }
+        return html;
     }
 
     // ── Update results card only (no DOM rebuild) ─────────────
@@ -369,11 +490,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.innerHTML =
             (result.error ? '' : buildInsightHtml(result.insight)) +
+            buildRecommendationHtml(result.recommendation) +
+            buildSummaryHtml(result.summary) +
             buildBmiGaugeHtml(result.bmiGauge) +
             buildStatsHtml(result.stats) +
             (result.bars ? buildBarsHtml(result.bars) : '') +
             buildChartsHtml(result) +
             buildBreakdownTablesHtml(result) +
+            buildInsightsHtml(result.insights) +
             buildCopyBtn();
 
         if (result.table) {
@@ -505,11 +629,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
                     <div class="calculator-results-card">
                         ${result.error ? '' : buildInsightHtml(result.insight)}
+                        ${buildRecommendationHtml(result.recommendation)}
+                        ${buildSummaryHtml(result.summary)}
                         ${buildBmiGaugeHtml(result.bmiGauge)}
                         ${buildStatsHtml(result.stats)}
                         ${result.bars ? buildBarsHtml(result.bars) : ''}
                         ${buildChartsHtml(result)}
                         ${buildBreakdownTablesHtml(result)}
+                        ${buildInsightsHtml(result.insights)}
                         ${buildCopyBtn()}
                     </div>
                 </div>
@@ -521,6 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="save-result-msg hidden" id="save-result-msg"></span>
                 </div>
             </div>
+            ${buildJourneyHtml(result.journey)}
             ${buildSeoContentHtml()}
             ${buildRelatedToolsHtml()}`;
 

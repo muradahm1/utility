@@ -84,6 +84,96 @@ html, body {
     margin-top: 0;
 }
 
+/* ── Collapsible Advanced Options Section ─────────────────── */
+.advanced-section {
+    margin: 20px 0 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    overflow: hidden;
+}
+.advanced-section-summary {
+    margin: 0;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    -webkit-user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary-color);
+    background: var(--primary-light);
+    border: none;
+    border-radius: 0;
+    padding: 12px 14px;
+    letter-spacing: 0.01em;
+    transition: background-color var(--transition-base);
+}
+.advanced-section-summary:hover {
+    background: rgba(99,102,241,0.12);
+}
+.advanced-section-summary::-webkit-details-marker {
+    display: none;
+}
+.advanced-section-summary .advanced-chevron {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+.advanced-section[open] .advanced-section-summary .advanced-chevron {
+    transform: rotate(180deg);
+}
+.advanced-section-body {
+    padding: 14px 16px 4px;
+    border-top: 1px solid var(--border-color);
+}
+.advanced-section-body .form-group {
+    margin-bottom: 14px;
+}
+
+/* ── Recommendation Card ──────────────────────────────────── */
+.recommendation-card {
+    box-shadow: var(--shadow-sm);
+}
+.recommendation-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Insights Card ────────────────────────────────────────── */
+.insights-card {
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Executive Summary Dashboard ──────────────────────────── */
+.executive-summary {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+}
+.executive-summary .result-stat-box {
+    background: var(--bg-card);
+}
+
+/* Mobile refinements for new components */
+@media (max-width: 768px) {
+    .advanced-section {
+        margin: 18px 0 12px;
+    }
+    .advanced-section-summary {
+        font-size: 13px;
+        padding: 11px 12px;
+    }
+    .recommendation-card > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+}
+
 /* ── Side-by-side chart layout (Net Worth) ────────────────── */
 .charts-side-by-side {
     display: grid;
