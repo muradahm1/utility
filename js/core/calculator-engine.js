@@ -69,6 +69,8 @@ export function initializeCalculator(slug, container, options = {}) {
         slug,
         tool,
         container,
+        state,
+        values: state.values,
         
         // Lifecycle methods
         render: () => renderCalculator(calculator),

@@ -105,14 +105,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // ── Initialize Core Architecture ────────────────────────────
+    // The new core architecture is being developed incrementally.
+    // For now, always use the proven legacy runner to ensure 100% functionality.
     let core;
     let useNewArchitecture = false;
     
     try {
-        // Try to initialize the new core architecture
+        // Initialize the new core architecture for tool registration
         core = await initializeMigration();
-        useNewArchitecture = true;
-        console.log('✓ Using new core architecture');
+        // Do NOT use the new architecture for rendering yet - it's still in development
+        useNewArchitecture = false;
+        console.log('✓ Core architecture initialized (using legacy runner for rendering)');
     } catch (error) {
         console.warn('⚠ Core architecture initialization failed, using legacy mode:', error);
         useNewArchitecture = false;
