@@ -1182,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const idx = parseInt(this.closest('.bp-income-row').dataset.idx);
                     if (budgetData.incomeSources.length <= 1) return;
                     budgetData.incomeSources.splice(idx, 1);
-                    saveData(budgetData); updateDynamicValues(budgetData);
+                    saveData(budgetData); refresh(budgetData);
                 });
             });
             container.querySelectorAll('.bp-expense-amount').forEach(el => {
@@ -1198,7 +1198,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const id = this.closest('.bp-expense-row').dataset.id;
                     if (budgetData.expenses.length <= 1) return;
                     budgetData.expenses = budgetData.expenses.filter(e => e.id !== id);
-                    saveData(budgetData); updateDynamicValues(budgetData);
+                    saveData(budgetData); refresh(budgetData);
                 });
             });
             container.querySelector('.bp-btn-pdf')?.addEventListener('click', function() { exportPDF(budgetData); });
