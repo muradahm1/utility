@@ -82,10 +82,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="theme-switch-container">
                     <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-toggle-switch">
-                        <span class="slider round"></span>
-                    </label>
+                        <label class="switch">
+                            <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle dark mode">
+                            <span class="slider round"></span>
+                        </label>
                 </div>
             </div>
         </aside>
@@ -162,12 +162,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
+    <!-- Core Architecture (ES Modules - load in dependency order) -->
+    <script src="js/core/tools.js" type="module"></script>
+    <script src="js/core/calculator-engine.js" type="module"></script>
+    <script src="js/core/router.js" type="module"></script>
+    <script src="js/core/migration.js" type="module"></script>
+    
+    <!-- Legacy Tools Registry (maintains backward compatibility) -->
     <script src="js/tools.js"></script>
+    
+    <!-- Third-party Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- App Configuration -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
-    <script src="js/tool-runner.js"></script>
+    
+    <!-- Tool Runner (now uses ES modules) -->
+    <script src="js/tool-runner.js" type="module"></script>
+    
+    <!-- App Initialization -->
     <script src="js/app.js"></script>
     <script src="js/cookie-consent.js"></script>
 </body>
