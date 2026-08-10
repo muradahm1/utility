@@ -1038,77 +1038,8 @@ export function createChart(canvas, chartData) {
 
 // ── Utility Functions ──────────────────────────────────────────
 
-/**
- * Escape HTML to prevent XSS
- * @param {string} str - String to escape
- * @returns {string} Escaped string
- */
-export function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(String(str)));
-    return div.innerHTML;
-}
-
-/**
- * Format number as currency
- * @param {number} value - Value to format
- * @returns {string} Formatted currency string
- */
-export function formatCurrency(value) {
-    const num = safeNum(value, 0);
-    return '$' + num.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-/**
- * Format number
- * @param {number} value - Value to format
- * @returns {string} Formatted number string
- */
-export function formatNumber(value) {
-    const num = safeNum(value, 0);
-    return num.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-/**
- * Safe number conversion
- * @param {*} val - Value to convert
- * @param {number} fallback - Fallback value
- * @returns {number} Safe number
- */
-export function safeNum(val, fallback = 0) {
-    if (val === null || val === undefined) return fallback;
-    const num = Number(val);
-    return isFinite(num) ? num : fallback;
-}
-
-/**
- * Safe string conversion
- * @param {*} val - Value to convert
- * @returns {string} Safe string
- */
-export function safeStr(val) {
-    if (val === null || val === undefined) return '';
-    return String(val).trim();
-}
-
-/**
- * Round to decimal places
- * @param {number} n - Number to round
- * @param {number} decimals - Decimal places
- * @returns {number} Rounded number
- */
-export function roundTo(n, decimals = 2) {
-    if (!isFinite(n)) return 0;
-    const factor = Math.pow(10, decimals);
-    return Math.round((n + Number.EPSILON) * factor) / factor;
-}
+// Note: escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo
+// are imported from ../utils/index.js at the top of this file
 
 /**
  * Set global option

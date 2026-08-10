@@ -68,7 +68,10 @@ export function registerLegacyTools() {
     let registered = 0;
     let failed = 0;
     
-    Object.entries(coreTOOLS).forEach(([slug, tool]) => {
+    // Get legacy tools from window.TOOLS (populated by js/tools.js)
+    const legacyTools = typeof window !== 'undefined' && window.TOOLS ? window.TOOLS : {};
+    
+    Object.entries(legacyTools).forEach(([slug, tool]) => {
         // Skip if already registered
         if (toolExists(slug)) {
             registered++;

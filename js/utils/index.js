@@ -119,6 +119,13 @@ export {
     ROUNDING
 } from './math.js';
 
+// ── Validation Utilities ────────────────────────────────────────
+export {
+    escapeHtml,
+    sanitizeString,
+    sanitizeNumber
+} from './validation.js';
+
 // ── Convenience Bundles ────────────────────────────────────────
 
 /**
