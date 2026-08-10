@@ -10,8 +10,6 @@
     <meta name="description" content="">
     <link rel="canonical" href="" id="canonical-tag">
 
-    <!-- Open Graph (filled dynamically) -->
-    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -164,11 +162,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Legacy Tools Registry must load before the migration layer reads it -->
     <script src="js/tools.js"></script>
+    
+    <!-- Template-based New Tools (add new tools here) -->
+    <script src="js/tools-template.js"></script>
 
     <!-- Core Architecture (ES Modules - load in dependency order) -->
     <script src="js/core/tools.js" type="module"></script>
     <script src="js/core/calculator-engine.js" type="module"></script>
     <script src="js/core/router.js" type="module"></script>
+    <script src="js/core/tool-manager.js" type="module"></script>
     <script src="js/core/migration.js" type="module"></script>
     
     <!-- Third-party Libraries -->
@@ -178,6 +180,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- App Configuration -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
+    
+    <!-- Budget Planner Module -->
+    <script src="js/modules/budget-planner.js" type="module"></script>
     
     <!-- Tool Runner (now uses ES modules) -->
     <script src="js/tool-runner.js" type="module"></script>
