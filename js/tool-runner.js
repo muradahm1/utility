@@ -1140,7 +1140,7 @@ function initLegacyRunner(tool, slug, container) {
 
     // ── Initial render ────────────────────────────────────────
     render();
-});
+}
 
 // Export for backward compatibility
 if (typeof window !== 'undefined') {

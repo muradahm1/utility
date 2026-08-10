@@ -65,7 +65,6 @@ export {
     getRelatedTools,
     getRecommendations,
     buildRelatedToolsHtml,
-    buildRecommendationsHtml,
     buildCategoryNavHtml
 } from './related-tools.js';
 
@@ -156,7 +155,6 @@ export {
     createShareUrl,
     getCurrentUrl,
     updateUrl,
-    copyToClipboard,
     share,
     shareCalculator,
     shareOnTwitter,

@@ -18,6 +18,10 @@
  */
 export const TOOLS = {};
 
+if (typeof window !== 'undefined' && window.TOOLS && typeof window.TOOLS === 'object') {
+    Object.assign(TOOLS, window.TOOLS);
+}
+
 // ── Registry Management ────────────────────────────────────────
 
 /**

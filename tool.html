@@ -162,14 +162,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
+    <!-- Legacy Tools Registry must load before the migration layer reads it -->
+    <script src="js/tools.js"></script>
+
     <!-- Core Architecture (ES Modules - load in dependency order) -->
     <script src="js/core/tools.js" type="module"></script>
     <script src="js/core/calculator-engine.js" type="module"></script>
     <script src="js/core/router.js" type="module"></script>
     <script src="js/core/migration.js" type="module"></script>
-    
-    <!-- Legacy Tools Registry (maintains backward compatibility) -->
-    <script src="js/tools.js"></script>
     
     <!-- Third-party Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

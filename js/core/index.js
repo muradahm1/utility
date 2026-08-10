@@ -73,7 +73,7 @@ export function initializeCore() {
     Object.values(coreTOOLS).forEach(tool => {
         if (tool.category) categories.add(tool.category);
     });
-    console.log('  - Categories:', Array.from(categories).sort()).join(', ');
+    console.log('  - Categories:', Array.from(categories).sort().join(', '));
     
     console.log('✓ Router: Initialized');
     console.log('✓ Calculator Engine: Ready');

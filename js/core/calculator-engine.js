@@ -10,6 +10,8 @@
 import { getTool, toolExists } from './tools.js';
 import { escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo } from '../utils/index.js';
 
+export { escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo };
+
 // ── Engine State ───────────────────────────────────────────────
 
 const engineState = {

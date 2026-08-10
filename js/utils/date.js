@@ -195,7 +195,7 @@ export function generatePaymentSchedule(startDate, totalPayments, frequency = 'm
  * @param {string} frequency - Payment frequency
  * @returns {Array<Object>} Schedule with dates
  */
-export function generateAmortizationSchedule(startDate, totalPayments, frequency = 'monthly') {
+export function generatePaymentDateSchedule(startDate, totalPayments, frequency = 'monthly') {
     const dates = generatePaymentSchedule(startDate, totalPayments, frequency);
     
     return dates.map((date, index) => ({

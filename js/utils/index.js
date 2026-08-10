@@ -15,9 +15,6 @@ export {
     formatNumber,
     formatPercentage,
     formatOrdinal,
-    roundTo,
-    roundUp,
-    roundDown,
     formatFinancial,
     getCurrencySymbol,
     formatCurrencyForLocale,
@@ -42,7 +39,7 @@ export {
     addYears,
     addDays,
     generatePaymentSchedule,
-    generateAmortizationSchedule,
+    generatePaymentDateSchedule,
     generateTimeline,
     generateYearMarkers,
     isValidDate,
@@ -121,10 +118,49 @@ export {
 
 // ── Validation Utilities ────────────────────────────────────────
 export {
-    escapeHtml,
+    validateRequired,
+    validateNumber,
+    validateInteger,
+    validatePercentage,
+    validateEmail,
+    validateUrl,
+    validateDate,
+    validateLength,
+    validateSelection,
     sanitizeString,
-    sanitizeNumber
-} from './validation.js';
+    sanitizeNumber,
+    escapeHtml,
+    validateForm,
+    showFieldError,
+    clearFieldError,
+    clearAllErrors,
+    createValidationSchema,
+    validateCalculatorInputs
+} from '../modules/validation.js';
+
+export function safeStr(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
+}
+
+export function fmt(value, options = {}) {
+    return formatCurrency(value, options);
+}
+
+export function fmtN(value, options = {}) {
+    const { minFractionDigits = 2, maxFractionDigits = 2, locale = 'en-US' } = options;
+    const num = safeNumber(value, 0);
+    return Number.isFinite(num)
+        ? num.toLocaleString(locale, {
+            minimumFractionDigits: minFractionDigits,
+            maximumFractionDigits: maxFractionDigits
+        })
+        : '0';
+}
+
+export function pct(value, options = {}) {
+    return formatPercentage(value, options);
+}
 
 // ── Convenience Bundles ────────────────────────────────────────
 
