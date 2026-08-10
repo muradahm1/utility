@@ -11,7 +11,13 @@ import { TOOLS as coreTOOLS, registerTool, getTool, toolExists } from './tools.j
 import { parseCurrentUrl, resolveToolFromUrl, handleRoute, initRouter } from './router.js';
 import { initializeCalculator, escapeHtml, safeNum, safeStr, roundTo, formatCurrency } from './calculator-engine.js';
 
-// ── Legacy Compatibility ───────────────────────────────────────
+// Import category calculator modules
+import { registerFinanceCalculators, financeCalculators } from '../calculators/finance.js';
+import { registerHealthCalculators, healthCalculators } from '../calculators/health.js';
+import { registerConstructionCalculators, constructionCalculators } from '../calculators/construction.js';
+import { registerEngineeringCalculators, engineeringCalculators } from '../calculators/engineering.js';
+
+// ── Legacy Compatibility ─────────────────────────────────────
 
 /**
  * Legacy helper functions (moved from tool-runner.js)
@@ -330,6 +336,12 @@ export function initializeMigration() {
     
     // Register all legacy tools
     registerLegacyTools();
+    
+    // Register category-specific calculators
+    registerFinanceCalculators(registerTool);
+    registerHealthCalculators(registerTool);
+    registerConstructionCalculators(registerTool);
+    registerEngineeringCalculators(registerTool);
     
     // Initialize router
     const router = initRouter();
