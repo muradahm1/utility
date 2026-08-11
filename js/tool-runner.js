@@ -562,4 +562,4 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     render();
-});
+}
