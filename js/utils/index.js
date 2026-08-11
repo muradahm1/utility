@@ -8,6 +8,7 @@
  */
 
 // ── Currency Utilities ─────────────────────────────────────────
+import { formatCurrency, formatPercentage } from './currency.js';
 export {
     formatCurrency,
     formatCurrencyWithSymbol,
