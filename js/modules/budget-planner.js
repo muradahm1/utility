@@ -7,6 +7,12 @@
  * @module modules/budget-planner
  */
 
+import { escapeHtml } from '../utils/index.js';
+import { formatMoney } from './formatting.js';
+import { safeNum } from '../utils/index.js';
+import { createDoughnutChart, destroyChart } from './charts.js';
+import { validateNumber, showFieldError, clearFieldError } from './validation.js';
+
 // ── Constants ───────────────────────────────────────────────────
 
 const STORAGE_KEY = 'getcalcu_budget_data_v1';
@@ -32,19 +38,7 @@ const DEFAULT_CATEGORIES = [
     ]}
 ];
 
-// ── Helper Functions ────────────────────────────────────────────
-
-function escapeHtml(str) {
-    if (str === null || str === undefined) return '';
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(String(str)));
-    return div.innerHTML;
-}
-
-function formatMoney(n) {
-    const num = Number.isFinite(Number(n)) ? Number(n) : 0;
-    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+// ── Helpers ─────────────────────────────────────────────────────
 
 function uid(prefix) {
     return prefix + '_' + Date.now() + '_' + Math.floor(Math.random() * 9999);
@@ -52,16 +46,11 @@ function uid(prefix) {
 
 // ── State Management ────────────────────────────────────────────
 
-/**
- * Load budget data from localStorage
- * @returns {Object} Budget data
- */
 function loadBudgetData() {
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             const parsed = JSON.parse(saved);
-            // Validate structure
             if (parsed && Array.isArray(parsed.income) && Array.isArray(parsed.categories)) {
                 return parsed;
             }
@@ -70,17 +59,12 @@ function loadBudgetData() {
         console.warn('Failed to load budget data:', e);
     }
     
-    // Return defaults
     return {
         income: JSON.parse(JSON.stringify(DEFAULT_INCOME)),
         categories: JSON.parse(JSON.stringify(DEFAULT_CATEGORIES))
     };
 }
 
-/**
- * Save budget data to localStorage
- * @param {Object} data - Budget data
- */
 function saveBudgetData(data) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -89,9 +73,6 @@ function saveBudgetData(data) {
     }
 }
 
-/**
- * Reset budget data to defaults
- */
 function resetBudgetData() {
     const data = {
         income: JSON.parse(JSON.stringify(DEFAULT_INCOME)),
@@ -103,16 +84,11 @@ function resetBudgetData() {
 
 // ── Budget Calculations ─────────────────────────────────────────
 
-/**
- * Calculate budget summary from data
- * @param {Object} data - Budget data
- * @returns {Object} Summary with totals
- */
 function calculateBudget(data) {
-    const totalIncome = data.income.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
+    const totalIncome = data.income.reduce((sum, i) => sum + safeNum(i.amount, 0), 0);
     
     const categories = data.categories.map(cat => {
-        const total = cat.items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+        const total = cat.items.reduce((sum, item) => sum + safeNum(item.amount, 0), 0);
         return {
             ...cat,
             total,
@@ -124,7 +100,6 @@ function calculateBudget(data) {
     const remaining = totalIncome - totalExpenses;
     const savingsRate = totalIncome > 0 ? (remaining / totalIncome) * 100 : 0;
     
-    // 50/30/20 analysis
     const needsCat = categories.find(c => c.id === 'needs');
     const wantsCat = categories.find(c => c.id === 'wants');
     const savingsCat = categories.find(c => c.id === 'savings');
@@ -154,10 +129,11 @@ function calculateBudget(data) {
 // ── HTML Builders ───────────────────────────────────────────────
 
 function buildIncomeSection(data) {
-    const rows = data.income.map((item, index) => `
+    const rows = data.income.map((item) => `
         <div class="budget-row budget-income-row" data-id="${item.id}">
-            <input type="text" class="budget-label-input" value="${escapeHtml(item.label)}" placeholder="Income source" aria-label="Income source name">
-            <input type="number" class="budget-amount-input" value="${item.amount}" min="0" step="0.01" aria-label="Income amount">
+            <input type="text" id="label-${item.id}" class="budget-label-input" value="${escapeHtml(item.label)}" placeholder="Income source" aria-label="Income source name">
+            <input type="number" id="amount-${item.id}" class="budget-amount-input" value="${item.amount}" min="0" step="0.01" aria-label="Income amount">
+            <span class="field-error hidden" data-error="amount-${item.id}"></span>
             <button class="budget-remove-btn" data-remove="income:${item.id}" aria-label="Remove income source"><i class="fa-solid fa-trash-can"></i></button>
         </div>
     `).join('');
@@ -173,7 +149,7 @@ function buildIncomeSection(data) {
             </div>
             <div class="budget-section-total">
                 <span>Total Income</span>
-                <span class="budget-total-value" data-total="income">${formatMoney(data.income.reduce((s, i) => s + (Number(i.amount) || 0), 0))}</span>
+                <span class="budget-total-value" data-total="income">${formatMoney(data.income.reduce((s, i) => s + safeNum(i.amount, 0), 0))}</span>
             </div>
         </div>
     `;
@@ -184,8 +160,9 @@ function buildExpenseSection(data) {
         const rows = cat.items.map(item => `
             <div class="budget-row budget-expense-row" data-id="${item.id}">
                 <span class="budget-category-dot" style="background:${cat.color};"></span>
-                <input type="text" class="budget-label-input" value="${escapeHtml(item.label)}" placeholder="Expense name" aria-label="Expense name">
-                <input type="number" class="budget-amount-input" value="${item.amount}" min="0" step="0.01" aria-label="Expense amount">
+                <input type="text" id="label-${item.id}" class="budget-label-input" value="${escapeHtml(item.label)}" placeholder="Expense name" aria-label="Expense name">
+                <input type="number" id="amount-${item.id}" class="budget-amount-input" value="${item.amount}" min="0" step="0.01" aria-label="Expense amount">
+                <span class="field-error hidden" data-error="amount-${item.id}"></span>
                 <button class="budget-remove-btn" data-remove="expense:${item.id}" aria-label="Remove expense"><i class="fa-solid fa-trash-can"></i></button>
             </div>
         `).join('');
@@ -201,7 +178,7 @@ function buildExpenseSection(data) {
                 </div>
                 <div class="budget-section-total">
                     <span>${escapeHtml(cat.label)} Total</span>
-                    <span class="budget-total-value" data-total="category:${cat.id}">${formatMoney(cat.items.reduce((s, i) => s + (Number(i.amount) || 0), 0))}</span>
+                    <span class="budget-total-value" data-total="category:${cat.id}">${formatMoney(cat.items.reduce((s, i) => s + safeNum(i.amount, 0), 0))}</span>
                 </div>
             </div>
         `;
@@ -284,7 +261,6 @@ function buildChartHtml(summary) {
     const data = summary.categories.map(c => c.total);
     const colors = summary.categories.map(c => c.color);
     
-    // Only show chart if we have data
     if (data.every(d => d === 0)) {
         return `
             <div class="budget-section-card">
@@ -311,19 +287,53 @@ function buildChartHtml(summary) {
     `;
 }
 
-// ── Main Render Function ────────────────────────────────────────
+function buildSeoHtml() {
+    return `
+        <div class="tool-runner-card" style="margin-top:24px;">
+            <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Build a Monthly Budget and Track Your Spending</h2>
+            <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">A budget is the foundation of financial control. The GetCalcu Budget Planner lets you log income sources, categorize expenses, visualize your spending, and get instant feedback with the 50/30/20 rule — all saved privately in your browser.</p>
+            
+            <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">The 50/30/20 Rule Explained</h3>
+            <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">This popular framework splits after-tax income into 50% needs (housing, food, utilities, transport), 30% wants (dining, entertainment, hobbies), and 20% savings and debt repayment. It is a flexible target to aim for, not a strict rule.</p>
+            
+            <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">Why Your Savings Rate Matters</h3>
+            <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Your savings rate — the percentage of income left after expenses — is the single best predictor of financial progress. A 20% rate puts you ahead of most households; pushing toward 30% or more accelerates debt payoff, investing, and financial independence.</p>
+            
+            <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);">
+                <strong style="color:var(--text-primary);">Formula:</strong> Budget Status = Total Income &minus; Total Expenses | Savings Rate = (Remaining / Income) &times; 100 | 50/30/20 Rule: Needs &le; 50%, Wants &le; 30%, Savings &ge; 20%
+            </div>
+        </div>
+    `;
+}
 
-/**
- * Render the budget planner into a container
- * @param {HTMLElement} container - Container element
- */
-export function renderBudgetPlanner(container) {
-    let data = loadBudgetData();
-    let chartInstance = null;
-    let summary = calculateBudget(data);
-    
-    // Build initial HTML
-    container.innerHTML = `
+function buildJourneyHtml() {
+    return `
+        <div id="budget-journey" class="budget-journey-card" style="margin-top:24px;padding:20px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-lg);">
+            <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;"><i class="fa-solid fa-route" style="color:var(--primary-color);margin-right:8px;"></i> Your Next Financial Step</h3>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Based on your budget figures, these calculators can help you optimize further.</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+                <a href="/tool?slug=mortgage-calculator" class="tool-card">
+                    <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
+                    <h3 style="font-size:14px;margin-bottom:4px;">Mortgage Calculator</h3>
+                    <p style="font-size:12px;color:var(--text-secondary);">See what home you can afford.</p>
+                </a>
+                <a href="/tool?slug=retirement-calculator" class="tool-card">
+                    <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
+                    <h3 style="font-size:14px;margin-bottom:4px;">Retirement Calculator</h3>
+                    <p style="font-size:12px;color:var(--text-secondary);">Plan your retirement savings.</p>
+                </a>
+                <a href="/tool?slug=investment-calculator" class="tool-card">
+                    <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3 style="font-size:14px;margin-bottom:4px;">Investment Calculator</h3>
+                    <p style="font-size:12px;color:var(--text-secondary);">Grow your savings faster.</p>
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+function buildFullHtml(data, summary) {
+    return `
         <div class="tool-runner-card">
             <div class="tool-header">
                 <h1>Budget Planner & Expense Tracker</h1>
@@ -360,36 +370,27 @@ export function renderBudgetPlanner(container) {
                 ${buildChartHtml(summary)}
             </div>
             
-            <div id="budget-journey" class="budget-journey-card" style="margin-top:24px;padding:20px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-lg);">
-                <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;"><i class="fa-solid fa-route" style="color:var(--primary-color);margin-right:8px;"></i> Your Next Financial Step</h3>
-                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Based on your budget figures, these calculators can help you optimize further.</p>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
-                    <a href="/tool?slug=mortgage-calculator" class="tool-card">
-                        <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
-                        <h3 style="font-size:14px;margin-bottom:4px;">Mortgage Calculator</h3>
-                        <p style="font-size:12px;color:var(--text-secondary);">See what home you can afford.</p>
-                    </a>
-                    <a href="/tool?slug=retirement-calculator" class="tool-card">
-                        <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
-                        <h3 style="font-size:14px;margin-bottom:4px;">Retirement Calculator</h3>
-                        <p style="font-size:12px;color:var(--text-secondary);">Plan your retirement savings.</p>
-                    </a>
-                    <a href="/tool?slug=investment-calculator" class="tool-card">
-                        <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
-                        <h3 style="font-size:14px;margin-bottom:4px;">Investment Calculator</h3>
-                        <p style="font-size:12px;color:var(--text-secondary);">Grow your savings faster.</p>
-                    </a>
-                </div>
+            ${buildJourneyHtml()}
+            
+            <div id="budget-seo" class="budget-seo-card" style="margin-top:24px;">
+                ${buildSeoHtml()}
             </div>
         </div>
     `;
+}
+
+// ── Main Render Function ────────────────────────────────────────
+
+export function renderBudgetPlanner(container) {
+    let data = loadBudgetData();
+    let chartInstance = null;
+    let summary = calculateBudget(data);
     
-    // Render chart
+    container.innerHTML = buildFullHtml(data, summary);
+    
     renderChart();
     
-    // ── Event delegation for all dynamic elements ──────────────
     container.addEventListener('click', (e) => {
-        // Add income
         if (e.target.closest('[data-add="income"]')) {
             data.income.push({ id: uid('inc'), label: 'New Income', amount: 0 });
             saveBudgetData(data);
@@ -397,7 +398,6 @@ export function renderBudgetPlanner(container) {
             return;
         }
         
-        // Add expense to category
         const addExpenseBtn = e.target.closest('[data-add^="expense:"]');
         if (addExpenseBtn) {
             const catId = addExpenseBtn.dataset.add.split(':')[1];
@@ -410,7 +410,6 @@ export function renderBudgetPlanner(container) {
             return;
         }
         
-        // Remove income or expense
         const removeBtn = e.target.closest('[data-remove]');
         if (removeBtn) {
             const [type, id] = removeBtn.dataset.remove.split(':');
@@ -426,29 +425,24 @@ export function renderBudgetPlanner(container) {
             return;
         }
         
-        // Reset button
         if (e.target.closest('#budget-reset-btn')) {
             data = resetBudgetData();
             summary = calculateBudget(data);
-            container.innerHTML = renderFullHtml();
-            renderChart();
+            refreshAll();
             return;
         }
         
-        // Export button
         if (e.target.closest('#budget-export-btn')) {
             exportSummary();
             return;
         }
     });
     
-    // ── Input event delegation ─────────────────────────────────
     container.addEventListener('input', (e) => {
         const row = e.target.closest('.budget-row');
         if (!row) return;
         const id = row.dataset.id;
         
-        // Determine if this is income or expense
         const isIncome = row.classList.contains('budget-income-row');
         
         if (e.target.classList.contains('budget-label-input')) {
@@ -464,16 +458,25 @@ export function renderBudgetPlanner(container) {
         }
         
         if (e.target.classList.contains('budget-amount-input')) {
-            const amount = parseFloat(e.target.value);
-            const safeAmount = isNaN(amount) ? 0 : amount;
+            const amountId = e.target.id;
+            const error = validateNumber(e.target.value, { min: 0, fieldName: 'Amount' });
+            
+            if (error) {
+                showFieldError(amountId, error);
+                return;
+            } else {
+                clearFieldError(amountId);
+            }
+            
+            const amount = parseFloat(e.target.value) || 0;
             
             if (isIncome) {
                 const item = data.income.find(i => i.id === id);
-                if (item) item.amount = safeAmount;
+                if (item) item.amount = amount;
             } else {
                 data.categories.forEach(cat => {
                     const item = cat.items.find(i => i.id === id);
-                    if (item) item.amount = safeAmount;
+                    if (item) item.amount = amount;
                 });
             }
         }
@@ -483,21 +486,67 @@ export function renderBudgetPlanner(container) {
         updateSummaryOnly();
     });
     
-    // ── Full refresh (re-render everything) ─────────────────────
+    container.addEventListener('blur', (e) => {
+        if (e.target.classList.contains('budget-label-input')) {
+            const row = e.target.closest('.budget-row');
+            if (!row) return;
+            const id = row.dataset.id;
+            const trimmed = e.target.value.trim();
+            
+            if (!trimmed) {
+                e.target.value = 'Untitled';
+                if (row.classList.contains('budget-income-row')) {
+                    const item = data.income.find(i => i.id === id);
+                    if (item) item.label = 'Untitled';
+                } else {
+                    data.categories.forEach(cat => {
+                        const item = cat.items.find(i => i.id === id);
+                        if (item) item.label = 'Untitled';
+                    });
+                }
+                saveBudgetData(data);
+            }
+        }
+        
+        if (e.target.classList.contains('budget-amount-input')) {
+            const amountId = e.target.id;
+            if (!e.target.value || isNaN(parseFloat(e.target.value))) {
+                e.target.value = '0';
+                clearFieldError(amountId);
+                
+                const row = e.target.closest('.budget-row');
+                if (row) {
+                    const id = row.dataset.id;
+                    const amount = 0;
+                    if (row.classList.contains('budget-income-row')) {
+                        const item = data.income.find(i => i.id === id);
+                        if (item) item.amount = amount;
+                    } else {
+                        data.categories.forEach(cat => {
+                            const item = cat.items.find(i => i.id === id);
+                            if (item) item.amount = amount;
+                        });
+                    }
+                }
+                saveBudgetData(data);
+                summary = calculateBudget(data);
+                updateSummaryOnly();
+            }
+        }
+    }, true);
+    
     function refreshAll() {
-        container.innerHTML = renderFullHtml();
+        data = loadBudgetData();
+        summary = calculateBudget(data);
+        container.innerHTML = buildFullHtml(data, summary);
         renderChart();
     }
     
-    // ── Render chart ───────────────────────────────────────────
     function renderChart() {
         const canvas = document.getElementById('budget-chart');
-        if (!canvas || typeof Chart === 'undefined') return;
+        if (!canvas) return;
         
-        // Destroy existing
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
+        destroyChart(canvas);
         
         const chartData = {
             labels: summary.categories.map(c => c.label),
@@ -505,35 +554,15 @@ export function renderBudgetPlanner(container) {
             colors: summary.categories.map(c => c.color)
         };
         
-        // Check if all zero
         if (chartData.data.every(d => d === 0)) return;
         
-        chartInstance = new Chart(canvas.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: chartData.labels,
-                datasets: [{
-                    data: chartData.data,
-                    backgroundColor: chartData.colors,
-                    borderWidth: 2,
-                    borderColor: 'var(--bg-card)',
-                    hoverBorderWidth: 3
-                }]
-            },
+        createDoughnutChart(canvas, {
+            labels: chartData.labels,
+            data: chartData.data,
+            colors: chartData.colors,
+            cutout: '60%',
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '60%',
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            boxWidth: 8,
-                            padding: 14,
-                            color: 'var(--text-secondary)'
-                        }
-                    },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
@@ -548,35 +577,28 @@ export function renderBudgetPlanner(container) {
         });
     }
     
-    // ── Update only summary/stat sections (no full re-render) ──
     function updateSummaryOnly() {
-        // Update income totals
         const incomeTotalEl = document.querySelector('[data-total="income"]');
         if (incomeTotalEl) incomeTotalEl.textContent = formatMoney(summary.totalIncome);
         
-        // Update category totals
         summary.categories.forEach(cat => {
             const totalEl = document.querySelector(`[data-total="category:${cat.id}"]`);
             if (totalEl) totalEl.textContent = formatMoney(cat.total);
         });
         
-        // Update summary stats
         const summaryContainer = document.getElementById('budget-summary-container');
         if (summaryContainer) {
             summaryContainer.innerHTML = buildSummaryHtml(summary);
         }
         
-        // Update rule analysis
         const ruleContainer = document.getElementById('budget-rule-container');
         if (ruleContainer) {
             ruleContainer.innerHTML = buildRuleHtml(summary);
         }
         
-        // Update chart
         renderChart();
     }
     
-    // ── Export summary to clipboard ────────────────────────────
     function exportSummary() {
         const lines = [
             'Budget Summary - GetCalcu',
@@ -607,7 +629,6 @@ export function renderBudgetPlanner(container) {
                 showToast('Failed to copy. Please try again.');
             });
         } else {
-            // Fallback
             const textarea = document.createElement('textarea');
             textarea.value = text;
             document.body.appendChild(textarea);
@@ -618,7 +639,6 @@ export function renderBudgetPlanner(container) {
         }
     }
     
-    // ── Toast notification ─────────────────────────────────────
     function showToast(message) {
         const existing = document.querySelector('.budget-toast');
         if (existing) existing.remove();
@@ -631,109 +651,12 @@ export function renderBudgetPlanner(container) {
         
         setTimeout(() => toast.remove(), 3000);
     }
-    
-    // ── Build full HTML for full refresh ───────────────────────
-    function renderFullHtml() {
-        return `
-            <div class="tool-runner-card">
-                <div class="tool-header">
-                    <h1>Budget Planner & Expense Tracker</h1>
-                    <p>Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.</p>
-                </div>
-                
-                <div class="budget-actions">
-                    <button class="btn btn-outline btn-sm" id="budget-reset-btn" title="Reset to default data">
-                        <i class="fa-solid fa-rotate-left"></i> Reset
-                    </button>
-                    <button class="btn btn-outline btn-sm" id="budget-export-btn" title="Copy budget summary">
-                        <i class="fa-regular fa-copy"></i> Copy Summary
-                    </button>
-                </div>
-                
-                <div id="budget-summary-container">
-                    ${buildSummaryHtml(summary)}
-                </div>
-                
-                <div class="budget-grid">
-                    <div id="budget-income-container">
-                        ${buildIncomeSection(data)}
-                    </div>
-                    <div id="budget-expense-container">
-                        ${buildExpenseSection(data)}
-                    </div>
-                </div>
-                
-                <div id="budget-rule-container">
-                    ${buildRuleHtml(summary)}
-                </div>
-                
-                <div id="budget-chart-container">
-                    ${buildChartHtml(summary)}
-                </div>
-                
-                <div class="budget-journey-card" style="margin-top:24px;padding:20px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-lg);">
-                    <h3 style="font-size:16px;font-weight:700;margin-bottom:12px;"><i class="fa-solid fa-route" style="color:var(--primary-color);margin-right:8px;"></i> Your Next Financial Step</h3>
-                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Based on your budget figures, these calculators can help you optimize further.</p>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
-                        <a href="/tool?slug=mortgage-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
-                            <h3 style="font-size:14px;margin-bottom:4px;">Mortgage Calculator</h3>
-                            <p style="font-size:12px;color:var(--text-secondary);">See what home you can afford.</p>
-                        </a>
-                        <a href="/tool?slug=retirement-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
-                            <h3 style="font-size:14px;margin-bottom:4px;">Retirement Calculator</h3>
-                            <p style="font-size:12px;color:var(--text-secondary);">Plan your retirement savings.</p>
-                        </a>
-                        <a href="/tool?slug=investment-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
-                            <h3 style="font-size:14px;margin-bottom:4px;">Investment Calculator</h3>
-                            <p style="font-size:12px;color:var(--text-secondary);">Grow your savings faster.</p>
-                        </a>
-                    </div>
-                </div>
-                
-                <div id="budget-seo" class="budget-seo-card" style="margin-top:24px;">
-                    ${buildSeoHtml()}
-                </div>
-            </div>
-        `;
-    }
-    
-    // ── SEO content ────────────────────────────────────────────
-    function buildSeoHtml() {
-        return `
-            <div class="tool-runner-card" style="margin-top:24px;">
-                <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Build a Monthly Budget and Track Your Spending</h2>
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">A budget is the foundation of financial control. The GetCalcu Budget Planner lets you log income sources, categorize expenses, visualize your spending, and get instant feedback with the 50/30/20 rule — all saved privately in your browser.</p>
-                
-                <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">The 50/30/20 Rule Explained</h3>
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">This popular framework splits after-tax income into 50% needs (housing, food, utilities, transport), 30% wants (dining, entertainment, hobbies), and 20% savings and debt repayment. It is a flexible target to aim for, not a strict rule.</p>
-                
-                <h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">Why Your Savings Rate Matters</h3>
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Your savings rate — the percentage of income left after expenses — is the single best predictor of financial progress. A 20% rate puts you ahead of most households; pushing toward 30% or more accelerates debt payoff, investing, and financial independence.</p>
-                
-                <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);">
-                    <strong style="color:var(--text-primary);">Formula:</strong> Budget Status = Total Income &minus; Total Expenses | Savings Rate = (Remaining / Income) &times; 100 | 50/30/20 Rule: Needs &le; 50%, Wants &le; 30%, Savings &ge; 20%
-                </div>
-            </div>
-        `;
-    }
 }
 
-// ── Init function ───────────────────────────────────────────────
-
-/**
- * Initialize budget planner globally
- * @param {HTMLElement} container - Container element
- */
 export function initBudgetPlanner(container) {
     renderBudgetPlanner(container);
 }
 
-/**
- * Global API for legacy compatibility
- */
 if (typeof window !== 'undefined') {
     window.renderBudgetPlannerModule = (container) => {
         renderBudgetPlanner(container);

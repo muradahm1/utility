@@ -2,662 +2,295 @@
  * Validation Module
  * 
  * Centralized input validation, sanitization, and error handling.
- * Provides consistent validation across all calculators.
+ * Pure functions with no side effects, tree-shake friendly.
  * 
  * @module modules/validation
  */
 
-// ── Validation Rules ───────────────────────────────────────────
+import { escapeHtml } from '../utils/index.js';
 
-/**
- * Validation result object
- * @typedef {Object} ValidationResult
- * @property {boolean} isValid - Whether validation passed
- * @property {string} error - Error message if invalid
- * @property {*} value - Validated/sanitized value
- */
+// ── Validation Functions ─────────────────────────────────────────
 
-/**
- * Validate required field
- * @param {*} value - Value to validate
- * @param {string} fieldName - Field name for error message
- * @returns {ValidationResult} Validation result
- */
-export function validateRequired(value, fieldName = 'This field') {
-    if (value === null || value === undefined || value === '') {
-        return {
-            isValid: false,
-            error: `${fieldName} is required`,
-            value: null
-        };
+export function validateRequired(value, fieldName = 'Field') {
+    if (value === null || value === undefined || value === '' || (typeof value === 'string' && value.trim() === '')) {
+        return `${fieldName} is required`;
     }
-    
-    return {
-        isValid: true,
-        error: null,
-        value: value
-    };
+    return null;
 }
 
-/**
- * Validate number
- * @param {*} value - Value to validate
- * @param {Object} options - Validation options
- * @param {number} options.min - Minimum value
- * @param {number} options.max - Maximum value
- * @param {boolean} options.required - Whether field is required
- * @param {string} options.fieldName - Field name for error message
- * @returns {ValidationResult} Validation result
- */
 export function validateNumber(value, options = {}) {
-    const {
-        min = -Infinity,
-        max = Infinity,
-        required = false,
-        fieldName = 'This field'
-    } = options;
+    const { min, max, required, fieldName = 'Value' } = options;
     
-    // Check required
     if (value === null || value === undefined || value === '') {
-        if (required) {
-            return {
-                isValid: false,
-                error: `${fieldName} is required`,
-                value: null
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
-            value: null
-        };
+        if (required) return `${fieldName} is required`;
+        return null;
     }
     
-    // Parse number
-    const num = parseFloat(value);
-    
-    if (isNaN(num)) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be a valid number`,
-            value: null
-        };
+    const num = Number(value);
+    if (isNaN(num) || !isFinite(num)) {
+        return `${fieldName} must be a valid number`;
     }
     
-    // Check range
-    if (num < min) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be at least ${min}`,
-            value: null
-        };
+    if (min !== undefined && num < min) {
+        return `${fieldName} must be at least ${min}`;
     }
     
-    if (num > max) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be at most ${max}`,
-            value: null
-        };
+    if (max !== undefined && num > max) {
+        return `${fieldName} must be at most ${max}`;
     }
     
-    return {
-        isValid: true,
-        error: null,
-        value: num
-    };
+    return null;
 }
 
-/**
- * Validate integer
- * @param {*} value - Value to validate
- * @param {Object} options - Validation options
- * @returns {ValidationResult} Validation result
- */
 export function validateInteger(value, options = {}) {
-    const result = validateNumber(value, options);
+    const { min, max, required, fieldName = 'Value' } = options;
     
-    if (result.isValid && result.value !== null) {
-        if (!Number.isInteger(result.value)) {
-            return {
-                isValid: false,
-                error: options.fieldName || 'This field' + ' must be a whole number',
-                value: null
-            };
-        }
+    if (value === null || value === undefined || value === '') {
+        if (required) return `${fieldName} is required`;
+        return null;
     }
     
-    return result;
+    const num = Number(value);
+    if (isNaN(num) || !Number.isInteger(num)) {
+        return `${fieldName} must be a whole number`;
+    }
+    
+    if (min !== undefined && num < min) {
+        return `${fieldName} must be at least ${min}`;
+    }
+    
+    if (max !== undefined && num > max) {
+        return `${fieldName} must be at most ${max}`;
+    }
+    
+    return null;
 }
 
-/**
- * Validate percentage
- * @param {*} value - Value to validate
- * @param {Object} options - Validation options
- * @returns {ValidationResult} Validation result
- */
 export function validatePercentage(value, options = {}) {
-    const {
-        min = 0,
-        max = 100,
-        fieldName = 'Percentage'
-    } = options;
-    
-    const result = validateNumber(value, {
-        min,
-        max,
-        fieldName,
-        required: options.required
-    });
-    
-    if (result.isValid && result.value !== null) {
-        // Convert to decimal if needed
-        if (result.value > 1 && result.value <= 100) {
-            result.value = result.value / 100;
-        }
-    }
-    
-    return result;
+    const { min = 0, max = 100, required, fieldName = 'Percentage' } = options;
+    return validateNumber(value, { min, max, required, fieldName });
 }
 
-/**
- * Validate email
- * @param {string} value - Email to validate
- * @param {boolean} required - Whether field is required
- * @returns {ValidationResult} Validation result
- */
 export function validateEmail(value, required = false) {
     if (!value || value.trim() === '') {
-        if (required) {
-            return {
-                isValid: false,
-                error: 'Email is required',
-                value: null
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
-            value: null
-        };
+        if (required) return 'Email is required';
+        return null;
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
     if (!emailRegex.test(value)) {
-        return {
-            isValid: false,
-            error: 'Please enter a valid email address',
-            value: null
-        };
+        return 'Please enter a valid email address';
     }
     
-    return {
-        isValid: true,
-        error: null,
-        value: value.toLowerCase().trim()
-    };
+    return null;
 }
 
-/**
- * Validate URL
- * @param {string} value - URL to validate
- * @param {boolean} required - Whether field is required
- * @returns {ValidationResult} Validation result
- */
 export function validateUrl(value, required = false) {
     if (!value || value.trim() === '') {
-        if (required) {
-            return {
-                isValid: false,
-                error: 'URL is required',
-                value: null
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
-            value: null
-        };
+        if (required) return 'URL is required';
+        return null;
     }
     
     try {
         new URL(value);
-        return {
-            isValid: true,
-            error: null,
-            value: value
-        };
-    } catch (error) {
-        return {
-            isValid: false,
-            error: 'Please enter a valid URL',
-            value: null
-        };
+        return null;
+    } catch {
+        return 'Please enter a valid URL';
     }
 }
 
-/**
- * Validate date
- * @param {*} value - Date to validate
- * @param {Object} options - Validation options
- * @returns {ValidationResult} Validation result
- */
 export function validateDate(value, options = {}) {
-    const {
-        min,
-        max,
-        required = false,
-        fieldName = 'Date'
-    } = options;
+    const { min, max, required, fieldName = 'Date' } = options;
     
-    if (!value || value === '') {
-        if (required) {
-            return {
-                isValid: false,
-                error: `${fieldName} is required`,
-                value: null
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
-            value: null
-        };
+    if (!value) {
+        if (required) return `${fieldName} is required`;
+        return null;
     }
     
     const date = new Date(value);
-    
     if (isNaN(date.getTime())) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be a valid date`,
-            value: null
-        };
+        return `${fieldName} must be a valid date`;
     }
     
-    // Check min date
-    if (min) {
-        const minDate = new Date(min);
-        if (date < minDate) {
-            return {
-                isValid: false,
-                error: `${fieldName} must be after ${minDate.toLocaleDateString()}`,
-                value: null
-            };
-        }
+    if (min && date < new Date(min)) {
+        return `${fieldName} must be on or after ${min}`;
     }
     
-    // Check max date
-    if (max) {
-        const maxDate = new Date(max);
-        if (date > maxDate) {
-            return {
-                isValid: false,
-                error: `${fieldName} must be before ${maxDate.toLocaleDateString()}`,
-                value: null
-            };
-        }
+    if (max && date > new Date(max)) {
+        return `${fieldName} must be on or before ${max}`;
     }
     
-    return {
-        isValid: true,
-        error: null,
-        value: date
-    };
+    return null;
 }
 
-/**
- * Validate string length
- * @param {string} value - String to validate
- * @param {Object} options - Validation options
- * @returns {ValidationResult} Validation result
- */
 export function validateLength(value, options = {}) {
-    const {
-        min = 0,
-        max = Infinity,
-        required = false,
-        fieldName = 'This field'
-    } = options;
+    const { min, max, required, fieldName = 'Text' } = options;
     
     if (!value || value.trim() === '') {
-        if (required) {
-            return {
-                isValid: false,
-                error: `${fieldName} is required`,
-                value: null
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
-            value: value
-        };
+        if (required) return `${fieldName} is required`;
+        return null;
     }
     
-    const length = value.length;
-    
-    if (length < min) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be at least ${min} characters`,
-            value: null
-        };
+    const len = value.length;
+    if (min !== undefined && len < min) {
+        return `${fieldName} must be at least ${min} characters`;
     }
     
-    if (length > max) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be at most ${max} characters`,
-            value: null
-        };
+    if (max !== undefined && len > max) {
+        return `${fieldName} must be at most ${max} characters`;
     }
     
-    return {
-        isValid: true,
-        error: null,
-        value: value
-    };
+    return null;
 }
 
-/**
- * Validate selection
- * @param {*} value - Value to validate
- * @param {Array} allowedValues - Allowed values
- * @param {boolean} required - Whether field is required
- * @param {string} fieldName - Field name for error message
- * @returns {ValidationResult} Validation result
- */
-export function validateSelection(value, allowedValues, required = false, fieldName = 'This field') {
-    if (value === null || value === undefined || value === '') {
-        if (required) {
-            return {
-                isValid: false,
-                error: `${fieldName} is required`,
-                value: null
-            };
-        }
-        return {
-            isValid: true,
-            error: null,
-            value: null
-        };
-    }
-    
-    if (!allowedValues.includes(value)) {
-        return {
-            isValid: false,
-            error: `${fieldName} must be one of: ${allowedValues.join(', ')}`,
-            value: null
-        };
-    }
-    
-    return {
-        isValid: true,
-        error: null,
-        value: value
-    };
+export function validateSelection(value, allowed, required = false) {
+    if (!value && !required) return null;
+    if (!value) return 'Please make a selection';
+    if (!allowed.includes(value)) return 'Invalid selection';
+    return null;
 }
 
-// ── Sanitization ───────────────────────────────────────────────
+// ── Sanitization ─────────────────────────────────────────────────
 
-/**
- * Sanitize string input
- * @param {string} value - Value to sanitize
- * @param {Object} options - Sanitization options
- * @returns {string} Sanitized string
- */
 export function sanitizeString(value, options = {}) {
-    const {
-        trim = true,
-        escapeHtml = true,
-        maxLength = null
-    } = options;
-    
-    if (value === null || value === undefined) {
-        return '';
-    }
-    
-    let sanitized = String(value);
-    
-    // Trim whitespace
-    if (trim) {
-        sanitized = sanitized.trim();
-    }
-    
-    // Escape HTML
-    if (escapeHtml) {
-        sanitized = escapeHtml(sanitized);
-    }
-    
-    // Limit length
-    if (maxLength && sanitized.length > maxLength) {
-        sanitized = sanitized.substring(0, maxLength);
-    }
-    
-    return sanitized;
+    const { maxLength, trim = true } = options;
+    if (value === null || value === undefined) return '';
+    let str = String(value);
+    if (trim) str = str.trim();
+    if (maxLength) str = str.slice(0, maxLength);
+    return escapeHtml(str);
 }
 
-/**
- * Sanitize number input
- * @param {*} value - Value to sanitize
- * @param {number} fallback - Fallback value
- * @returns {number} Sanitized number
- */
 export function sanitizeNumber(value, fallback = 0) {
-    if (value === null || value === undefined) {
-        return fallback;
-    }
-    
-    const num = parseFloat(value);
-    
-    if (isNaN(num) || !isFinite(num)) {
-        return fallback;
-    }
-    
-    return num;
+    const num = Number(value);
+    return isFinite(num) ? num : fallback;
 }
 
-/**
- * Escape HTML to prevent XSS
- * @param {string} str - String to escape
- * @returns {string} Escaped string
- */
-export function escapeHtml(str) {
-    if (str === null || str === undefined) {
-        return '';
-    }
-    
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(String(str)));
-    return div.innerHTML;
-}
+// ── Form Validation ──────────────────────────────────────────────
 
-// ── Form Validation ────────────────────────────────────────────
-
-/**
- * Validate form fields
- * @param {Object} values - Form values
- * @param {Object} rules - Validation rules
- * @returns {Object} Validation result
- */
 export function validateForm(values, rules) {
     const errors = {};
-    const sanitizedValues = {};
+    let isValid = true;
     
-    Object.entries(rules).forEach(([fieldName, rule]) => {
-        const value = values[fieldName];
-        let result;
+    Object.entries(rules).forEach(([field, rule]) => {
+        const value = values[field];
+        let error = null;
         
-        // Apply validation rule
         switch (rule.type) {
             case 'required':
-                result = validateRequired(value, rule.label || fieldName);
+                error = validateRequired(value, rule.label || field);
                 break;
-            
             case 'number':
-                result = validateNumber(value, {
-                    ...rule,
-                    fieldName: rule.label || fieldName
-                });
+                error = validateNumber(value, { ...rule, fieldName: rule.label || field });
                 break;
-            
             case 'integer':
-                result = validateInteger(value, {
-                    ...rule,
-                    fieldName: rule.label || fieldName
-                });
+                error = validateInteger(value, { ...rule, fieldName: rule.label || field });
                 break;
-            
             case 'percentage':
-                result = validatePercentage(value, {
-                    ...rule,
-                    fieldName: rule.label || fieldName
-                });
+                error = validatePercentage(value, { ...rule, fieldName: rule.label || field });
                 break;
-            
             case 'email':
-                result = validateEmail(value, rule.required);
+                error = validateEmail(value, rule.required);
                 break;
-            
             case 'url':
-                result = validateUrl(value, rule.required);
+                error = validateUrl(value, rule.required);
                 break;
-            
             case 'date':
-                result = validateDate(value, {
-                    ...rule,
-                    fieldName: rule.label || fieldName
-                });
+                error = validateDate(value, { ...rule, fieldName: rule.label || field });
                 break;
-            
             case 'length':
-                result = validateLength(value, {
-                    ...rule,
-                    fieldName: rule.label || fieldName
-                });
+                error = validateLength(value, { ...rule, fieldName: rule.label || field });
                 break;
-            
             case 'selection':
-                result = validateSelection(value, rule.allowedValues, rule.required, rule.label || fieldName);
+                error = validateSelection(value, rule.allowed, rule.required);
                 break;
-            
             default:
-                result = { isValid: true, error: null, value };
+                if (rule.validator && typeof rule.validator === 'function') {
+                    error = rule.validator(value, values);
+                }
         }
         
-        // Store result
-        if (!result.isValid) {
-            errors[fieldName] = result.error;
-        }
-        
-        // Sanitize value
-        if (rule.type === 'number' || rule.type === 'integer' || rule.type === 'percentage') {
-            sanitizedValues[fieldName] = result.value;
-        } else if (rule.type === 'string') {
-            sanitizedValues[fieldName] = sanitizeString(result.value, rule.sanitize);
-        } else {
-            sanitizedValues[fieldName] = result.value;
+        if (error) {
+            errors[field] = error;
+            isValid = false;
         }
     });
     
-    return {
-        isValid: Object.keys(errors).length === 0,
-        errors,
-        values: sanitizedValues
-    };
+    return { isValid, errors };
 }
 
-/**
- * Show validation error for field
- * @param {string} fieldId - Field ID
- * @param {string} error - Error message
- */
+export function createValidationSchema(fields) {
+    const schema = {};
+    fields.forEach(field => {
+        if (field.required) {
+            schema[field.id] = { type: field.type || 'text', required: true, label: field.label };
+        }
+        if (field.type === 'number' || field.type === 'range') {
+            schema[field.id] = {
+                type: 'number',
+                label: field.label,
+                required: field.required,
+                min: field.min,
+                max: field.max
+            };
+        }
+    });
+    return schema;
+}
+
+export function validateCalculatorInputs(values, fields) {
+    const errors = {};
+    
+    fields.forEach(field => {
+        if (field.type !== 'number') return;
+        const value = values[field.id];
+        
+        if (value === '' || value === null || value === undefined) {
+            if (field.required) errors[field.id] = 'This field is required';
+            return;
+        }
+        
+        const num = parseFloat(value);
+        if (isNaN(num)) {
+            errors[field.id] = 'Please enter a valid number';
+            return;
+        }
+        
+        if (field.min !== undefined && num < field.min) {
+            errors[field.id] = `Minimum value is ${field.min}`;
+        }
+        
+        if (field.max !== undefined && num > field.max) {
+            errors[field.id] = `Maximum value is ${field.max}`;
+        }
+    });
+    
+    return { isValid: Object.keys(errors).length === 0, errors };
+}
+
+// ── Error Display ────────────────────────────────────────────────
+
 export function showFieldError(fieldId, error) {
-    const field = document.getElementById(fieldId);
-    const errorElement = document.querySelector(`[data-error="${fieldId}"]`);
-    
-    if (field) {
-        field.classList.add('error');
-    }
-    
-    if (errorElement) {
-        errorElement.textContent = error;
-        errorElement.classList.remove('hidden');
+    const input = document.getElementById(fieldId);
+    const errEl = document.querySelector(`[data-error="${fieldId}"]`);
+    if (input) input.classList.toggle('input-error', !!error);
+    if (errEl) {
+        errEl.textContent = error || '';
+        errEl.classList.toggle('hidden', !error);
     }
 }
 
-/**
- * Clear validation error for field
- * @param {string} fieldId - Field ID
- */
 export function clearFieldError(fieldId) {
-    const field = document.getElementById(fieldId);
-    const errorElement = document.querySelector(`[data-error="${fieldId}"]`);
-    
-    if (field) {
-        field.classList.remove('error');
-    }
-    
-    if (errorElement) {
-        errorElement.textContent = '';
-        errorElement.classList.add('hidden');
-    }
+    showFieldError(fieldId, null);
 }
 
-/**
- * Clear all validation errors
- * @param {HTMLElement} container - Container element
- */
 export function clearAllErrors(container) {
-    const errorElements = container.querySelectorAll('.field-error');
-    const errorFields = container.querySelectorAll('.error');
-    
-    errorElements.forEach(el => {
+    if (!container) return;
+    container.querySelectorAll('.field-error').forEach(el => {
         el.textContent = '';
         el.classList.add('hidden');
     });
-    
-    errorFields.forEach(el => {
-        el.classList.remove('error');
+    container.querySelectorAll('.input-error').forEach(el => {
+        el.classList.remove('input-error');
     });
 }
-
-// ── Validation Helpers ─────────────────────────────────────────
-
-/**
- * Create validation schema for a calculator
- * @param {Array} fields - Field definitions
- * @returns {Object} Validation rules
- */
-export function createValidationSchema(fields) {
-    const rules = {};
-    
-    fields.forEach(field => {
-        if (!field.validations) return;
-        
-        rules[field.id] = {
-            type: field.validations.type || 'number',
-            required: field.required || false,
-            label: field.label,
-            ...field.validations
-        };
-    });
-    
-    return rules;
-}
-
-/**
- * Validate calculator inputs
- * @param {Object} values - Input values
- * @param {Array} fields - Field definitions
- * @returns {Object} Validation result
- */
-export function validateCalculatorInputs(values, fields) {
-    const rules = createValidationSchema(fields);
-    return validateForm(values, rules);
-}
-
-// Log module initialization
-console.log('Validation module loaded');

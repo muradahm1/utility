@@ -1,144 +1,219 @@
 /**
  * Tables Module
  * 
- * Sortable, responsive, paginated tables with virtualization for large datasets.
- * Provides consistent table functionality across all calculators.
+ * Sortable, responsive, paginated tables with virtualization.
  * 
  * @module modules/tables
  */
 
-// ── Table Configuration ────────────────────────────────────────
+import { escapeHtml } from '../utils/index.js';
 
-/**
- * Table column definition
- * @typedef {Object} TableColumn
- * @property {string} key - Data key
- * @property {string} label - Column header label
- * @property {string} [format] - Format type: 'currency', 'percentage', 'number', 'date'
- * @property {boolean} [sortable] - Whether column is sortable
- * @property {boolean} [emphasis] - Whether to emphasize column
- */
+const tableState = new Map();
 
-/**
- * Table configuration
- * @typedef {Object} TableConfig
- * @property {Array<TableColumn>} columns - Column definitions
- * @property {Array<Object>} rows - Table data rows
- * @property {string} [title] - Table title
- * @property {boolean} [sortable] - Enable sorting (default: true)
- * @property {boolean} [paginated] - Enable pagination (default: false)
- * @property {number} [pageSize] - Rows per page (default: 10)
- * @property {boolean} [searchable] - Enable search (default: false)
- * @property {boolean} [exportable] - Enable export (default: true)
- */
-
-// ── Table Builder ──────────────────────────────────────────────
-
-/**
- * Build table HTML
- * @param {TableConfig} config - Table configuration
- * @returns {string} HTML string
- */
 export function buildTable(config) {
-    const {
-        columns = [],
-        rows = [],
-        title,
-        sortable = true,
-        paginated = false,
-        pageSize = 10,
-        searchable = false,
-        exportable = true
-    } = config;
+    const { id, columns, rows, title, sortable = true, searchable = true, pageSize = 10 } = config;
+    const tableId = id || `table-${Date.now()}`;
     
-    if (!columns.length || !rows.length) {
-        return '';
+    tableState.set(tableId, {
+        rows: rows || [],
+        columns,
+        currentPage: 0,
+        pageSize,
+        sortColumn: null,
+        sortDirection: 'asc',
+        searchQuery: ''
+    });
+    
+    return renderTable(tableId, title, sortable, searchable);
+}
+
+export function buildVirtualTable(config, rowHeight = 40) {
+    const { id, columns, rows, title, visibleRows = 20 } = config;
+    const tableId = id || `vtable-${Date.now()}`;
+    
+    tableState.set(tableId, {
+        rows: rows || [],
+        columns,
+        scrollTop: 0,
+        rowHeight,
+        visibleRows
+    });
+    
+    return `
+        <div class="virtual-table-container" id="${tableId}" style="height:${visibleRows * rowHeight}px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-md);">
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr>${columns.map(c => `<th style="padding:10px 14px;text-align:left;font-weight:700;font-size:12px;text-transform:uppercase;background:var(--bg-main);border-bottom:2px solid var(--border-color);position:sticky;top:0;z-index:1;">${escapeHtml(c.label)}</th>`).join('')}</tr>
+                </thead>
+                <tbody id="${tableId}-body"></tbody>
+            </table>
+        </div>
+    `;
+}
+
+export function sort(tableId, columnKey) {
+    const state = tableState.get(tableId);
+    if (!state) return;
+    
+    if (state.sortColumn === columnKey) {
+        state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        state.sortColumn = columnKey;
+        state.sortDirection = 'asc';
     }
     
-    const tableId = 'table-' + Date.now();
-    const totalPages = paginated ? Math.ceil(rows.length / pageSize) : 1;
+    const column = state.columns.find(c => c.key === columnKey);
+    const format = column?.format;
     
-    // Build header
-    const headerCells = columns.map(col => {
-        const sortAttr = sortable && col.sortable !== false 
-            ? `onclick="window.tableModules.sort('${tableId}', '${col.key}')"` 
-            : '';
-        const sortIcon = sortable && col.sortable !== false 
-            ? `<i class="fa-solid fa-sort table-sort-icon" data-sort-key="${col.key}"></i>` 
-            : '';
+    state.rows.sort((a, b) => {
+        let aVal = a[columnKey];
+        let bVal = b[columnKey];
         
-        return `
-            <th${col.emphasis ? ' class="emphasis"' : ''} ${sortAttr}>
-                ${escapeHtml(col.label)}
-                ${sortIcon}
-            </th>
-        `;
-    }).join('');
+        if (format === 'currency') {
+            aVal = Number(aVal) || 0;
+            bVal = Number(bVal) || 0;
+        } else if (format === 'number') {
+            aVal = Number(aVal) || 0;
+            bVal = Number(bVal) || 0;
+        } else {
+            aVal = String(aVal || '').toLowerCase();
+            bVal = String(bVal || '').toLowerCase();
+        }
+        
+        if (aVal < bVal) return state.sortDirection === 'asc' ? -1 : 1;
+        if (aVal > bVal) return state.sortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
     
-    // Build body
-    const displayRows = paginated ? rows.slice(0, pageSize) : rows;
-    const bodyRows = displayRows.map((row, index) => {
-        const cells = columns.map(col => {
-            const value = row[col.key];
-            const formatted = formatCell(value, col.format);
-            return `<td${col.emphasis ? ' class="emphasis"' : ''}>${formatted}</td>`;
+    renderTable(tableId);
+}
+
+export function search(tableId, query) {
+    const state = tableState.get(tableId);
+    if (!state) return;
+    
+    state.searchQuery = query.toLowerCase();
+    state.currentPage = 0;
+    renderTable(tableId);
+}
+
+export function paginate(tableId, page) {
+    const state = tableState.get(tableId);
+    if (!state) return;
+    
+    state.currentPage = page;
+    renderTable(tableId);
+}
+
+export function nextPage(tableId) {
+    const state = tableState.get(tableId);
+    if (!state) return;
+    
+    const totalPages = Math.ceil(getFilteredRows(state).length / state.pageSize);
+    if (state.currentPage < totalPages - 1) {
+        state.currentPage++;
+        renderTable(tableId);
+    }
+}
+
+export function prevPage(tableId) {
+    const state = tableState.get(tableId);
+    if (!state) return;
+    
+    if (state.currentPage > 0) {
+        state.currentPage--;
+        renderTable(tableId);
+    }
+}
+
+export function exportCSV(tableId) {
+    const state = tableState.get(tableId);
+    if (!state) return '';
+    
+    const rows = getFilteredRows(state);
+    const headers = state.columns.map(c => c.label).join(',');
+    const csvRows = rows.map(row => 
+        state.columns.map(c => {
+            const val = row[c.key];
+            if (val === null || val === undefined) return '';
+            const str = String(val);
+            if (str.includes(',') || str.includes('"')) {
+                return '"' + str.replace(/"/g, '""') + '"';
+            }
+            return str;
+        }).join(',')
+    );
+    
+    return [headers, ...csvRows].join('\n');
+}
+
+function getFilteredRows(state) {
+    if (!state.searchQuery) return state.rows;
+    return state.rows.filter(row => 
+        state.columns.some(c => {
+            const val = row[c.key];
+            return val !== undefined && String(val).toLowerCase().includes(state.searchQuery);
+        })
+    );
+}
+
+function renderTable(tableId, title, sortable, searchable) {
+    const state = tableState.get(tableId);
+    if (!state) return '';
+    
+    const filteredRows = getFilteredRows(state);
+    const totalPages = Math.max(1, Math.ceil(filteredRows.length / state.pageSize));
+    const start = state.currentPage * state.pageSize;
+    const pageRows = filteredRows.slice(start, start + state.pageSize);
+    
+    const sortIcon = (col) => {
+        if (state.sortColumn !== col) return '<i class="fa-solid fa-sort" style="margin-left:4px;opacity:0.3;"></i>';
+        return state.sortDirection === 'asc' 
+            ? '<i class="fa-solid fa-sort-up" style="margin-left:4px;color:var(--primary-color);"></i>'
+            : '<i class="fa-solid fa-sort-down" style="margin-left:4px;color:var(--primary-color);"></i>';
+    };
+    
+    const headerCells = state.columns.map(c => `
+        <th ${c.emphasis ? 'style="font-weight:700;color:var(--text-primary);"' : ''}>
+            ${sortable ? `<button class="table-sort-btn" data-sort="${c.key}" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;">${escapeHtml(c.label)}${sortIcon(c.key)}</button>` : escapeHtml(c.label)}
+        </th>
+    `).join('');
+    
+    const dataRows = pageRows.map(row => {
+        const cells = state.columns.map(c => {
+            const formatted = formatCell(row[c.key], c.format);
+            return `<td${c.emphasis ? ' style="font-weight:600;color:var(--text-primary);"' : ''}>${formatted}</td>`;
         }).join('');
-        
-        return `<tr data-row-index="${index}">${cells}</tr>`;
+        return `<tr>${cells}</tr>`;
     }).join('');
     
-    // Build search
+    const footerRow = state.footer ? `<tr style="font-weight:700;border-top:2px solid var(--border-color);">${state.columns.map(c => {
+        const formatted = formatCell(state.footer[c.key], c.format);
+        return `<td${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${formatted}</td>`;
+    }).join('')}</tr>` : '';
+    
     const searchHtml = searchable ? `
-        <div class="table-search">
-            <input type="text" 
-                   id="${tableId}-search" 
-                   placeholder="Search..." 
-                   class="table-search-input"
-                   oninput="window.tableModules.search('${tableId}', this.value)">
-            <i class="fa-solid fa-search table-search-icon"></i>
+        <div style="margin-bottom:12px;">
+            <input type="text" id="${tableId}-search" placeholder="Search..." style="padding:8px 14px;border:1px solid var(--border-color);border-radius:var(--radius-sm);font-size:14px;width:100%;max-width:300px;">
         </div>
     ` : '';
     
-    // Build export buttons
-    const exportHtml = exportable ? `
-        <div class="table-export">
-            <button class="table-export-btn" onclick="window.tableModules.exportCSV('${tableId}')">
-                <i class="fa-solid fa-download"></i> Export CSV
-            </button>
+    const paginationHtml = totalPages > 1 ? `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-color);">
+            <button class="btn btn-outline btn-sm" id="${tableId}-prev" ${state.currentPage === 0 ? 'disabled' : ''}>Previous</button>
+            <span style="font-size:13px;color:var(--text-secondary);">Page ${state.currentPage + 1} of ${totalPages}</span>
+            <button class="btn btn-outline btn-sm" id="${tableId}-next" ${state.currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
         </div>
     ` : '';
     
-    // Build pagination
-    const paginationHtml = paginated && totalPages > 1 ? `
-        <div class="table-pagination">
-            <button class="pagination-btn" onclick="window.tableModules.prevPage('${tableId}')" ${displayRows.length === 0 ? 'disabled' : ''}>
-                <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            <span class="pagination-info">
-                Page <span id="${tableId}-current-page">1</span> of ${totalPages}
-            </span>
-            <button class="pagination-btn" onclick="window.tableModules.nextPage('${tableId}')" ${displayRows.length === 0 ? 'disabled' : ''}>
-                <i class="fa-solid fa-chevron-right"></i>
-            </button>
-        </div>
-    ` : '';
-    
-    // Assemble table
     return `
-        <div class="table-container" id="${tableId}" data-total-rows="${rows.length}" data-page-size="${pageSize}">
-            ${title ? `<h4 class="table-title">${escapeHtml(title)}</h4>` : ''}
-            <div class="table-controls">
-                ${searchHtml}
-                ${exportHtml}
-            </div>
+        <div class="result-table-container calc-data-table" id="${tableId}-container">
+            ${title ? `<h4>${escapeHtml(title)}</h4>` : ''}
+            ${searchHtml}
             <div class="table-wrapper">
-                <table class="data-table">
-                    <thead>
-                        <tr>${headerCells}</tr>
-                    </thead>
-                    <tbody id="${tableId}-body">
-                        ${bodyRows}
-                    </tbody>
+                <table>
+                    <thead><tr>${headerCells}</tr></thead>
+                    <tbody>${dataRows}${footerRow}</tbody>
                 </table>
             </div>
             ${paginationHtml}
@@ -146,362 +221,11 @@ export function buildTable(config) {
     `;
 }
 
-/**
- * Format cell value
- * @param {*} value - Cell value
- * @param {string} format - Format type
- * @returns {string} Formatted value
- */
 function formatCell(value, format) {
-    if (value === null || value === undefined) {
-        return '-';
-    }
-    
-    switch (format) {
-        case 'currency':
-            return formatCurrency(value);
-        
-        case 'percentage':
-            return formatPercentage(value, { decimals: 2 });
-        
-        case 'number':
-            return formatNumber(value, { minFractionDigits: 0, maxFractionDigits: 2 });
-        
-        case 'date':
-            return formatDate(value);
-        
-        case 'integer':
-            return Math.round(value).toLocaleString();
-        
-        default:
-            return escapeHtml(String(value));
-    }
+    if (value === null || value === undefined || value === '') return '';
+    if (typeof value === 'string') return escapeHtml(value);
+    if (format === 'currency') return '$' + Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (format === 'percent') return (Number(value) * 100).toFixed(2) + '%';
+    if (format === 'number') return Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return escapeHtml(String(value));
 }
-
-// ── Table Operations ───────────────────────────────────────────
-
-/**
- * Sort table
- * @param {string} tableId - Table ID
- * @param {string} columnKey - Column key to sort by
- */
-export function sort(tableId, columnKey) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    // Get current sort direction
-    const currentSort = table.dataset.sortKey;
-    const currentDirection = table.dataset.sortDirection || 'asc';
-    const newDirection = currentSort === columnKey && currentDirection === 'asc' ? 'desc' : 'asc';
-    
-    // Update sort icons
-    table.querySelectorAll('.table-sort-icon').forEach(icon => {
-        icon.className = 'fa-solid fa-sort table-sort-icon';
-    });
-    
-    const sortIcon = table.querySelector(`[data-sort-key="${columnKey}"]`);
-    if (sortIcon) {
-        sortIcon.className = newDirection === 'asc' 
-            ? 'fa-solid fa-sort-up table-sort-icon' 
-            : 'fa-solid fa-sort-down table-sort-icon';
-    }
-    
-    // Sort rows
-    rows.sort((a, b) => {
-        const aVal = a.querySelector(`[data-column="${columnKey}"]`)?.textContent || '';
-        const bVal = b.querySelector(`[data-column="${columnKey}"]`)?.textContent || '';
-        
-        const aNum = parseFloat(aVal.replace(/[^0-9.-]/g, ''));
-        const bNum = parseFloat(bVal.replace(/[^0-9.-]/g, ''));
-        
-        let comparison = 0;
-        
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-            comparison = aNum - bNum;
-        } else {
-            comparison = aVal.localeCompare(bVal);
-        }
-        
-        return newDirection === 'asc' ? comparison : -comparison;
-    });
-    
-    // Re-append sorted rows
-    rows.forEach(row => tbody.appendChild(row));
-    
-    // Store sort state
-    table.dataset.sortKey = columnKey;
-    table.dataset.sortDirection = newDirection;
-}
-
-/**
- * Search table
- * @param {string} tableId - Table ID
- * @param {string} query - Search query
- */
-export function search(tableId, query) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    const lowerQuery = query.toLowerCase();
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(lowerQuery) ? '' : 'none';
-    });
-}
-
-/**
- * Paginate table
- * @param {string} tableId - Table ID
- * @param {number} page - Page number
- */
-export function paginate(tableId, page) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    const pageSize = parseInt(table.dataset.pageSize) || 10;
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    
-    rows.forEach((row, index) => {
-        row.style.display = index >= start && index < end ? '' : 'none';
-    });
-    
-    // Update page indicator
-    const currentPageEl = document.getElementById(`${tableId}-current-page`);
-    if (currentPageEl) {
-        currentPageEl.textContent = page;
-    }
-    
-    // Store current page
-    table.dataset.currentPage = page;
-}
-
-/**
- * Go to next page
- * @param {string} tableId - Table ID
- */
-export function nextPage(tableId) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    const currentPage = parseInt(table.dataset.currentPage) || 1;
-    const pageSize = parseInt(table.dataset.pageSize) || 10;
-    const totalRows = parseInt(table.dataset.totalRows) || 0;
-    const totalPages = Math.ceil(totalRows / pageSize);
-    
-    if (currentPage < totalPages) {
-        paginate(tableId, currentPage + 1);
-    }
-}
-
-/**
- * Go to previous page
- * @param {string} tableId - Table ID
- */
-export function prevPage(tableId) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    const currentPage = parseInt(table.dataset.currentPage) || 1;
-    
-    if (currentPage > 1) {
-        paginate(tableId, currentPage - 1);
-    }
-}
-
-/**
- * Export table to CSV
- * @param {string} tableId - Table ID
- */
-export function exportCSV(tableId) {
-    const table = document.getElementById(tableId);
-    if (!table) return;
-    
-    const headers = Array.from(table.querySelectorAll('thead th'))
-        .map(th => `"${th.textContent.trim()}"`)
-        .join(',');
-    
-    const rows = Array.from(table.querySelectorAll('tbody tr'))
-        .filter(row => row.style.display !== 'none')
-        .map(row => {
-            const cells = Array.from(row.querySelectorAll('td'));
-            return cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
-        });
-    
-    const csv = [headers, ...rows].join('\n');
-    
-    downloadFile(csv, `${tableId}-export.csv`, 'text/csv');
-}
-
-// ── Virtual Scrolling ──────────────────────────────────────────
-
-/**
- * Create virtual scrolling table for large datasets
- * @param {TableConfig} config - Table configuration
- * @param {number} rowHeight - Height of each row in pixels
- * @returns {string} HTML string
- */
-export function buildVirtualTable(config, rowHeight = 40) {
-    const { columns = [], rows = [], title } = config;
-    
-    if (!columns.length || !rows.length) {
-        return '';
-    }
-    
-    const tableId = 'virtual-table-' + Date.now();
-    const totalHeight = rows.length * rowHeight;
-    const viewportHeight = Math.min(600, rows.length * rowHeight);
-    
-    const headerCells = columns.map(col => {
-        return `<th>${escapeHtml(col.label)}</th>`;
-    }).join('');
-    
-    return `
-        <div class="virtual-table-container" id="${tableId}" style="height: ${viewportHeight}px; overflow-y: auto;">
-            ${title ? `<h4 class="table-title">${escapeHtml(title)}</h4>` : ''}
-            <div class="table-wrapper" style="height: ${totalHeight}px; position: relative;">
-                <table class="data-table" style="position: absolute; top: 0; left: 0; width: 100%;">
-                    <thead>
-                        <tr>${headerCells}</tr>
-                    </thead>
-                    <tbody>
-                        ${rows.map((row, index) => {
-                            const cells = columns.map(col => {
-                                const value = row[col.key];
-                                const formatted = formatCell(value, col.format);
-                                return `<td>${formatted}</td>`;
-                            }).join('');
-                            
-                            return `<tr style="position: absolute; top: ${index * rowHeight}px; width: 100%;">${cells}</tr>`;
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-}
-
-// ── Helper Functions ───────────────────────────────────────────
-
-/**
- * Download file
- * @param {string} content - File content
- * @param {string} filename - Filename
- * @param {string} mimeType - MIME type
- */
-function downloadFile(content, filename, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    
-    link.href = url;
-    link.download = filename;
-    link.style.display = 'none';
-    
-    document.body.appendChild(link);
-    link.click();
-    
-    setTimeout(() => {
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }, 100);
-}
-
-/**
- * Format currency
- * @param {number} value - Value to format
- * @returns {string} Formatted currency
- */
-function formatCurrency(value) {
-    const num = parseFloat(value);
-    if (isNaN(num)) return '-';
-    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-/**
- * Format percentage
- * @param {number} value - Value to format
- * @param {Object} options - Formatting options
- * @returns {string} Formatted percentage
- */
-function formatPercentage(value, options = {}) {
-    const { decimals = 2 } = options;
-    const num = parseFloat(value);
-    if (isNaN(num)) return '-';
-    return (num * 100).toFixed(decimals) + '%';
-}
-
-/**
- * Format number
- * @param {number} value - Value to format
- * @param {Object} options - Formatting options
- * @returns {string} Formatted number
- */
-function formatNumber(value, options = {}) {
-    const { minFractionDigits = 0, maxFractionDigits = 2 } = options;
-    const num = parseFloat(value);
-    if (isNaN(num)) return '-';
-    return num.toLocaleString('en-US', { minimumFractionDigits: minFractionDigits, maximumFractionDigits: maxFractionDigits });
-}
-
-/**
- * Format date
- * @param {*} value - Date value
- * @returns {string} Formatted date
- */
-function formatDate(value) {
-    if (!value) return '-';
-    const date = new Date(value);
-    if (isNaN(date.getTime())) return '-';
-    return date.toLocaleDateString('en-US');
-}
-
-/**
- * Escape HTML
- * @param {string} str - String to escape
- * @returns {string} Escaped string
- */
-function escapeHtml(str) {
-    if (str === null || str === undefined) {
-        return '';
-    }
-    
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(String(str)));
-    return div.innerHTML;
-}
-
-// ── Global API ─────────────────────────────────────────────────
-
-/**
- * Initialize tables module globally
- */
-export function initTablesGlobal() {
-    if (typeof window !== 'undefined') {
-        window.tableModules = {
-            sort,
-            search,
-            paginate,
-            nextPage,
-            prevPage,
-            exportCSV
-        };
-    }
-}
-
-// Auto-initialize
-if (typeof window !== 'undefined') {
-    initTablesGlobal();
-}
-
-// Log module initialization
-console.log('Tables module loaded');

@@ -1,0 +1,29 @@
+# Kilo local state and session files
+.kilo/
+
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# IDE / OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+
+# Build / dist
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage / test artifacts
+coverage/

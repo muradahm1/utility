@@ -117,30 +117,19 @@ export {
 } from './math.js';
 
 // ── Validation Utilities ────────────────────────────────────────
-export {
-    validateRequired,
-    validateNumber,
-    validateInteger,
-    validatePercentage,
-    validateEmail,
-    validateUrl,
-    validateDate,
-    validateLength,
-    validateSelection,
-    sanitizeString,
-    sanitizeNumber,
-    escapeHtml,
-    validateForm,
-    showFieldError,
-    clearFieldError,
-    clearAllErrors,
-    createValidationSchema,
-    validateCalculatorInputs
-} from '../modules/validation.js';
+// Note: Validation utilities are exported from js/modules/index.js
+// Use: import { validateRequired, ... } from './modules/index.js';
 
 export function safeStr(value) {
     if (value === null || value === undefined) return '';
     return String(value).trim();
+}
+
+export function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(String(str)));
+    return div.innerHTML;
 }
 
 export function fmt(value, options = {}) {

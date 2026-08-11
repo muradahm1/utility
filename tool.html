@@ -167,13 +167,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="js/tools-template.js"></script>
 
     <!-- Core Architecture (ES Modules - load in dependency order) -->
+    <script src="js/core/index.js" type="module"></script>
     <script src="js/core/tools.js" type="module"></script>
     <script src="js/core/calculator-engine.js" type="module"></script>
     <script src="js/core/router.js" type="module"></script>
-    <script src="js/core/tool-manager.js" type="module"></script>
     <script src="js/core/migration.js" type="module"></script>
+    <script src="js/core/tool-manager.js" type="module"></script>
     
-    <!-- Third-party Libraries -->
+    <!-- Feature Modules -->
+    <script src="js/modules/index.js" type="module"></script>
+    <script src="js/modules/validation.js" type="module"></script>
+    <script src="js/modules/charts.js" type="module"></script>
+    <script src="js/modules/export.js" type="module"></script>
+    <script src="js/modules/sharing.js" type="module"></script>
+    <script src="js/modules/related-tools.js" type="module"></script>
+    <script src="js/modules/recommendations.js" type="module"></script>
+    <script src="js/modules/faq.js" type="module"></script>
+    <script src="js/modules/tables.js" type="module"></script>
+    <script src="js/modules/formatting.js" type="module"></script>
+    <script src="js/modules/pdf.js" type="module"></script>
+    <script src="js/modules/print.js" type="module"></script>
+    
+    <!-- Third-party Libraries (Chart.js must load BEFORE budget planner) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -181,10 +196,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
     
-    <!-- Budget Planner Module -->
+    <!-- Budget Planner Module (loads after Chart.js) -->
     <script src="js/modules/budget-planner.js" type="module"></script>
     
-    <!-- Tool Runner (now uses ES modules) -->
+    <!-- Tool Runner -->
     <script src="js/tool-runner.js" type="module"></script>
     
     <!-- App Initialization -->

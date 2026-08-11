@@ -2,379 +2,131 @@
  * FAQ Module
  * 
  * Dynamic FAQ rendering and JSON-LD generation for SEO.
- * Provides consistent FAQ functionality across all calculators.
  * 
  * @module modules/faq
  */
 
-// ── FAQ Data Management ────────────────────────────────────────
-
-/**
- * FAQ item structure
- * @typedef {Object} FAQItem
- * @property {string} question - FAQ question
- * @property {string} answer - FAQ answer
- * @property {Array<string>} keywords - Related keywords
- */
-
-/**
- * Create FAQ item
- * @param {string} question - Question text
- * @param {string} answer - Answer text
- * @param {Array<string>} keywords - Related keywords
- * @returns {FAQItem} FAQ item
- */
 export function createFAQItem(question, answer, keywords = []) {
-    return {
-        question: question.trim(),
-        answer: answer.trim(),
-        keywords: keywords.map(k => k.toLowerCase().trim())
-    };
+    return { q: question, a: answer, keywords };
 }
 
-/**
- * Filter FAQ items by search query
- * @param {Array<FAQItem>} faqs - FAQ items
- * @param {string} query - Search query
- * @returns {Array<FAQItem>} Matching FAQs
- */
+import { escapeHtml } from '../utils/index.js';
+
 export function searchFAQs(faqs, query) {
-    if (!query || query.trim() === '') {
-        return faqs;
-    }
-    
-    const searchTerm = query.toLowerCase().trim();
-    const words = searchTerm.split(/\s+/);
-    
-    return faqs.filter(faq => {
-        const question = faq.question.toLowerCase();
-        const answer = faq.answer.toLowerCase();
-        const keywords = faq.keywords.join(' ').toLowerCase();
-        
-        // Match if all words are found in question, answer, or keywords
-        return words.every(word => 
-            question.includes(word) || 
-            answer.includes(word) || 
-            keywords.includes(word)
-        );
-    });
+    if (!query || !faqs.length) return [];
+    const q = query.toLowerCase();
+    return faqs.filter(faq => 
+        faq.q.toLowerCase().includes(q) || 
+        faq.a.toLowerCase().includes(q) ||
+        (faq.keywords && faq.keywords.some(kw => kw.toLowerCase().includes(q)))
+    );
 }
 
-// ── FAQ Rendering ──────────────────────────────────────────────
-
-/**
- * Build FAQ HTML
- * @param {Array<FAQItem>} faqs - FAQ items
- * @param {Object} options - Rendering options
- * @param {boolean} options.collapsible - Make FAQs collapsible (default: true)
- * @param {boolean} options.showSearch - Show search box (default: false)
- * @param {string} options.title - Section title (default: 'Frequently Asked Questions')
- * @returns {string} HTML string
- */
 export function buildFAQHtml(faqs, options = {}) {
-    const {
-        collapsible = true,
-        showSearch = false,
-        title = 'Frequently Asked Questions'
-    } = options;
+    const { searchable = true, title = 'Frequently Asked Questions' } = options;
     
-    if (!faqs || faqs.length === 0) {
-        return '';
-    }
+    if (!faqs || !faqs.length) return '';
     
-    const faqItems = faqs.map((faq, index) => {
-        if (collapsible) {
-            return `
-                <details class="faq-item" data-faq-index="${index}">
-                    <summary class="faq-question">
-                        <span>${escapeHtml(faq.question)}</span>
-                        <i class="fa-solid fa-chevron-down faq-icon"></i>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>${escapeHtml(faq.answer)}</p>
-                    </div>
-                </details>
-            `;
-        } else {
-            return `
-                <div class="faq-item" data-faq-index="${index}">
-                    <div class="faq-question">${escapeHtml(faq.question)}</div>
-                    <div class="faq-answer">
-                        <p>${escapeHtml(faq.answer)}</p>
-                    </div>
-                </div>
-            `;
-        }
-    }).join('');
-    
-    const searchHtml = showSearch ? `
-        <div class="faq-search">
-            <input type="text" 
-                   id="faq-search-input" 
-                   placeholder="Search FAQs..." 
-                   class="faq-search-input"
-                   aria-label="Search frequently asked questions">
-            <i class="fa-solid fa-search faq-search-icon"></i>
-        </div>
-    ` : '';
+    const items = faqs.map((faq, i) => `
+        <details style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:8px;">
+            <summary style="font-size:14px;font-weight:700;cursor:pointer;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                ${escapeHtml(faq.q)} <i class="fa-solid fa-chevron-down" style="font-size:12px;color:var(--text-secondary);"></i>
+            </summary>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:10px;line-height:1.7;">${escapeHtml(faq.a)}</p>
+        </details>
+    `).join('');
     
     return `
-        <div class="faq-section" data-faq-count="${faqs.length}">
-            <h3 class="faq-title">
-                <i class="fa-solid fa-circle-question"></i>
-                ${escapeHtml(title)}
-            </h3>
-            ${searchHtml}
-            <div class="faq-list">
-                ${faqItems}
-            </div>
+        <div class="faq-section" style="margin-top:24px;">
+            <h2 id="faqs" style="font-size:18px;font-weight:700;margin-bottom:16px;">${escapeHtml(title)}</h2>
+            ${searchable ? '<input type="text" id="faq-search" placeholder="Search FAQs..." style="width:100%;padding:10px 14px;border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:16px;font-size:14px;">' : ''}
+            <div id="faq-list">${items}</div>
         </div>
     `;
 }
 
-/**
- * Build calculator-specific FAQ
- * @param {Object} tool - Tool definition
- * @param {Object} options - Rendering options
- * @returns {string} HTML string
- */
 export function buildCalculatorFAQ(tool, options = {}) {
-    const faqs = tool.faqs || getDefaultFAQs(tool);
-    return buildFAQHtml(faqs, options);
+    if (!tool) return '';
+    
+    const faqs = tool.faqs || [];
+    return buildFAQHtml(faqs, { ...options, title: `Frequently Asked Questions about ${tool.name}` });
 }
 
-/**
- * Get default FAQs for a calculator
- * @param {Object} tool - Tool definition
- * @returns {Array<FAQItem>} Default FAQs
- */
-function getDefaultFAQs(tool) {
-    const faqs = [];
-    
-    // General FAQ
-    faqs.push(createFAQItem(
-        `How accurate is the ${tool.name}?`,
-        `The ${tool.name} provides estimates based on standard financial formulas and the information you provide. While we strive for accuracy, actual results may vary based on additional factors not accounted for in this calculator.`,
-        ['accuracy', 'accurate', 'reliable', 'estimate']
-    ));
-    
-    faqs.push(createFAQItem(
-        'What information do I need to use this calculator?',
-        'You will need to provide the required input values as indicated in the form. Common inputs include principal amounts, interest rates, time periods, and other relevant financial figures.',
-        ['information', 'input', 'required', 'needed']
-    ));
-    
-    faqs.push(createFAQItem(
-        'How often should I recalculate?',
-        'You should recalculate whenever your financial situation changes or when market conditions (like interest rates) change significantly. For long-term planning, consider recalculating annually.',
-        ['recalculate', 'how often', 'frequency', 'update']
-    ));
-    
-    faqs.push(createFAQItem(
-        'Are the results saved?',
-        'No, calculations are performed in your browser and are not saved to our servers. Your financial data remains private and is only used for the current calculation session.',
-        ['saved', 'save', 'privacy', 'data', 'stored']
-    ));
-    
-    faqs.push(createFAQItem(
-        'Can I export the results?',
-        'Yes, you can export your calculation results in various formats including CSV, JSON, and plain text. Look for the export options below the results.',
-        ['export', 'download', 'save', 'csv', 'json']
-    ));
-    
-    return faqs;
-}
-
-// ── FAQ Search ─────────────────────────────────────────────────
-
-/**
- * Initialize FAQ search functionality
- * @param {string} containerId - Container element ID
- * @param {Array<FAQItem>} faqs - FAQ items
- */
 export function initFAQSearch(containerId, faqs) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    const searchInput = container.querySelector('.faq-search-input');
-    const faqList = container.querySelector('.faq-list');
-    
-    if (!searchInput || !faqList) return;
-    
-    // Debounce search
-    let searchTimeout;
+    const searchInput = container.querySelector('#faq-search');
+    const listContainer = container.querySelector('#faq-list');
+    if (!searchInput || !listContainer) return;
     
     searchInput.addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
+        const query = e.target.value;
+        const filtered = searchFAQs(faqs, query);
         
-        searchTimeout = setTimeout(() => {
-            const query = e.target.value;
-            const filteredFaqs = searchFAQs(faqs, query);
-            
-            // Re-render FAQ list
-            const faqHtml = filteredFaqs.map((faq, index) => `
-                <details class="faq-item" data-faq-index="${index}">
-                    <summary class="faq-question">
-                        <span>${escapeHtml(faq.question)}</span>
-                        <i class="fa-solid fa-chevron-down faq-icon"></i>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>${escapeHtml(faq.answer)}</p>
-                    </div>
-                </details>
-            `).join('');
-            
-            faqList.innerHTML = faqHtml;
-            
-            // Show "no results" message if needed
-            if (filteredFaqs.length === 0) {
-                faqList.innerHTML = `
-                    <div class="faq-no-results">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <p>No FAQs found matching your search.</p>
-                    </div>
-                `;
-            }
-        }, 300);
+        if (filtered.length === 0) {
+            listContainer.innerHTML = '<p style="color:var(--text-secondary);font-size:14px;">No matching questions found.</p>';
+            return;
+        }
+        
+        listContainer.innerHTML = filtered.map((faq, i) => `
+            <details style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:8px;">
+                <summary style="font-size:14px;font-weight:700;cursor:pointer;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+                    ${escapeHtml(faq.q)} <i class="fa-solid fa-chevron-down" style="font-size:12px;color:var(--text-secondary);"></i>
+                </summary>
+                <p style="font-size:13px;color:var(--text-secondary);margin-top:10px;line-height:1.7;">${escapeHtml(faq.a)}</p>
+            </details>
+        `).join('');
     });
 }
 
-// ── JSON-LD Generation ─────────────────────────────────────────
-
-/**
- * Generate FAQPage JSON-LD schema
- * @param {Array<FAQItem>} faqs - FAQ items
- * @param {string} pageUrl - Page URL
- * @returns {string} JSON-LD schema markup
- */
 export function generateFAQJsonLd(faqs, pageUrl) {
-    if (!faqs || faqs.length === 0) {
-        return '';
-    }
+    if (!faqs || !faqs.length) return null;
     
-    const schema = {
+    return {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-        '@id': pageUrl + '#faq',
-        mainEntity: faqs.map(faq => ({
+        mainEntity: faqs.map(f => ({
             '@type': 'Question',
-            name: faq.question,
-            acceptedAnswer: {
-                '@type': 'Answer',
-                text: faq.answer
-            }
+            name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a }
         }))
     };
-    
-    return JSON.stringify(schema, null, 2);
 }
 
-/**
- * Add FAQ JSON-LD to page
- * @param {Array<FAQItem>} faqs - FAQ items
- * @param {string} pageUrl - Page URL
- */
 export function addFAQJsonLd(faqs, pageUrl) {
     const jsonLd = generateFAQJsonLd(faqs, pageUrl);
-    
     if (!jsonLd) return;
     
-    // Remove existing FAQ schema
-    const existing = document.querySelector('script[type="application/ld+json"][data-faq-schema]');
-    if (existing) {
-        existing.remove();
-    }
-    
-    // Add new schema
     const script = document.createElement('script');
     script.type = 'application/ld+json';
-    script.setAttribute('data-faq-schema', 'true');
-    script.textContent = jsonLd;
+    script.textContent = JSON.stringify(jsonLd);
     document.head.appendChild(script);
 }
 
-// ── FAQ Analytics ──────────────────────────────────────────────
-
-/**
- * Track FAQ interactions
- * @param {string} action - Action type: 'expand', 'collapse', 'search'
- * @param {Object} data - Additional data
- */
-export function trackFAQInteraction(action, data = {}) {
-    // Dispatch event for analytics
-    window.dispatchEvent(new CustomEvent('faq:interaction', {
-        detail: {
-            action,
-            timestamp: Date.now(),
-            ...data
-        }
-    }));
-    
-    // Google Analytics integration (if available)
+export function trackFAQInteraction(action, data) {
     if (typeof gtag === 'function') {
-        gtag('event', 'faq_interaction', {
+        gtag('event', action, {
             event_category: 'FAQ',
-            event_label: action,
+            event_label: data.question || '',
             ...data
         });
     }
 }
 
-// ── Accessibility ──────────────────────────────────────────────
-
-/**
- * Initialize FAQ accessibility features
- * @param {string} containerId - Container element ID
- */
 export function initFAQAccessibility(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    // Add keyboard navigation
-    const faqItems = container.querySelectorAll('.faq-item');
-    
-    faqItems.forEach(item => {
-        const summary = item.querySelector('summary');
-        const answer = item.querySelector('.faq-answer');
-        
-        if (!summary || !answer) return;
-        
-        // Make summary keyboard accessible
-        summary.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                summary.click();
+    container.querySelectorAll('details').forEach(details => {
+        details.addEventListener('toggle', () => {
+            const summary = details.querySelector('summary');
+            if (summary) {
+                summary.setAttribute('aria-expanded', details.open);
             }
-        });
-        
-        // Track expand/collapse
-        summary.addEventListener('click', () => {
-            const isExpanded = item.open;
-            const question = item.querySelector('.faq-question span')?.textContent || '';
-            
-            trackFAQInteraction(isExpanded ? 'collapse' : 'expand', {
-                question: question.substring(0, 50)
-            });
+            if (details.open) {
+                trackFAQInteraction('faq_open', { question: details.querySelector('summary')?.textContent || '' });
+            }
         });
     });
 }
-
-// ── Helper Functions ───────────────────────────────────────────
-
-/**
- * Escape HTML to prevent XSS
- * @param {string} str - String to escape
- * @returns {string} Escaped string
- */
-function escapeHtml(str) {
-    if (str === null || str === undefined) {
-        return '';
-    }
-    
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(String(str)));
-    return div.innerHTML;
-}
-
-// Log module initialization
-console.log('FAQ module loaded');
