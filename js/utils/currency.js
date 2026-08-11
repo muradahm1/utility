@@ -147,19 +147,6 @@ export function formatOrdinal(value) {
 // ── Financial Precision ────────────────────────────────────────
 
 /**
- * Round to specified decimal places with financial precision
- * @param {number} value - Value to round
- * @param {number} decimals - Number of decimal places (default: 2)
- * @returns {number} Rounded value
- */
-export function roundTo(value, decimals = 2) {
-    if (!isFinite(value)) return 0;
-    
-    const factor = Math.pow(10, decimals);
-    return Math.round((value + Number.EPSILON) * factor) / factor;
-}
-
-/**
  * Round up to specified decimal places
  * @param {number} value - Value to round
  * @param {number} decimals - Number of decimal places (default: 2)
@@ -361,4 +348,3 @@ export const CURRENCIES = {
 };
 
 // Log module initialization
-console.log('Currency utilities loaded');

@@ -9,7 +9,7 @@
 
 import { initializeMigration, legacyHelpers, initToolRunner, updateSeoMeta } from './core/migration.js';
 import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo } from './core/calculator-engine.js';
-import { fmt, fmtN, pct } from './utils/index.js';
+import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml } from './core/calculator-engine.js';
 
 // Expose legacy globals for backward compatibility with calculators in tools.js
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         core = await initializeMigration();
         useNewArchitecture = true;
-        console.log('Core architecture initialized');
     } catch (error) {
         console.warn('Core architecture initialization failed, using legacy mode:', error);
         useNewArchitecture = false;
@@ -88,12 +87,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (useNewArchitecture && core && core.initToolRunner) {
         const calculator = core.initToolRunner(container);
         if (calculator) {
-            console.log('Calculator initialized with new architecture');
             return;
         }
     }
 
-    console.log('Using legacy tool-runner');
     initLegacyRunner(tool, slug, container);
 });
 

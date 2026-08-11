@@ -180,5 +180,3 @@ export const tables = {
     search,
     paginate
 };
-
-console.log('Modules barrel export loaded');

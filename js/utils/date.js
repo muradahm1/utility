@@ -528,4 +528,3 @@ export function getDaysInMonthForYear(year, month) {
 }
 
 // Log module initialization
-console.log('Date utilities loaded');

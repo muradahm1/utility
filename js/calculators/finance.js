@@ -156,6 +156,3 @@ export function registerFinanceCalculators(registerTool) {
         registerTool(calculator.id, calculator);
     });
 }
-
-console.log('Finance calculators module loaded');
-console.log(`  - ${financeCalculators.length} calculators available`);

@@ -107,5 +107,4 @@ const NEW_TOOLS = {
 if (typeof window !== 'undefined') {
     // Merge with existing tools
     window.TOOLS = { ...window.TOOLS, ...NEW_TOOLS };
-    console.log(`✓ Loaded ${Object.keys(NEW_TOOLS).length} new tools from template`);
 }

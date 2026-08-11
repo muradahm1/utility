@@ -85,7 +85,6 @@ export function registerCategoryTools(calculators, category) {
         }
     });
     
-    console.log(`✓ Registered ${registered} ${category} tools (${failed} failed)`);
     return { registered, failed };
 }
 
@@ -226,7 +225,6 @@ export function getRecentTools(limit = 6) {
 export function removeTool(slug) {
     if (TOOLS[slug]) {
         delete TOOLS[slug];
-        console.log(`✓ Removed tool: ${slug}`);
         return true;
     }
     return false;
@@ -245,7 +243,6 @@ export function updateTool(slug, updates) {
     }
     
     TOOLS[slug] = { ...TOOLS[slug], ...updates };
-    console.log(`✓ Updated tool: ${slug}`);
     return true;
 }
 
@@ -318,7 +315,6 @@ export function initToolManager() {
         });
         
         managerState.legacyToolsLoaded = true;
-        console.log(`✓ Tool Manager: Loaded ${registered} legacy tools`);
     }
     
     managerState.initialized = true;
@@ -373,7 +369,3 @@ function getManagerAPI() {
 if (typeof window !== 'undefined') {
     window.ToolManager = initToolManager();
 }
-
-console.log('Tool Manager initialized');
-console.log(`  - Total tools: ${getToolCount()}`);
-console.log(`  - Categories: ${getCategories().join(', ')}`);

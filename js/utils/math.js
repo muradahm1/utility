@@ -806,4 +806,3 @@ export const ROUNDING = {
 };
 
 // Log module initialization
-console.log('Math utilities loaded');

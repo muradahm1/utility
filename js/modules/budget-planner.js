@@ -662,5 +662,3 @@ if (typeof window !== 'undefined') {
         renderBudgetPlanner(container);
     };
 }
-
-console.log('Budget Planner module loaded');

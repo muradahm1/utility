@@ -60,24 +60,10 @@ export const TOOLS_LEGACY = coreTOOLS;
  * This function registers all tools and sets up the legacy global
  */
 export function initializeCore() {
-    console.log('═══════════════════════════════════════════');
-    console.log('  GetCalcu Core Architecture v1.0');
-    console.log('═══════════════════════════════════════════');
-    
-    // Log registry stats
-    console.log('✓ Tools Registry: Loaded');
-    console.log('  - Total tools:', Object.keys(coreTOOLS).length);
-    
-    // Log categories
     const categories = new Set();
     Object.values(coreTOOLS).forEach(tool => {
         if (tool.category) categories.add(tool.category);
     });
-    console.log('  - Categories:', Array.from(categories).sort().join(', '));
-    
-    console.log('✓ Router: Initialized');
-    console.log('✓ Calculator Engine: Ready');
-    console.log('═══════════════════════════════════════════');
     
     return {
         tools: coreTOOLS,
@@ -109,5 +95,3 @@ if (typeof window !== 'undefined') {
         window.TOOLS = coreTOOLS;
     }
 }
-
-console.log('Core module index loaded');

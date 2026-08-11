@@ -70,6 +70,3 @@ export function registerHealthCalculators(registerTool) {
         registerTool(calculator.id, calculator);
     });
 }
-
-console.log('Health calculators module loaded');
-console.log(`  - ${healthCalculators.length} calculators available`);

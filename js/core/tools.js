@@ -55,8 +55,6 @@ export function registerTool(slug, toolDefinition) {
     
     // Register the tool
     TOOLS[slug] = toolDefinition;
-    
-    console.log(`✓ Registered tool: ${slug} (${toolDefinition.name})`);
     return true;
 }
 
@@ -68,7 +66,6 @@ export function registerTool(slug, toolDefinition) {
 export function unregisterTool(slug) {
     if (TOOLS[slug]) {
         delete TOOLS[slug];
-        console.log(`✓ Unregistered tool: ${slug}`);
         return true;
     }
     return false;
@@ -470,8 +467,3 @@ export function getRegistryStats() {
 export function getLegacyTools() {
     return TOOLS;
 }
-
-// Log registry stats on load
-console.log('Core Tools Registry initialized');
-console.log('Total tools:', getToolCount());
-console.log('Categories:', getCategories().join(', '));

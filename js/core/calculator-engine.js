@@ -1080,5 +1080,3 @@ export function getEngineStats() {
 }
 
 // Log engine initialization
-console.log('Calculator Engine initialized');
-console.log('Global settings:', engineState.globalSettings);

@@ -558,5 +558,3 @@ export function updateUrl(updates = {}) {
 }
 
 // Log router initialization
-console.log('Core Router initialized');
-console.log('Current slug:', routerState.currentSlug);

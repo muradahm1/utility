@@ -14,8 +14,6 @@ import { initializeCalculator, escapeHtml, safeNum, safeStr, roundTo, formatCurr
 // Import category calculator modules
 import { registerFinanceCalculators, financeCalculators } from '../calculators/finance.js';
 import { registerHealthCalculators, healthCalculators } from '../calculators/health.js';
-import { registerConstructionCalculators, constructionCalculators } from '../calculators/construction.js';
-import { registerEngineeringCalculators, engineeringCalculators } from '../calculators/engineering.js';
 
 // ── Legacy Compatibility ─────────────────────────────────────
 
@@ -93,7 +91,6 @@ export function registerLegacyTools() {
         }
     });
     
-    console.log(`✓ Registered ${registered} tools (${failed} failed)`);
     return { registered, failed };
 }
 
@@ -330,18 +327,11 @@ export function addSchemaMarkup(tool, pageUrl) {
  * Call this once to set up backward compatibility
  */
 export function initializeMigration() {
-    console.log('═══════════════════════════════════════════');
-    console.log('  Migration Layer Initialized');
-    console.log('═══════════════════════════════════════════');
-    
-    // Register all legacy tools
     registerLegacyTools();
     
     // Register category-specific calculators
     registerFinanceCalculators(registerTool);
     registerHealthCalculators(registerTool);
-    registerConstructionCalculators(registerTool);
-    registerEngineeringCalculators(registerTool);
     
     // Initialize router
     const router = initRouter();
@@ -368,11 +358,6 @@ export function initializeMigration() {
         window.CORE.registerLegacyTools = registerLegacyTools;
     }
     
-    console.log('✓ Legacy helpers exported to window');
-    console.log('✓ Router initialized');
-    console.log('✓ Migration layer ready');
-    console.log('═══════════════════════════════════════════');
-    
     return {
         helpers: legacyHelpers,
         router,
@@ -393,5 +378,3 @@ if (typeof window !== 'undefined') {
         initializeMigration();
     }
 }
-
-console.log('Migration adapter loaded');

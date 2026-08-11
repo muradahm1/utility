@@ -196,7 +196,3 @@ export const math = {
 };
 
 // Log module initialization
-console.log('Utils module index loaded');
-console.log('  - Currency utilities: Available');
-console.log('  - Date utilities: Available');
-console.log('  - Math utilities: Available');
