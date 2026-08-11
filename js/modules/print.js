@@ -15,8 +15,6 @@ export function printResults(options = {}) {
     cleanupAfterPrint();
 }
 
-import { escapeHtml } from '../utils/index.js';
-
 export function createPrintContent(tool, result) {
     if (!tool || !result) return '';
     

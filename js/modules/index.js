@@ -71,14 +71,13 @@ export {
     getRelatedTools,
     getRecommendations,
     buildRelatedToolsHtml,
-    buildRecommendationsHtml,
     buildCategoryNavHtml
 } from './related-tools.js';
 
 export {
     getPersonalizedRecommendations,
     generateInsights,
-    buildRecommendationsHtml,
+    buildRecommendationsHtml as buildRecommendationsHtmlFromRec,
     buildInsightsHtml
 } from './recommendations.js';
 
