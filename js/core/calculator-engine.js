@@ -10,8 +10,483 @@
 import { getTool, toolExists } from './tools.js';
 import { escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo } from '../utils/index.js';
 import { ChartManager } from '../modules/charts.js';
+import { validateNumber, validateRequired, validateInteger, validatePercentage } from '../modules/validation.js';
 
 export { escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo };
+
+// ═══════════════════════════════════════════════════════════════
+// CalculatorEngine — Pure Calculation Infrastructure
+// 
+// Separates INPUTS → NORMALIZE → VALIDATE → CALCULATE → RESULT
+// Contains NO DOM manipulation, NO rendering, NO charts, NO PDF.
+// 
+// @module core/calculator-engine
+// ═══════════════════════════════════════════════════════════════
+
+const ENGINE_VERSION = '1.0.0';
+
+// ── Input Normalization ─────────────────────────────────────────
+const INPUT_TYPES = {
+    number: (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const num = Number(String(v).replace(/[$,%\s]/g, ''));
+        return isFinite(num) ? num : null;
+    },
+    currency: (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const num = Number(String(v).replace(/[$,%\s]/g, ''));
+        return isFinite(num) ? num : null;
+    },
+    percentage: (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const num = Number(String(v).replace(/[%\s]/g, ''));
+        return isFinite(num) ? num / 100 : null;
+    },
+    integer: (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const num = Math.round(Number(String(v).replace(/[$,%\s]/g, '')));
+        return isFinite(num) ? num : null;
+    },
+    decimal: (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const num = Number(String(v).replace(/[$,%\s]/g, ''));
+        return isFinite(num) ? num : null;
+    },
+    date: (v) => {
+        if (v === null || v === undefined || v === '') return null;
+        const d = new Date(v);
+        return isNaN(d.getTime()) ? null : d;
+    },
+    boolean: (v) => {
+        if (v === null || v === undefined) return false;
+        if (typeof v === 'boolean') return v;
+        return v === 'true' || v === '1' || v === 'yes';
+    },
+    select: (v) => v === null || v === undefined ? null : String(v),
+    text: (v) => v === null || v === undefined ? '' : String(v).trim()
+};
+
+/**
+ * Normalize raw inputs based on field definitions
+ * @param {Array} fields - Calculator field definitions
+ * @param {Object} rawInputs - Raw input values
+ * @returns {Object} Normalized inputs
+ */
+export function normalizeInputs(fields, rawInputs) {
+    const normalized = {};
+    
+    fields.forEach(field => {
+        const raw = rawInputs[field.id];
+        const type = field.type || 'number';
+        const normalizer = INPUT_TYPES[type] || INPUT_TYPES.number;
+        
+        let value = normalizer(raw);
+        
+        // Apply default if value is null
+        if (value === null && field.default !== undefined) {
+            value = typeof field.default === 'function' ? field.default() : field.default;
+        }
+        
+        normalized[field.id] = value;
+    });
+    
+    return normalized;
+}
+
+// ── Validation Integration ──────────────────────────────────────
+/**
+ * Validate inputs against field constraints
+ * @param {Array} fields - Calculator field definitions
+ * @param {Object} inputs - Normalized inputs
+ * @returns {Object} { isValid, errors }
+ */
+export function validateInputs(fields, inputs) {
+    const errors = [];
+    
+    fields.forEach(field => {
+        if (field.type === 'section' || field.type === 'select' || field.type === 'boolean') return;
+        
+        const value = inputs[field.id];
+        const label = field.label || field.id;
+        
+        // Required check
+        if (field.required && (value === null || value === undefined || value === '')) {
+            errors.push({
+                field: field.id,
+                code: 'REQUIRED',
+                message: `${label} is required`
+            });
+            return;
+        }
+        
+        // Skip further validation if value is null/undefined and not required
+        if (value === null || value === undefined || value === '') return;
+        
+        // Number validation
+        if (field.type === 'number' || field.type === 'currency' || field.type === 'decimal') {
+            const num = Number(value);
+            if (isNaN(num)) {
+                errors.push({
+                    field: field.id,
+                    code: 'INVALID_NUMBER',
+                    message: `${label} must be a valid number`
+                });
+                return;
+            }
+            
+            if (field.min !== undefined && num < field.min) {
+                errors.push({
+                    field: field.id,
+                    code: 'MIN_VALUE',
+                    message: `${label} must be at least ${field.min}`
+                });
+            }
+            
+            if (field.max !== undefined && num > field.max) {
+                errors.push({
+                    field: field.id,
+                    code: 'MAX_VALUE',
+                    message: `${label} must be at most ${field.max}`
+                });
+            }
+        }
+        
+        // Integer validation
+        if (field.type === 'integer') {
+            const num = Number(value);
+            if (!Number.isInteger(num)) {
+                errors.push({
+                    field: field.id,
+                    code: 'INVALID_INTEGER',
+                    message: `${label} must be a whole number`
+                });
+            }
+        }
+        
+        // Percentage validation
+        if (field.type === 'percentage') {
+            const num = Number(value);
+            if (num < 0 || num > 1) {
+                errors.push({
+                    field: field.id,
+                    code: 'INVALID_PERCENTAGE',
+                    message: `${label} must be between 0% and 100%`
+                });
+            }
+        }
+    });
+    
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+}
+
+// ── Result Helpers ──────────────────────────────────────────────
+/**
+ * Create an empty result template
+ * @param {string} calculatorId - Calculator ID
+ * @returns {Object} Empty result
+ */
+export function createResult(calculatorId) {
+    return {
+        success: true,
+        inputs: {},
+        results: {},
+        metrics: {},
+        breakdown: {},
+        timeline: [],
+        comparison: {},
+        warnings: [],
+        errors: [],
+        metadata: {
+            calculatorId,
+            version: ENGINE_VERSION,
+            timestamp: new Date().toISOString()
+        }
+    };
+}
+
+/**
+ * Add an error to a result
+ * @param {Object} result - Result object
+ * @param {string} field - Field name
+ * @param {string} code - Error code
+ * @param {string} message - Error message
+ */
+export function addError(result, field, code, message) {
+    result.success = false;
+    result.errors.push({ field, code, message });
+}
+
+/**
+ * Add a warning to a result
+ * @param {Object} result - Result object
+ * @param {string} message - Warning message
+ */
+export function addWarning(result, message) {
+    result.warnings.push(message);
+}
+
+// ── Precision Helpers ───────────────────────────────────────────
+/**
+ * Round a number to specified decimal places
+ * @param {number} value - Value to round
+ * @param {number} decimals - Decimal places
+ * @returns {number} Rounded value
+ */
+export function round(value, decimals = 2) {
+    if (!isFinite(value)) return 0;
+    const factor = Math.pow(10, decimals);
+    return Math.round((value + Number.EPSILON) * factor) / factor;
+}
+
+// ── Financial Math Primitives ───────────────────────────────────
+/**
+ * Calculate loan payment (PMT)
+ * @param {Object} config - Loan config
+ * @param {number} config.principal - Loan amount
+ * @param {number} config.annualRate - Annual interest rate (decimal, e.g. 0.07)
+ * @param {number} config.termYears - Loan term in years
+ * @param {number} [config.paymentsPerYear=12] - Payments per year
+ * @returns {number} Monthly payment
+ */
+export function loanPayment({ principal, annualRate, termYears, paymentsPerYear = 12 }) {
+    const p = safeNum(principal, 0);
+    const r = safeNum(annualRate, 0) / paymentsPerYear;
+    const n = Math.round(safeNum(termYears, 0)) * paymentsPerYear;
+    
+    if (p <= 0 || n <= 0) return 0;
+    if (r === 0) return p / n;
+    
+    return p * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+}
+
+/**
+ * Generate amortization schedule
+ * @param {Object} config - Amortization config
+ * @param {number} config.principal - Loan amount
+ * @param {number} config.annualRate - Annual interest rate (decimal)
+ * @param {number} config.termYears - Loan term in years
+ * @param {number} [config.paymentsPerYear=12] - Payments per year
+ * @param {number} [config.payment] - Fixed payment (optional, defaults to PMT)
+ * @returns {Array} Amortization schedule
+ */
+export function amortization({ principal, annualRate, termYears, paymentsPerYear = 12, payment }) {
+    const p = safeNum(principal, 0);
+    const r = safeNum(annualRate, 0) / paymentsPerYear;
+    const n = Math.round(safeNum(termYears, 0)) * paymentsPerYear;
+    const pmt = payment !== undefined ? safeNum(payment, 0) : loanPayment({ principal: p, annualRate, termYears, paymentsPerYear });
+    
+    const schedule = [];
+    let balance = p;
+    let cumulativePrincipal = 0;
+    let cumulativeInterest = 0;
+    
+    for (let i = 1; i <= n; i++) {
+        const interest = balance * r;
+        let principalPaid = pmt - interest;
+        
+        if (principalPaid > balance) principalPaid = balance;
+        
+        balance = Math.max(0, balance - principalPaid);
+        cumulativePrincipal += principalPaid;
+        cumulativeInterest += interest;
+        
+        schedule.push({
+            paymentNumber: i,
+            payment: round(pmt, 2),
+            principal: round(principalPaid, 2),
+            interest: round(interest, 2),
+            balance: round(balance, 2),
+            cumulativePrincipal: round(cumulativePrincipal, 2),
+            cumulativeInterest: round(cumulativeInterest, 2)
+        });
+        
+        if (balance <= 0 && i < n) break;
+    }
+    
+    // Fix final payment
+    if (schedule.length > 0) {
+        const last = schedule[schedule.length - 1];
+        last.balance = 0;
+        last.payment = round(last.principal + last.interest, 2);
+    }
+    
+    return schedule;
+}
+
+/**
+ * Calculate compound interest growth
+ * @param {Object} config - Compound interest config
+ * @param {number} config.principal - Initial amount
+ * @param {number} config.annualRate - Annual rate (decimal)
+ * @param {number} config.years - Number of years
+ * @param {number} [config.compoundsPerYear=12] - Compounding frequency
+ * @param {number} [config.monthlyContribution=0] - Monthly contribution
+ * @returns {Object} Growth data
+ */
+export function compoundInterest({ principal, annualRate, years, compoundsPerYear = 12, monthlyContribution = 0 }) {
+    const p = safeNum(principal, 0);
+    const r = safeNum(annualRate, 0);
+    const y = safeNum(years, 0);
+    const cpy = Math.max(1, Math.round(safeNum(compoundsPerYear, 12)));
+    const mc = safeNum(monthlyContribution, 0);
+    
+    const timeline = [];
+    let balance = p;
+    let totalContributions = p;
+    let totalGrowth = 0;
+    
+    for (let year = 1; year <= y; year++) {
+        // Monthly compounding with contributions
+        for (let m = 0; m < cpy; m++) {
+            const monthlyRate = r / cpy;
+            balance = balance * (1 + monthlyRate) + mc;
+            totalContributions += mc;
+        }
+        
+        totalGrowth = balance - totalContributions;
+        
+        timeline.push({
+            year,
+            value: round(balance, 2),
+            contributions: round(totalContributions, 2),
+            growth: round(totalGrowth, 2)
+        });
+    }
+    
+    return {
+        finalValue: round(balance, 2),
+        totalContributions: round(totalContributions, 2),
+        totalGrowth: round(totalGrowth, 2),
+        timeline
+    };
+}
+
+/**
+ * Calculate break-even point
+ * @param {Object} config - Break-even config
+ * @param {Array} config.scenarios - Array of scenario cost functions
+ * @returns {Object} Break-even analysis
+ */
+export function breakEven({ scenarios }) {
+    if (!Array.isArray(scenarios) || scenarios.length < 2) {
+        return { breakEvenPoint: null, comparison: {} };
+    }
+    
+    const comparison = {};
+    const maxYears = 30;
+    
+    // Calculate cumulative costs for each scenario
+    scenarios.forEach((scenario, i) => {
+        const key = `scenario${i + 1}`;
+        comparison[key] = {
+            name: scenario.name || `Scenario ${i + 1}`,
+            cumulative: []
+        };
+        
+        let cumulative = 0;
+        for (let year = 1; year <= maxYears; year++) {
+            cumulative += scenario.annualCost(year);
+            comparison[key].cumulative.push({
+                year,
+                cumulativeCost: round(cumulative, 2)
+            });
+        }
+    });
+    
+    // Find break-even year
+    let breakEvenPoint = null;
+    const a = comparison.scenario1?.cumulative || [];
+    const b = comparison.scenario2?.cumulative || [];
+    
+    for (let i = 0; i < Math.min(a.length, b.length); i++) {
+        if (a[i].cumulativeCost <= b[i].cumulativeCost) {
+            breakEvenPoint = a[i].year;
+            break;
+        }
+    }
+    
+    return { breakEvenPoint, comparison };
+}
+
+// ── Main Engine Pipeline ────────────────────────────────────────
+/**
+ * Run a calculator through the engine pipeline
+ * @param {Object} calculator - Calculator definition
+ * @param {Object} rawInputs - Raw input values
+ * @param {Object} [context] - Additional context
+ * @returns {Object} Structured result
+ */
+export function runCalculator(calculator, rawInputs, context = {}) {
+    const result = createResult(calculator.id || calculator.slug);
+    
+    // 1. Normalize inputs
+    const inputs = normalizeInputs(calculator.fields || [], rawInputs);
+    result.inputs = inputs;
+    
+    // 2. Validate inputs
+    const validation = validateInputs(calculator.fields || [], inputs);
+    if (!validation.isValid) {
+        result.success = false;
+        result.errors = validation.errors;
+        return result;
+    }
+    
+    // 3. Calculate
+    try {
+        const calcResult = calculator.calculate(inputs, context);
+        
+        // Merge calculation result into structured result
+        if (calcResult && typeof calcResult === 'object') {
+            Object.assign(result.results, calcResult.results || {});
+            Object.assign(result.metrics, calcResult.metrics || {});
+            Object.assign(result.breakdown, calcResult.breakdown || {});
+            
+            if (calcResult.timeline) result.timeline = calcResult.timeline;
+            if (calcResult.comparison) result.comparison = calcResult.comparison;
+            if (calcResult.warnings) result.warnings = result.warnings.concat(calcResult.warnings);
+            
+            // Preserve legacy result fields for backward compatibility
+            if (calcResult.stats) result.stats = calcResult.stats;
+            if (calcResult.chart) result.chart = calcResult.chart;
+            if (calcResult.chart2) result.chart2 = calcResult.chart2;
+            if (calcResult.compareChart) result.compareChart = calcResult.compareChart;
+            if (calcResult.chart3) result.chart3 = calcResult.chart3;
+            if (calcResult.table) result.table = calcResult.table;
+            if (calcResult.insight) result.insight = calcResult.insight;
+            if (calcResult.recommendation) result.recommendation = calcResult.recommendation;
+            if (calcResult.summary) result.summary = calcResult.summary;
+            if (calcResult.bmiGauge) result.bmiGauge = calcResult.bmiGauge;
+            if (calcResult.bars) result.bars = calcResult.bars;
+            if (calcResult.insights) result.insights = calcResult.insights;
+            if (calcResult.journey) result.journey = calcResult.journey;
+        }
+    } catch (error) {
+        console.error(`[CalculatorEngine] Calculation error for "${calculator.id}":`, error);
+        addError(result, 'general', 'CALCULATION_ERROR', 'An error occurred during calculation');
+    }
+    
+    return result;
+}
+
+// ── Backward Compatibility ──────────────────────────────────────
+// Export the engine as a namespace for easy access
+export const CalculatorEngine = {
+    run: runCalculator,
+    normalizeInputs,
+    validateInputs,
+    createResult,
+    addError,
+    addWarning,
+    round,
+    loanPayment,
+    amortization,
+    compoundInterest,
+    breakEven,
+    version: ENGINE_VERSION
+};
 
 // ── Engine State ───────────────────────────────────────────────
 
