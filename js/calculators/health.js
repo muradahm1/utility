@@ -10,6 +10,13 @@ import { safeNum, safeStr, roundTo } from '../utils/index.js';
 import { escapeHtml } from '../utils/index.js';
 
 const errorResult = (message) => ({ error: true, stats: [{ label: 'Error', value: message, warn: true }] });
+const bmiCategory = (bmi) => {
+    if (!isFinite(bmi)) return { label: '—', color: '#64748B' };
+    if (bmi < 18.5) return { label: 'Underweight', color: '#3B82F6' };
+    if (bmi < 25) return { label: 'Normal Weight', color: '#10B981' };
+    if (bmi < 30) return { label: 'Overweight', color: '#F59E0B' };
+    return { label: 'Obese', color: '#EF4444' };
+};
 
 // ── BMI Calculator ─────────────────────────────────────────────
 
