@@ -9,6 +9,7 @@
 
 import { getTool, toolExists } from './tools.js';
 import { escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo } from '../utils/index.js';
+import { ChartManager } from '../modules/charts.js';
 
 export { escapeHtml, formatCurrency, formatNumber, safeNum, safeStr, roundTo };
 
@@ -104,6 +105,13 @@ export function initializeCalculator(slug, container, options = {}) {
 export function destroyCalculator(instanceId) {
     const instance = engineState.activeCalculators.get(instanceId);
     if (instance) {
+        // Destroy any charts associated with this calculator
+        if (instance.container) {
+            const canvases = instance.container.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                if (canvas.id) ChartManager.destroy(canvas.id);
+            });
+        }
         // Cleanup
         if (instance.container) {
             instance.container.innerHTML = '';
@@ -945,99 +953,54 @@ export function renderCharts(calculator, result) {
 }
 
 /**
- * Create Chart.js instance
+ * Create Chart.js instance via ChartManager
  * @param {HTMLCanvasElement} canvas - Canvas element
  * @param {Object} chartData - Chart configuration
- * @returns {Chart} Chart instance
+ * @returns {Object|null} Chart instance
  */
 export function createChart(canvas, chartData) {
-    const type = chartData.type || 'doughnut';
-    const ctx = canvas.getContext('2d');
+    if (!canvas) return null;
+    const id = canvas.id || `chart-${Date.now()}`;
+    if (!canvas.id) canvas.id = id;
     
-    // Doughnut chart
+    const type = chartData.type || 'doughnut';
+    const isHBar = type === 'horizontalBar';
+    const normalizedType = isHBar ? 'bar' : type;
+    
+    // Build datasets for ChartManager
+    let datasets;
     if (type === 'doughnut' || !type) {
-        return new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: chartData.labels || ['Principal', 'Total Interest'],
-                datasets: [{
-                    data: chartData.data || [chartData.principal, chartData.totalInterest],
-                    backgroundColor: chartData.colors || ['#6366F1', '#F59E0B'],
-                    borderWidth: 2,
-                    borderColor: 'var(--bg-card)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: chartData.cutout || '62%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            boxWidth: 8,
-                            padding: 14,
-                            color: 'var(--text-secondary)'
-                        }
-                    }
-                }
-            }
-        });
+        datasets = [{
+            data: chartData.data || [chartData.principal, chartData.totalInterest],
+            colors: chartData.colors || ['#6366F1', '#F59E0B'],
+            backgroundColor: chartData.colors || ['#6366F1', '#F59E0B']
+        }];
+    } else {
+        datasets = (chartData.datasets || []).map(ds => ({
+            label: ds.label,
+            data: ds.data,
+            color: ds.color || '#6366F1',
+            backgroundColor: ds.backgroundColor,
+            fill: ds.fill,
+            format: ds.format
+        }));
     }
     
-    // Line/Bar chart
-    const datasets = (chartData.datasets || []).map(ds => ({
-        label: ds.label,
-        data: ds.data,
-        borderColor: ds.color || '#6366F1',
-        backgroundColor: ds.color || '#6366F1',
-        tension: 0.25,
-        pointRadius: type === 'line' ? 3 : 0,
-        pointHoverRadius: type === 'line' ? 5 : 0,
-        fill: ds.fill || false,
-        borderWidth: type === 'line' ? 2.5 : 1,
-        borderRadius: type === 'bar' ? 6 : 0,
-        borderSkipped: false
-    }));
-    
-    return new Chart(ctx, {
-        type: type === 'horizontalBar' ? 'bar' : type,
+    // Create chart via ChartManager
+    const instance = ChartManager.create({
+        id,
+        type: normalizedType,
+        container: canvas.parentElement || canvas,
         data: {
             labels: chartData.labels || [],
             datasets
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: type === 'horizontalBar' ? 'y' : undefined,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        boxWidth: 8,
-                        padding: 16,
-                        color: 'var(--text-secondary)'
-                    }
-                }
-            },
-            scales: type === 'line' || type === 'bar' ? {
-                x: {
-                    ticks: { color: 'var(--text-secondary)', font: { size: 11 } },
-                    grid: { display: false }
-                },
-                y: {
-                    ticks: {
-                        color: 'var(--text-secondary)',
-                        font: { size: 11 },
-                        callback: v => '$' + Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
-                    },
-                    grid: { color: 'var(--border-color)' }
-                }
-            } : undefined
-        }
+        format: chartData.format || 'currency',
+        cutout: chartData.cutout,
+        options: isHBar ? { indexAxis: 'y' } : undefined
     });
+    
+    return instance ? instance.chart : null;
 }
 
 // ── Utility Functions ──────────────────────────────────────────

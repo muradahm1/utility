@@ -6,11 +6,11 @@
  * 
  * @module tool-runner
  */
-
 import { initializeMigration, legacyHelpers, initToolRunner, updateSeoMeta } from './core/migration.js';
 import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo } from './core/calculator-engine.js';
 import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml } from './core/calculator-engine.js';
+import { ChartManager } from './modules/charts.js';
 
 // Expose legacy globals for backward compatibility with calculators in tools.js
 window.esc = escapeHtml;
@@ -487,54 +487,47 @@ function initLegacyRunner(tool, slug, container) {
         return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Your Next Step</h2><div class="tools-grid">${items}</div></div>`;
     }
 
-    let chartInstances = {};
     function renderChart(chartData, canvasId) {
         const id = canvasId || 'result-chart';
         const canvas = document.getElementById(id);
         if (!canvas) return;
-        if (chartInstances[id]) chartInstances[id].destroy();
-        if (typeof Chart === 'undefined') return;
-
+        
+        // Map legacy chart data to ChartManager format
         const type = chartData.type || 'doughnut';
-        const isLine = type === 'line';
-        const isBar = type === 'bar';
         const isHBar = type === 'horizontalBar';
-        const isDoughnut = !type || type === 'doughnut';
-
-        if (isDoughnut) {
-            const labels = chartData.labels || ['Principal', 'Total Interest'];
-            const data = chartData.data || [chartData.principal, chartData.totalInterest];
-            const colors = chartData.colors || ['#6366F1', '#F59E0B'];
-            chartInstances[id] = new Chart(canvas.getContext('2d'), {
-                type: 'doughnut',
-                data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: 'var(--bg-card)' }] },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: chartData.cutout || '62%',
-                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 14, color: 'var(--text-secondary)' } } }
-                }
-            });
-            return;
+        const normalizedType = isHBar ? 'bar' : type;
+        
+        // Build datasets for ChartManager
+        let datasets;
+        if (type === 'doughnut' || !type) {
+            datasets = [{
+                data: chartData.data || [chartData.principal, chartData.totalInterest],
+                colors: chartData.colors || ['#6366F1', '#F59E0B'],
+                backgroundColor: chartData.colors || ['#6366F1', '#F59E0B']
+            }];
+        } else {
+            datasets = (chartData.datasets || []).map(ds => ({
+                label: ds.label,
+                data: ds.data,
+                color: ds.color || '#6366F1',
+                backgroundColor: ds.backgroundColor,
+                fill: ds.fill,
+                format: ds.format
+            }));
         }
-
-        const datasets = (chartData.datasets || []).map(ds => {
-            const base = { label: ds.label, data: ds.data, borderColor: ds.color || '#6366F1', backgroundColor: ds.color || '#6366F1', tension: 0.25, pointRadius: isLine ? 3 : 0, pointHoverRadius: isLine ? 5 : 0, fill: ds.fill || false, borderWidth: isLine ? 2.5 : 1, borderRadius: isBar || isHBar ? 6 : 0, borderSkipped: false };
-            if (isBar) { base.backgroundColor = chartData.datasets[0].data.map((_, i) => ['#6366F1', '#10B981', '#F59E0B', '#EF4444'][i % 4]); base.borderColor = base.backgroundColor; }
-            if (isHBar) { base.backgroundColor = ds.colors || chartData.colors || ['#10B981', '#EF4444']; base.borderColor = base.backgroundColor; base.borderRadius = 8; }
-            return base;
-        });
-
-        chartInstances[id] = new Chart(canvas.getContext('2d'), {
-            type: isHBar ? 'bar' : type,
-            data: { labels: chartData.labels || [], datasets },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                indexAxis: isHBar ? 'y' : undefined,
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 16, color: 'var(--text-secondary)' } } },
-                scales: isLine || isBar ? {
-                    x: { ticks: { color: 'var(--text-secondary)', font: { size: 11 } }, grid: { display: false } },
-                    y: { ticks: { color: 'var(--text-secondary)', font: { size: 11 }, callback: v => '$' + Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }) }, grid: { color: 'var(--border-color)' } }
-                } : undefined
-            }
+        
+        // Create chart via ChartManager
+        ChartManager.create({
+            id,
+            type: normalizedType,
+            container: canvas.parentElement || canvas,
+            data: {
+                labels: chartData.labels || [],
+                datasets
+            },
+            format: chartData.format || 'currency',
+            cutout: chartData.cutout,
+            options: isHBar ? { indexAxis: 'y' } : undefined
         });
     }
 
