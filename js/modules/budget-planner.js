@@ -657,6 +657,28 @@ export function initBudgetPlanner(container) {
     renderBudgetPlanner(container);
 }
 
+const budgetPlannerTool = {
+    id: 'budget-planner',
+    name: 'Budget Planner & Expense Tracker',
+    category: 'Finance',
+    icon: 'fa-wallet',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.',
+    metaDescription: 'Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.',
+    fields: [],
+    calculate() {
+        return { stats: [{ label: 'Use the interactive planner below', value: '' }] };
+    },
+    customRenderer: (container) => renderBudgetPlanner(container),
+};
+
+export function registerBudgetPlanner(registerTool) {
+    if (typeof registerTool === 'function') {
+        registerTool('budget-planner', budgetPlannerTool);
+    }
+}
+
 if (typeof window !== 'undefined') {
     window.renderBudgetPlannerModule = (container) => {
         renderBudgetPlanner(container);

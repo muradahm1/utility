@@ -10,10 +10,10 @@
 import { TOOLS as coreTOOLS, registerTool, getTool, toolExists } from './tools.js';
 import { parseCurrentUrl, resolveToolFromUrl, handleRoute, initRouter } from './router.js';
 import { initializeCalculator, escapeHtml, safeNum, safeStr, roundTo, formatCurrency } from './calculator-engine.js';
+import { registerBudgetPlanner } from '../modules/budget-planner.js';
 
-// Import category calculator modules
-import { registerFinanceCalculators, financeCalculators } from '../calculators/finance.js';
-import { registerHealthCalculators, healthCalculators } from '../calculators/health.js';
+// Note: Legacy calculator modules (finance.js, health.js) are reserved for future migration
+// but are not currently loaded because legacy tools.js already contains richer definitions.
 
 // ── Legacy Compatibility ─────────────────────────────────────
 
@@ -337,10 +337,10 @@ export function initializeMigration() {
     
     registerLegacyTools();
     
-    // Register category-specific calculators (only if not already registered)
-    // Pass toolExists to preserve richer legacy tool definitions
-    registerFinanceCalculators(registerTool, toolExists);
-    registerHealthCalculators(registerTool, toolExists);
+    // Register custom renderers (only if not already registered)
+    if (!toolExists('budget-planner')) {
+        registerBudgetPlanner(registerTool);
+    }
     
     // Initialize router
     const router = initRouter();
@@ -386,12 +386,4 @@ function getMigrationAPI() {
     };
 }
 
-// Auto-initialize when loaded
-if (typeof window !== 'undefined') {
-    // Wait for DOM to be ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeMigration);
-    } else {
-        initializeMigration();
-    }
-}
+// Note: Auto-initialization removed — tool-runner.js is the single entry point.

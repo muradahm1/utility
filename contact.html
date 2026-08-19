@@ -127,7 +127,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="header-actions">
                     <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
                     <div id="auth-header-slot">
-                        <a href="/auth.html" class="btn btn-primary btn-pill">Sign in</a>
+                        <a href="/auth" class="btn btn-primary btn-pill">Sign in</a>
                     </div>
                 </div>
             </header>
@@ -226,11 +226,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                     <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
                     <nav class="footer-links" aria-label="Footer navigation">
-                        <a href="/about.html">About</a>
-                        <a href="/contact.html">Contact</a>
-                        <a href="/privacy.html">Privacy Policy</a>
-                        <a href="/terms.html">Terms of Service</a>
-                        <a href="/cookie-policy.html">Cookie Policy</a>
+                        <a href="/about">About</a>
+                        <a href="/contact">Contact</a>
+                        <a href="/privacy">Privacy Policy</a>
+                        <a href="/terms">Terms of Service</a>
+                        <a href="/cookie-policy">Cookie Policy</a>
                     </nav>
                     <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
                 </div>
@@ -244,7 +244,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="cookie-consent-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
         <p class="cookie-consent-text">
             <i class="fa-solid fa-cookie-bite" style="color: var(--primary-color); margin-right: 6px;"></i>
-            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy.html">Cookie Policy</a>.
+            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy">Cookie Policy</a>.
         </p>
         <div class="cookie-consent-actions">
             <button class="btn btn-outline btn-sm" id="cookie-essential-btn">Essential Only</button>
@@ -260,10 +260,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
     <script>
-        emailjs.init('saxm-p4xUpvicaPwp'); // e.g. 'user_aBcDeFgHiJkLmNoP'
+        if (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.EMAILJS_PUBLIC_KEY) {
+            emailjs.init(APP_CONFIG.EMAILJS_PUBLIC_KEY);
+        }
 
-        const EMAILJS_SERVICE_ID  = 'service_xpcm9ik';  // e.g. 'service_abc123'
-        const EMAILJS_TEMPLATE_ID = 'template_98ki4vp'; // e.g. 'template_xyz789'
+        const EMAILJS_SERVICE_ID  = APP_CONFIG?.EMAILJS_SERVICE_ID || 'service_xpcm9ik';
+        const EMAILJS_TEMPLATE_ID = APP_CONFIG?.EMAILJS_TEMPLATE_ID || 'template_98ki4vp';
 
         const form = document.getElementById('contact-form');
         const responseEl = document.getElementById('contact-response');

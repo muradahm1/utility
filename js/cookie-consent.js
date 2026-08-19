@@ -51,6 +51,24 @@
 
         // Update preference status on load
         updatePrefStatus();
+        
+        // Focus trap for keyboard accessibility
+        if (banner.classList.contains('show')) {
+            const focusable = banner.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusable.length) focusable[0].focus();
+        }
+        banner.addEventListener('keydown', (e) => {
+            if (e.key !== 'Tab') return;
+            const focusable = banner.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+            } else {
+                if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+        });
     };
 
     // Auto-initialize if the banner is present on the page

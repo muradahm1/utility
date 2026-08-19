@@ -12,7 +12,7 @@
 
     // ── Configuration ────────────────────────────────────────────
     // Set to false to hide the banner (e.g., after maintenance is done)
-    const MAINTENANCE_ENABLED = true;
+    const MAINTENANCE_ENABLED = false;
     
     // Banner message
     const BANNER_MESSAGE = 'We are currently performing maintenance to improve your experience. Some features may be temporarily unavailable.';

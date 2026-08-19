@@ -310,9 +310,8 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function render() {
-        if (slug === 'budget-planner') {
-            const budgetModule = window.renderBudgetPlannerModule || window.renderBudgetPlanner;
-            if (budgetModule) budgetModule(container);
+        if (tool.customRenderer) {
+            tool.customRenderer(container);
             return;
         }
 

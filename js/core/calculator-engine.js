@@ -604,13 +604,9 @@ export function destroyCalculator(instanceId) {
 export function renderCalculator(calculator) {
     const { tool, container, values } = calculator;
     
-    // Special handling for budget-planner
-    if (calculator.slug === 'budget-planner') {
-        const budgetModule = window.renderBudgetPlannerModule || window.renderBudgetPlanner;
-        if (budgetModule) {
-            budgetModule(container);
-            return;
-        }
+    if (tool.customRenderer) {
+        tool.customRenderer(container);
+        return;
     }
     
     // Build form HTML

@@ -822,19 +822,9 @@
     tagClass: 'tag-finance',
     description: 'Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.',
     metaDescription: 'Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.',
-    fields: [
-      { id: 'budget_placeholder', label: 'Budget', type: 'number', default: 0, min: 0 },
-    ],
-    calculate() {
-      return {
-        stats: [
-          { label: 'Total Income', value: '$0.00', highlight: true },
-          { label: 'Total Expenses', value: '$0.00' },
-          { label: 'Remaining Balance', value: '$0.00' },
-          { label: 'Savings Rate', value: '0%' },
-        ],
-      };
-    },
+    fields: [],
+    calculate() { return {}; },
+    customRenderer: true,
     article: {
       heading: 'How to Build a Monthly Budget and Track Your Spending',
       intro: 'A budget is the foundation of financial control. The GetCalcu Budget Planner lets you log income sources, categorize expenses, visualize your spending, and get instant feedback with the 50/30/20 rule — all saved privately in your browser.',
@@ -1947,7 +1937,8 @@
 
         // ── NET WORTH CALCULATIONS ──
         // Buyer net worth = home equity - cumulative ownership costs (excluding principal which builds equity)
-        const buyingNetWorth = equity - (totalInterestPaid + totalPropertyTaxPaid + totalInsurancePaid + totalMaintenancePaid + totalHOAPaid + totalPMIPaid + totalMiscPaid + totalClosingCosts + sellingCosts);
+        // Note: selling costs are only applied at the final year, not annually
+        const buyingNetWorth = equity - (totalInterestPaid + totalPropertyTaxPaid + totalInsurancePaid + totalMaintenancePaid + totalHOAPaid + totalPMIPaid + totalMiscPaid + totalClosingCosts);
         // Renter net worth = investment portfolio value - cumulative rent costs
         const rentingNetWorth = netInvestmentValue - (totalRentPaid + totalRentersInsurancePaid);
 
@@ -2108,12 +2099,12 @@
         { label: 'Selling Costs', value: fmt(finalSellingCosts) },
         { label: 'Investment Portfolio', value: fmt(finalRent.investmentValue) },
         { label: 'Opportunity Cost', value: fmt(roundTo(totalInvestmentGains, 2)) },
-        { label: 'Estimated Net Worth', value: fmt(roundTo(finalBuy.netWorth + finalBuy.equity, 2)), highlight: true },
+        { label: 'Estimated Net Worth', value: fmt(roundTo(finalBuy.netWorth, 2)), highlight: true },
       ];
 
       // ── BUILD CHARTS ──
       const chartLabels = buyData.map(d => `Year ${d.year}`);
-      const netWorthBuyData = buyData.map(d => d.netWorth + d.equity);
+      const netWorthBuyData = buyData.map(d => d.netWorth);
       const netWorthRentData = rentData.map(d => d.netWorth);
       const buyCostData = buyData.map(d => d.mortgagePaid + d.taxes + d.insurance + d.maintenance + d.hoa + d.pmi + d.misc);
       const rentCostData = rentData.map(d => d.rentPaid + d.insurance);
@@ -2188,7 +2179,7 @@
           homeValue: b.homeValue,
           equity: b.equity,
           investmentValue: r.investmentValue,
-          netWorth: roundTo((b.netWorth + b.equity) - r.netWorth, 2),
+          netWorth: roundTo(b.netWorth - r.netWorth, 2),
           difference: b.difference,
         };
       });

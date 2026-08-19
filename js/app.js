@@ -300,12 +300,34 @@ function initSearchModal() {
     function openModal() {
         if (!modal) return;
         modal.classList.remove('hidden');
+        modal.setAttribute('aria-modal', 'true');
         searchField.focus();
+        // Focus trap
+        const trap = (e) => {
+            if (e.key !== 'Tab') return;
+            const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+            } else {
+                if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+            }
+        };
+        modal._focusTrap = trap;
+        modal.addEventListener('keydown', trap);
     }
 
     function closeModal() {
         if (!modal) return;
         modal.classList.add('hidden');
+        modal.removeAttribute('aria-modal');
+        if (modal._focusTrap) {
+            modal.removeEventListener('keydown', modal._focusTrap);
+            modal._focusTrap = null;
+        }
+        trigger.focus();
     }
 
     if (trigger) trigger.addEventListener('click', openModal);

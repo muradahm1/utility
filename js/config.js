@@ -7,4 +7,7 @@ const APP_CONFIG = {
     SUPABASE_URL:  'https://uvkukqdrkvqhzrvfgxgq.supabase.co',
     SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2a3VrcWRya3ZxaHpydmZneGdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1OTgzMDUsImV4cCI6MjEwMDE3NDMwNX0.lnzPHVUWFsZQ6mikxO2hQd9Uy1bjMutmvQXa8A8_-cA',
     SITE_URL: 'https://www.getcalcu.com',
+    EMAILJS_PUBLIC_KEY: 'saxm-p4xUpvicaPwp',
+    EMAILJS_SERVICE_ID: 'service_xpcm9ik',
+    EMAILJS_TEMPLATE_ID: 'template_98ki4vp',
 };

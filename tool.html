@@ -118,7 +118,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <!-- Search Modal -->
-    <div class="modal-overlay hidden" id="search-modal">
+    <div class="modal-overlay hidden" id="search-modal" role="dialog" aria-label="Search calculators">
         <div class="modal-card">
             <div class="modal-search-input-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -137,11 +137,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
             <nav class="footer-links" aria-label="Footer navigation">
-                <a href="/about.html">About</a>
-                <a href="/contact.html">Contact</a>
-                <a href="/privacy.html">Privacy Policy</a>
-                <a href="/terms.html">Terms of Service</a>
-                <a href="/cookie-policy.html">Cookie Policy</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/cookie-policy">Cookie Policy</a>
             </nav>
             <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
         </div>
@@ -151,7 +151,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="cookie-consent-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
         <p class="cookie-consent-text">
             <i class="fa-solid fa-cookie-bite" style="color: var(--primary-color); margin-right: 6px;"></i>
-            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy.html">Cookie Policy</a>.
+            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy">Cookie Policy</a>.
         </p>
         <div class="cookie-consent-actions">
             <button class="btn btn-outline btn-sm" id="cookie-essential-btn">Essential Only</button>
@@ -166,12 +166,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Template-based New Tools (add new tools here) -->
     <script src="js/tools-template.js"></script>
 
-    <!-- Core Architecture (ES Modules - load in dependency order) -->
+    <!-- Core Architecture — index.js re-exports all core modules -->
     <script src="js/core/index.js" type="module"></script>
-    <script src="js/core/tools.js" type="module"></script>
-    <script src="js/core/calculator-engine.js" type="module"></script>
-    <script src="js/core/router.js" type="module"></script>
-    <script src="js/core/migration.js" type="module"></script>
     
     <!-- Feature Modules (only load what's needed) -->
     <script src="js/modules/validation.js" type="module"></script>
@@ -192,7 +188,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Budget Planner Module (loads after Chart.js) -->
     <script src="js/modules/budget-planner.js" type="module"></script>
     
-    <!-- Tool Runner -->
+    <!-- Tool Runner — imports migration.js, which imports the rest of core -->
     <script src="js/tool-runner.js" type="module"></script>
     
     <!-- App Initialization -->

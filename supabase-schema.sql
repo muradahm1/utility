@@ -99,3 +99,8 @@ create or replace trigger cap_calculations_per_user
 -- Profiles are only created by the server trigger, never by the client
 revoke insert on public.profiles from anon, authenticated;
 grant insert on public.profiles to service_role;
+
+-- ── 7. BLOCK ANON FROM WRITING CALCULATIONS ──────────────────
+-- Calculations are only created by authenticated users via the app
+revoke insert on public.calculations from anon, authenticated;
+grant insert on public.calculations to authenticated;
