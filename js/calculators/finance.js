@@ -149,10 +149,16 @@ export const financeCalculators = [
 
 /**
  * Register all finance calculators with the tool registry
+ * Only registers if the tool is not already registered (preserves richer legacy definitions)
  * @param {Function} registerTool - Tool registration function
+ * @param {Function} toolExists - Tool existence check function
  */
-export function registerFinanceCalculators(registerTool) {
+export function registerFinanceCalculators(registerTool, toolExists) {
     financeCalculators.forEach(calculator => {
+        // Skip if already registered (legacy tools have richer content)
+        if (toolExists && toolExists(calculator.id)) {
+            return;
+        }
         registerTool(calculator.id, calculator);
     });
 }

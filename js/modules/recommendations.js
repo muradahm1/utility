@@ -38,7 +38,7 @@ export function getPersonalizedRecommendations(context) {
         });
         recommendations.push({
             type: 'tool',
-            slug: 'home-affordability-calculator',
+            slug: 'house-affordability-calculator',
             reason: 'Check what home you can truly afford'
         });
     }
@@ -46,8 +46,8 @@ export function getPersonalizedRecommendations(context) {
     if (tool.id === 'loan-calculator') {
         recommendations.push({
             type: 'tool',
-            slug: 'debt-payoff-calculator',
-            reason: 'Plan your debt payoff strategy'
+            slug: 'loan-interest-calculator',
+            reason: 'See total interest with different payment frequencies'
         });
     }
     

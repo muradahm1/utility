@@ -604,29 +604,156 @@ export function destroyCalculator(instanceId) {
 export function renderCalculator(calculator) {
     const { tool, container, values } = calculator;
     
+    // Special handling for budget-planner
+    if (calculator.slug === 'budget-planner') {
+        const budgetModule = window.renderBudgetPlannerModule || window.renderBudgetPlanner;
+        if (budgetModule) {
+            budgetModule(container);
+            return;
+        }
+    }
+    
     // Build form HTML
     const formHtml = buildFormHtml(tool, values);
     
     // Build results container
     const resultsHtml = '<div class="calculator-results-card"></div>';
     
+    // Build SEO content (article, how-to, examples, FAQs)
+    const seoContentHtml = buildSeoContentHtml(tool);
+    
+    // Build related tools
+    const relatedToolsHtml = buildRelatedToolsHtml(tool, calculator.slug);
+    
     // Render to container
     container.innerHTML = `
-        <div class="calculator-wrapper">
-            <div class="calculator-form-inputs">
-                ${formHtml}
+        <div class="tool-runner-card">
+            <div class="tool-header">
+                <h1>${escapeHtml(tool.name)}</h1>
+                <p>${escapeHtml(tool.description)}</p>
             </div>
-            <div class="calculator-results-container">
-                ${resultsHtml}
+            <div class="tool-grid-workspace">
+                <div class="calculator-form-inputs">
+                    ${formHtml}
+                </div>
+                <div class="calculator-results-container">
+                    ${resultsHtml}
+                </div>
+            </div>
+            <div class="save-result-bar" id="save-result-bar">
+                <button class="btn btn-primary" id="save-result-btn"><i class="fa-solid fa-bookmark"></i> Save Result</button>
+                <span class="save-result-msg hidden" id="save-result-msg"></span>
             </div>
         </div>
+        ${seoContentHtml}
+        ${relatedToolsHtml}
     `;
     
     // Bind events
     bindCalculatorEvents(calculator);
     
+    // Initialize save button
+    initSaveButton(calculator);
+    
     // Perform initial calculation
     setTimeout(() => calculator.calculate(), 0);
+}
+
+/**
+ * Build SEO content HTML (article, how-to, examples, FAQs)
+ * @param {Object} tool - Tool definition
+ * @returns {string} HTML string
+ */
+export function buildSeoContentHtml(tool) {
+    let html = '';
+    
+    // Article content
+    if (tool.article) {
+        const a = tool.article;
+        const sectionsHtml = (a.sections && a.sections.length)
+            ? a.sections.map(s => `<h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">${escapeHtml(s.heading)}</h3><p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body)}</p>`).join('')
+            : '';
+        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2><p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>${sectionsHtml}</div>`;
+    }
+    
+    // How-to guide
+    if (tool.howTo && tool.howTo.length) {
+        const steps = tool.howTo.map((step, i) => `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${escapeHtml(step)}</li>`).join('');
+        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2><ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}</div>`;
+    }
+    
+    // Examples
+    if (tool.examples && tool.examples.length) {
+        const exHtml = tool.examples.map(ex => `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;"><p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(ex.title)}</p><p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> ${escapeHtml(ex.input)}</p><p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">${escapeHtml(ex.result)}</span></p></div>`).join('');
+        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Examples</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">${exHtml}</div></div>`;
+    }
+    
+    // FAQs
+    if (tool.faqs && tool.faqs.length) {
+        const faqHtml = tool.faqs.map(f => `<details style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:8px;"><summary style="font-size:14px;font-weight:700;cursor:pointer;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;">${escapeHtml(f.q)} <i class="fa-solid fa-chevron-down" style="font-size:12px;color:var(--text-secondary);"></i></summary><p style="font-size:13px;color:var(--text-secondary);margin-top:10px;line-height:1.7;">${escapeHtml(f.a)}</p></details>`).join('');
+        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 id="faqs" style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>${faqHtml}</div>`;
+    }
+    
+    return html;
+}
+
+/**
+ * Build related tools HTML
+ * @param {Object} tool - Tool definition
+ * @param {string} slug - Current tool slug
+ * @returns {string} HTML string
+ */
+export function buildRelatedToolsHtml(tool, slug) {
+    const allTools = typeof window !== 'undefined' && window.TOOLS ? window.TOOLS : {};
+    
+    // Get related tools from explicit related array or same category
+    const related = Object.entries(allTools)
+        .filter(([s, t]) => s !== slug && (t.category === tool.category || (tool.related && tool.related.includes(s))))
+        .slice(0, 4);
+    
+    if (!related.length) return '';
+    
+    const cards = related.map(([s, t]) => `<a href="/tool?slug=${encodeURIComponent(s)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(t.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description || '')}</p><span class="tag ${escapeHtml(t.tagClass || 'tag-finance')}">${escapeHtml(t.category || '')}</span></a>`).join('');
+    
+    return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Related Calculators</h2><div class="tools-grid">${cards}</div></div>`;
+}
+
+/**
+ * Initialize save button
+ * @param {Object} calculator - Calculator instance
+ */
+export function initSaveButton(calculator) {
+    const bar = document.getElementById('save-result-bar');
+    const btn = document.getElementById('save-result-btn');
+    const msg = document.getElementById('save-result-msg');
+    if (!bar || !btn) return;
+    
+    if (typeof onAuthChange === 'function') {
+        onAuthChange(session => { bar.style.display = session ? '' : 'none'; });
+    } else {
+        bar.style.display = 'none';
+    }
+    
+    btn.addEventListener('click', async () => {
+        if (typeof saveCalculation !== 'function') return;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+        try {
+            const result = calculator.tool.calculate(calculator.state.values);
+            const { error } = await saveCalculation(calculator.slug, calculator.tool.name, calculator.state.values, { stats: result.stats });
+            msg.classList.remove('hidden');
+            msg.textContent = error ? 'Failed to save. Please try again.' : 'Saved to history!';
+            msg.style.color = error ? '#EF4444' : '#10B981';
+        } catch (err) {
+            msg.classList.remove('hidden');
+            msg.textContent = 'Failed to save. Please try again.';
+            msg.style.color = '#EF4444';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
+            setTimeout(() => msg.classList.add('hidden'), 3000);
+        }
+    });
 }
 
 /**
@@ -956,10 +1083,13 @@ export function renderResults(calculator, result) {
     if (!container) return;
     
     if (result.error) {
+        const errorMsg = (result.stats && result.stats[0] && result.stats[0].value) 
+            ? result.stats[0].value 
+            : 'An error occurred';
         container.innerHTML = `
             <div class="error-message">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <p>${escapeHtml(result.stats[0]?.value || 'An error occurred')}</p>
+                <p>${escapeHtml(errorMsg)}</p>
             </div>
         `;
         return;
@@ -1018,11 +1148,73 @@ export function renderResults(calculator, result) {
         html += buildInsightsHtml(result.insights);
     }
     
+    // Copy results button
+    html += buildCopyBtnHtml();
+    
     container.innerHTML = html;
     
     // Render charts if Chart.js is available
     if (typeof Chart !== 'undefined') {
         renderCharts(calculator, result);
+    }
+    
+    // Bind copy button
+    bindCopyBtn(result.stats);
+    
+    // Render journey/next-step content
+    if (result.journey && result.journey.length) {
+        renderJourneyHtml(calculator, result.journey);
+    }
+}
+
+/**
+ * Build copy results button HTML
+ * @returns {string} HTML string
+ */
+export function buildCopyBtnHtml() {
+    return `<button class="btn btn-outline btn-sm copy-results-btn" id="copy-results-btn" style="margin-top:16px;"><i class="fa-regular fa-copy"></i> Copy Results</button>`;
+}
+
+/**
+ * Bind copy results button
+ * @param {Array} stats - Stats array
+ */
+export function bindCopyBtn(stats) {
+    const btn = document.getElementById('copy-results-btn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+        const text = (stats || []).map(s => `${s.label}: ${s.value}`).join('\n');
+        try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+            btn.style.color = '#10B981';
+            btn.style.borderColor = '#10B981';
+            setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+        } catch {
+            btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Copy failed';
+            btn.style.color = '#EF4444';
+            btn.style.borderColor = '#EF4444';
+            setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+        }
+    });
+}
+
+/**
+ * Render journey/next-step HTML
+ * @param {Object} calculator - Calculator instance
+ * @param {Array} journey - Journey items
+ */
+export function renderJourneyHtml(calculator, journey) {
+    if (!journey || !journey.length) return;
+    
+    const items = journey.map(j => `<a href="/tool?slug=${encodeURIComponent(j.slug)}" class="tool-card"><div class="tool-icon ${escapeHtml(j.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(j.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(j.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(j.description || j.why || '')}</p></a>`).join('');
+    
+    const journeyHtml = `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Your Next Step</h2><div class="tools-grid">${items}</div></div>`;
+    
+    // Append after the calculator results card
+    const resultsCard = calculator.container.querySelector('.calculator-results-card');
+    if (resultsCard) {
+        resultsCard.insertAdjacentHTML('afterend', journeyHtml);
     }
 }
 
@@ -1353,6 +1545,21 @@ export function buildBarsHtml(bars) {
 }
 
 /**
+ * Format a cell value for table display
+ * @param {*} raw - Raw value
+ * @param {string} format - Format type (currency, percent, number, text)
+ * @returns {string} Formatted value
+ */
+export function formatCell(raw, format) {
+    if (raw === null || raw === undefined || raw === '') return '';
+    if (typeof raw === 'string') return escapeHtml(raw);
+    if (format === 'currency') return formatCurrency(raw);
+    if (format === 'percent') return (safeNum(raw, 0) * 100).toFixed(2) + '%';
+    if (format === 'number') return safeNum(raw, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return escapeHtml(raw);
+}
+
+/**
  * Build table spec HTML
  * @param {Object} tbl - Table specification
  * @returns {string} HTML string
@@ -1372,13 +1579,15 @@ export function buildTableSpecHtml(tbl) {
         return `<tr>${cells}</tr>`;
     }).join('');
     
+    const footerRow = tbl.footer ? `<tr style="font-weight:700;border-top:2px solid var(--border-color);">${tbl.columns.map(c => { const formatted = formatCell(tbl.footer[c.key], c.format); return `<td${c.emphasis ? ' style="font-weight:700;color:var(--text-primary);"' : ''}>${formatted}</td>`; }).join('')}</tr>` : '';
+    
     return `
         <div class="result-table-container calc-data-table">
             <h4>${escapeHtml(tbl.title)}</h4>
             <div class="table-wrapper">
                 <table>
                     <thead><tr>${headerCells}</tr></thead>
-                    <tbody>${dataRows}</tbody>
+                    <tbody>${dataRows}${footerRow}</tbody>
                 </table>
             </div>
         </div>

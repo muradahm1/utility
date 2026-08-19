@@ -322,16 +322,25 @@ export function addSchemaMarkup(tool, pageUrl) {
 
 // ── Initialization ─────────────────────────────────────────────
 
+let migrationInitialized = false;
+
 /**
  * Initialize the migration layer
  * Call this once to set up backward compatibility
  */
 export function initializeMigration() {
+    // Prevent double initialization
+    if (migrationInitialized) {
+        return getMigrationAPI();
+    }
+    migrationInitialized = true;
+    
     registerLegacyTools();
     
-    // Register category-specific calculators
-    registerFinanceCalculators(registerTool);
-    registerHealthCalculators(registerTool);
+    // Register category-specific calculators (only if not already registered)
+    // Pass toolExists to preserve richer legacy tool definitions
+    registerFinanceCalculators(registerTool, toolExists);
+    registerHealthCalculators(registerTool, toolExists);
     
     // Initialize router
     const router = initRouter();
@@ -358,9 +367,17 @@ export function initializeMigration() {
         window.CORE.registerLegacyTools = registerLegacyTools;
     }
     
+    return getMigrationAPI();
+}
+
+/**
+ * Get the migration API
+ * @returns {Object} Migration API
+ */
+function getMigrationAPI() {
     return {
         helpers: legacyHelpers,
-        router,
+        router: window.CORE?.router || null,
         registerLegacyTools,
         migrateTool,
         createToolRunner,
