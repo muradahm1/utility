@@ -2876,3 +2876,50 @@ body.has-maintenance-banner {
         right: 8px;
     }
 }
+
+/* ── Monetization / Ad Infrastructure ─────────────────────────── */
+
+.ad-slot {
+    background: var(--bg-main);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0;
+}
+
+.ad-slot--leaderboard {
+    min-height: 90px;
+}
+
+.ad-slot--rectangle {
+    min-height: 250px;
+}
+
+.ad-slot--mobile {
+    min-height: 100px;
+}
+
+.ad-slot-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    .ad-slot {
+        min-height: 80px;
+        padding: 12px;
+    }
+    .ad-slot--rectangle {
+        min-height: 200px;
+    }
+}

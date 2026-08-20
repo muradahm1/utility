@@ -50,11 +50,18 @@ export {
     roundTo
 } from './calculator-engine.js';
 
+// ── Calculator Modules ──────────────────────────────────────────
+
+export { registerConstructionCalculators } from '../calculators/construction.js';
+export { registerEngineeringCalculators } from '../calculators/engineering.js';
+
 // ── Backward Compatibility Layer ───────────────────────────────
 
-import { TOOLS as coreTOOLS, getTool, toolExists, getAllTools } from './tools.js';
+import { TOOLS as coreTOOLS, getTool, toolExists, getAllTools, registerTool } from './tools.js';
 import { parseCurrentUrl, resolveToolFromUrl, handleRoute } from './router.js';
 import { initializeCalculator, escapeHtml, safeNum, safeStr, roundTo, formatCurrency } from './calculator-engine.js';
+import { registerConstructionCalculators } from '../calculators/construction.js';
+import { registerEngineeringCalculators } from '../calculators/engineering.js';
 
 /**
  * Legacy TOOLS object - maintains backward compatibility
@@ -71,6 +78,10 @@ export function initializeCore() {
     Object.values(coreTOOLS).forEach(tool => {
         if (tool.category) categories.add(tool.category);
     });
+    
+    // Register modular calculators
+    registerConstructionCalculators(registerTool, toolExists);
+    registerEngineeringCalculators(registerTool, toolExists);
     
     return {
         tools: coreTOOLS,

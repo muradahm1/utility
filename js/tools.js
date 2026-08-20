@@ -1937,8 +1937,9 @@
 
         // ── NET WORTH CALCULATIONS ──
         // Buyer net worth = home equity - cumulative ownership costs (excluding principal which builds equity)
-        // Note: selling costs are only applied at the final year, not annually
-        const buyingNetWorth = equity - (totalInterestPaid + totalPropertyTaxPaid + totalInsurancePaid + totalMaintenancePaid + totalHOAPaid + totalPMIPaid + totalMiscPaid + totalClosingCosts);
+        // Selling costs are only meaningful when you actually sell (final year)
+        const sellingCostsThisYear = (year === analysisPeriod) ? sellingCosts : 0;
+        const buyingNetWorth = equity - (totalInterestPaid + totalPropertyTaxPaid + totalInsurancePaid + totalMaintenancePaid + totalHOAPaid + totalPMIPaid + totalMiscPaid + totalClosingCosts + sellingCostsThisYear);
         // Renter net worth = investment portfolio value - cumulative rent costs
         const rentingNetWorth = netInvestmentValue - (totalRentPaid + totalRentersInsurancePaid);
 

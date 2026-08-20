@@ -11,6 +11,8 @@ import { TOOLS as coreTOOLS, registerTool, getTool, toolExists } from './tools.j
 import { parseCurrentUrl, resolveToolFromUrl, handleRoute, initRouter } from './router.js';
 import { initializeCalculator, escapeHtml, safeNum, safeStr, roundTo, formatCurrency } from './calculator-engine.js';
 import { registerBudgetPlanner } from '../modules/budget-planner.js';
+import { registerConstructionCalculators } from '../calculators/construction.js';
+import { registerEngineeringCalculators } from '../calculators/engineering.js';
 
 // Note: Legacy calculator modules (finance.js, health.js) are reserved for future migration
 // but are not currently loaded because legacy tools.js already contains richer definitions.
@@ -341,6 +343,10 @@ export function initializeMigration() {
     if (!toolExists('budget-planner')) {
         registerBudgetPlanner(registerTool);
     }
+    
+    // Register modular calculators (only if not already registered)
+    registerConstructionCalculators(registerTool, toolExists);
+    registerEngineeringCalculators(registerTool, toolExists);
     
     // Initialize router
     const router = initRouter();

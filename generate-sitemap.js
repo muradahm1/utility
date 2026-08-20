@@ -13,6 +13,21 @@ const TODAY    = new Date().toISOString().split('T')[0];
 const toolsSource = fs.readFileSync(path.join(__dirname, 'js', 'tools.js'), 'utf8');
 const slugs = [...toolsSource.matchAll(/'([a-z0-9-]+)':\s*\{/g)].map(m => m[1]);
 
+// Also parse slugs from modular calculator files
+const modularFiles = [
+    path.join(__dirname, 'js', 'calculators', 'construction.js'),
+    path.join(__dirname, 'js', 'calculators', 'engineering.js'),
+    path.join(__dirname, 'js', 'calculators', 'finance.js'),
+    path.join(__dirname, 'js', 'calculators', 'health.js'),
+];
+const modularSlugs = modularFiles.flatMap(filePath => {
+    if (!fs.existsSync(filePath)) return [];
+    const source = fs.readFileSync(filePath, 'utf8');
+    return [...source.matchAll(/export\s+const\s+\w+\s*=\s*\{\s*id:\s*'([a-z0-9-]+)'/g)].map(m => m[1]);
+});
+
+const allSlugs = [...new Set([...slugs, ...modularSlugs])];
+
 const staticUrls = [
     { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'weekly'  },
     { loc: `${BASE_URL}/about`,       priority: '0.8', changefreq: 'monthly' },
@@ -22,7 +37,7 @@ const staticUrls = [
     { loc: `${BASE_URL}/cookie-policy`, priority: '0.6', changefreq: 'monthly' },
 ];
 
-const toolUrls = slugs.map(slug => ({
+const toolUrls = allSlugs.map(slug => ({
     loc:        `${BASE_URL}/tool?slug=${slug}`,
     priority:   '0.9',
     changefreq: 'monthly',
@@ -43,4 +58,4 @@ ${allUrls.map(u => `
 `;
 
 fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), xml.trimStart());
-console.log(`✓ sitemap.xml generated with ${allUrls.length} URLs (${slugs.length} tools, ${staticUrls.length} static pages)`);
+console.log(`✓ sitemap.xml generated with ${allUrls.length} URLs (${allSlugs.length} tools, ${staticUrls.length} static pages)`);
