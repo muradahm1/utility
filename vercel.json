@@ -1,15 +1,17 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/tool",    "destination": "/tool.html"    },
-    { "source": "/auth",    "destination": "/auth.html"    },
-    { "source": "/history", "destination": "/history.html" }
+    { "source": "/tool/:slug", "destination": "/tool/:slug/index.html" },
+    { "source": "/tool",       "destination": "/tool.html" },
+    { "source": "/auth",       "destination": "/auth.html" },
+    { "source": "/history",    "destination": "/history.html" }
   ],
   "redirects": [
     { "source": "/tool.html",    "destination": "/tool",    "permanent": true },
     { "source": "/auth.html",    "destination": "/auth",    "permanent": true },
     { "source": "/history.html", "destination": "/history", "permanent": true },
-    { "source": "/index.html",   "destination": "/",        "permanent": true }
+    { "source": "/index.html",   "destination": "/",        "permanent": true },
+    { "source": "/tool", "destination": "/tool/:slug", "permanent": true, "has": [{ "type": "query", "key": "slug", "value": "(?<slug>.*)" }] }
   ],
   "headers": [
     {

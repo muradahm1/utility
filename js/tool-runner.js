@@ -43,7 +43,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug');
+    let slug = urlParams.get('slug');
+
+    // Support pretty URL format: /tool/{slug} (Phase 4 SEO)
+    if (!slug) {
+        const pathMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/?$/);
+        if (pathMatch) {
+            slug = pathMatch[1];
+        }
+    }
+
     const TOOLS = window.TOOLS || {};
     const tool = TOOLS[slug];
 
@@ -95,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function updateSeoLegacy(tool, slug) {
-    const pageUrl = `https://www.getcalcu.com/tool?slug=${slug}`;
+    const pageUrl = `https://www.getcalcu.com/tool/${slug}`;
     document.title = tool.metaTitle
         ? tool.metaTitle
         : (`${tool.name} — Free Online Calculator | GetCalcu`.length > 60
@@ -479,13 +488,13 @@ function initLegacyRunner(tool, slug, container) {
     function buildRelatedToolsHtml() {
         const related = Object.entries(TOOLS).filter(([s, t]) => s !== slug && (t.category === tool.category || (tool.related && tool.related.includes(s)))).slice(0, 4);
         if (!related.length) return '';
-        const cards = related.map(([s, t]) => `<a href="/tool?slug=${encodeURIComponent(s)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass)}"><i class="fa-solid ${escapeHtml(t.icon)}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description)}</p><span class="tag ${escapeHtml(t.tagClass)}">${escapeHtml(t.category)}</span></a>`).join('');
+        const cards = related.map(([s, t]) => `<a href="/tool/${encodeURIComponent(s)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass)}"><i class="fa-solid ${escapeHtml(t.icon)}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description)}</p><span class="tag ${escapeHtml(t.tagClass)}">${escapeHtml(t.category)}</span></a>`).join('');
         return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Related Calculators</h2><div class="tools-grid">${cards}</div></div>`;
     }
 
     function buildJourneyHtml(journey) {
         if (!journey || !journey.length) return '';
-        const items = journey.map(j => `<a href="/tool?slug=${encodeURIComponent(j.slug)}" class="tool-card"><div class="tool-icon ${escapeHtml(j.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(j.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(j.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(j.why || '')}</p></a>`).join('');
+        const items = journey.map(j => `<a href="/tool/${encodeURIComponent(j.slug)}" class="tool-card"><div class="tool-icon ${escapeHtml(j.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(j.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(j.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(j.why || '')}</p></a>`).join('');
         return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Your Next Step</h2><div class="tools-grid">${items}</div></div>`;
     }
 

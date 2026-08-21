@@ -4064,6 +4064,71 @@
       { q: 'Can I compare two loan scenarios?', a: 'Yes, our calculator includes a built-in comparison mode that lets you compare two loan scenarios side by side. You can compare different loan amounts, interest rates, terms, and extra payment amounts. The comparison shows the difference in monthly payment, total interest, total cost, and payoff time.' },
     ],
   },
+
+  // ── Tip Calculator ───────────────────────────────────────────────
+  'tip-calculator': {
+    name: 'Tip Calculator',
+    category: 'Math',
+    icon: 'fa-receipt',
+    iconClass: 'icon-math',
+    tagClass: 'tag-math',
+    description: 'Calculate tip amounts, split bills among friends, and find the total per person with tax included.',
+    metaDescription: 'Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.',
+    fields: [
+      { id: 'bill_amount', label: 'Bill Amount ($)', type: 'number', default: 50, min: 0, step: 0.01, hint: 'The total amount of the bill before tip.' },
+      { id: 'tip_percent', label: 'Tip Percentage (%)', type: 'number', default: 18, min: 0, max: 100, step: 0.5, hint: 'The tip percentage you want to leave. Standard is 15-20%.' },
+      { id: 'tax_percent', label: 'Tax Percentage (%)', type: 'number', default: 0, min: 0, max: 100, step: 0.5, hint: 'Sales tax percentage (optional).' },
+      { id: 'num_people', label: 'Number of People', type: 'number', default: 1, min: 1, step: 1, hint: 'How many people are splitting the bill.' },
+    ],
+    calculate(v) {
+      const bill = safeNum(v.bill_amount, 0);
+      const tipPct = safeNum(v.tip_percent, 0);
+      const taxPct = safeNum(v.tax_percent, 0);
+      const people = Math.max(1, Math.round(safeNum(v.num_people, 1)));
+      if (bill <= 0) return errorResult('Bill amount must be greater than zero.');
+      const taxAmount = roundTo(bill * (taxPct / 100), 2);
+      const tipAmount = roundTo(bill * (tipPct / 100), 2);
+      const total = roundTo(bill + taxAmount + tipAmount, 2);
+      const perPerson = roundTo(total / people, 2);
+      const tipPerPerson = roundTo(tipAmount / people, 2);
+      return {
+        stats: [
+          { label: 'Tip Amount', value: fmt(tipAmount), highlight: true },
+          { label: 'Tax Amount', value: fmt(taxAmount) },
+          { label: 'Total Bill', value: fmt(total), highlight: true },
+          { label: 'Per Person', value: fmt(perPerson) },
+          { label: 'Tip Per Person', value: fmt(tipPerPerson) },
+        ],
+      };
+    },
+    article: {
+      heading: 'How to Calculate Tips and Split Bills Fairly',
+      intro: 'Tipping is a standard part of dining and service culture in many countries. Knowing how to calculate a tip quickly and fairly ensures you reward good service appropriately and split bills accurately among friends.',
+      sections: [
+        { heading: 'The Standard Tip Formula', body: 'Tip = Bill Amount × (Tip Percentage / 100). For example, on a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9. The total is $50 + $9 = $59. For a quick mental calculation, round the bill to the nearest ten and multiply by 0.18, or simply double the tax amount for an approximate 18% tip.' },
+        { heading: 'Splitting the Bill', body: 'To split a bill evenly, divide the total (including tip and tax) by the number of people. For example, a $59 total split among 4 people is $59 ÷ 4 = $14.75 per person. If you want to tip on the pre-tax amount only, calculate the tip separately and add it to the taxed total before dividing.' },
+        { heading: 'Tipping Etiquette', body: 'In the United States, 15-20% is standard for good service at restaurants. For buffets, 10-15% is typical. For taxis and rideshares, 10-15% is standard. For hotel bellhops, $1-2 per bag is customary. For hotel housekeeping, $2-5 per night is typical. Always check local customs when traveling internationally, as tipping practices vary widely.' },
+      ],
+    },
+    howTo: [
+      'Enter the total bill amount before tip and tax.',
+      'Set the tip percentage (15-20% is standard for good service).',
+      'Enter the sales tax percentage if applicable.',
+      'Enter the number of people splitting the bill.',
+      'The calculator shows the tip amount, tax, total, and per-person amounts.',
+    ],
+    formula: 'Tip = Bill × (Tip% / 100) | Tax = Bill × (Tax% / 100) | Total = Bill + Tax + Tip | Per Person = Total / Number of People',
+    examples: [
+      { title: 'Dinner for Two', input: 'Bill: $85, Tip: 20%, Tax: 8%, People: 2', result: 'Tip: $17.00 | Tax: $6.80 | Total: $108.80 | Per Person: $54.40' },
+      { title: 'Large Group', input: 'Bill: $240, Tip: 18%, Tax: 0%, People: 6', result: 'Tip: $43.20 | Total: $283.20 | Per Person: $47.20' },
+    ],
+    faqs: [
+      { q: 'How do I calculate a tip?', a: 'Tip = Bill Amount × (Tip Percentage / 100). For a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9.' },
+      { q: 'How do I split a bill?', a: 'Divide the total (bill + tax + tip) by the number of people. For example, a $59 total split among 4 people is $14.75 each.' },
+      { q: 'What is a good tip percentage?', a: 'In the US, 15-20% is standard for good restaurant service. 10-15% for buffets, 10-15% for taxis, and $1-2 per bag for hotel bellhops.' },
+      { q: 'Should I tip on the pre-tax or post-tax amount?', a: 'Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity.' },
+    ],
+  },
 };
 
 if (typeof window !== 'undefined') {

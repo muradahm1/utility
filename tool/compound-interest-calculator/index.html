@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6366F1">
+    <title>Compound Interest Calculator | Free Calculator — GetCalcu</title>
+    <meta name="description" content="Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.">
+    <link rel="canonical" href="https://www.getcalcu.com/tool/compound-interest-calculator">
+    <meta name="robots" content="index, follow">
+    
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="GetCalcu">
+    <meta property="og:title" content="Compound Interest Calculator | Free Calculator — GetCalcu">
+    <meta property="og:description" content="Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.">
+    <meta property="og:url" content="https://www.getcalcu.com/tool/compound-interest-calculator">
+    <meta property="og:image" content="https://www.getcalcu.com/og-image.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Compound Interest Calculator | Free Calculator — GetCalcu">
+    <meta name="twitter:description" content="Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.">
+    <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Compound Interest Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.","url":"https://www.getcalcu.com/tool/compound-interest-calculator"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/?category=finance"},{"@type":"ListItem","position":3,"name":"Compound Interest Calculator","item":"https://www.getcalcu.com/tool/compound-interest-calculator"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How is compound interest calculated?","acceptedAnswer":{"@type":"Answer","text":"Compound interest is calculated as FV = P × (1 + r/n)^(nt), where P is the principal, r is the annual rate, n is the compounding periods per year, and t is years. With recurring contributions, add PMT × [((1 + r/n)^(nt) − 1) / (r/n)]. Our calculator handles both parts automatically."}},{"@type":"Question","name":"What is the difference between simple and compound interest?","acceptedAnswer":{"@type":"Answer","text":"Simple interest is calculated only on the original principal, while compound interest is calculated on the principal plus accumulated interest. Over time, compounding grows exponentially while simple interest grows linearly — a $10,000 sum at 8% becomes $46,610 (simple) versus $100,627 (compounded monthly) over 30 years."}},{"@type":"Question","name":"How does compounding frequency affect growth?","acceptedAnswer":{"@type":"Answer","text":"More frequent compounding reinvests interest sooner, so your balance grows faster. At 8% over 30 years, $10,000 grows to about $100,627 compounded monthly versus $93,219 compounded semi-annually. The gap widens with larger sums and longer horizons."}},{"@type":"Question","name":"How much will I have if I save $500 a month for 30 years?","acceptedAnswer":{"@type":"Answer","text":"Saving $500 per month at an 8% average return compounded monthly for 30 years grows to about $745,000 from contributions alone, plus growth on any starting balance. With a $10,000 starting balance, the total reaches about $811,627. Use our calculator to test your own numbers."}},{"@type":"Question","name":"What is a good interest rate to assume for compound interest?","acceptedAnswer":{"@type":"Answer","text":"For a diversified stock portfolio, a realistic long-term assumption is 7–10% (the historical S&P 500 average). For savings accounts expect 3–5%, and for bonds 4–6%. Always use a conservative rate for planning so you are not caught short — our calculator lets you adjust instantly."}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Compound Interest and Project Your Savings Growth","description":"Compound interest is the engine behind long-term wealth — it earns interest on your interest, accelerating growth over time. The GetCalcu Compound Interest Calculator projects your future balance from a starting sum plus recurring contributions, with flexible compounding frequency and a year-by-year growth schedule.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Compound Interest Calculator","url":"https://www.getcalcu.com/tool/compound-interest-calculator"}</script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
+
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a href="/" class="brand">
+                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <span class="brand-name">GetCalcu</span>
+            </a>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
+                <a href="/?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+                <a href="/?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+                <a href="/?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+                <a href="/?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+                <a href="/?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+                <a href="/?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
+                <a href="/?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+                <a href="/history" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="promo-card" id="sidebar-promo">
+                    <h4>Save your results</h4>
+                    <p>Create a free account to save your calculations and history.</p>
+                    <a href="/auth?mode=signup" class="btn btn-primary btn-sm">Sign up free</a>
+                </div>
+                <div class="theme-switch-container">
+                    <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle dark mode">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-wrapper" id="main-content">
+            <header class="top-header">
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation" aria-expanded="false">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="search-trigger" id="cmd-k-trigger">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search calculators, converters, tools...</span>
+                    <kbd>⌘K</kbd>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+                    <div id="auth-header-slot">
+                        <a href="/auth" class="btn btn-primary btn-pill">Sign in</a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body" id="tool-runner-container">
+                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
+                    <span class="ad-slot-label">Advertisement</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="modal-overlay hidden" id="search-modal" role="dialog" aria-label="Search calculators">
+        <div class="modal-card">
+            <div class="modal-search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="modal-search-field" placeholder="Search all calculators...">
+                <button class="close-btn" id="modal-close-btn">&times;</button>
+            </div>
+            <div class="search-results-list" id="search-results"></div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <span class="brand-name">GetCalcu</span>
+            </div>
+            <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+            <nav class="footer-links" aria-label="Footer navigation">
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/cookie-policy">Cookie Policy</a>
+            </nav>
+            <p class="footer-copy">&copy; <span id="footer-year"></span> GetCalcu. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="cookie-consent-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
+        <p class="cookie-consent-text">
+            <i class="fa-solid fa-cookie-bite" style="color: var(--primary-color); margin-right: 6px;"></i>
+            We use cookies to improve your experience and analyze anonymous traffic. See our <a href="/cookie-policy">Cookie Policy</a>.
+        </p>
+        <div class="cookie-consent-actions">
+            <button class="btn btn-outline btn-sm" id="cookie-essential-btn">Essential Only</button>
+            <button class="btn btn-primary btn-sm" id="cookie-accept-btn">Accept All</button>
+            <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
+        </div>
+    </div>
+
+    <noscript>
+        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
+            <h1>Compound Interest Calculator</h1>
+            <p>Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.</p>
+            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
+            <p><a href="/">Browse all GetCalcu calculators</a></p>
+        </div>
+    </noscript>
+
+    <script src="/js/tools.js"></script>
+    <script src="/js/tools-template.js"></script>
+    <script src="/js/core/index.js" type="module"></script>
+    <script src="/js/modules/validation.js" type="module"></script>
+    <script src="/js/modules/charts.js" type="module"></script>
+    <script src="/js/modules/formatting.js" type="module"></script>
+    <script src="/js/modules/faq.js" type="module"></script>
+    <script src="/js/modules/related-tools.js" type="module"></script>
+    <script src="/js/modules/recommendations.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/supabase.js"></script>
+    <script src="/js/modules/budget-planner.js" type="module"></script>
+    <script src="/js/tool-runner.js" type="module"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/cookie-consent.js"></script>
+    <script src="/js/maintenance-banner.js"></script>
+    <script>
+        // Redirect legacy ?slug= URLs to pretty URLs
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+            if (slug) {
+                window.location.replace('/tool/' + encodeURIComponent(slug));
+            }
+        })();
+    </script>
+</body>
+</html>
