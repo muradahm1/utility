@@ -824,7 +824,7 @@
     metaDescription: 'Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.',
     fields: [],
     calculate() { return {}; },
-    customRenderer: true,
+    customRenderer: (container) => { if (window.renderBudgetPlannerModule) window.renderBudgetPlannerModule(container); },
     article: {
       heading: 'How to Build a Monthly Budget and Track Your Spending',
       intro: 'A budget is the foundation of financial control. The GetCalcu Budget Planner lets you log income sources, categorize expenses, visualize your spending, and get instant feedback with the 50/30/20 rule — all saved privately in your browser.',
@@ -938,11 +938,12 @@
       // ── Target retirement income (today's dollars)
       const desiredIncomeToday = annualIncome * incomeReplace;
 
-      // ── Future value of desired income (inflation-adjusted)
-      const fvDesiredIncome = desiredIncomeToday * Math.pow(1 + inflationRate, yearsToRetire);
-
-      // ── 4% Rule: target nest egg (25x annual desired income)
-      const targetNestEgg   = roundTo(fvDesiredIncome * 25, 2);
+      // ── 4% Rule: target nest egg (25x annual desired income) in TODAY'S dollars
+      // totalNestEgg is projected using the real (inflation-adjusted) return via
+      // the Fisher equation above, so the target must be expressed in the same
+      // real-dollar basis. Previously the target was inflated to nominal future
+      // dollars, producing an apples-to-oranges comparison (ISSUE-004).
+      const targetNestEgg   = roundTo(desiredIncomeToday * 25, 2);
 
       // ── Monthly and annual retirement income (4% rule)
       const monthlyRetireIncome = roundTo(totalNestEgg * 0.04 / 12, 2);
@@ -1210,12 +1211,17 @@
         const tUse = Math.max(t, 1);
         const fvNom = fv(P0, M, rNom/k, k*tUse);
         const fvPost = fv(P0, M, rNet/k, k*tUse);
-        const fvReal = roundTo(fvPost / Math.pow(1 + pi, tUse), 2);
+        // Real future value (today's dollars): compound each period's balance and
+        // contributions at the real post-tax rate (Fisher equation). Previously the
+        // whole post-tax FV was divided by a single inflation factor, which
+        // over-discounted contributions made in future years and understated the
+        // real buying power (ISSUE-005).
+        const fvReal = roundTo(fv(P0, M, rReal/k, k*tUse), 2);
         const rowsS = []; let run = P0;
         for (let y = 1; y <= tUse; y++) {
           const sB = run; const dep = M * k;
           const nE = fv(P0, M, rNom/k, k*y); const pE = fv(P0, M, rNet/k, k*y);
-          const rE = roundTo(pE / Math.pow(1 + pi, y), 2);
+          const rE = roundTo(fv(P0, M, rReal/k, k*y), 2);
           rowsS.push({ year: 'Year ' + y, startBalance: fmt(sB), deposits: fmt(dep), nominalEnd: fmt(nE), postTaxEnd: fmt(pE), realEndTodayDollars: fmt(rE) });
           run = nE;
         }

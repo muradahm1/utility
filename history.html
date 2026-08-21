@@ -230,27 +230,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     // ── Build card HTML ──────────────────────────────────────
     function buildHistoryCard(row) {
+        // XSS fix (ISSUE-110): escape all user-derived values before inserting
+        // into innerHTML so stored malicious input/results can never execute.
+        const esc = escapeHtml;
+
         const inputLines = Object.entries(row.inputs)
-            .map(([k, v]) => `<span class="history-input-chip">${formatKey(k)}: <strong>${v}</strong></span>`)
+            .map(([k, v]) => `<span class="history-input-chip">${esc(formatKey(k))}: <strong>${esc(v)}</strong></span>`)
             .join('');
 
         const resultLines = Object.entries(row.results)
             .slice(0, 3)
-            .map(([k, v]) => `<div class="history-result-line"><span>${formatKey(k)}</span><strong>${v}</strong></div>`)
+            .map(([k, v]) => `<div class="history-result-line"><span>${esc(formatKey(k))}</span><strong>${esc(v)}</strong></div>`)
             .join('');
 
+        // Encode attribute values too — never trust stored slug/name/tool data
+        const safeSlug = esc(row.tool_slug);
+
         return `
-            <div class="history-card" data-id="${row.id}">
+            <div class="history-card" data-id="${esc(row.id)}">
                 <div class="history-card-header">
                     <div>
-                        <span class="history-tool-name">${row.tool_name}</span>
+                        <span class="history-tool-name">${esc(row.tool_name)}</span>
                         <span class="history-date">${formatDate(row.created_at)}</span>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <a href="/tool?slug=${row.tool_slug}" class="btn btn-outline btn-sm">
+                        <a href="/tool?slug=${safeSlug}" class="btn btn-outline btn-sm">
                             <i class="fa-solid fa-rotate-right"></i> Re-run
                         </a>
-                        <button class="btn btn-sm history-delete-btn" data-id="${row.id}" style="background:rgba(239,68,68,0.1); color:#EF4444; border:none;">
+                        <button class="btn btn-sm history-delete-btn" data-id="${esc(row.id)}" style="background:rgba(239,68,68,0.1); color:#EF4444; border:none;">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -262,7 +269,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function formatKey(key) {
-        return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        return String(key).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    // ── Escape HTML special characters (XSS safety) ──────────
+    // Entities are built via concatenation to survive auto-formatting.
+    var _AMP = '&' + 'amp;';
+    var _LT  = '&' + 'lt;';
+    var _GT  = '&' + 'gt;';
+    var _QUOT = '&' + 'quot;';
+    var _APOS = '&' + '#39;';
+    function escapeHtml(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, _AMP)
+            .replace(/</g, _LT)
+            .replace(/>/g, _GT)
+            .replace(/"/g, _QUOT)
+            .replace(/'/g, _APOS);
     }
 
     // ── Delete single ────────────────────────────────────────

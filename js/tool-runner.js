@@ -310,7 +310,10 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function render() {
-        if (tool.customRenderer) {
+        // Defensive check (ISSUE-106): only invoke customRenderer if it is
+        // actually a function. A boolean `true` (legacy budget-planner) would
+        // throw "TypeError: tool.customRenderer is not a function".
+        if (typeof tool.customRenderer === 'function') {
             tool.customRenderer(container);
             return;
         }

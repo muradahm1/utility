@@ -101,6 +101,8 @@ revoke insert on public.profiles from anon, authenticated;
 grant insert on public.profiles to service_role;
 
 -- ── 7. BLOCK ANON FROM WRITING CALCULATIONS ──────────────────
--- Calculations are only created by authenticated users via the app
-revoke insert on public.calculations from anon, authenticated;
-grant insert on public.calculations to authenticated;
+-- Calculations are only created by authenticated users via the app.
+-- Authenticated users rely on the Row Level Security policy
+-- (auth.uid() = user_id) to authorize their own inserts.
+-- (ISSUE-003: removed the contradictory revoke-then-re-grant pair.)
+revoke insert on public.calculations from anon;

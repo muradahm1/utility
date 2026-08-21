@@ -344,9 +344,12 @@ export function initializeMigration() {
         registerBudgetPlanner(registerTool);
     }
     
-    // Register modular calculators (only if not already registered)
-    registerConstructionCalculators(registerTool, toolExists);
-    registerEngineeringCalculators(registerTool, toolExists);
+    // Register modular calculators (only if not already registered) — wrapped
+    // in try/catch so a single broken module cannot crash migration (ISSUE-101).
+    try { registerConstructionCalculators(registerTool, toolExists); }
+    catch (e) { console.error('[migration] construction registration failed:', e); }
+    try { registerEngineeringCalculators(registerTool, toolExists); }
+    catch (e) { console.error('[migration] engineering registration failed:', e); }
     
     // Initialize router
     const router = initRouter();

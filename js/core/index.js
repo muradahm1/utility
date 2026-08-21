@@ -79,9 +79,12 @@ export function initializeCore() {
         if (tool.category) categories.add(tool.category);
     });
     
-    // Register modular calculators
-    registerConstructionCalculators(registerTool, toolExists);
-    registerEngineeringCalculators(registerTool, toolExists);
+    // Register modular calculators — wrapped in try/catch so a single broken
+    // module cannot crash the entire core initialization (ISSUE-101 resilience).
+    try { registerConstructionCalculators(registerTool, toolExists); }
+    catch (e) { console.error('[core] construction registration failed:', e); }
+    try { registerEngineeringCalculators(registerTool, toolExists); }
+    catch (e) { console.error('[core] engineering registration failed:', e); }
     
     return {
         tools: coreTOOLS,

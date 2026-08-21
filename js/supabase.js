@@ -96,9 +96,15 @@ async function saveCalculation(toolSlug, toolName, inputs, results) {
 }
 
 async function getHistory(limit = 50) {
+    // Security fix (ISSUE-002): scope the query to the authenticated user so rows
+    // are filtered at query time, not solely relying on Row Level Security.
+    const user = await getUser();
+    if (!user) return { data: [], error: { message: 'Not signed in' } };
+
     const { data, error } = await _sb
         .from('calculations')
         .select('id, tool_slug, tool_name, inputs, results, created_at')
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(limit);
 
