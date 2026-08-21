@@ -1,0 +1,17 @@
+# Exclude non-production files from Cloudflare Pages/Workers deployments
+node_modules
+.git
+.github
+.kilo
+coverage
+*.log
+
+# Test & dev config — NOT needed for production build
+test
+vitest.config.js
+
+# Local plans/docs
+plans
+
+# Build output that is generated fresh
+coverage

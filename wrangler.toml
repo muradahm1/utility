@@ -1,0 +1,14 @@
+# Cloudflare Workers configuration
+# Deploys the worker entrypoint. Test files & vitest config are excluded
+# via .cfignore so they are never bundled into the production Worker.
+
+name = "getcalcu"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Keep the deployed bundle focused on production code only.
+[build]
+  command = ""
+
+# Environment variables are injected via the Cloudflare dashboard.
+# EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID

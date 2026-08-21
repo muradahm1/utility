@@ -1,0 +1,14 @@
+# Exclude non-production files from Vercel deployment
+node_modules
+.git
+.github
+.kilo
+coverage
+*.log
+
+# Test & dev config — NOT needed for production build
+test
+vitest.config.js
+
+# Local plans/docs
+plans
