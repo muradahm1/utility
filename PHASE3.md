@@ -560,6 +560,19 @@ shareCalculator(slug, tool);
 - **Code duplication eliminated**: ~2,000 lines
 - **Backward compatibility**: 100% maintained
 
+## Test Suite (Phase 3 Verification)
+
+A comprehensive test suite was added to verify Phase 3 modules and the overall architecture:
+
+- **test/utils/math.test.js** (49 tests) — Financial formulas, statistical helpers, edge cases
+- **test/utils/currency.test.js** (39 tests) — Currency formatting, validation, edge cases
+- **test/utils/date.test.js** (42 tests) — Date parsing, formatting, arithmetic, validation
+- **test/calculators/construction.test.js** (19 tests) — Construction calculator registration and calculations
+- **test/calculators/legacy.test.js** (16 tests) — Legacy tools.js regression tests (ISSUE-004, ISSUE-005)
+- **test/integration/core.test.js** (16 tests) — Core registry, construction registration, customRenderer guard
+
+**Total: 181 tests, all passing** ✅
+
 ## Next Steps
 
 1. **Migrate calculators** to use new modules

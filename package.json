@@ -1,0 +1,17 @@
+{
+  "name": "getcalcu",
+  "version": "1.0.0",
+  "description": "GetCalcu — free online calculators and utility tools",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "echo \"No linter configured yet\"",
+    "build": "echo \"No build step yet — static site served directly\""
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "jsdom": "^25.0.0"
+  }
+}
