@@ -12,3 +12,6 @@ vitest.config.js
 
 # Local plans/docs
 plans
+
+# Cloudflare Pages headers file — Vercel uses vercel.json for headers
+_headers
