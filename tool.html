@@ -43,10 +43,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="shortcut icon" href="/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/icons.css">
 </head>
     <body>
         <!-- Google Tag Manager (noscript) -->
@@ -117,6 +120,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </header>
 
             <div class="content-body" id="tool-runner-container">
+                <!-- Loading skeleton shown while tool initializes (Phase 5.5) -->
+                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
+                    <div class="skeleton-form">
+                        <div class="skeleton-line tall"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                    <div class="skeleton-results">
+                        <div class="skeleton-line full"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                </div>
                 <!-- Tool will be dynamically rendered here -->
                 <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
                     <span class="ad-slot-label">Advertisement</span>
@@ -187,16 +206,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="js/modules/faq.js" type="module"></script>
     <script src="js/modules/related-tools.js" type="module"></script>
     <script src="js/modules/recommendations.js" type="module"></script>
+    <script src="js/modules/error-boundary.js" type="module"></script>
     
-    <!-- Third-party Libraries (Chart.js must load BEFORE budget planner) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Third-party Libraries (Chart.js is lazy-loaded by ChartManager when needed) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- App Configuration -->
     <script src="js/config.js"></script>
     <script src="js/supabase.js"></script>
     
-    <!-- Budget Planner Module (loads after Chart.js) -->
+    <!-- Budget Planner Module (Chart.js is lazy-loaded by ChartManager when needed) -->
     <script src="js/modules/budget-planner.js" type="module"></script>
     
     <!-- Tool Runner — imports migration.js, which imports the rest of core -->
@@ -206,6 +225,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="js/app.js"></script>
     <script src="js/cookie-consent.js"></script>
     <script src="js/maintenance-banner.js"></script>
+    <script src="js/pwa.js" defer></script>
 </body>
 </html>
 

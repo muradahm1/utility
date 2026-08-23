@@ -1149,10 +1149,8 @@ export function renderResults(calculator, result) {
     
     container.innerHTML = html;
     
-    // Render charts if Chart.js is available
-    if (typeof Chart !== 'undefined') {
-        renderCharts(calculator, result);
-    }
+    // Render charts (ChartManager lazy-loads Chart.js when needed)
+    renderCharts(calculator, result);
     
     // Bind copy button
     bindCopyBtn(result.stats);
@@ -1598,11 +1596,6 @@ export function buildTableSpecHtml(tbl) {
  * @param {Object} result - Calculation result
  */
 export function renderCharts(calculator, result) {
-    if (typeof Chart === 'undefined') {
-        console.warn('Chart.js not loaded');
-        return;
-    }
-    
     const { container } = calculator;
     
     // Destroy existing charts

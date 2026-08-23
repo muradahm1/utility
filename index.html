@@ -113,10 +113,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="shortcut icon" href="/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366F1">
+
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/icons.css">
 </head>
     <body>
         <!-- Google Tag Manager (noscript) -->
@@ -187,7 +191,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                         <div class="hero-search-box" id="hero-search-box">
                             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                            <input type="text" id="hero-search-input" placeholder="Search calculators, converters, tools...">
+                            <input type="text" id="hero-search-input" placeholder="Search calculators, converters, tools..." aria-label="Search calculators, converters, tools">
                             <button class="btn btn-primary" id="hero-search-btn">Search</button>
                         </div>
 
@@ -449,6 +453,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </script>
     <script src="js/cookie-consent.js"></script>
     <script src="js/maintenance-banner.js"></script>
+    <script src="js/pwa.js" defer></script>
 </body>
 </html>
 

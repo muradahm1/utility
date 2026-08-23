@@ -1,0 +1,56 @@
+{
+  "name": "GetCalcu — Free Online Calculators & Tools",
+  "short_name": "GetCalcu",
+  "description": "Free, fast and accurate online calculators, converters and utilities for finance, health, math, business and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#6366F1",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mortgage Calculator",
+      "short_name": "Mortgage",
+      "url": "/tool/mortgage-calculator",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "BMI Calculator",
+      "short_name": "BMI",
+      "url": "/tool/bmi-calculator",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Loan Calculator",
+      "short_name": "Loan",
+      "url": "/tool/loan-calculator",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Percentage Calculator",
+      "short_name": "Percentage",
+      "url": "/tool/percentage-calculator",
+      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+    }
+  ]
+}

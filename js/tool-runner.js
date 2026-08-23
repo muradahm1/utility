@@ -11,6 +11,10 @@ import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo } from './core/ca
 import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml, buildTableSpecHtml } from './core/calculator-engine.js';
 import { ChartManager } from './modules/charts.js';
+import { initErrorBoundary } from './modules/error-boundary.js';
+
+// Initialize global error boundary (Phase 5.4)
+initErrorBoundary();
 
 // Expose legacy globals for backward compatibility with calculators in tools.js
 window.esc = escapeHtml;
@@ -203,6 +207,56 @@ function initLegacyRunner(tool, slug, container) {
         values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
     });
 
+    // ── Phase 5.3: Debounce recalculation (~200ms) ─────────────
+    let debounceTimer = null;
+    function debouncedUpdate() {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            updateResults();
+            updateShareUrl();
+        }, 200);
+    }
+
+    // ── Phase 5.5: Hide loading skeleton once tool renders ────
+    const skeleton = document.getElementById('tool-loading-skeleton');
+    if (skeleton) skeleton.style.display = 'none';
+
+    // ── Phase 5.9: Load values from shareable URL (?input=...) ─
+    const urlInput = new URLSearchParams(window.location.search).get('input');
+    if (urlInput) {
+        try {
+            const inputParams = new URLSearchParams(decodeURIComponent(urlInput));
+            tool.fields.forEach(f => {
+                if (inputParams.has(f.id)) {
+                    const raw = inputParams.get(f.id);
+                    if (f.type === 'number' || f.type === 'range') {
+                        const n = parseFloat(raw);
+                        if (!isNaN(n)) values[f.id] = n;
+                    } else if (f.type === 'select') {
+                        values[f.id] = raw;
+                    }
+                }
+            });
+        } catch (e) {
+            console.warn('Failed to parse input URL params:', e);
+        }
+    }
+
+    // ── Phase 5.9: Shareable result URLs (#input=...) ──────────
+    function updateShareUrl() {
+        const params = new URLSearchParams();
+        tool.fields.forEach(f => {
+            if (f.type === 'number' || f.type === 'range' || f.type === 'select') {
+                params.set(f.id, values[f.id]);
+            }
+        });
+        const hash = params.toString();
+        const url = window.location.pathname + (hash ? '?input=' + encodeURIComponent(hash) : '');
+        if (window.location.search !== url) {
+            history.replaceState(null, '', url);
+        }
+    }
+
     function buildFormHtml() {
         let html = '';
         let inCollapsible = false;
@@ -367,6 +421,7 @@ function initLegacyRunner(tool, slug, container) {
                 ${tableHtml}
                 <div class="save-result-bar" id="save-result-bar">
                     <button class="btn btn-primary" id="save-result-btn"><i class="fa-solid fa-bookmark"></i> Save Result</button>
+                    <button class="btn btn-outline btn-sm" id="reset-btn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
                     <span class="save-result-msg hidden" id="save-result-msg"></span>
                 </div>
             </div>
@@ -380,6 +435,7 @@ function initLegacyRunner(tool, slug, container) {
         if (result.chart3) renderChart(result.chart3, 'result-chart-4');
         bindCopyBtn(result.stats);
         initSaveButton();
+        initResetButton();
     }
 
     function validateField(field, rawValue) {
@@ -412,7 +468,7 @@ function initLegacyRunner(tool, slug, container) {
             value = parseFloat(value);
         }
         values[id] = value;
-        updateResults();
+        debouncedUpdate();
     }
 
     function handleRangeInput(e) {
@@ -421,13 +477,22 @@ function initLegacyRunner(tool, slug, container) {
         const numInput = document.getElementById(rangeFor);
         if (numInput) numInput.value = e.target.value;
         values[rangeFor] = parseFloat(e.target.value);
-        updateResults();
+        debouncedUpdate();
+    }
+
+    // ── Phase 5.8: Enter-to-recalculate on number inputs ──────
+    function handleKeyDown(e) {
+        if (e.key === 'Enter' && e.target.dataset.id) {
+            e.preventDefault();
+            debouncedUpdate();
+        }
     }
 
     container.addEventListener('input', handleInputChange);
     container.addEventListener('change', handleInputChange);
     container.addEventListener('input', handleRangeInput);
     container.addEventListener('change', handleRangeInput);
+    container.addEventListener('keydown', handleKeyDown);
 
     function initSaveButton() {
         const bar = document.getElementById('save-result-bar');
@@ -458,6 +523,30 @@ function initLegacyRunner(tool, slug, container) {
                 btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
                 setTimeout(() => msg.classList.add('hidden'), 3000);
             }
+        });
+    }
+
+    // ── Phase 5.8: Reset button — restore defaults ────────────
+    function initResetButton() {
+        const resetBtn = document.getElementById('reset-btn');
+        if (!resetBtn) return;
+        resetBtn.addEventListener('click', () => {
+            tool.fields.forEach(f => {
+                values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
+            });
+            // Clear any field errors
+            tool.fields.forEach(f => {
+                const input = document.getElementById(f.id);
+                const errEl = document.querySelector(`[data-error="${f.id}"]`);
+                if (input) input.classList.remove('input-error');
+                if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
+            });
+            // Re-render form with default values
+            const formContainer = document.querySelector('.calculator-form-inputs');
+            if (formContainer) formContainer.innerHTML = buildFormHtml();
+            // Recalculate and update URL
+            updateResults();
+            updateShareUrl();
         });
     }
 

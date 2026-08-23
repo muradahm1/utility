@@ -1,4 +1,16 @@
-﻿const TOOLS = {
+﻿// ── Phase 5.11: Lazy-load Chart.js for legacy calculators ──────
+// Some legacy calculators in this file use `new Chart()` directly.
+// Load Chart.js dynamically so it's only fetched when a chart is needed.
+(function () {
+    if (typeof Chart === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        s.async = true;
+        document.head.appendChild(s);
+    }
+})();
+
+const TOOLS = {
   'mortgage-calculator': {
     name: 'Mortgage Calculator',
     category: 'Finance',

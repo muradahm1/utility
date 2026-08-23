@@ -2923,3 +2923,88 @@ body.has-maintenance-banner {
         min-height: 200px;
     }
 }
+
+/* ── Loading Skeleton (Phase 5.5) ────────────────────────────── */
+.tool-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.skeleton-form,
+.skeleton-results {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+.skeleton-form {
+    flex: 1;
+}
+.skeleton-line {
+    height: 14px;
+    background: linear-gradient(90deg, var(--border-color) 25%, var(--bg-main) 50%, var(--border-color) 75%);
+    background-size: 200% 100%;
+    border-radius: 4px;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    margin-bottom: 12px;
+}
+.skeleton-line.short { width: 40%; }
+.skeleton-line.tall { height: 48px; }
+.skeleton-line.full { width: 100%; }
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+.skeleton-results .skeleton-line { margin-bottom: 16px; }
+.skeleton-results .skeleton-line:last-child { width: 60%; }
+
+/* ── Error Boundary (Phase 5.4) ──────────────────────────────── */
+.error-boundary {
+    padding: 40px;
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    max-width: 520px;
+    margin: 0 auto;
+}
+.error-boundary h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+.error-boundary p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.error-boundary pre {
+    background: rgba(239, 68, 68, 0.08);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: monospace;
+    word-break: break-word;
+    max-height: 120px;
+    overflow: auto;
+}
+.error-boundary .btn {
+    min-width: 120px;
+}
+
+/* ── Tool Results Toolbar (Phase 5.8) ───────────────────────── */
+.tool-results-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+.tool-results-toolbar .btn {
+    min-width: 100px;
+}
+
+

@@ -287,6 +287,25 @@ function setupResizeObserver(id, canvas) {
     resizeObservers.set(id, observer);
 }
 
+// ── Phase 5.11: Dynamic Chart.js Loader ────────────────────────
+let chartJsPromise = null;
+function loadChartJs() {
+    if (chartJsPromise) return chartJsPromise;
+    chartJsPromise = new Promise((resolve, reject) => {
+        if (typeof Chart !== 'undefined') {
+            resolve();
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Failed to load Chart.js'));
+        document.head.appendChild(script);
+    });
+    return chartJsPromise;
+}
+
 // ── ChartManager API ────────────────────────────────────────────
 
 export const ChartManager = {
@@ -313,12 +332,6 @@ export const ChartManager = {
         const validation = validateConfig(config);
         if (!validation.isValid) {
             console.error('[ChartManager] Invalid chart config:', validation.errors);
-            return null;
-        }
-        
-        // Check if Chart.js is loaded
-        if (typeof Chart === 'undefined') {
-            console.warn('[ChartManager] Chart.js is not loaded');
             return null;
         }
         
@@ -356,9 +369,19 @@ export const ChartManager = {
         // Build chart config
         const chartConfig = buildChartConfig(config);
         
-        try {
-            // Create chart
-            const chart = new Chart(canvas.getContext('2d'), chartConfig);
+        // ── Phase 5.11: Lazy-load Chart.js only when needed ─────
+        const createChart = () => {
+            try {
+                return new Chart(canvas.getContext('2d'), chartConfig);
+            } catch (err) {
+                console.error('[ChartManager] Failed to create chart:', err);
+                return null;
+            }
+        };
+        
+        const finalizeChart = () => {
+            const chart = createChart();
+            if (!chart) return null;
             
             // Store instance
             const instance = {
@@ -376,6 +399,23 @@ export const ChartManager = {
             setupResizeObserver(config.id, canvas);
             
             return instance;
+        };
+        
+        try {
+            if (typeof Chart !== 'undefined') {
+                return finalizeChart();
+            }
+            
+            // Chart.js not yet loaded — lazy-load it
+            if (!ChartManager._loadingChartJs) {
+                ChartManager._loadingChartJs = loadChartJs();
+            }
+            ChartManager._loadingChartJs.then(() => {
+                finalizeChart();
+            }).catch(err => {
+                console.error('[ChartManager] Failed to load Chart.js:', err);
+            });
+            return null;
         } catch (error) {
             console.error(`[ChartManager] Failed to create chart "${config.id}":`, error);
             return null;

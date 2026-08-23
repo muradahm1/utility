@@ -1,0 +1,11 @@
+// fix-auth-a11y.js — Add aria-labels to password toggle buttons in auth.html
+const fs = require('fs');
+let f = fs.readFileSync('auth.html', 'utf8');
+const before = (f.match(/class="pw-toggle"/g) || []).length;
+f = f.replace(
+  /<button type="button" class="pw-toggle" data-target="([^"]+)" tabindex="-1"><i class="fa-solid fa-eye"><\/i><\/button>/g,
+  '<button type="button" class="pw-toggle" data-target="$1" tabindex="-1" aria-label="Toggle password visibility"><i class="fa-solid fa-eye"></i></button>'
+);
+fs.writeFileSync('auth.html', f);
+const after = (f.match(/aria-label="Toggle password visibility"/g) || []).length;
+console.log('pw-toggle buttons:', before, '| aria-labels added:', after);
