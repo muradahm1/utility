@@ -2,7 +2,7 @@
 // Some legacy calculators in this file use `new Chart()` directly.
 // Load Chart.js dynamically so it's only fetched when a chart is needed.
 (function () {
-    if (typeof Chart === 'undefined') {
+    if (typeof document !== 'undefined' && document.head && typeof Chart === 'undefined') {
         var s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
         s.async = true;
