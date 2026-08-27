@@ -1,32 +1,88 @@
-﻿// ── Phase 5.11: Lazy-load Chart.js for legacy calculators ──────
-// Some legacy calculators in this file use `new Chart()` directly.
-// Load Chart.js dynamically so it's only fetched when a chart is needed.
-(function () {
-    if (typeof document !== 'undefined' && document.head && typeof Chart === 'undefined') {
-        var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-        s.async = true;
-        document.head.appendChild(s);
-    }
-})();
-
 const TOOLS = {
-  'mortgage-calculator': {
-    name: 'Mortgage Calculator',
-    category: 'Finance',
-    icon: 'fa-house',
-    iconClass: 'icon-home',
-    tagClass: 'tag-finance',
-    description: 'Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.',
-    metaDescription: 'Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.',
+  "mortgage-calculator": {
+    name: "Mortgage Calculator",
+    category: "Finance",
+    icon: "fa-house",
+    iconClass: "icon-home",
+    tagClass: "tag-finance",
+    description: "Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.",
+    metaDescription: "Calculate your exact monthly mortgage payment including principal, interest, taxes, and insurance (PITI). See full amortization schedules and interest savings tips.",
     fields: [
-      { id: 'home_price',    label: 'Home Price ($)',         type: 'number', default: 400000, min: 1000,   step: 1000,  hint: 'The total purchase price of the home you are buying.' },
-      { id: 'down_payment',  label: 'Down Payment ($)',       type: 'number', default: 80000,  min: 0,      step: 1000,  hint: 'Cash paid upfront. A larger down payment lowers your loan amount and can help you avoid PMI (typically need 20% to skip it).' },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)',type: 'number', default: 7.0,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) on your mortgage. US 30-year fixed rates have often ranged 6-8%.' },
-      { id: 'loan_term',     label: 'Loan Term (years)',      type: 'select', default: 30,
-        options: [10,15,20,25,30].map(v => ({ value: v, label: `${v} years` })), hint: 'How long you take to repay the loan. Shorter terms mean higher monthly payments but far less total interest.' },
-      { id: 'property_tax',  label: 'Annual Property Tax ($)',type: 'number', default: 4800,   min: 0,      step: 100,   hint: 'Yearly property tax set by your local government, spread across your monthly payments.' },
-      { id: 'insurance',     label: 'Annual Insurance ($)',   type: 'number', default: 1200,   min: 0,      step: 100,   hint: 'Yearly homeowners insurance premium, spread across your monthly payments.' },
+      {
+        id: "home_price",
+        label: "Home Price ($)",
+        type: "number",
+        default: 400000,
+        min: 1000,
+        step: 1000,
+        hint: "The total purchase price of the home you are buying."
+      },
+      {
+        id: "down_payment",
+        label: "Down Payment ($)",
+        type: "number",
+        default: 80000,
+        min: 0,
+        step: 1000,
+        hint: "Cash paid upfront. A larger down payment lowers your loan amount and can help you avoid PMI (typically need 20% to skip it)."
+      },
+      {
+        id: "interest_rate",
+        label: "Annual Interest Rate (%)",
+        type: "number",
+        default: 7,
+        min: 0.01,
+        step: 0.05,
+        max: 50,
+        hint: "The yearly interest rate (APR) on your mortgage. US 30-year fixed rates have often ranged 6-8%."
+      },
+      {
+        id: "loan_term",
+        label: "Loan Term (years)",
+        type: "select",
+        default: 30,
+        options: [
+          {
+            value: 10,
+            label: "10 years"
+          },
+          {
+            value: 15,
+            label: "15 years"
+          },
+          {
+            value: 20,
+            label: "20 years"
+          },
+          {
+            value: 25,
+            label: "25 years"
+          },
+          {
+            value: 30,
+            label: "30 years"
+          }
+        ],
+        hint: "How long you take to repay the loan. Shorter terms mean higher monthly payments but far less total interest."
+      },
+      {
+        id: "property_tax",
+        label: "Annual Property Tax ($)",
+        type: "number",
+        default: 4800,
+        min: 0,
+        step: 100,
+        hint: "Yearly property tax set by your local government, spread across your monthly payments."
+      },
+      {
+        id: "insurance",
+        label: "Annual Insurance ($)",
+        type: "number",
+        default: 1200,
+        min: 0,
+        step: 100,
+        hint: "Yearly homeowners insurance premium, spread across your monthly payments."
+      }
     ],
     calculate(v) {
       // M = P * [r(1+r)^n] / [(1+r)^n - 1]
@@ -67,50 +123,215 @@ const TOOLS = {
         table: schedule,
       };
     },
-
     article: {
-      heading: 'How to Calculate Your Mortgage Payment Accurately',
-      intro: 'Your monthly mortgage payment is more than just principal and interest — it includes property taxes and insurance (PITI). The GetCalcu Mortgage Calculator breaks down every component so you know exactly what you will pay each month and over the life of the loan.',
+      heading: "Everything You Need to Know About Your Monthly Mortgage Payment",
+      intro: "When you take out a home loan, your monthly mortgage payment is almost always larger than just the loan repayment itself. Most lenders bundle your principal, interest, property taxes, and homeowners insurance into a single monthly bill known as PITI. Understanding how each piece works helps you budget accurately, avoid surprise costs, and potentially save tens of thousands of dollars in interest over the life of your loan.",
       sections: [
-        { heading: 'Principal, Interest, Taxes, and Insurance (PITI)', body: 'Principal is the amount you borrowed, interest is the lender\'s charge for lending it, property taxes fund local services, and homeowners insurance protects your investment. Lenders typically bundle all four into one monthly payment.' },
-        { heading: 'How the Loan Term Affects Total Cost', body: 'A 30-year term keeps monthly payments low but you pay roughly twice as much total interest as a 15-year term. Use the calculator to compare terms side by side and see the lifetime interest difference.' },
-      ],
+        {
+          heading: "What Is PITI (Principal, Interest, Taxes, Insurance)?",
+          body: "PITI represents the four standard pieces of a monthly mortgage bill. Principal is the portion that actually pays down your original loan balance. Interest is the fee the lender charges you to borrow the money. Property Taxes are assessed by your local county or city government to fund schools, roads, and emergency services. Homeowners Insurance protects your home against fire, storms, and hazards. Lenders collect the tax and insurance portions each month and hold them in an escrow account to pay the bills on your behalf when they are due."
+        },
+        {
+          heading: "How Loan Terms Change What You Pay: 15-Year vs. 30-Year",
+          body: "A 30-year fixed-rate mortgage is the most common choice because it spreads payments over 360 months, keeping your required monthly payment lower and more manageable. A 15-year fixed mortgage requires higher monthly payments because you pay off the balance in half the time, but it comes with two massive benefits: lenders usually offer lower interest rates, and you pay a fraction of the total lifetime interest. For example, borrowing $320,000 at 6.5% costs around $408,000 in interest over 30 years, compared to just $180,000 over 15 years."
+        },
+        {
+          heading: "Private Mortgage Insurance (PMI) and How to Avoid It",
+          body: "If your down payment is less than 20% of the purchase price on a conventional loan, lenders usually require Private Mortgage Insurance (PMI). PMI protects the lender if you stop making payments. It typically costs between 0.3% and 1.5% of the original loan balance each year, divided into your monthly payment. Once you pay down your loan to 80% of your home original appraised value, you can request to cancel PMI. By law, lenders must automatically drop PMI once your balance reaches 78%."
+        },
+        {
+          heading: "How Property Taxes and Insurance Impact Your Budget",
+          body: "Property taxes vary widely depending on where you live, usually ranging from 0.5% to over 2.5% of your assessed home value per year. Homeowners insurance also depends on your location, property age, and weather risks. Because both taxes and insurance premiums can rise each year, your monthly escrow payment may adjust upward over time, even if you have a fixed-rate mortgage."
+        },
+        {
+          heading: "The Power of Making Extra Principal Payments",
+          body: "Because mortgage interest is calculated based on your remaining loan balance, every extra dollar you put toward the principal immediately reduces the interest charged in all future months. Paying an extra $100 or $200 each month, or making one extra full payment per year, can shave 4 to 7 years off a 30-year loan and save you tens of thousands of dollars in interest without refinancing."
+        },
+        {
+          heading: "Fixed-Rate vs. Adjustable-Rate Mortgages (ARMs)",
+          body: "A fixed-rate mortgage locks in the same interest rate and principal payment for the entire loan life (15, 20, or 30 years), giving you complete stability. An adjustable-rate mortgage (ARM), like a 5/1 or 7/1 ARM, offers a fixed lower interest rate for an initial introductory period, after which the rate adjusts periodically based on market benchmark rates. ARMs can be useful if you know you will sell or refinance before the rate resets, but they carry the risk of higher payments if rates rise."
+        },
+        {
+          heading: "Understanding Closing Costs and Discount Points",
+          body: "Buying a home comes with one-time closing costs that typically total 2% to 5% of the loan amount. These include appraisal fees, title insurance, attorney fees, and lender origination fees. You may also choose to buy \"discount points\" upfront. One point equals 1% of the loan amount and permanently lowers your mortgage rate by about 0.25%, saving interest if you plan to keep the loan for many years."
+        },
+        {
+          heading: "How Lenders Evaluate Your Application",
+          body: "Lenders evaluate your credit score, employment stability, down payment, and Debt-to-Income (DTI) ratio. Most lenders look for a credit score of at least 620 for conventional loans (or 580 for FHA loans) and prefer that your total monthly debt payments (including your new mortgage) stay under 36% to 43% of your gross monthly income."
+        }
+      ]
     },
     howTo: [
-      'Enter the home price and your down payment — the calculator subtracts the down payment to find your loan amount.',
-      'Add the annual interest rate (APR) and choose your loan term in years.',
-      'Include annual property tax and homeowners insurance for a true PITI monthly payment.',
-      'Review your monthly payment, total interest, and full amortization schedule.',
-      'Adjust the down payment or term to see how much interest you can save.',
+      "Enter the full purchase price of the home you plan to buy.",
+      "Enter your down payment in dollars. Putting down 20% eliminates the need for monthly PMI.",
+      "Input the annual interest rate (APR) quoted by lenders.",
+      "Select your loan term in years (standard options are 15, 20, or 30 years).",
+      "Add estimated annual property taxes and homeowners insurance to see your true PITI monthly payment.",
+      "Review your total monthly payment, interest paid over the life of the loan, and your month-by-month amortization schedule."
     ],
     examples: [
-      { title: 'Typical 30-Year Fixed Mortgage', input: 'Price: $400,000, Down: $80,000, Rate: 7%, Term: 30 years', result: 'Monthly Payment: ~$2,129 | Total Interest: ~$466,000' },
-      { title: '15-Year Term Saves Interest', input: 'Price: $400,000, Down: $80,000, Rate: 6.5%, Term: 15 years', result: 'Monthly Payment: ~$2,935 | Total Interest: ~$188,000' },
+      {
+        title: "Starter Home (30-Year Fixed)",
+        input: "Price: $350,000 | Down Payment: $70,000 (20%) | Rate: 6.5% | Taxes: $4,200/yr | Insurance: $1,200/yr",
+        result: "Monthly PITI: ~$2,220 (Principal & Interest: $1,770 | Tax & Ins: $450)"
+      },
+      {
+        title: "15-Year Term Fast Payoff",
+        input: "Price: $350,000 | Down Payment: $70,000 (20%) | Rate: 5.8% | Term: 15 Years",
+        result: "Monthly PITI: ~$2,785 | Lifetime Interest Saved: ~$185,000 vs. 30-Year"
+      },
+      {
+        title: "Low Down Payment (5% Down)",
+        input: "Price: $400,000 | Down Payment: $20,000 (5%) | Rate: 6.75% | Term: 30 Years",
+        result: "Monthly PITI: ~$2,965 (Includes estimated PMI & escrow)"
+      },
+      {
+        title: "High-Value Home (20% Down)",
+        input: "Price: $750,000 | Down Payment: $150,000 (20%) | Rate: 6.25% | Term: 30 Years",
+        result: "Monthly PITI: ~$4,495 (Principal & Interest: $3,695 | Tax & Ins: $800)"
+      }
     ],
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Monthly Total = M + (Property Tax / 12) + (Insurance / 12) | Total Interest = (M × n) − P',
+    formula: "Monthly Payment (P&I) = P × [r(1+r)^n] / [(1+r)^n − 1] + (Annual Tax / 12) + (Annual Insurance / 12), where P is loan principal, r is monthly rate (APR / 12), and n is total months (years × 12).",
     faqs: [
-      { q: 'How is a monthly mortgage payment calculated?', a: 'A monthly mortgage payment is calculated using the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the loan principal, r is the monthly interest rate (annual rate ÷ 12), and n is the total number of payments (years × 12). Property taxes and insurance are then added to get your full PITI payment.' },
-      { q: 'What is PITI in a mortgage payment?', a: 'PITI stands for Principal, Interest, Taxes, and Insurance — the four components most lenders bundle into your monthly mortgage payment. Principal and Interest repay the loan, while Taxes and Insurance cover annual property tax and homeowners insurance, divided by 12 and collected each month.' },
-      { q: 'How much down payment do I need to avoid PMI?', a: 'You typically need a down payment of at least 20% of the home price to avoid Private Mortgage Insurance (PMI). PMI protects the lender (not you) when you put down less than 20%, and usually costs 0.5% to 1% of the loan amount per year until your equity reaches 20%.' },
-      { q: 'Is a 15-year or 30-year mortgage better?', a: 'A 15-year mortgage has higher monthly payments but you pay roughly half the total interest of a 30-year loan and build equity faster. A 30-year mortgage keeps payments affordable and offers flexibility, but costs far more over time. Use our calculator to compare the total interest of both terms with your exact numbers.' },
-      { q: 'What is an amortization schedule?', a: 'An amortization schedule is a table showing how each payment splits between principal and interest over the life of the loan. Early payments are mostly interest, while later payments are mostly principal. Our calculator generates a full month-by-month amortization schedule automatically.' },
+      {
+        q: "What is included in a monthly mortgage payment?",
+        a: "A standard mortgage payment includes four main parts (PITI): Principal (paying off the loan balance), Interest (the lender fee), Property Taxes (local government fees), and Homeowners Insurance. If you put down less than 20%, it may also include Private Mortgage Insurance (PMI)."
+      },
+      {
+        q: "How is mortgage interest calculated?",
+        a: "Mortgage interest is calculated monthly based on your remaining loan balance. Each month, your balance is multiplied by your annual interest rate divided by 12. Early in the loan, when the balance is highest, most of your payment goes to interest. As the balance drops, more of each payment goes to principal."
+      },
+      {
+        q: "What is an amortization schedule?",
+        a: "An amortization schedule is a complete table showing every payment over the entire loan term. It details how much of each payment goes to principal versus interest and shows your remaining loan balance after every single month."
+      },
+      {
+        q: "What is the difference between APR and interest rate?",
+        a: "The interest rate is the base cost to borrow the loan balance each year. The APR (Annual Percentage Rate) includes both the interest rate plus other lender fees, points, and closing costs spread over the loan term. APR represents the true total annual cost of the loan."
+      },
+      {
+        q: "How much down payment do I really need to buy a house?",
+        a: "While 20% down eliminates PMI, you can buy a home with much less. Conventional loans often allow down payments as low as 3% to 5%, FHA loans require 3.5%, and VA or USDA loans offer 0% down for eligible borrowers."
+      },
+      {
+        q: "Can I pay off my mortgage early without penalty?",
+        a: "Most standard residential mortgages today do not have prepayment penalties, meaning you can make extra principal payments or pay off the loan in full whenever you want. Always verify your loan disclosure document to confirm."
+      },
+      {
+        q: "How do bi-weekly mortgage payments work?",
+        a: "With a bi-weekly plan, you pay half your monthly mortgage payment every two weeks. Because there are 52 weeks in a year, you make 26 half-payments, which equals 13 full payments each year. That extra payment goes directly to principal, shortening a 30-year mortgage by roughly 4 to 6 years."
+      },
+      {
+        q: "What is an escrow account for a mortgage?",
+        a: "An escrow account is a special holding account managed by your mortgage servicer. Each month, a portion of your payment is set aside in escrow to pay your annual property taxes and homeowners insurance premiums when the bills come due."
+      },
+      {
+        q: "Why did my monthly mortgage payment increase on a fixed-rate loan?",
+        a: "Even with a fixed interest rate, your overall monthly payment can rise if your local property taxes increase or your homeowners insurance premium goes up, which raises your monthly escrow requirement."
+      },
+      {
+        q: "Is a 15-year or 30-year mortgage better for me?",
+        a: "A 30-year mortgage is ideal if you want lower required monthly payments and maximum monthly budgeting flexibility. A 15-year mortgage is better if your income easily supports higher monthly payments and your priority is getting debt-free fast and minimizing interest."
+      },
+      {
+        q: "What credit score is needed to qualify for a good mortgage rate?",
+        a: "Conventional loans usually require a minimum score of 620, but the best rates and lowest PMI costs typically go to borrowers with credit scores of 740 and above. FHA loans accept scores down to 580 (or 500 with 10% down)."
+      },
+      {
+        q: "What are discount points and should I buy them?",
+        a: "Discount points are prepaid interest where you pay 1% of the loan amount upfront to lower your interest rate by roughly 0.25%. They make financial sense if you plan to stay in the home longer than the break-even period (usually 4 to 7 years)."
+      },
+      {
+        q: "How does my down payment affect my monthly payment?",
+        a: "A larger down payment reduces your loan principal, which lowers your required monthly payment, cuts your lifetime interest costs, and can eliminate monthly PMI once you reach 20% down."
+      },
+      {
+        q: "What is Debt-to-Income (DTI) ratio in mortgage lending?",
+        a: "DTI is the percentage of your gross monthly income that goes toward paying monthly debts (including your future mortgage payment, car loans, student loans, and credit card minimums). Most lenders prefer a total DTI of 36% to 43% or lower."
+      },
+      {
+        q: "Can I refinance my mortgage if interest rates drop later?",
+        a: "Yes. When market interest rates drop, you can replace your existing loan with a new one at a lower rate to reduce your monthly payment or shorten your loan term. You will need to weigh the closing costs of refinancing against your monthly savings."
+      }
     ],
+    metaTitle: "Mortgage Calculator | Monthly Payment, PITI & Amortization — GetCalcu",
+    keywords: [
+      "mortgage calculator",
+      "monthly mortgage payment",
+      "piti calculator",
+      "home loan calculator",
+      "amortization schedule mortgage",
+      "mortgage interest calculator",
+      "15 vs 30 year mortgage",
+      "how much is mortgage payment",
+      "down payment mortgage calculator",
+      "mortgage payoff calculator",
+      "property tax and insurance calculator",
+      "house payment estimator"
+    ],
+    related: [
+      "house-affordability-calculator",
+      "rent-vs-buy-calculator",
+      "amortization-calculator",
+      "loan-calculator",
+      "compound-interest-calculator",
+      "budget-planner"
+    ]
   },
-
-  'bmi-calculator': {
-    name: 'BMI Calculator',
-    category: 'Health',
-    icon: 'fa-heart',
-    iconClass: 'icon-health',
-    tagClass: 'tag-health',
-    description: 'Calculate your Body Mass Index (BMI) and find out your healthy weight range.',
-    metaDescription: 'Free BMI calculator — instantly calculate your Body Mass Index, health category, and ideal weight range.',
+  "bmi-calculator": {
+    name: "BMI Calculator",
+    category: "Health",
+    icon: "fa-heart",
+    iconClass: "icon-health",
+    tagClass: "tag-health",
+    description: "Calculate your Body Mass Index (BMI) and find out your healthy weight range.",
+    metaDescription: "Free BMI calculator — instantly calculate your Body Mass Index, health category, and ideal weight range.",
     fields: [
-      { id: 'unit',   label: 'Unit System', type: 'select', default: 'metric',
-        options: [{ value:'metric', label:'Metric (kg / cm)' }, { value:'imperial', label:'Imperial (lb / in)' }], hint: 'Choose Metric (kilograms / centimeters) or Imperial (pounds / inches).' },
-      { id: 'weight', label: 'Weight',      type: 'number', default: 70,  min: 1,   step: 0.1, hint: 'Your body weight, entered in the unit system selected above.' },
-      { id: 'height', label: 'Height',      type: 'number', default: 175, min: 1,   step: 0.1, hint: 'Your height, entered in the unit system selected above.' },
-      { id: 'age',    label: 'Age',         type: 'number', default: 30,  min: 1,   max: 120, step: 1, hint: 'Your age. BMI categories are the same for adults of all ages, but age gives context to your result.' },
+      {
+        id: "unit",
+        label: "Unit System",
+        type: "select",
+        default: "metric",
+        options: [
+          {
+            value: "metric",
+            label: "Metric (kg / cm)"
+          },
+          {
+            value: "imperial",
+            label: "Imperial (lb / in)"
+          }
+        ],
+        hint: "Choose Metric (kilograms / centimeters) or Imperial (pounds / inches)."
+      },
+      {
+        id: "weight",
+        label: "Weight",
+        type: "number",
+        default: 70,
+        min: 1,
+        step: 0.1,
+        hint: "Your body weight, entered in the unit system selected above."
+      },
+      {
+        id: "height",
+        label: "Height",
+        type: "number",
+        default: 175,
+        min: 1,
+        step: 0.1,
+        hint: "Your height, entered in the unit system selected above."
+      },
+      {
+        id: "age",
+        label: "Age",
+        type: "number",
+        default: 30,
+        min: 1,
+        max: 120,
+        step: 1,
+        hint: "Your age. BMI categories are the same for adults of all ages, but age gives context to your result."
+      }
     ],
     fieldLabels(v) {
       return {
@@ -148,53 +369,110 @@ const TOOLS = {
         bmiGauge: { bmi: clampedBmi, color: cat.color, label: cat.label },
       };
     },
-
     article: {
-      heading: 'How to Calculate Your BMI and Understand Your Weight Category',
-      intro: 'Body Mass Index (BMI) is a widely used screening tool that estimates body fat from your height and weight. The GetCalcu BMI Calculator instantly computes your BMI, classifies it, and shows your healthy weight range — in metric or imperial units.',
+      heading: "How to Calculate Your BMI and Understand Your Weight Category",
+      intro: "Body Mass Index (BMI) is a widely used screening tool that estimates body fat from your height and weight. The GetCalcu BMI Calculator instantly computes your BMI, classifies it, and shows your healthy weight range — in metric or imperial units.",
       sections: [
-        { heading: 'What the BMI Categories Mean', body: 'A BMI below 18.5 is Underweight, 18.5–24.9 is Normal Weight, 25–29.9 is Overweight, and 30 or above is Obese. These ranges are the same for adult men and women of all ages, though BMI does not directly measure body fat or muscle mass.' },
-        { heading: 'Limitations of BMI', body: 'BMI does not distinguish between muscle and fat, so very muscular athletes may score "Overweight" despite low body fat. It is a useful starting point, not a complete health picture — combine it with waist measurement and body fat percentage for a fuller assessment.' },
-      ],
+        {
+          heading: "What the BMI Categories Mean",
+          body: "A BMI below 18.5 is Underweight, 18.5–24.9 is Normal Weight, 25–29.9 is Overweight, and 30 or above is Obese. These ranges are the same for adult men and women of all ages, though BMI does not directly measure body fat or muscle mass."
+        },
+        {
+          heading: "Limitations of BMI",
+          body: "BMI does not distinguish between muscle and fat, so very muscular athletes may score \"Overweight\" despite low body fat. It is a useful starting point, not a complete health picture — combine it with waist measurement and body fat percentage for a fuller assessment."
+        }
+      ]
     },
     howTo: [
-      'Choose your unit system — Metric (kg and cm) or Imperial (lb and in).',
-      'Enter your weight and height in the selected units.',
-      'Optionally add your age for extra context (categories are the same for all adults).',
-      'Read your BMI value and color-coded category on the gauge.',
-      'Use the healthy weight range to set a realistic target.',
+      "Choose your unit system — Metric (kg and cm) or Imperial (lb and in).",
+      "Enter your weight and height in the selected units.",
+      "Optionally add your age for extra context (categories are the same for all adults).",
+      "Read your BMI value and color-coded category on the gauge.",
+      "Use the healthy weight range to set a realistic target."
     ],
     examples: [
-      { title: 'Average Adult (Metric)', input: 'Weight: 70 kg, Height: 175 cm', result: 'BMI: 22.9 — Normal Weight' },
-      { title: 'Imperial Units', input: 'Weight: 180 lb, Height: 70 in', result: 'BMI: 25.8 — Overweight' },
+      {
+        title: "Average Adult (Metric)",
+        input: "Weight: 70 kg, Height: 175 cm",
+        result: "BMI: 22.9 — Normal Weight"
+      },
+      {
+        title: "Imperial Units",
+        input: "Weight: 180 lb, Height: 70 in",
+        result: "BMI: 25.8 — Overweight"
+      }
     ],
-    formula: 'BMI = Weight (kg) / Height (m)² | Imperial: BMI = 703 × Weight (lb) / Height (in)² | Healthy Range: 18.5–24.9',
+    formula: "BMI = Weight (kg) / Height (m)² | Imperial: BMI = 703 × Weight (lb) / Height (in)² | Healthy Range: 18.5–24.9",
     faqs: [
-      { q: 'How is BMI calculated?', a: 'BMI is calculated as weight in kilograms divided by height in meters squared (kg/m²). In imperial units, the formula is 703 × weight in pounds ÷ height in inches squared. Our calculator handles both unit systems automatically.' },
-      { q: 'What is a healthy BMI range?', a: 'A healthy BMI for adults is between 18.5 and 24.9 (Normal Weight). A BMI of 25–29.9 is classified as Overweight, and 30 or above as Obese. Below 18.5 is considered Underweight. These thresholds are set by the World Health Organization.' },
-      { q: 'Is BMI accurate for athletes and muscular people?', a: 'BMI does not distinguish muscle from fat, so heavily muscled athletes may register as "Overweight" or "Obese" despite having low body fat. For athletic builds, body fat percentage and waist-to-hip ratio are more accurate indicators of health than BMI alone.' },
-      { q: 'What BMI is considered obese?', a: 'A BMI of 30 or higher is classified as obese. Class I obesity is 30–34.9, Class II is 35–39.9, and Class III (severe) is 40 or above. Obesity is associated with increased risk of heart disease, type 2 diabetes, and other conditions.' },
-      { q: 'Does BMI differ for men and women?', a: 'No — the BMI categories and formula are the same for adult men and women. However, women naturally carry more body fat at the same BMI, and older adults tend to have more body fat at the same BMI than younger adults.' },
-    ],
+      {
+        q: "How is BMI calculated?",
+        a: "BMI is calculated as weight in kilograms divided by height in meters squared (kg/m²). In imperial units, the formula is 703 × weight in pounds ÷ height in inches squared. Our calculator handles both unit systems automatically."
+      },
+      {
+        q: "What is a healthy BMI range?",
+        a: "A healthy BMI for adults is between 18.5 and 24.9 (Normal Weight). A BMI of 25–29.9 is classified as Overweight, and 30 or above as Obese. Below 18.5 is considered Underweight. These thresholds are set by the World Health Organization."
+      },
+      {
+        q: "Is BMI accurate for athletes and muscular people?",
+        a: "BMI does not distinguish muscle from fat, so heavily muscled athletes may register as \"Overweight\" or \"Obese\" despite having low body fat. For athletic builds, body fat percentage and waist-to-hip ratio are more accurate indicators of health than BMI alone."
+      },
+      {
+        q: "What BMI is considered obese?",
+        a: "A BMI of 30 or higher is classified as obese. Class I obesity is 30–34.9, Class II is 35–39.9, and Class III (severe) is 40 or above. Obesity is associated with increased risk of heart disease, type 2 diabetes, and other conditions."
+      },
+      {
+        q: "Does BMI differ for men and women?",
+        a: "No — the BMI categories and formula are the same for adult men and women. However, women naturally carry more body fat at the same BMI, and older adults tend to have more body fat at the same BMI than younger adults."
+      }
+    ]
   },
-
-  'percentage-calculator': {
-    name: 'Percentage Calculator',
-    category: 'Math',
-    icon: 'fa-percent',
-    iconClass: 'icon-math',
-    tagClass: 'tag-math',
-    description: 'Quickly find what percent one number is of another, calculate percentage increase or decrease, and more.',
-    metaDescription: 'Free percentage calculator — find percentages, percent change, and compute values instantly.',
+  "percentage-calculator": {
+    name: "Percentage Calculator",
+    category: "Math",
+    icon: "fa-percent",
+    iconClass: "icon-math",
+    tagClass: "tag-math",
+    description: "Quickly find what percent one number is of another, calculate percentage increase or decrease, and more.",
+    metaDescription: "Free percentage calculator — find percentages, percent change, and compute values instantly.",
     fields: [
-      { id: 'mode',    type: 'select', default: 'what-percent',
+      {
+        id: "mode",
+        type: "select",
+        default: "what-percent",
         options: [
-          { value: 'what-percent',  label: 'X is what % of Y?' },
-          { value: 'percent-of',    label: 'What is X% of Y?' },
-          { value: 'change',        label: '% Change (from X to Y)' },
-        ], hint: 'Pick the type of percentage calculation you want to perform.' },
-      { id: 'val_a',   label: 'Value A',   type: 'number', default: 50,  min: -99999999, step: 1, hint: 'The first value. Its meaning changes based on the mode chosen above.' },
-      { id: 'val_b',   label: 'Value B',   type: 'number', default: 200, min: -99999999, step: 1, hint: 'The second value. Its meaning changes based on the mode chosen above.' },
+          {
+            value: "what-percent",
+            label: "X is what % of Y?"
+          },
+          {
+            value: "percent-of",
+            label: "What is X% of Y?"
+          },
+          {
+            value: "change",
+            label: "% Change (from X to Y)"
+          }
+        ],
+        hint: "Pick the type of percentage calculation you want to perform."
+      },
+      {
+        id: "val_a",
+        label: "Value A",
+        type: "number",
+        default: 50,
+        min: -99999999,
+        step: 1,
+        hint: "The first value. Its meaning changes based on the mode chosen above."
+      },
+      {
+        id: "val_b",
+        label: "Value B",
+        type: "number",
+        default: 200,
+        min: -99999999,
+        step: 1,
+        hint: "The second value. Its meaning changes based on the mode chosen above."
+      }
     ],
     fieldLabels(v) {
       if (v.mode === 'what-percent') return { val_a: 'What is',  val_b: '% of?' };
@@ -243,50 +521,137 @@ const TOOLS = {
 
       return errorResult('Invalid calculation mode.');
     },
-
     article: {
-      heading: 'How to Calculate Percentages Quickly and Accurately',
-      intro: 'Percentages are everywhere — discounts, tips, taxes, grades, and statistics. The GetCalcu Percentage Calculator handles three common calculations in one tool: "X is what % of Y?", "What is X% of Y?", and percentage change between two values.',
+      heading: "How to Calculate Percentages Quickly and Accurately",
+      intro: "Percentages are everywhere — discounts, tips, taxes, grades, and statistics. The GetCalcu Percentage Calculator handles three common calculations in one tool: \"X is what % of Y?\", \"What is X% of Y?\", and percentage change between two values.",
       sections: [
-        { heading: 'The Three Percentage Modes', body: '"X is what % of Y?" divides X by Y and multiplies by 100. "What is X% of Y?" multiplies Y by X/100. "% Change" subtracts the old value from the new, divides by the old value, and multiplies by 100 — a positive result means increase, negative means decrease.' },
-        { heading: 'Common Percentage Mistakes', body: 'A common error is confusing percentage points with percent change. If a rate rises from 10% to 15%, that is a 5 percentage-point increase but a 50% relative increase. Always confirm which comparison you need before calculating.' },
-      ],
+        {
+          heading: "The Three Percentage Modes",
+          body: "\"X is what % of Y?\" divides X by Y and multiplies by 100. \"What is X% of Y?\" multiplies Y by X/100. \"% Change\" subtracts the old value from the new, divides by the old value, and multiplies by 100 — a positive result means increase, negative means decrease."
+        },
+        {
+          heading: "Common Percentage Mistakes",
+          body: "A common error is confusing percentage points with percent change. If a rate rises from 10% to 15%, that is a 5 percentage-point increase but a 50% relative increase. Always confirm which comparison you need before calculating."
+        }
+      ]
     },
     howTo: [
-      'Select the calculation mode you need from the dropdown.',
-      'Enter Value A and Value B as prompted for that mode.',
-      'The result updates instantly — no need to press calculate.',
-      'Switch modes to solve a different type of percentage problem.',
-      'Use negative values when working with losses or decreases.',
+      "Select the calculation mode you need from the dropdown.",
+      "Enter Value A and Value B as prompted for that mode.",
+      "The result updates instantly — no need to press calculate.",
+      "Switch modes to solve a different type of percentage problem.",
+      "Use negative values when working with losses or decreases."
     ],
     examples: [
-      { title: 'Test Score to Percentage', input: 'Mode: X is what % of Y? | A: 85, B: 100', result: '85%' },
-      { title: 'Discount on a Price', input: 'Mode: What is X% of Y? | A: 20, B: 250', result: '$50 off — pay $200' },
-      { title: 'Salary Increase', input: 'Mode: % Change | A: 50000, B: 55000', result: '+10% increase' },
+      {
+        title: "Test Score to Percentage",
+        input: "Mode: X is what % of Y? | A: 85, B: 100",
+        result: "85%"
+      },
+      {
+        title: "Discount on a Price",
+        input: "Mode: What is X% of Y? | A: 20, B: 250",
+        result: "$50 off — pay $200"
+      },
+      {
+        title: "Salary Increase",
+        input: "Mode: % Change | A: 50000, B: 55000",
+        result: "+10% increase"
+      }
     ],
-    formula: 'X is what % of Y = (X / Y) × 100 | X% of Y = (X / 100) × Y | % Change = ((New − Old) / Old) × 100',
+    formula: "X is what % of Y = (X / Y) × 100 | X% of Y = (X / 100) × Y | % Change = ((New − Old) / Old) × 100",
     faqs: [
-      { q: 'How do I calculate what percent one number is of another?', a: 'To find what percent X is of Y, divide X by Y and multiply by 100: (X ÷ Y) × 100. For example, 25 is what percent of 200? (25 ÷ 200) × 100 = 12.5%. Our calculator does this in the "X is what % of Y?" mode.' },
-      { q: 'How do I calculate a percentage of a number?', a: 'To calculate X% of Y, multiply Y by X divided by 100: Y × (X ÷ 100). For example, 20% of 250 = 250 × 0.20 = 50. Use the "What is X% of Y?" mode for this calculation.' },
-      { q: 'How do I calculate percentage increase or decrease?', a: 'Percentage change is calculated as ((New Value − Old Value) ÷ Old Value) × 100. A positive result is an increase and a negative result is a decrease. For example, a change from 50 to 65 = ((65−50) ÷ 50) × 100 = 30% increase.' },
-      { q: 'How do I calculate a discount percentage?', a: 'To find a discount, calculate the percentage of the original price, then subtract it. For a 25% discount on an $80 item: 25% of $80 = $20, so the sale price is $80 − $20 = $60. Use "What is X% of Y?" mode to find the discount amount.' },
-      { q: 'What is the difference between percentage points and percent change?', a: 'Percentage points measure the absolute difference between two percentages, while percent change measures the relative difference. If an interest rate rises from 5% to 7%, that is a 2 percentage-point increase but a 40% relative increase ((7−5) ÷ 5 × 100).' },
-    ],
+      {
+        q: "How do I calculate what percent one number is of another?",
+        a: "To find what percent X is of Y, divide X by Y and multiply by 100: (X ÷ Y) × 100. For example, 25 is what percent of 200? (25 ÷ 200) × 100 = 12.5%. Our calculator does this in the \"X is what % of Y?\" mode."
+      },
+      {
+        q: "How do I calculate a percentage of a number?",
+        a: "To calculate X% of Y, multiply Y by X divided by 100: Y × (X ÷ 100). For example, 20% of 250 = 250 × 0.20 = 50. Use the \"What is X% of Y?\" mode for this calculation."
+      },
+      {
+        q: "How do I calculate percentage increase or decrease?",
+        a: "Percentage change is calculated as ((New Value − Old Value) ÷ Old Value) × 100. A positive result is an increase and a negative result is a decrease. For example, a change from 50 to 65 = ((65−50) ÷ 50) × 100 = 30% increase."
+      },
+      {
+        q: "How do I calculate a discount percentage?",
+        a: "To find a discount, calculate the percentage of the original price, then subtract it. For a 25% discount on an $80 item: 25% of $80 = $20, so the sale price is $80 − $20 = $60. Use \"What is X% of Y?\" mode to find the discount amount."
+      },
+      {
+        q: "What is the difference between percentage points and percent change?",
+        a: "Percentage points measure the absolute difference between two percentages, while percent change measures the relative difference. If an interest rate rises from 5% to 7%, that is a 2 percentage-point increase but a 40% relative increase ((7−5) ÷ 5 × 100)."
+      }
+    ]
   },
-
-  'loan-calculator': {
-    name: 'Loan Calculator',
-    category: 'Finance',
-    icon: 'fa-sack-dollar',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.',
-    metaDescription: 'Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.',
+  "loan-calculator": {
+    name: "Loan Calculator",
+    category: "Finance",
+    icon: "fa-sack-dollar",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.",
+    metaDescription: "Free loan calculator to calculate monthly payments, total interest paid, and payoff schedules for personal loans, auto loans, business loans, or student debt.",
     fields: [
-      { id: 'loan_amount', label: 'Loan Amount ($)',      type: 'number', default: 30000,  min: 1,      step: 100,   hint: 'The total amount you are borrowing (the principal).' },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) charged on the loan.' },
-      { id: 'loan_term',    label: 'Loan Term (years)',    type: 'select', default: 5,
-        options: [1,2,3,4,5,6,7,10].map(v => ({ value: v, label: `${v} year${v > 1 ? 's' : ''}` })), hint: 'How many years you will take to repay the loan in full.' },
+      {
+        id: "loan_amount",
+        label: "Loan Amount ($)",
+        type: "number",
+        default: 30000,
+        min: 1,
+        step: 100,
+        hint: "The total amount you are borrowing (the principal)."
+      },
+      {
+        id: "interest_rate",
+        label: "Annual Interest Rate (%)",
+        type: "number",
+        default: 6.5,
+        min: 0.01,
+        step: 0.05,
+        max: 50,
+        hint: "The yearly interest rate (APR) charged on the loan."
+      },
+      {
+        id: "loan_term",
+        label: "Loan Term (years)",
+        type: "select",
+        default: 5,
+        options: [
+          {
+            value: 1,
+            label: "1 year"
+          },
+          {
+            value: 2,
+            label: "2 years"
+          },
+          {
+            value: 3,
+            label: "3 years"
+          },
+          {
+            value: 4,
+            label: "4 years"
+          },
+          {
+            value: 5,
+            label: "5 years"
+          },
+          {
+            value: 6,
+            label: "6 years"
+          },
+          {
+            value: 7,
+            label: "7 years"
+          },
+          {
+            value: 10,
+            label: "10 years"
+          }
+        ],
+        hint: "How many years you will take to repay the loan in full."
+      }
     ],
     calculate(v) {
       const principal = safeNum(v.loan_amount, 0);
@@ -315,60 +680,234 @@ const TOOLS = {
         table: schedule,
       };
     },
-
     article: {
-      heading: 'How to Calculate Loan Payments and Total Interest',
-      intro: 'Whether it is a car, personal, or student loan, knowing your monthly payment and total cost before you borrow is essential. The GetCalcu Loan Calculator uses the standard amortization formula to show your monthly payment, total interest, and full repayment schedule.',
+      heading: "How Loan Payments and Total Interest Work",
+      intro: "Whether you are taking out a personal loan, financing a vehicle, or borrowing for home renovations, understanding how installment loans work is essential. The GetCalcu Loan Calculator shows you your exact monthly payment, the total amount of interest you will pay over the loan life, and how quickly you can become debt-free by adjusting terms or making extra payments.",
       sections: [
-        { heading: 'How Loan Amortization Works', body: 'Most loans are amortized — each fixed monthly payment covers the interest accrued that month plus a portion of principal. Early payments are mostly interest; later payments are mostly principal. By the final payment, the balance reaches zero.' },
-        { heading: 'Why the Interest Rate Matters So Much', body: 'Even a 1% rate difference dramatically changes total cost. On a $30,000 5-year loan, 5% APR costs about $3,968 in interest while 7% costs about $5,640 — a $1,672 difference for the same loan. Always compare offers.' },
-      ],
+        {
+          heading: "How Installment Loans Amortize Over Time",
+          body: "Most consumer loans (including auto loans, personal loans, and student loans) are amortized installment loans. This means you make equal monthly payments throughout the term. In the early months, a larger share of each payment covers interest because the outstanding principal balance is high. As you pay down the balance, interest charges decrease, and more of each monthly payment goes directly to reducing principal."
+        },
+        {
+          heading: "Loan Term vs. Total Borrowing Cost",
+          body: "Choosing a longer loan term lowers your required monthly payment, making the loan feel more affordable in your monthly budget. However, stretching out payments means interest accrues over more months, drastically increasing your total borrowing cost. A shorter loan term has higher monthly payments but saves substantial money on interest and gets you out of debt years sooner."
+        },
+        {
+          heading: "Secured Loans vs. Unsecured Loans",
+          body: "A secured loan is backed by collateral, such as your vehicle for an auto loan or your house for a mortgage. Because the lender can repossess the asset if you default, secured loans carry lower interest rates. An unsecured loan (such as a personal loan or credit card) requires no collateral and relies solely on your creditworthiness, which results in higher interest rates."
+        },
+        {
+          heading: "Understanding APR vs. Nominal Interest Rate",
+          body: "The nominal interest rate is the base percentage rate charged on the loan balance. The APR (Annual Percentage Rate) includes the interest rate plus any mandatory upfront fees, such as origination fees, administrative fees, or documentation charges. Always compare loans using the APR to see the true total cost of borrowing."
+        },
+        {
+          heading: "How Origination Fees Affect Your Payout",
+          body: "Many personal loan lenders charge an origination fee (typically 1% to 8% of the loan amount), which is deducted directly from your loan proceeds before you receive the funds. If you need exactly $10,000 for a project and the lender charges a 5% origination fee, you will only receive $9,500 in cash while still owing interest on the full $10,000."
+        },
+        {
+          heading: "How Extra Payments Save Money on Interest",
+          body: "Because interest on amortized loans is calculated on the remaining principal balance, paying even a small extra amount toward principal each month shortens the repayment period and reduces total interest charges. Making bi-weekly payments or rounding up your payment amount creates meaningful interest savings over time."
+        },
+        {
+          heading: "Fixed-Rate vs. Variable-Rate Loans",
+          body: "Fixed-rate loans guarantee that your interest rate and monthly payment remain identical throughout the entire loan term, providing predictability. Variable-rate loans have rates that fluctuate with benchmark market interest rates. Variable loans may start with a lower introductory rate, but payments can increase if interest rates climb."
+        },
+        {
+          heading: "Key Factors That Determine Your Loan Interest Rate",
+          body: "Lenders set interest rates based on your credit score, debt-to-income ratio, annual income, employment history, and loan term. Borrowers with excellent credit scores (720+) receive the lowest interest rates, while lower credit scores lead to higher rates or require a co-signer to qualify."
+        }
+      ]
     },
     howTo: [
-      'Enter the loan amount (the total you are borrowing).',
-      'Add the annual interest rate (APR) quoted by your lender.',
-      'Choose the loan term in years.',
-      'Review your monthly payment, total interest, and total cost.',
-      'Check the amortization schedule to see how each payment splits.',
+      "Enter the total amount of money you want to borrow (loan principal).",
+      "Input the annual interest rate (APR) offered by your lender.",
+      "Enter the loan term in years or months.",
+      "Select your payment frequency (monthly is standard).",
+      "Review your monthly payment amount, total interest paid, and total cost of the loan.",
+      "Experiment with shorter loan terms to see how much interest you can save."
     ],
     examples: [
-      { title: 'Auto Loan', input: 'Amount: $30,000, Rate: 6.5%, Term: 5 years', result: 'Monthly: ~$587 | Total Interest: ~$5,211' },
-      { title: 'Personal Loan', input: 'Amount: $15,000, Rate: 9%, Term: 3 years', result: 'Monthly: ~$477 | Total Interest: ~$2,180' },
+      {
+        title: "New Car Auto Loan",
+        input: "Loan: $28,000 | APR: 5.5% | Term: 5 Years (60 Months)",
+        result: "Monthly Payment: ~$535 | Total Interest: ~$4,095"
+      },
+      {
+        title: "Personal Debt Consolidation Loan",
+        input: "Loan: $15,000 | APR: 11.0% | Term: 3 Years (36 Months)",
+        result: "Monthly Payment: ~$491 | Total Interest: ~$2,680"
+      },
+      {
+        title: "Home Improvement Loan",
+        input: "Loan: $35,000 | APR: 8.25% | Term: 7 Years (84 Months)",
+        result: "Monthly Payment: ~$550 | Total Interest: ~$11,180"
+      },
+      {
+        title: "Short-Term Emergency Loan",
+        input: "Loan: $5,000 | APR: 12.5% | Term: 2 Years (24 Months)",
+        result: "Monthly Payment: ~$237 | Total Interest: ~$678"
+      }
     ],
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Total Interest = (M × n) − P | Total Cost = M × n',
+    formula: "Payment = P × [r(1+r)^n] / [(1+r)^n − 1], where P = Principal amount borrowed, r = Periodic interest rate (Annual Rate / 12), and n = Total number of payment periods.",
     faqs: [
-      { q: 'How is a loan payment calculated?', a: 'A fixed loan payment is calculated with the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the principal, r is the monthly interest rate (APR ÷ 12), and n is the number of monthly payments (term in years × 12). This keeps every payment equal while paying off the loan completely.' },
-      { q: 'What is APR versus interest rate?', a: 'The interest rate is the cost of borrowing the principal, while APR (Annual Percentage Rate) includes the interest rate plus fees and other loan costs, giving the true yearly cost. APR is the better figure for comparing loans because it reflects what you actually pay.' },
-      { q: 'How does the loan term affect my payment?', a: 'A longer term lowers your monthly payment but increases total interest because the principal is repaid more slowly and interest accrues over more months. A shorter term raises the monthly payment but saves significantly on total interest. Use our calculator to compare terms.' },
-      { q: 'How much interest will I pay on a loan?', a: 'Total interest equals (monthly payment × number of payments) − principal. For a $20,000 loan at 6% APR over 4 years, the monthly payment is about $469 and total interest is about $2,544. Our calculator shows this automatically along with a payment-by-payment schedule.' },
-      { q: 'Can I pay off my loan early to save interest?', a: 'Yes. Because interest is calculated on the remaining balance, making extra payments or paying off the loan early reduces the principal faster and cuts total interest. Check your loan agreement for prepayment penalties first — many loans allow early repayment with no fee.' },
+      {
+        q: "How is a monthly loan payment calculated?",
+        a: "Loan payments are calculated using standard amortization formulas that combine your loan amount, interest rate, and total number of months. The formula ensures that fixed monthly payments will pay off both the loan principal and accrued interest down to exactly zero by the end of the term."
+      },
+      {
+        q: "What happens if I make extra payments on my loan?",
+        a: "Extra payments reduce your outstanding principal balance directly. Because future interest is calculated on a smaller balance, extra payments lower the total interest you pay and help you pay off the loan months or years ahead of schedule."
+      },
+      {
+        q: "Are there penalties for paying off a loan early?",
+        a: "Most consumer loans and auto loans do not charge prepayment penalties. However, some specialty or personal lenders charge a small fee if the loan is paid off within the first 1 to 2 years. Always check your loan agreement terms."
+      },
+      {
+        q: "What is the difference between simple interest and amortized interest?",
+        a: "Simple interest is calculated only on the original principal amount. Amortized interest is calculated on the remaining declining balance each month, where each payment splits between interest and principal reduction."
+      },
+      {
+        q: "What is an origination fee on a personal loan?",
+        a: "An origination fee is an upfront processing fee charged by the lender (often 1% to 8% of the loan). It is typically subtracted from the cash disbursed to your bank account upon funding."
+      },
+      {
+        q: "How does my credit score affect my loan interest rate?",
+        a: "Lenders use credit scores to evaluate risk. Borrowers with excellent credit (720+) receive the lowest APRs, while borrowers with fair or poor credit are charged higher interest rates to offset default risk."
+      },
+      {
+        q: "What is the difference between a secured and unsecured loan?",
+        a: "A secured loan is backed by collateral (like a vehicle or house) that the lender can seize if you default, giving it lower interest rates. An unsecured loan has no collateral requirement and carries higher rates."
+      },
+      {
+        q: "Is it better to choose a longer or shorter loan term?",
+        a: "A shorter loan term has higher monthly payments but minimizes total interest costs. A longer loan term lowers your required monthly payment but significantly increases the total interest you pay over the life of the loan."
+      },
+      {
+        q: "What is APR and why is it higher than the interest rate?",
+        a: "APR includes the interest rate plus any mandatory lender fees and closing costs expressed as an annual percentage. It shows the true comprehensive cost of taking out the loan."
+      },
+      {
+        q: "Can I consolidate multiple debts with a single personal loan?",
+        a: "Yes. Debt consolidation loans combine multiple high-interest credit card balances or bills into one single monthly payment, often with a lower interest rate and a fixed payoff timeline."
+      },
+      {
+        q: "What is a co-signer and when do I need one?",
+        a: "A co-signer is someone who legally agrees to take responsibility for repaying the loan if you fail to do so. Having a co-signer with good credit can help you qualify for loans or secure a lower rate if your credit history is limited."
+      },
+      {
+        q: "How does loan payment frequency affect total interest paid?",
+        a: "Switching to bi-weekly payments means making 26 half-payments per year (equivalent to 13 monthly payments), which pays down the principal faster and saves substantial interest compared to standard monthly payments."
+      },
+      {
+        q: "Can a lender change my interest rate after the loan is approved?",
+        a: "If you have a fixed-rate loan, your rate cannot change during the term. If you have a variable-rate loan, your interest rate and monthly payment will adjust according to market benchmark rates specified in your contract."
+      },
+      {
+        q: "How do lenders determine if I can afford a loan?",
+        a: "Lenders look at your Debt-to-Income (DTI) ratio, monthly income, employment history, and credit history to ensure your new loan payment will fit comfortably within your overall monthly budget."
+      },
+      {
+        q: "What should I do if I struggle to make my loan payment?",
+        a: "Contact your loan servicer immediately. Many lenders offer temporary hardship assistance, forbearance programs, or loan term extensions to help you avoid defaulting or damaging your credit score."
+      }
     ],
+    metaTitle: "Loan Calculator | Monthly Payment, Total Interest & Amortization — GetCalcu",
+    keywords: [
+      "loan calculator",
+      "personal loan calculator",
+      "auto loan calculator",
+      "monthly loan payment",
+      "loan interest calculator",
+      "loan payment schedule",
+      "simple loan calculator",
+      "installment loan calculator",
+      "car payment calculator",
+      "loan payoff calculator",
+      "total interest on loan"
+    ],
+    related: [
+      "loan-interest-calculator",
+      "mortgage-calculator",
+      "amortization-calculator",
+      "credit-card-payoff-calculator",
+      "compound-interest-calculator",
+      "budget-planner"
+    ]
   },
-
-  'date-calculator': {
-    name: 'Date Calculator',
-    category: 'Math',
-    icon: 'fa-calendar',
-    iconClass: 'icon-math',
-    tagClass: 'tag-math',
-    description: 'Calculate the number of days between two dates, or add/subtract days, weeks, months, or years from a date.',
-    metaDescription: 'Free date calculator — find days between dates, or add/subtract days, weeks, months and years from any date.',
+  "date-calculator": {
+    name: "Date Calculator",
+    category: "Math",
+    icon: "fa-calendar",
+    iconClass: "icon-math",
+    tagClass: "tag-math",
+    description: "Calculate the number of days between two dates, or add/subtract days, weeks, months, or years from a date.",
+    metaDescription: "Free date calculator — find days between dates, or add/subtract days, weeks, months and years from any date.",
     fields: [
-      { id: 'mode',    type: 'select', default: 'between',
+      {
+        id: "mode",
+        type: "select",
+        default: "between",
         options: [
-          { value: 'between', label: 'Days between dates' },
-          { value: 'add',     label: 'Add/subtract from date' },
-        ], hint: 'Choose whether to count days between two dates or add/subtract time from a date.' },
-      { id: 'start_date',   label: 'Start Date', type: 'date', default: () => new Date().toISOString().split('T')[0], hint: 'The starting date for your calculation.' },
-      { id: 'end_date',     label: 'End Date',   type: 'date', default: () => {
+          {
+            value: "between",
+            label: "Days between dates"
+          },
+          {
+            value: "add",
+            label: "Add/subtract from date"
+          }
+        ],
+        hint: "Choose whether to count days between two dates or add/subtract time from a date."
+      },
+      {
+        id: "start_date",
+        label: "Start Date",
+        type: "date",
+        default: () => new Date().toISOString().split('T')[0],
+        hint: "The starting date for your calculation."
+      },
+      {
+        id: "end_date",
+        label: "End Date",
+        type: "date",
+        default: () => {
         const d = new Date(); d.setDate(d.getDate() + 7); return d.toISOString().split('T')[0];
-      }, hint: 'The ending date, used when counting days between two dates.' },
-      { id: 'add_days',     label: 'Days',       type: 'number', default: 0, min: -99999, max: 99999, step: 1, hint: 'Days to add (positive) or subtract (negative).',
-        condition: v => v.mode === 'add' },
-      { id: 'add_months',   label: 'Months',     type: 'number', default: 0, min: -99999, max: 99999, step: 1, hint: 'Months to add (positive) or subtract (negative).',
-        condition: v => v.mode === 'add' },
-      { id: 'add_years',    label: 'Years',      type: 'number', default: 0, min: -99999, max: 99999, step: 1, hint: 'Years to add (positive) or subtract (negative).',
-        condition: v => v.mode === 'add' },
+      },
+        hint: "The ending date, used when counting days between two dates."
+      },
+      {
+        id: "add_days",
+        label: "Days",
+        type: "number",
+        default: 0,
+        min: -99999,
+        max: 99999,
+        step: 1,
+        hint: "Days to add (positive) or subtract (negative).",
+        condition: v => v.mode === 'add'
+      },
+      {
+        id: "add_months",
+        label: "Months",
+        type: "number",
+        default: 0,
+        min: -99999,
+        max: 99999,
+        step: 1,
+        hint: "Months to add (positive) or subtract (negative).",
+        condition: v => v.mode === 'add'
+      },
+      {
+        id: "add_years",
+        label: "Years",
+        type: "number",
+        default: 0,
+        min: -99999,
+        max: 99999,
+        step: 1,
+        hint: "Years to add (positive) or subtract (negative).",
+        condition: v => v.mode === 'add'
+      }
     ],
     fieldLabels(v) {
       if (v.mode === 'between') return { start_date: 'From', end_date: 'To' };
@@ -447,55 +986,126 @@ const TOOLS = {
         ],
       };
     },
-
     article: {
-      heading: 'How to Calculate Days Between Dates and Add or Subtract Time',
-      intro: 'From project deadlines to pregnancy due dates and contract terms, calculating time spans accurately matters. The GetCalcu Date Calculator counts the days between two dates or adds and subtracts days, months, and years from any starting date — accounting for real calendar rules.',
+      heading: "How to Calculate Days Between Dates and Add or Subtract Time",
+      intro: "From project deadlines to pregnancy due dates and contract terms, calculating time spans accurately matters. The GetCalcu Date Calculator counts the days between two dates or adds and subtracts days, months, and years from any starting date — accounting for real calendar rules.",
       sections: [
-        { heading: 'Counting Days Between Two Dates', body: 'The calculator finds the absolute difference between the start and end dates, counting full days. It correctly handles months of different lengths and leap years, so February 28 to March 1 is always 1 day (or 2 in a non-leap year bridge).' },
-        { heading: 'Adding and Subtracting Calendar Units', body: 'When adding months or years, the calculator follows calendar arithmetic — adding 1 month to January 31 gives February 28 (or 29 in a leap year), not March 3. This matches how contracts and due dates are typically calculated.' },
-      ],
+        {
+          heading: "Counting Days Between Two Dates",
+          body: "The calculator finds the absolute difference between the start and end dates, counting full days. It correctly handles months of different lengths and leap years, so February 28 to March 1 is always 1 day (or 2 in a non-leap year bridge)."
+        },
+        {
+          heading: "Adding and Subtracting Calendar Units",
+          body: "When adding months or years, the calculator follows calendar arithmetic — adding 1 month to January 31 gives February 28 (or 29 in a leap year), not March 3. This matches how contracts and due dates are typically calculated."
+        }
+      ]
     },
     howTo: [
-      'Choose a mode: "Days between dates" or "Add/subtract from date".',
-      'For days between: pick a start date and an end date.',
-      'For add/subtract: enter a start date, then the days, months, and years to add or subtract (use negative numbers to subtract).',
-      'Read the result — total days, weeks, months, and the resulting date.',
-      'Adjust the inputs to explore different scenarios.',
+      "Choose a mode: \"Days between dates\" or \"Add/subtract from date\".",
+      "For days between: pick a start date and an end date.",
+      "For add/subtract: enter a start date, then the days, months, and years to add or subtract (use negative numbers to subtract).",
+      "Read the result — total days, weeks, months, and the resulting date.",
+      "Adjust the inputs to explore different scenarios."
     ],
     examples: [
-      { title: 'Project Duration', input: 'Mode: Days between | Start: 2025-01-15, End: 2025-04-20', result: '95 days (~13.6 weeks)' },
-      { title: '90-Day Deadline', input: 'Mode: Add | Start: 2025-03-01, Add 90 days', result: 'Due date: 2025-05-30' },
+      {
+        title: "Project Duration",
+        input: "Mode: Days between | Start: 2025-01-15, End: 2025-04-20",
+        result: "95 days (~13.6 weeks)"
+      },
+      {
+        title: "90-Day Deadline",
+        input: "Mode: Add | Start: 2025-03-01, Add 90 days",
+        result: "Due date: 2025-05-30"
+      }
     ],
-    formula: 'Days Between = |End Date − Start Date| | Result Date = Start Date + Days + Months + Years (calendar arithmetic)',
+    formula: "Days Between = |End Date − Start Date| | Result Date = Start Date + Days + Months + Years (calendar arithmetic)",
     faqs: [
-      { q: 'How do I calculate the number of days between two dates?', a: 'To calculate days between two dates, subtract the earlier date from the later date. The result is the number of full days between them. Our calculator does this instantly and also converts the span into weeks and months for context.' },
-      { q: 'How many days are in a month on average?', a: 'Averaged over a 4-year leap cycle, a month is 30.4375 days (365.25 ÷ 12). For quick estimates, 30 days per month is common, but exact day counts depend on the specific months involved. Our calculator uses exact calendar dates for precision.' },
-      { q: 'Does the date calculator account for leap years?', a: 'Yes. The calculator uses real calendar arithmetic, so it correctly includes February 29 in leap years. For example, the days between February 28, 2024 and March 1, 2024 is 2 days because 2024 is a leap year.' },
-      { q: 'How do I add months to a date that does not exist?', a: 'When adding months lands on a date that does not exist (like January 31 + 1 month = February 31), calendar arithmetic rolls back to the last valid day of the target month — February 28 or 29. Our calculator follows this standard convention.' },
-      { q: 'How do I count business days instead of calendar days?', a: 'This calculator counts all calendar days. To count only business days (Monday–Friday), exclude weekends manually, or subtract 2 days for every full 7-day week in the span. A dedicated business-day calculator that excludes holidays is best for precise working-day counts.' },
-    ],
+      {
+        q: "How do I calculate the number of days between two dates?",
+        a: "To calculate days between two dates, subtract the earlier date from the later date. The result is the number of full days between them. Our calculator does this instantly and also converts the span into weeks and months for context."
+      },
+      {
+        q: "How many days are in a month on average?",
+        a: "Averaged over a 4-year leap cycle, a month is 30.4375 days (365.25 ÷ 12). For quick estimates, 30 days per month is common, but exact day counts depend on the specific months involved. Our calculator uses exact calendar dates for precision."
+      },
+      {
+        q: "Does the date calculator account for leap years?",
+        a: "Yes. The calculator uses real calendar arithmetic, so it correctly includes February 29 in leap years. For example, the days between February 28, 2024 and March 1, 2024 is 2 days because 2024 is a leap year."
+      },
+      {
+        q: "How do I add months to a date that does not exist?",
+        a: "When adding months lands on a date that does not exist (like January 31 + 1 month = February 31), calendar arithmetic rolls back to the last valid day of the target month — February 28 or 29. Our calculator follows this standard convention."
+      },
+      {
+        q: "How do I count business days instead of calendar days?",
+        a: "This calculator counts all calendar days. To count only business days (Monday–Friday), exclude weekends manually, or subtract 2 days for every full 7-day week in the span. A dedicated business-day calculator that excludes holidays is best for precise working-day counts."
+      }
+    ]
   },
-
-  'loan-interest-calculator': {
-    name: 'Loan Interest Calculator',
-    category: 'Finance',
-    icon: 'fa-percent',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate total interest paid on any loan with detailed amortization by payment frequency.',
-    metaDescription: 'Free loan interest calculator — see total interest, monthly payments, and full amortization with flexible payment frequencies.',
+  "loan-interest-calculator": {
+    name: "Loan Interest Calculator",
+    category: "Finance",
+    icon: "fa-percent",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate total interest paid on any loan with detailed amortization by payment frequency.",
+    metaDescription: "Calculate the total interest cost on any loan. Compare simple vs compound interest, explore payment frequencies, and see how extra payments save money.",
     fields: [
-      { id: 'loan_amount',   label: 'Loan Amount ($)',        type: 'number', default: 25000,  min: 1,      step: 100,    hint: 'The total amount you are borrowing (the principal).' },
-      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.0,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) charged on the loan.' },
-      { id: 'loan_term',     label: 'Loan Term (years)',       type: 'number', default: 5,     min: 1,      max: 50,    step: 1, hint: 'How many years you will take to repay the loan.' },
-      { id: 'payment_freq',  label: 'Payment Frequency',       type: 'select', default: 'monthly',
+      {
+        id: "loan_amount",
+        label: "Loan Amount ($)",
+        type: "number",
+        default: 25000,
+        min: 1,
+        step: 100,
+        hint: "The total amount you are borrowing (the principal)."
+      },
+      {
+        id: "interest_rate",
+        label: "Annual Interest Rate (%)",
+        type: "number",
+        default: 5,
+        min: 0.01,
+        step: 0.05,
+        max: 50,
+        hint: "The yearly interest rate (APR) charged on the loan."
+      },
+      {
+        id: "loan_term",
+        label: "Loan Term (years)",
+        type: "number",
+        default: 5,
+        min: 1,
+        max: 50,
+        step: 1,
+        hint: "How many years you will take to repay the loan."
+      },
+      {
+        id: "payment_freq",
+        label: "Payment Frequency",
+        type: "select",
+        default: "monthly",
         options: [
-          { value: 'monthly',  label: 'Monthly (12/yr)' },
-          { value: 'biweekly', label: 'Bi-Weekly (26/yr)' },
-          { value: 'weekly',   label: 'Weekly (52/yr)' },
-          { value: 'quarterly',label: 'Quarterly (4/yr)' },
-        ], hint: 'How often you make payments. More frequent payments slightly reduce total interest paid.' },
+          {
+            value: "monthly",
+            label: "Monthly (12/yr)"
+          },
+          {
+            value: "biweekly",
+            label: "Bi-Weekly (26/yr)"
+          },
+          {
+            value: "weekly",
+            label: "Weekly (52/yr)"
+          },
+          {
+            value: "quarterly",
+            label: "Quarterly (4/yr)"
+          }
+        ],
+        hint: "How often you make payments. More frequent payments slightly reduce total interest paid."
+      }
     ],
     calculate(v) {
       const principal = safeNum(v.loan_amount, 0);
@@ -526,59 +1136,234 @@ const TOOLS = {
         table: schedule,
       };
     },
-
     article: {
-      heading: 'How to Calculate Total Interest Paid on a Loan',
-      intro: 'Understanding the true cost of borrowing means looking beyond the monthly payment. The GetCalcu Loan Interest Calculator reveals the total interest you will pay and how your payment frequency — monthly, biweekly, weekly, or quarterly — changes that cost over the life of the loan.',
+      heading: "How Loan Interest Is Calculated and How to Minimize It",
+      intro: "Interest is the cost of borrowing money. While a loan interest rate may seem like a simple percentage, how and when that interest is calculated—whether simple interest, compound interest, or amortized periodic interest—has a dramatic impact on the real dollar amount you pay. The GetCalcu Loan Interest Calculator reveals the true cost of borrowing and helps you find ways to cut interest expenses.",
       sections: [
-        { heading: 'How Payment Frequency Reduces Interest', body: 'Making payments more frequently than monthly reduces total interest because principal is paid down sooner, so less interest accrues. Biweekly payments (26 per year) effectively add one extra monthly payment per year, shortening the loan and saving interest.' },
-        { heading: 'Reading the Amortization Schedule', body: 'The schedule shows every payment split into principal and interest. Watching the interest portion shrink over time reveals how accelerated payments front-load principal reduction and compound your interest savings.' },
-      ],
+        {
+          heading: "How Periodic Interest Accrues on Loans",
+          body: "On standard installment loans, interest accrues continuously based on your remaining principal balance. Each billing cycle, the lender calculates the monthly interest rate (Annual Percentage Rate divided by 12) and multiplies it by your balance. When your loan balance is high in the beginning, the monthly interest charge is largest. As you make payments and reduce the principal, the monthly interest charge shrinks."
+        },
+        {
+          heading: "Simple Interest vs. Compound Interest on Loans",
+          body: "Simple interest is calculated solely on the original principal amount borrowed throughout the entire term. Compound interest is calculated on the principal plus any previously accumulated unpaid interest. Most amortized loans function like simple interest on a declining balance as long as you pay on time, but missed or deferred payments cause interest to capitalize, compounding your total debt."
+        },
+        {
+          heading: "The True Cost of Borrowing: Comparing APR vs. Base Rate",
+          body: "The nominal interest rate only reflects the basic borrowing fee. The Annual Percentage Rate (APR) incorporates upfront origination fees, administration fees, and closing charges. Comparing loan offers using APR gives you the accurate, apples-to-apples comparison of which loan actually costs less in interest and total fees."
+        },
+        {
+          heading: "How Loan Term Length Multiplies Interest Charges",
+          body: "A common borrowing mistake is focusing only on the monthly payment rather than the total interest paid. Extending a $20,000 loan from 3 years to 6 years at 8% APR drops the monthly payment from $627 to $351, but more than doubles the total interest paid from $2,560 to $5,280. Balancing payment affordability with term length is key to minimizing interest."
+        },
+        {
+          heading: "How Early Principal Payments Slash Lifetime Interest",
+          body: "When you make an extra payment designated toward principal, 100% of that money reduces your balance. Because future interest is calculated on that smaller remaining balance, every extra dollar pays a double dividend: it eliminates interest on that dollar for the rest of the loan term and accelerates your debt-free date."
+        },
+        {
+          heading: "Understanding Interest Capitalization and Grace Periods",
+          body: "On certain student loans and forbearance arrangements, interest may accumulate while payments are paused. If this unpaid accrued interest is added to the principal balance (known as capitalization), you end up paying interest on interest in subsequent months, increasing your debt balance."
+        },
+        {
+          heading: "Impact of Payment Frequency on Accrued Interest",
+          body: "Making bi-weekly payments instead of monthly payments results in 26 half-payments per year (equivalent to 13 full payments). This slight frequency change reduces the average principal balance faster throughout the year, saving significant interest on long-term loans like mortgages and auto financing."
+        },
+        {
+          heading: "Strategies to Negotiate or Lower Your Interest Rate",
+          body: "To secure the lowest interest rates, check your credit report for errors, pay down revolving credit card balances to improve credit utilization, set up automated payments (many lenders offer a 0.25% autopay discount), and get rate quotes from multiple lenders within a 14-day shopping window."
+        }
+      ]
     },
     howTo: [
-      'Enter the loan amount and annual interest rate (APR).',
-      'Set the loan term in years.',
-      'Choose how often you make payments — monthly, biweekly, weekly, or quarterly.',
-      'Review the total interest, payment amount, and full amortization schedule.',
-      'Switch payment frequency to see how much interest you can save.',
+      "Enter the total principal amount of your loan.",
+      "Input the annual interest rate (APR) in percentage.",
+      "Specify the loan term in months or years.",
+      "Select your payment schedule (monthly, bi-weekly, or weekly).",
+      "Review the total interest paid, total loan cost, and interest-to-principal ratio.",
+      "Adjust interest rates or add extra payments to see your direct interest savings."
     ],
     examples: [
-      { title: 'Monthly Payments', input: 'Amount: $25,000, Rate: 5%, Term: 5 years, Monthly', result: 'Payment: ~$472 | Total Interest: ~$3,307' },
-      { title: 'Biweekly Saves Interest', input: 'Amount: $25,000, Rate: 5%, Term: 5 years, Biweekly', result: 'Payment: ~$236 | Total Interest: ~$3,064 (saves ~$243)' },
-    ],
-    formula: 'Payment = P × [r(1+r)^n] / [(1+r)^n − 1] | Total Interest = (Payment × n) − P | r = APR ÷ payments per year, n = total payments',
-    faqs: [
-      { q: 'How is total interest on a loan calculated?', a: 'Total interest equals (regular payment × total number of payments) − loan principal. For a $25,000 loan at 5% APR over 5 years with monthly payments, each payment is about $472, total payments are $28,307, so total interest is about $3,307. Our calculator computes this for any payment frequency.' },
-      { q: 'Does paying biweekly instead of monthly save interest?', a: 'Yes. Biweekly payments mean 26 half-payments per year — equivalent to 13 monthly payments instead of 12. The extra payment and more frequent principal reduction lower total interest and shorten the loan. On a 5-year loan the savings can be a few hundred dollars; on a 30-year mortgage it can be tens of thousands.' },
-      { q: 'What payment frequency saves the most interest?', a: 'More frequent payments save more interest because principal is reduced sooner. Weekly payments save slightly more than biweekly, which saves more than monthly. However, the biggest factor is the extra payment effect — biweekly and weekly effectively add payments per year, which matters more than the small compounding gain.' },
-      { q: 'How does the interest rate affect total interest paid?', a: 'Interest is charged on the outstanding balance, so a higher rate raises every payment and total cost sharply. On a $25,000 5-year loan, 5% APR costs about $3,307 in interest while 8% costs about $5,415 — a $2,108 difference. Shopping for a lower rate is one of the most effective ways to cut borrowing costs.' },
-      { q: 'What is an amortization schedule and why does it matter?', a: 'An amortization schedule lists each payment and shows how much goes to interest versus principal. Early payments are interest-heavy; later ones are principal-heavy. It helps you see exactly when equity builds and how extra payments reduce future interest. Our calculator generates the full schedule automatically.' },
-    ],
-  },
-
-  // ── Compound Interest Calculator ─────────────────────────────────────
-  'compound-interest-calculator': {
-    name: 'Compound Interest Calculator',
-    category: 'Finance',
-    icon: 'fa-chart-line',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Project how your savings and investments grow over time with compound interest and recurring monthly contributions.',
-    metaDescription: 'Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
-    fields: [
-      { id: 'principal',         label: 'Starting Balance ($)',          type: 'number', default: 10000, min: 0,      step: 100,    hint: 'Your initial lump-sum deposit or current investment balance.' },
-      { id: 'annual_rate',       label: 'Annual Interest Rate (%)',       type: 'number', default: 8.0,   min: 0.01,   step: 0.1,   hint: 'Expected average yearly growth rate. A diversified stock portfolio has historically returned about 7-10% long-term.' },
-      { id: 'compounding_freq',  label: 'Compounding Frequency',         type: 'select', default: 'monthly',
-        options: [
-          { value: 'annually',       label: 'Annually (1/yr)' },
-          { value: 'semi-annually',  label: 'Semi-annually (2/yr)' },
-          { value: 'quarterly',      label: 'Quarterly (4/yr)' },
-          { value: 'monthly',        label: 'Monthly (12/yr)' },
-          { value: 'daily',          label: 'Daily (365/yr)' },
-        ], hint: 'How often interest is added to your balance. More frequent compounding grows your money slightly faster. <a href="#faqs">See how compounding frequency affects growth ↓</a>'
+      {
+        title: "3-Year Personal Loan Interest",
+        input: "Principal: $10,000 | Rate: 9.5% | Term: 36 Months",
+        result: "Total Interest Paid: ~$1,535 | Total Paid: ~$11,535"
       },
-      { id: 'monthly_contribution', label: 'Monthly Contribution ($)',   type: 'number', default: 500,   min: 0,      step: 50,    hint: 'Amount you add each month on top of your starting balance.' },
-      { id: 'time_years',          label: 'Time Horizon (years)',        type: 'number', default: 30,    min: 1,      max: 100,   step: 1, hint: 'How long your money stays invested. Longer horizons dramatically boost compound growth.' },
+      {
+        title: "5-Year Auto Loan Interest",
+        input: "Principal: $25,000 | Rate: 6.0% | Term: 60 Months",
+        result: "Total Interest Paid: ~$4,000 | Total Paid: ~$29,000"
+      },
+      {
+        title: "High-Interest Debt Comparison",
+        input: "Principal: $8,000 | Rate: 18.0% | Term: 48 Months",
+        result: "Total Interest Paid: ~$3,300 (41% added on top of principal)"
+      },
+      {
+        title: "Low-Rate Student Loan",
+        input: "Principal: $30,000 | Rate: 4.5% | Term: 120 Months (10 Yrs)",
+        result: "Total Interest Paid: ~$7,315 | Monthly: ~$311"
+      }
+    ],
+    formula: "Total Interest = (Monthly Payment × Total Months) − Loan Principal. Monthly Payment = P × [r(1+r)^n] / [(1+r)^n − 1].",
+    faqs: [
+      {
+        q: "How is total interest on a loan calculated?",
+        a: "Total interest is calculated by multiplying your fixed periodic payment by the total number of payments, and then subtracting the original loan principal borrowed. The difference is the total interest paid to the lender."
+      },
+      {
+        q: "Why is interest higher at the beginning of a loan?",
+        a: "Interest is charged on the outstanding loan balance. At the start of the loan, the balance is at its highest, meaning monthly interest charges take up the largest portion of your payment. As the principal drops, monthly interest decreases."
+      },
+      {
+        q: "What is the formula for simple interest?",
+        a: "The simple interest formula is I = P × r × t, where I is total interest, P is principal borrowed, r is the annual interest rate, and t is time in years."
+      },
+      {
+        q: "What is the difference between nominal interest rate and APR?",
+        a: "The nominal interest rate is the base interest percentage charged on your loan balance. The APR (Annual Percentage Rate) includes both the interest rate and any required lender fees, giving a complete measure of annual borrowing costs."
+      },
+      {
+        q: "How much interest do extra payments actually save?",
+        a: "Extra payments go 100% toward reducing your principal balance. For example, paying an extra $100 monthly on a $20,000 5-year loan at 8% saves over $600 in interest and pays off the loan 10 months early."
+      },
+      {
+        q: "Does paying bi-weekly reduce interest costs?",
+        a: "Yes. Bi-weekly payments split your monthly payment in half and pay every 2 weeks. This results in 26 half-payments (13 full monthly payments per year), reducing principal faster and lowering total interest."
+      },
+      {
+        q: "What is negative amortization?",
+        a: "Negative amortization occurs when your monthly payment is too small to cover even the monthly interest accrued. The unpaid interest is added to your principal balance, causing your loan balance to grow rather than shrink."
+      },
+      {
+        q: "How does my credit score affect my interest rate?",
+        a: "Credit scores reflect borrowing risk. Lenders give the lowest interest rates to applicants with credit scores of 740+, while lower scores lead to higher rates to offset the increased risk of default."
+      },
+      {
+        q: "Can loan interest be tax deductible?",
+        a: "Interest on home mortgages, home equity loans used for substantial home improvements, and certain qualified student loans may be tax deductible depending on your income and tax filing status. Personal loan interest is generally not deductible."
+      },
+      {
+        q: "What is an autopay discount on loan interest?",
+        a: "Many lenders offer a 0.25% to 0.50% interest rate reduction if you enroll in automatic monthly electronic bank deductions for your loan payments."
+      },
+      {
+        q: "How do variable interest rates work over time?",
+        a: "Variable rate loans fluctuate based on a benchmark rate (such as the SOFR or Prime Rate). If market benchmark rates rise, your interest rate and monthly payment increase; if benchmark rates drop, your interest costs fall."
+      },
+      {
+        q: "What happens if I miss a loan payment?",
+        a: "Missing a payment triggers late fees and damages your credit score if delinquent over 30 days. In addition, unpaid interest accumulates and increases future borrowing costs."
+      },
+      {
+        q: "What is a daily simple interest loan?",
+        a: "On a daily simple interest loan, interest accrues every single day based on that day exact outstanding balance. Paying even a few days earlier each month reduces the daily interest accrued and saves money."
+      },
+      {
+        q: "Is refinancing a good way to lower loan interest?",
+        a: "Refinancing replaces your current loan with a new loan at a lower interest rate. If interest rates have fallen or your credit score has improved, refinancing can significantly reduce monthly payments and total interest."
+      },
+      {
+        q: "What is an amortization table and why should I check it?",
+        a: "An amortization table details every scheduled payment, the split between principal and interest, and the remaining balance after each month. Checking it helps you see exactly when your loan balance begins dropping rapidly."
+      }
+    ],
+    metaTitle: "Loan Interest Calculator | Calculate Total Interest & APR — GetCalcu",
+    keywords: [
+      "loan interest calculator",
+      "total interest calculator",
+      "calculate loan interest",
+      "interest rate calculator",
+      "simple interest loan calculator",
+      "compound loan interest",
+      "interest paid on loan",
+      "how much interest on loan",
+      "cost of borrowing calculator",
+      "interest savings calculator"
+    ],
+    related: [
+      "loan-calculator",
+      "amortization-calculator",
+      "mortgage-calculator",
+      "compound-interest-calculator",
+      "credit-card-payoff-calculator",
+      "savings-calculator"
+    ]
+  },
+  "compound-interest-calculator": {
+    name: "Compound Interest Calculator",
+    category: "Finance",
+    icon: "fa-chart-line",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Project how your savings and investments grow over time with compound interest and recurring monthly contributions.",
+    metaDescription: "Free compound interest calculator to see how your money grows over time. Model monthly deposits, various compounding frequencies, and see the power of exponential growth.",
+    fields: [
+      {
+        id: "principal",
+        label: "Starting Balance ($)",
+        type: "number",
+        default: 10000,
+        min: 0,
+        step: 100,
+        hint: "Your initial lump-sum deposit or current investment balance."
+      },
+      {
+        id: "annual_rate",
+        label: "Annual Interest Rate (%)",
+        type: "number",
+        default: 8,
+        min: 0.01,
+        step: 0.1,
+        hint: "Expected average yearly growth rate. A diversified stock portfolio has historically returned about 7-10% long-term."
+      },
+      {
+        id: "compounding_freq",
+        label: "Compounding Frequency",
+        type: "select",
+        default: "monthly",
+        options: [
+          {
+            value: "annually",
+            label: "Annually (1/yr)"
+          },
+          {
+            value: "semi-annually",
+            label: "Semi-annually (2/yr)"
+          },
+          {
+            value: "quarterly",
+            label: "Quarterly (4/yr)"
+          },
+          {
+            value: "monthly",
+            label: "Monthly (12/yr)"
+          },
+          {
+            value: "daily",
+            label: "Daily (365/yr)"
+          }
+        ],
+        hint: "How often interest is added to your balance. More frequent compounding grows your money slightly faster. <a href=\"#faqs\">See how compounding frequency affects growth ↓</a>"
+      },
+      {
+        id: "monthly_contribution",
+        label: "Monthly Contribution ($)",
+        type: "number",
+        default: 500,
+        min: 0,
+        step: 50,
+        hint: "Amount you add each month on top of your starting balance."
+      },
+      {
+        id: "time_years",
+        label: "Time Horizon (years)",
+        type: "number",
+        default: 30,
+        min: 1,
+        max: 100,
+        step: 1,
+        hint: "How long your money stays invested. Longer horizons dramatically boost compound growth."
+      }
     ],
     calculate(v) {
       // FV = PV * (1 + r)^n + PMT * ((1 + r)^n - 1) / r
@@ -641,59 +1426,244 @@ const TOOLS = {
         table: schedule,
       };
     },
-
     article: {
-      heading: 'How to Calculate Compound Interest and Project Your Savings Growth',
-      intro: 'Compound interest is the engine behind long-term wealth — it earns interest on your interest, accelerating growth over time. The GetCalcu Compound Interest Calculator projects your future balance from a starting sum plus recurring contributions, with flexible compounding frequency and a year-by-year growth schedule.',
+      heading: "The Power of Compound Interest: How Money Multiplies Over Time",
+      intro: "Compound interest has been called the eighth wonder of the world for good reason. Unlike simple interest, which only pays returns on your original deposit, compound interest earns interest on your previous interest. Over decades, this exponential snowball effect turns modest, consistent monthly contributions into substantial wealth. The GetCalcu Compound Interest Calculator lets you model different initial balances, regular deposits, interest rates, and compounding frequencies to see your future financial growth in action.",
       sections: [
-        { heading: 'Why Compounding Frequency Matters', body: 'The more often interest is reinvested, the faster your balance grows. Daily compounding earns slightly more than monthly, which earns more than annual — the difference compounds over decades. For long horizons, even small frequency gains add up.' },
-        { heading: 'The Power of Starting Early', body: 'Time is the most powerful variable in compound interest. Starting 10 years earlier can more than double your final balance, even with smaller contributions — because early gains have more time to compound on themselves.' },
-      ],
+        {
+          heading: "How Compound Interest Works (The Snowball Effect)",
+          body: "When you deposit money into an account that earns compound interest, your balance grows in two ways: from the new money you deposit, and from the interest earned on your growing balance. In year one, a $10,000 balance at 8% annual return earns $800. In year two, you earn 8% on $10,800, generating $864. By year 20, that same initial $10,000 earns over $3,400 in a single year with zero additional deposits, having grown to more than $46,600."
+        },
+        {
+          heading: "Compounding Frequency: Daily vs. Monthly vs. Annually",
+          body: "How often interest is compounded determines how quickly your money multiplies. Common compounding schedules include annually (once a year), quarterly (4 times a year), monthly (12 times a year), and daily (365 times a year). More frequent compounding means interest is added back into the balance sooner, generating slightly higher returns over time. High-yield savings accounts and certificates of deposit (CDs) commonly compound interest daily."
+        },
+        {
+          heading: "The Critical Factor: Time in the Market vs. Timing the Market",
+          body: "Time is the single most powerful ingredient in compound interest. Because compound growth is exponential (forming a classic hockey-stick curve), the vast majority of your wealth is generated in the final third of your investing timeframe. Starting to invest at age 25 versus age 35 can more than double your ultimate nest egg at retirement, even if you contribute the exact same total dollar amount."
+        },
+        {
+          heading: "The Rule of 72: A Quick Mental Math Shortcut",
+          body: "The Rule of 72 is a practical shortcut to estimate how many years it takes for your investment to double at a given annual interest rate. Simply divide 72 by your expected annual return percentage. For example, at an 8% return, your money doubles approximately every 9 years (72 ÷ 8 = 9). At a 6% return, it doubles every 12 years."
+        },
+        {
+          heading: "APY (Annual Percentage Yield) vs. APR (Annual Percentage Rate)",
+          body: "APR represents the simple annual interest rate without taking compounding into account. APY reflects the total amount of interest you actually earn in one full year, including the effect of compounding. A bank offering a 5.00% APR compounded daily provides an effective APY of approximately 5.13%."
+        },
+        {
+          heading: "Regular Monthly Contributions: The Wealth Accelerator",
+          body: "While a one-time lump sum benefits from compounding, pairing initial principal with regular monthly contributions supercharges wealth accumulation. Investing $300 every month at an 8% average return for 30 years results in over $400,000 from just $108,000 in out-of-pocket contributions."
+        },
+        {
+          heading: "Adjusting for Inflation and Taxes",
+          body: "To understand your real future purchasing power, you must account for inflation and investment taxes. If your portfolio grows at 8% nominal return while inflation averages 3%, your real purchasing power growth is roughly 5% per year. Utilizing tax-advantaged accounts like Roth IRAs and 401(k)s protects your compound growth from annual tax drag."
+        },
+        {
+          heading: "Compound Interest on Debt: The Reverse Snowball",
+          body: "Compound interest works in reverse on unpaid debts, such as high-interest credit cards. When you carry a balance, card issuers calculate interest daily, causing unpaid charges to snowball rapidly. Paying down high-interest debt provides a guaranteed, risk-free return equal to the interest rate avoided."
+        }
+      ]
     },
     howTo: [
-      'Enter your starting balance (a lump sum or current savings).',
-      'Add the annual interest or growth rate you expect.',
-      'Choose how often interest compounds — monthly is common for savings.',
-      'Enter your monthly contribution and the number of years.',
-      'Review the future balance, total interest earned, and year-by-year schedule.',
+      "Enter your initial starting deposit (principal balance).",
+      "Input the regular addition amount you plan to contribute (e.g. monthly or annually).",
+      "Specify your expected annual interest rate or investment return percentage.",
+      "Enter the total investment timeframe in years.",
+      "Select how often interest compounds (daily, monthly, quarterly, or annually).",
+      "Review the total future value, the breakdown of principal versus compound interest, and your year-by-year growth table."
     ],
     examples: [
-      { title: 'Lump Sum Over 30 Years', input: 'Principal: $10,000, Rate: 8%, Monthly compounding, 30 years', result: 'Future Balance: ~$100,627 | Interest: ~$90,627' },
-      { title: 'With Monthly Contributions', input: 'Principal: $10,000, Rate: 8%, $500/mo, 30 years', result: 'Future Balance: ~$811,627 | Interest: ~$621,627' },
+      {
+        title: "Long-Term Retirement Accumulation",
+        input: "Initial: $10,000 | Monthly: $500 | Rate: 8.0% | Term: 30 Years",
+        result: "Future Balance: ~$793,000 (Principal: $190,000 | Interest: ~$603,000)"
+      },
+      {
+        title: "High-Yield Savings Goal",
+        input: "Initial: $20,000 | Monthly: $250 | Rate: 4.5% (Daily Compounding) | Term: 5 Years",
+        result: "Future Balance: ~$41,500 (Earned Interest: ~$6,500)"
+      },
+      {
+        title: "College Savings Growth",
+        input: "Initial: $5,000 | Monthly: $200 | Rate: 7.0% | Term: 18 Years",
+        result: "Future Balance: ~$104,000 (Total Contributed: $48,200)"
+      },
+      {
+        title: "One-Time Lump Sum Growth",
+        input: "Initial: $50,000 | Monthly: $0 | Rate: 8.5% | Term: 20 Years",
+        result: "Future Balance: ~$255,600 (More than 5x original investment)"
+      }
     ],
-    formula: 'FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)] | Total Interest = FV − P − (PMT × t)',
+    formula: "Future Value A = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P = initial principal, r = annual interest rate, n = compounding frequency per year, t = number of years, and PMT = periodic deposit.",
     faqs: [
-      { q: 'How is compound interest calculated?', a: 'Compound interest is calculated as FV = P × (1 + r/n)^(nt), where P is the principal, r is the annual rate, n is the compounding periods per year, and t is years. With recurring contributions, add PMT × [((1 + r/n)^(nt) − 1) / (r/n)]. Our calculator handles both parts automatically.' },
-      { q: 'What is the difference between simple and compound interest?', a: 'Simple interest is calculated only on the original principal, while compound interest is calculated on the principal plus accumulated interest. Over time, compounding grows exponentially while simple interest grows linearly — a $10,000 sum at 8% becomes $46,610 (simple) versus $100,627 (compounded monthly) over 30 years.' },
-      { q: 'How does compounding frequency affect growth?', a: 'More frequent compounding reinvests interest sooner, so your balance grows faster. At 8% over 30 years, $10,000 grows to about $100,627 compounded monthly versus $93,219 compounded semi-annually. The gap widens with larger sums and longer horizons.' },
-      { q: 'How much will I have if I save $500 a month for 30 years?', a: 'Saving $500 per month at an 8% average return compounded monthly for 30 years grows to about $745,000 from contributions alone, plus growth on any starting balance. With a $10,000 starting balance, the total reaches about $811,627. Use our calculator to test your own numbers.' },
-      { q: 'What is a good interest rate to assume for compound interest?', a: 'For a diversified stock portfolio, a realistic long-term assumption is 7–10% (the historical S&P 500 average). For savings accounts expect 3–5%, and for bonds 4–6%. Always use a conservative rate for planning so you are not caught short — our calculator lets you adjust instantly.' },
+      {
+        q: "What is compound interest in simple terms?",
+        a: "Compound interest is interest earned on top of both your original principal deposit and the interest that has already accumulated from previous periods. It creates a snowball effect where your money grows faster each year."
+      },
+      {
+        q: "How does compounding frequency affect my returns?",
+        a: "The more frequently interest compounds (such as daily versus annually), the sooner interest is added back into your balance. This generates slightly higher earnings over time, known as a higher APY (Annual Percentage Yield)."
+      },
+      {
+        q: "What is the difference between simple interest and compound interest?",
+        a: "Simple interest is calculated only on the original starting balance. Compound interest is calculated on the total accumulated balance, meaning you earn interest on your past interest earnings."
+      },
+      {
+        q: "What is the Rule of 72?",
+        a: "The Rule of 72 is a quick way to estimate how many years it will take to double your investment. Divide 72 by your annual interest rate percentage (e.g. 72 ÷ 8% = 9 years to double)."
+      },
+      {
+        q: "How does inflation affect compound interest?",
+        a: "Inflation reduces the future purchasing power of your money. To calculate your real rate of return, subtract the annual inflation rate from your nominal investment return (e.g. 8% return − 3% inflation = 5% real return)."
+      },
+      {
+        q: "Why is starting early so important for compound interest?",
+        a: "Compound interest accelerates exponentially over time. Starting 10 years earlier allows the exponential growth curve to compound multiple times, often creating more wealth than saving twice as much money later in life."
+      },
+      {
+        q: "What is the formula for compound interest?",
+        a: "The compound interest formula for a lump sum is A = P(1 + r/n)^(nt), where A is future value, P is principal, r is annual rate, n is compounding periods per year, and t is time in years."
+      },
+      {
+        q: "What is the difference between APR and APY?",
+        a: "APR (Annual Percentage Rate) does not account for compounding within the year. APY (Annual Percentage Yield) includes the effect of intra-year compounding, representing your true annual return."
+      },
+      {
+        q: "Can compound interest work against me?",
+        a: "Yes. On credit cards and revolving debt, lenders compound interest daily against your outstanding balance, causing unpaid balances and finance charges to grow rapidly if not paid in full."
+      },
+      {
+        q: "How do regular monthly deposits impact compound growth?",
+        a: "Regular deposits continually increase your principal base, giving compound interest a larger balance to multiply each month and accelerating wealth building."
+      },
+      {
+        q: "What types of accounts offer compound interest?",
+        a: "High-yield savings accounts, money market accounts, certificates of deposit (CDs), dividend reinvestment plans (DRIPs), mutual funds, and stock index funds all benefit from compounding growth."
+      },
+      {
+        q: "Do I have to pay taxes on compound interest?",
+        a: "Interest earned in standard taxable accounts is generally taxed as ordinary income each year. In tax-advantaged accounts like Roth IRAs or 401(k)s, compound growth is tax-free or tax-deferred."
+      },
+      {
+        q: "What is continuous compounding?",
+        a: "Continuous compounding is compounding that occurs infinitely often at every micro-moment in time, represented mathematically as A = P × e^(rt). It represents the theoretical maximum limit of compounding frequency."
+      },
+      {
+        q: "How does market volatility affect compound interest in stock investments?",
+        a: "Unlike fixed savings accounts that provide a steady interest rate, stock market returns fluctuate annually. Over long periods, average annual market returns compound to produce strong wealth accumulation, though actual year-to-year returns vary."
+      },
+      {
+        q: "How can I maximize the power of compound interest?",
+        a: "Start investing as early as possible, make consistent monthly contributions, reinvest all dividends and interest distributions, minimize investment management fees, and use tax-advantaged accounts."
+      }
     ],
+    metaTitle: "Compound Interest Calculator | Daily, Monthly & Annual Compounding — GetCalcu",
+    keywords: [
+      "compound interest calculator",
+      "compound interest formula",
+      "daily compound interest calculator",
+      "monthly compounding calculator",
+      "interest on interest calculator",
+      "exponential savings growth",
+      "apy calculator compound interest",
+      "rule of 72 calculator",
+      "future value compound interest",
+      "investment compounding calculator"
+    ],
+    related: [
+      "investment-calculator",
+      "savings-calculator",
+      "retirement-calculator",
+      "fire-calculator",
+      "inflation-calculator",
+      "net-worth-calculator"
+    ]
   },
-
-  // ── Investment Calculator ─────────────────────────────────────
-  'investment-calculator': {
-    name: 'Investment Calculator',
-    category: 'Finance',
-    icon: 'fa-chart-line',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.',
-    metaDescription: 'Free investment calculator — project future value with compound returns and monthly contributions. See how long to save $100k, when you can retire early, and how much to invest each month to reach $1M.',
+  "investment-calculator": {
+    name: "Investment Calculator",
+    category: "Finance",
+    icon: "fa-chart-line",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.",
+    metaDescription: "Calculate the future growth of your investments with regular contributions, dividend reinvestment, expected return rates, and inflation adjustments.",
     fields: [
-      { id: 'initial_investment',    label: 'Initial Investment ($)',       type: 'number', default: 10000, min: 0,      step: 1000,  hint: 'Your starting lump-sum amount invested today.' },
-      { id: 'monthly_contribution',  label: 'Monthly Contribution ($)',     type: 'number', default: 500,   min: 0,      step: 50,    hint: 'How much you add to your investment each month.' },
-      { id: 'annual_return',         label: 'Expected Annual Return (%)',   type: 'number', default: 8.0,   min: 0.01,   step: 0.1,  max: 100, hint: 'Expected average yearly return. S&P 500 long-term average: about 7-10%. <a href="#faqs">See safe return rates ↓</a>' },
-      { id: 'investment_period',     label: 'Investment Period (years)',    type: 'number', default: 20,    min: 1,      max: 100,   step: 1, hint: 'How many years you plan to keep your money invested.' },
-      { id: 'compound_freq',         label: 'Compounding Frequency',        type: 'select', default: 'monthly',
+      {
+        id: "initial_investment",
+        label: "Initial Investment ($)",
+        type: "number",
+        default: 10000,
+        min: 0,
+        step: 1000,
+        hint: "Your starting lump-sum amount invested today."
+      },
+      {
+        id: "monthly_contribution",
+        label: "Monthly Contribution ($)",
+        type: "number",
+        default: 500,
+        min: 0,
+        step: 50,
+        hint: "How much you add to your investment each month."
+      },
+      {
+        id: "annual_return",
+        label: "Expected Annual Return (%)",
+        type: "number",
+        default: 8,
+        min: 0.01,
+        step: 0.1,
+        max: 100,
+        hint: "Expected average yearly return. S&P 500 long-term average: about 7-10%. <a href=\"#faqs\">See safe return rates ↓</a>"
+      },
+      {
+        id: "investment_period",
+        label: "Investment Period (years)",
+        type: "number",
+        default: 20,
+        min: 1,
+        max: 100,
+        step: 1,
+        hint: "How many years you plan to keep your money invested."
+      },
+      {
+        id: "compound_freq",
+        label: "Compounding Frequency",
+        type: "select",
+        default: "monthly",
         options: [
-          { value: 'annually',       label: 'Annually (1/yr)' },
-          { value: 'semi-annually',  label: 'Semi-annually (2/yr)' },
-          { value: 'quarterly',      label: 'Quarterly (4/yr)' },
-          { value: 'monthly',        label: 'Monthly (12/yr)' },
-          { value: 'daily',          label: 'Daily (365/yr)' },
-        ], hint: 'How often returns are reinvested. <a href="#faqs">See how compounding frequency affects growth ↓</a>' },
-      { id: 'goal_amount',           label: 'Savings Goal ($) (optional)',  type: 'number', default: 1000000, min: 0, step: 10000, hint: 'A target balance you want to reach (e.g. $1M). Optional — used to estimate how long it will take.' },
+          {
+            value: "annually",
+            label: "Annually (1/yr)"
+          },
+          {
+            value: "semi-annually",
+            label: "Semi-annually (2/yr)"
+          },
+          {
+            value: "quarterly",
+            label: "Quarterly (4/yr)"
+          },
+          {
+            value: "monthly",
+            label: "Monthly (12/yr)"
+          },
+          {
+            value: "daily",
+            label: "Daily (365/yr)"
+          }
+        ],
+        hint: "How often returns are reinvested. <a href=\"#faqs\">See how compounding frequency affects growth ↓</a>"
+      },
+      {
+        id: "goal_amount",
+        label: "Savings Goal ($) (optional)",
+        type: "number",
+        default: 1000000,
+        min: 0,
+        step: 10000,
+        hint: "A target balance you want to reach (e.g. $1M). Optional — used to estimate how long it will take."
+      }
     ],
     calculate(v) {
       const principal = safeNum(v.initial_investment, 0);
@@ -758,146 +1728,433 @@ const TOOLS = {
       }
       return { stats, chart: { principal: totalContributions, totalInterest: totalReturn }, table: schedule };
     },
-
     article: {
-      heading: 'How to Calculate Investment Growth and Reach Your Financial Goals',
-      intro: 'Investing turns time and consistency into wealth through compound returns. The GetCalcu Investment Calculator projects your portfolio\'s future value from an initial lump sum plus monthly contributions, shows how long it takes to hit goals like $100k or $1M, and helps you plan for milestones including early retirement.',
+      heading: "How to Project Your Investment Portfolio Growth",
+      intro: "Building long-term wealth through investing is one of the most reliable ways to achieve financial independence, fund college education, or retire comfortably. The GetCalcu Investment Calculator helps you project your portfolio value over any time horizon by combining initial capital, regular recurring contributions, expected market return rates, and compounding periods.",
       sections: [
-        { heading: 'How Compound Returns Build Wealth', body: 'Investment returns compound — each year\'s gains earn gains in future years. At an 8% average return, money roughly doubles every 9 years. The longer your money stays invested, the more dramatic the compounding, which is why starting early matters more than starting with a lot.' },
-        { heading: 'Setting a Realistic Expected Return', body: 'The S&P 500 has averaged about 10% per year before inflation (7–8% after) over the long run. A diversified 60/40 portfolio averages 6–7%. For planning, use a conservative figure so surprises are on the upside, and remember that returns are not guaranteed every year.' },
-      ],
+        {
+          heading: "The Power of Dollar-Cost Averaging (DCA)",
+          body: "Dollar-cost averaging is the practice of investing a fixed dollar amount on a regular schedule (such as monthly or with every paycheck), regardless of whether stock prices are high or low. When prices fall, your fixed dollar amount buys more shares; when prices rise, it buys fewer shares. Over time, DCA removes the emotional stress of attempting to time market peaks and valleys and establishes disciplined wealth accumulation."
+        },
+        {
+          heading: "Historical Market Returns and Realistic Expectations",
+          body: "Historically, the broad US stock market (represented by the S&P 500) has delivered an average annual return of roughly 10% before inflation (or about 7% after inflation) over long multi-decade periods. While past performance does not guarantee future results, using realistic return assumptions (such as 6% to 8% for a balanced stock/bond portfolio) prevents overestimating your future wealth."
+        },
+        {
+          heading: "Asset Allocation: Balancing Growth and Risk",
+          body: "Asset allocation refers to how you divide your portfolio among stocks, bonds, cash, and real estate. Equities (stocks) provide long-term growth potential but come with higher short-term volatility. Fixed-income assets (bonds) offer income and stability during market downturns. Younger investors with decades until retirement typically hold higher stock allocations (80% to 90%), gradually shifting toward bonds as they approach their withdrawal goals."
+        },
+        {
+          heading: "The Drag of Investment Fees and Expense Ratios",
+          body: "Investment fees can quietly erode hundreds of thousands of dollars from your portfolio over a lifetime. A mutual fund with a 1.25% expense ratio compared to a low-cost broad index fund with a 0.03% expense ratio can reduce your final portfolio value by 20% to 30% over 30 years. Keeping investment fees low is one of the few guaranteed ways to boost your net investment returns."
+        },
+        {
+          heading: "Reinvesting Dividends (DRIP)",
+          body: "Dividend reinvestment plans (DRIP) automatically use cash dividend distributions from stocks or index funds to buy additional shares of the underlying investment. Over multi-decade periods, reinvested dividends account for a substantial percentage of total stock market returns through the compound purchase of additional shares."
+        },
+        {
+          heading: "Taxable Brokerage vs. Tax-Advantaged Accounts",
+          body: "Where you hold your investments matters as much as what you buy. Tax-advantaged accounts like 401(k)s, Traditional IRAs, and Roth IRAs allow your money to grow without annual tax drag from dividends and capital gains. A standard taxable brokerage account offers maximum flexibility without early withdrawal penalties but requires paying taxes on dividends and realized gains along the way."
+        },
+        {
+          heading: "Understanding Sequence of Returns Risk",
+          body: "While average annual returns are useful for projections, the order in which returns occur matters greatly when you begin withdrawing money in retirement. A sharp market downturn in the early years of retirement (poor sequence of returns) can deplete a portfolio faster than the same downturn occurring later. Maintaining a cash cushion and bond reserve mitigates this risk."
+        },
+        {
+          heading: "Inflation-Adjusted Returns (Nominal vs. Real Wealth)",
+          body: "Nominal return is the raw percentage gain of your portfolio. Real return is your gain minus inflation. If your portfolio grows at 8% while inflation runs at 3%, your real increase in purchasing power is 5%. When setting future financial goals, modeling in real terms ensures your future savings can actually buy what you expect."
+        }
+      ]
     },
     howTo: [
-      'Enter your initial investment (lump sum you\'re starting with).',
-      'Set your monthly contribution — the amount you plan to add each month.',
-      'Choose an expected annual return rate based on your investment strategy (S&P 500 historically ~8-10%, bonds ~3-5%).',
-      'Pick your investment time horizon in years — the longer you invest, the more compounding works in your favor.',
-      'Optionally enter a savings goal (e.g., $100,000, $500,000, or $1,000,000) to see exactly how long it will take to reach that milestone.',
-      'Review the year-by-year schedule, total return, and interactive chart to understand your investment\'s growth trajectory.',
+      "Enter your starting investment balance (current portfolio size).",
+      "Input the recurring contribution amount you plan to deposit regularly (monthly or annually).",
+      "Specify your expected annual rate of return percentage.",
+      "Enter the investment timeframe in years.",
+      "Select whether to adjust figures for estimated annual inflation.",
+      "Review your estimated ending portfolio value, total contributions, total investment growth, and year-by-year asset chart."
     ],
-    formula: 'Future Value = Principal × (1 + r/n)^(nt) + Monthly Contribution × [((1 + r/12)^(12t) - 1) / (r/12)] | Total Return % = (Total Return / Total Contributions) × 100',
+    formula: "Future Value = P(1 + r)^t + PMT × [((1 + r)^t − 1) / r], where P is starting principal, r is annual return rate, t is time in years, and PMT is total annual contribution.",
     examples: [
       {
-        title: 'How long to save $100,000?',
-        input: '$10,000 initial, $400/month, 7% return',
-        result: 'Reach $100,000 in ~11 years 2 months',
+        title: "Monthly Index Fund Investing",
+        input: "Starting: $15,000 | Monthly: $600 | Expected Return: 8.0% | Term: 25 Years",
+        result: "Ending Portfolio: ~$670,000 (Contributions: $195,000 | Investment Growth: ~$475,000)"
       },
       {
-        title: 'Retire early with $1 Million',
-        input: '$20,000 initial, $1,000/month, 8% return',
-        result: 'Reach $1,000,000 in ~24 years 5 months',
+        title: "Conservative Balanced Portfolio",
+        input: "Starting: $50,000 | Monthly: $400 | Expected Return: 6.0% | Term: 15 Years",
+        result: "Ending Portfolio: ~$235,000 (Earned Growth: ~$113,000)"
       },
       {
-        title: 'Monthly investment to reach $500k',
-        input: '$5,000 initial, 15 years, 9% return',
-        result: 'Need ~$1,530/month to reach $500,000',
+        title: "Aggressive Growth Strategy",
+        input: "Starting: $25,000 | Monthly: $1,000 | Expected Return: 9.5% | Term: 20 Years",
+        result: "Ending Portfolio: ~$845,000 (Earned Growth: ~$580,000)"
       },
+      {
+        title: "Lump Sum 10-Year Horizon",
+        input: "Starting: $100,000 | Monthly: $0 | Expected Return: 7.5% | Term: 10 Years",
+        result: "Ending Portfolio: ~$206,100 (More than doubled in 10 years)"
+      }
     ],
     faqs: [
       {
-        q: 'How long will it take to save $100,000 with my investments?',
-        a: 'The time to reach $100,000 depends on your starting balance, monthly contribution, and annual return rate. With a $10,000 initial investment, $400 monthly contributions, and a 7% annual return, you would reach $100,000 in approximately 11 years and 2 months. Our investment calculator shows exactly how long it takes to reach any savings goal you set.',
+        q: "What is a realistic annual rate of return to assume for investments?",
+        a: "For a diversified, 100% stock index fund portfolio, historical long-term returns have averaged roughly 9% to 10% annually before inflation (or 6% to 7% after inflation). For a balanced stock/bond portfolio (such as 60/40), a realistic planning range is 6% to 7% nominal return."
       },
       {
-        q: 'How much do I need to invest monthly to reach $1,000,000?',
-        a: 'To reach $1,000,000 in 25 years with an 8% annual return starting from $0, you would need to invest approximately $1,050 per month. With a $25,000 initial investment, that drops to about $770 per month. The required monthly contribution decreases significantly the earlier you start and the higher your expected return rate.',
+        q: "What is dollar-cost averaging (DCA)?",
+        a: "Dollar-cost averaging is investing a fixed amount of money on a set schedule (such as $500 every month), regardless of market price swings. This lowers average cost per share over time and removes emotional market timing."
       },
       {
-        q: 'Can I use the investment calculator to see when I can retire early?',
-        a: 'Yes! Enter your current retirement savings as the initial investment, add your monthly retirement contributions, set a conservative expected return (7-8% for stock-heavy portfolios), and enter your retirement savings goal as the target amount. The calculator will show you the exact year you\'ll reach financial independence and how much your nest egg will grow over time.',
+        q: "How do investment fees and expense ratios impact my returns?",
+        a: "Expense ratios are fees charged annually by funds. A 1% fee sounds small, but over 30 years it can eat away up to 25% of your total potential portfolio value through lost compounding."
       },
       {
-        q: 'What is the difference between simple and compound investment returns?',
-        a: 'Simple returns earn interest only on your original principal. Compound returns (compound interest) earn returns on both your principal AND the accumulated returns from prior periods. Over a 20-year horizon with $10,000 at 8%, simple interest yields $26,000, while compounding annually yields $46,610 — a 79% higher ending balance.',
+        q: "What is the difference between capital gains and dividend income?",
+        a: "Capital gains are profits earned when you sell an asset for a higher price than you bought it for. Dividends are regular cash distributions paid out by profitable companies to shareholders."
       },
       {
-        q: 'What is a safe annual return rate to use for long-term investing?',
-        a: 'For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation. A conservative estimate of 6-7% is wise for planning. For bond-heavy portfolios, use 3-5%. For balanced portfolios (60/40 stocks/bonds), 5-7% is a reasonable planning range. Always use a rate you\'re comfortable with and consider inflation (typically 2-3% annually).',
+        q: "Should I invest a lump sum all at once or spread it out?",
+        a: "Historically, lump-sum investing outperforms dollar-cost averaging roughly two-thirds of the time because markets rise more often than they fall. However, spreading deposits out over 6 to 12 months can provide emotional peace of mind."
       },
       {
-        q: 'How does compounding frequency affect my investment returns?',
-        a: 'More frequent compounding generates slightly higher returns because interest is calculated on a growing balance more often. For example, $10,000 at 8% over 30 years grows to $100,627 with annual compounding, $107,432 with quarterly compounding, $108,383 with monthly compounding, and $108,856 with daily compounding. The difference between monthly and daily compounding is marginal for most investors.',
+        q: "What is the difference between nominal and real return?",
+        a: "Nominal return is the percentage gain before accounting for inflation. Real return is your actual purchasing power gain after subtracting the inflation rate."
       },
       {
-        q: 'What is the 4% rule for retirement planning?',
-        a: 'The 4% rule is a retirement planning guideline suggesting you can withdraw 4% of your retirement portfolio in the first year of retirement (adjusting for inflation annually) with a low probability of running out of money over a 30-year retirement. For example, if your portfolio is $1,000,000, you could withdraw $40,000 in your first year. Use our investment calculator to determine if your savings goal supports your desired retirement lifestyle.',
+        q: "How does asset allocation change as I get older?",
+        a: "When you are younger, holding a higher percentage of equities (stocks) maximizes long-term compound growth. As you near retirement or withdrawal goals, shifting part of your portfolio to fixed income (bonds and cash) protects capital from short-term market crashes."
       },
+      {
+        q: "What is CAGR (Compound Annual Growth Rate)?",
+        a: "CAGR is the annualized rate of return that an investment would have grown at if it grew at a steady constant rate each year over a specified time period."
+      },
+      {
+        q: "What is the difference between index funds and actively managed funds?",
+        a: "Index funds passively track a market benchmark (like the S&P 500) with ultra-low fees. Actively managed funds employ managers who pick individual stocks to try to beat the market, but usually charge higher fees and rarely beat benchmark index funds over long periods."
+      },
+      {
+        q: "How do taxes impact my investment growth?",
+        a: "In a taxable account, you pay taxes on dividends and capital gains each year. Using tax-advantaged accounts like Roth IRAs, Traditional IRAs, and 401(k)s allows your money to compound tax-free or tax-deferred."
+      },
+      {
+        q: "What is rebalancing and why is it necessary?",
+        a: "Rebalancing is the process of periodically realigning your portfolio asset weights (e.g. 80% stocks / 20% bonds) back to your target allocation after market movements cause one asset class to grow faster than another."
+      },
+      {
+        q: "How long does it take for an investment to double?",
+        a: "Using the Rule of 72, divide 72 by your annual rate of return. At a 7% return, an investment doubles in roughly 10.3 years; at a 10% return, it doubles in 7.2 years."
+      },
+      {
+        q: "What is sequence of returns risk?",
+        a: "Sequence of returns risk is the danger that market downturns early in your retirement withdrawal phase can permanently damage your portfolio longevity, even if long-term average returns look healthy."
+      },
+      {
+        q: "Can I lose money in index fund investments?",
+        a: "In the short term, broad stock market index funds can experience sharp drops (10% to 30% or more during recessions). Over long 15-to-20-year horizons, diversified broad-market US stock index funds have historically never produced negative returns."
+      },
+      {
+        q: "How much of my income should I invest each month?",
+        a: "A standard financial guideline is to invest 15% to 20% of your gross income for retirement and long-term goals. If you are starting later in life or aiming for early retirement (FIRE), targeting 30% to 50% may be needed."
+      }
     ],
+    metaTitle: "Investment Calculator | Portfolio Growth, Returns & Contributions — GetCalcu",
+    keywords: [
+      "investment calculator",
+      "stock market returns calculator",
+      "portfolio growth calculator",
+      "roi calculator",
+      "mutual fund growth calculator",
+      "future value investment",
+      "dollar cost averaging calculator",
+      "cagr calculator investment",
+      "wealth accumulation calculator",
+      "index fund return calculator"
+    ],
+    related: [
+      "compound-interest-calculator",
+      "retirement-calculator",
+      "savings-calculator",
+      "fire-calculator",
+      "inflation-calculator",
+      "net-worth-calculator"
+    ]
   },
-
-  // ── Budget Planner & Expense Tracker ──────────────────────────
-  'budget-planner': {
-    name: 'Budget Planner & Expense Tracker',
-    category: 'Finance',
-    icon: 'fa-wallet',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.',
-    metaDescription: 'Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.',
+  "budget-planner": {
+    name: "Budget Planner & Expense Tracker",
+    category: "Finance",
+    icon: "fa-wallet",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.",
+    metaDescription: "Free monthly budget planner calculator using the 50/30/20 budgeting rule. Allocate income across needs, wants, and savings to take control of your personal finances.",
     fields: [],
     calculate() { return {}; },
     customRenderer: (container) => { if (window.renderBudgetPlannerModule) window.renderBudgetPlannerModule(container); },
     article: {
-      heading: 'How to Build a Monthly Budget and Track Your Spending',
-      intro: 'A budget is the foundation of financial control. The GetCalcu Budget Planner lets you log income sources, categorize expenses, visualize your spending, and get instant feedback with the 50/30/20 rule — all saved privately in your browser.',
+      heading: "How to Build a Realistic Monthly Budget That Actually Works",
+      intro: "A budget is not about restricting your life—it is about giving every dollar a specific job so you can spend without guilt and save with intention. The GetCalcu Budget Planner uses the proven 50/30/20 framework to balance your essential living costs, discretionary spending, and long-term financial goals.",
       sections: [
-        { heading: 'The 50/30/20 Rule Explained', body: 'This popular framework splits after-tax income into 50% needs (housing, food, utilities, transport), 30% wants (dining, entertainment, hobbies), and 20% savings and debt repayment. It is a flexible target to aim for, not a strict rule.' },
-        { heading: 'Why Your Savings Rate Matters', body: 'Your savings rate — the percentage of income left after expenses — is the single best predictor of financial progress. A 20% rate puts you ahead of most households; pushing toward 30% or more accelerates debt payoff, investing, and financial independence.' },
-      ],
+        {
+          heading: "The 50/30/20 Budgeting Rule Explained",
+          body: "Created by Senator Elizabeth Warren in her book All Your Worth, the 50/30/20 rule divides your after-tax take-home pay into three clear categories: 50% for Needs (must-haves), 30% for Wants (lifestyle choices), and 20% for Savings and Debt Repayment (your financial future). It offers a simple, sustainable guideline that eliminates tedious line-item tracking."
+        },
+        {
+          heading: "Defining \"Needs\" (50% of Income)",
+          body: "Needs are the non-negotiable expenses you must pay to survive and keep working. These include rent or mortgage payments, basic groceries, utilities (electricity, water, heat), health insurance, essential transportation (car payment, fuel, public transit), and minimum debt payments. If your needs exceed 50% of your take-home pay, look for ways to downsize housing, refinance car loans, or shop around for insurance."
+        },
+        {
+          heading: "Defining \"Wants\" (30% of Income)",
+          body: "Wants are the discretionary choices that make life enjoyable: dining out, streaming subscriptions, vacations, shopping, hobbies, concerts, and gym memberships. Unlike needs, you could temporarily pause these expenses during a financial emergency without jeopardizing your shelter or health."
+        },
+        {
+          heading: "Defining \"Savings & Debt\" (20% of Income)",
+          body: "The final 20% of your take-home income is dedicated to building long-term wealth and eliminating financial stress. This includes building your 3-6 month emergency fund, making extra payments on high-interest credit card debt, contributing to Roth IRAs or 401(k)s, and funding future goals like home down payments."
+        },
+        {
+          heading: "Zero-Based Budgeting (Give Every Dollar a Name)",
+          body: "In a zero-based budget (popularized by YNAB and Dave Ramsey), your total income minus all expenses, savings, and debt payments equals exactly zero at the start of each month. This does not mean your bank account is empty—it means every dollar is intentionally assigned to a category before the month begins, eliminating mindless leaks."
+        },
+        {
+          heading: "Budgeting with Irregular or Variable Income",
+          body: "If you are self-employed, freelance, or earn commissions, base your core baseline budget on your lowest-earning month of the previous year. In months when you earn higher revenue, route the excess cash into a \"holding account\" or emergency buffer to supplement lean months."
+        },
+        {
+          heading: "Using Sinking Funds to Prevent Budget Blowouts",
+          body: "Irregular expenses like auto maintenance, holiday shopping, vet bills, or annual insurance premiums frequently derail budgets. Setting aside a small amount each month in dedicated sinking funds ensures you can pay these bills in cash when they arrive without touching your credit cards."
+        },
+        {
+          heading: "Overcoming Budget Burnout and Staying Consistent",
+          body: "Budgets fail when they are too rigid or unrealistic. Give yourself permission to spend guilt-free from your \"Wants\" category, automate your savings on payday, and perform a brief 10-minute weekly budget check-in rather than letting receipts pile up for months."
+        }
+      ]
     },
     howTo: [
-      'Add your monthly income sources (salary, freelance, investments, etc.).',
-      'Enter your expenses by category — use the default categories or create your own.',
-      'View your spending breakdown with interactive charts and progress bars.',
-      'Check your Budget Status and 50/30/20 rule recommendations.',
-      'Export your budget as PDF or share the summary with others.',
+      "Enter your total monthly net take-home pay (after income taxes and payroll deductions).",
+      "List your essential monthly Needs (housing, groceries, utilities, transportation, insurance).",
+      "List your discretionary Wants (dining out, entertainment, subscriptions, shopping).",
+      "Enter your monthly Savings and extra debt payoff contributions.",
+      "Review your percentage breakdown against the 50/30/20 benchmark.",
+      "Adjust categories to balance your cash flow and ensure total spending does not exceed net income."
     ],
-    formula: 'Budget Status = Total Income – Total Expenses | Savings Rate = (Remaining / Income) × 100 | 50/30/20 Rule: Needs ≤ 50%, Wants ≤ 30%, Savings ≥ 20%',
+    formula: "Target Needs = Net Income × 0.50 | Target Wants = Net Income × 0.30 | Target Savings = Net Income × 0.20 | Net Cash Flow = Income − (Needs + Wants + Savings).",
     examples: [
-      { title: 'Healthy 50/30/20 Budget', input: 'Income: $5,000 | Needs: $2,500 | Wants: $1,500 | Savings: $1,000', result: 'Savings Rate: 20% — On Track' },
-      { title: 'Needs-Heavy Budget', input: 'Income: $5,000 | Needs: $3,500 | Wants: $1,000 | Savings: $500', result: 'Savings Rate: 10% — Boost Savings' },
+      {
+        title: "Single Professional ($4,500 Take-Home)",
+        input: "Net Income: $4,500 | Needs: $2,250 (50%) | Wants: $1,350 (30%) | Savings: $900 (20%)",
+        result: "Perfect 50/30/20 Balance | $10,800 saved per year"
+      },
+      {
+        title: "High Housing Cost Metro ($6,000 Take-Home)",
+        input: "Net Income: $6,000 | Needs: $3,600 (60%) | Wants: $1,200 (20%) | Savings: $1,200 (20%)",
+        result: "60/20/20 Allocation (Trimmed wants to preserve 20% savings)"
+      },
+      {
+        title: "Aggressive Debt Payoff ($5,000 Take-Home)",
+        input: "Net Income: $5,000 | Needs: $2,500 (50%) | Wants: $750 (15%) | Debt/Savings: $1,750 (35%)",
+        result: "Accelerated Debt Freedom Plan ($21,000/yr toward debt)"
+      },
+      {
+        title: "Entry-Level Starter Budget ($3,000 Take-Home)",
+        input: "Net Income: $3,000 | Needs: $1,650 (55%) | Wants: $750 (25%) | Savings: $600 (20%)",
+        result: "Solid Starter Budget ($7,200/yr into savings)"
+      }
     ],
     faqs: [
-      { q: 'What is the 50/30/20 budgeting rule?', a: 'The 50/30/20 rule splits your after-tax income into three categories: 50% for needs (housing, food, utilities, healthcare, transport), 30% for wants (entertainment, dining, shopping, hobbies), and 20% for savings and debt repayment. It provides a simple framework for balanced spending.' },
-      { q: 'How is the savings rate calculated?', a: 'Your savings rate is calculated as: (Remaining Balance / Total Income) × 100. This shows what percentage of your income you are saving after all expenses.' },
-      { q: 'Can I add custom expense categories?', a: 'Yes! Click the "+ Add Category" button to create unlimited custom categories. You can remove them anytime with the delete button.' },
-      { q: 'Does my data get saved?', a: 'Your budget data is saved automatically in your browser\'s local storage. It stays on your device and is never sent to our servers.' },
-      { q: 'Can I export my budget?', a: 'Yes, you can download a PDF summary of your budget, print the page, or share the summary using your device\'s share menu.' },
+      {
+        q: "What is the 50/30/20 budgeting rule?",
+        a: "The 50/30/20 rule is a simple budgeting guideline where 50% of your take-home pay goes to Needs (essential bills), 30% to Wants (lifestyle and entertainment), and 20% to Savings and debt reduction."
+      },
+      {
+        q: "Should I calculate my budget using gross or net income?",
+        a: "Always budget using your net take-home pay—the actual cash deposited into your bank account after federal, state, and payroll taxes are subtracted."
+      },
+      {
+        q: "What counts as a \"Need\" in a budget?",
+        a: "Needs are essential survival and work requirements: rent/mortgage, basic groceries, utilities, essential healthcare, transportation, and minimum loan payments."
+      },
+      {
+        q: "What counts as a \"Want\" in a budget?",
+        a: "Wants are non-essential discretionary expenses: eating out, streaming services, vacations, hobbies, upgraded clothing, and entertainment."
+      },
+      {
+        q: "What if my essential needs take up more than 50% of my income?",
+        a: "In high-cost-of-living areas, needs often reach 60% or more. In that case, reduce your \"Wants\" percentage (e.g. 60% needs, 20% wants, 20% savings) to protect your savings rate."
+      },
+      {
+        q: "What is zero-based budgeting?",
+        a: "Zero-based budgeting is an approach where your income minus all expenses, savings, and debt payments equals zero. Every single dollar is assigned a designated purpose before the month begins."
+      },
+      {
+        q: "How can I stick to a budget without feeling deprived?",
+        a: "Include a dedicated \"fun money\" or \"wants\" line item in your budget that you can spend guilt-free, automate your savings on payday, and focus on cutting expenses you do not care about."
+      },
+      {
+        q: "How often should I review and update my budget?",
+        a: "Review your budget on a monthly basis to adjust for seasonal expenses, and do a quick 5-to-10-minute check-in weekly to keep spending on track."
+      },
+      {
+        q: "What is a sinking fund?",
+        a: "A sinking fund is a separate savings pool where you set aside money each month for a predictable upcoming expense (such as car insurance or holiday gifts)."
+      },
+      {
+        q: "How do I budget with an irregular or freelance income?",
+        a: "Create your baseline budget based on your lowest historical monthly income. When you have high-earning months, stash the extra earnings in a buffer fund to cover lower months."
+      },
+      {
+        q: "Should 401(k) contributions come out of the 20% savings category?",
+        a: "Yes. If your 401(k) contribution is deducted directly from your gross paycheck, you can add it back to your take-home pay to calculate your true total savings percentage."
+      },
+      {
+        q: "What is the envelope budgeting system?",
+        a: "Envelope budgeting involves placing physical or digital cash into specific category envelopes (groceries, dining, gas). Once an envelope is empty, spending in that category stops until next month."
+      },
+      {
+        q: "How much should I save in an emergency fund before investing?",
+        a: "Start with a $1,000 to $2,000 starter emergency fund, eliminate high-interest credit card debt, and then build a full 3 to 6-month living expense reserve before expanding into broader investments."
+      },
+      {
+        q: "What is the biggest budgeting mistake to avoid?",
+        a: "The biggest mistake is making a budget too strict or complicated to sustain. A simple, flexible budget you can maintain for years is far better than a perfect budget you abandon in two weeks."
+      },
+      {
+        q: "How can I cut my monthly expenses quickly?",
+        a: "Cancel unused recurring subscriptions, cook meals at home, negotiate car insurance and internet rates, and shop with a grocery list to eliminate impulsive purchases."
+      }
     ],
-  },
-
-  // ── Retirement Calculator ─────────────────────────────────────
-  'retirement-calculator': {
-    id: 'retirement-calculator',
-    name: 'Retirement Calculator',
-    category: 'Finance',
-    icon: 'fa-umbrella',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Determine how much money you need to retire comfortably, estimate your future nest egg balance, and calculate required monthly savings based on inflation and life expectancy.',
-    metaTitle: 'Retirement Calculator for Early Career Professionals | Free Template - GetCalcu',
-    metaDescription: 'Free online Retirement Savings Calculator for early career professionals. Estimate your target retirement nest egg, monthly savings requirements, compound returns, and inflation impact. Start planning at 25.',
+    metaTitle: "Budget Planner Calculator | 50/30/20 Rule, Income & Expenses — GetCalcu",
     keywords: [
-      'retirement calculator',
-      'retirement savings calculator',
-      'how much do I need to retire',
-      '401k retirement planning',
-      'compound interest calculator for young professionals',
-      'early career retirement calculator',
-      'retirement nest egg estimator',
-      'how to calculate retirement if you start at 25',
-      'retirement planner',
+      "budget planner calculator",
+      "50 30 20 budget calculator",
+      "monthly budget calculator",
+      "personal budget planner",
+      "income and expense calculator",
+      "household budget planner",
+      "how to make a budget",
+      "zero based budgeting calculator",
+      "spending breakdown calculator",
+      "savings rate budget calculator"
+    ],
+    related: [
+      "savings-calculator",
+      "credit-card-payoff-calculator",
+      "net-worth-calculator",
+      "house-affordability-calculator",
+      "retirement-calculator",
+      "investment-calculator"
+    ]
+  },
+  "retirement-calculator": {
+    id: "retirement-calculator",
+    name: "Retirement Calculator",
+    category: "Finance",
+    icon: "fa-umbrella",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Determine how much money you need to retire comfortably, estimate your future nest egg balance, and calculate required monthly savings based on inflation and life expectancy.",
+    metaTitle: "Retirement Calculator | Nest Egg, 4% Rule & Savings Plan — GetCalcu",
+    metaDescription: "Free retirement calculator to calculate your retirement nest egg, required annual savings, safe withdrawal rate, Social Security income, and retirement age.",
+    keywords: [
+      "retirement calculator",
+      "retirement savings calculator",
+      "how much to save for retirement",
+      "401k retirement calculator",
+      "retirement nest egg calculator",
+      "4 percent rule retirement",
+      "roth ira retirement calculator",
+      "social security retirement calculator",
+      "retirement age planner",
+      "pension retirement calculator"
     ],
     fields: [
-      { id: 'current_age',         label: 'Your Current Age',                    type: 'number', default: 25,   min: 18,    max: 70,  step: 1, hint: 'Your age today. The calculator uses this to find how many years you have until retirement.' },
-      { id: 'current_savings',     label: 'Current Retirement Savings ($)',      type: 'number', default: 0,    min: 0,     step: 1000, hint: 'Total across all retirement accounts: 401k, IRA, Roth IRA, and brokerage investments.' },
-      { id: 'annual_income',       label: 'Annual Income ($)',                   type: 'number', default: 55000, min: 10000, step: 5000, hint: 'Your current yearly pre-tax income. Used to estimate your retirement income target.' },
-      { id: 'monthly_contribution',label: 'Monthly Contribution ($)',            type: 'number', default: 500,   min: 0,     step: 50, hint: 'What you save each month toward retirement (401k, IRA, brokerage). Even small amounts compound over decades.' },
-      { id: 'annual_return',       label: 'Expected Annual Return (%)',          type: 'number', default: 7.0,   min: 0.1,   step: 0.1, max: 30, hint: 'Expected average yearly investment growth. S&P 500 long-term average: about 7-8% after inflation. <a href="#faqs">See realistic return rates ↓</a>' },
-      { id: 'inflation_rate',      label: 'Expected Inflation Rate (%)',         type: 'number', default: 3.0,   min: 0,     step: 0.1, max: 20, hint: 'The annual rate at which prices rise, eroding purchasing power. US historical average: 2.5-3%. <a href="#faqs">See how inflation affects savings ↓</a>' },
-      { id: 'retirement_age',      label: 'Desired Retirement Age',              type: 'number', default: 65,   min: 30,    max: 80,  step: 1, hint: 'The age you plan to stop working and start drawing on your nest egg.' },
-      { id: 'life_expectancy',     label: 'Life Expectancy (years)',             type: 'number', default: 95,   min: 50,    max: 120, step: 1, hint: 'How long you expect to live in retirement. Plan for 90-95 to be safe.' },
-      { id: 'income_replacement',  label: 'Desired Retirement Income (% of current)', type: 'number', default: 80, min: 10, max: 100, step: 5, hint: 'Share of pre-retirement income you will need in retirement. Advisors suggest 70-80%.' },
+      {
+        id: "current_age",
+        label: "Your Current Age",
+        type: "number",
+        default: 25,
+        min: 18,
+        max: 70,
+        step: 1,
+        hint: "Your age today. The calculator uses this to find how many years you have until retirement."
+      },
+      {
+        id: "current_savings",
+        label: "Current Retirement Savings ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 1000,
+        hint: "Total across all retirement accounts: 401k, IRA, Roth IRA, and brokerage investments."
+      },
+      {
+        id: "annual_income",
+        label: "Annual Income ($)",
+        type: "number",
+        default: 55000,
+        min: 10000,
+        step: 5000,
+        hint: "Your current yearly pre-tax income. Used to estimate your retirement income target."
+      },
+      {
+        id: "monthly_contribution",
+        label: "Monthly Contribution ($)",
+        type: "number",
+        default: 500,
+        min: 0,
+        step: 50,
+        hint: "What you save each month toward retirement (401k, IRA, brokerage). Even small amounts compound over decades."
+      },
+      {
+        id: "annual_return",
+        label: "Expected Annual Return (%)",
+        type: "number",
+        default: 7,
+        min: 0.1,
+        step: 0.1,
+        max: 30,
+        hint: "Expected average yearly investment growth. S&P 500 long-term average: about 7-8% after inflation. <a href=\"#faqs\">See realistic return rates ↓</a>"
+      },
+      {
+        id: "inflation_rate",
+        label: "Expected Inflation Rate (%)",
+        type: "number",
+        default: 3,
+        min: 0,
+        step: 0.1,
+        max: 20,
+        hint: "The annual rate at which prices rise, eroding purchasing power. US historical average: 2.5-3%. <a href=\"#faqs\">See how inflation affects savings ↓</a>"
+      },
+      {
+        id: "retirement_age",
+        label: "Desired Retirement Age",
+        type: "number",
+        default: 65,
+        min: 30,
+        max: 80,
+        step: 1,
+        hint: "The age you plan to stop working and start drawing on your nest egg."
+      },
+      {
+        id: "life_expectancy",
+        label: "Life Expectancy (years)",
+        type: "number",
+        default: 95,
+        min: 50,
+        max: 120,
+        step: 1,
+        hint: "How long you expect to live in retirement. Plan for 90-95 to be safe."
+      },
+      {
+        id: "income_replacement",
+        label: "Desired Retirement Income (% of current)",
+        type: "number",
+        default: 80,
+        min: 10,
+        max: 100,
+        step: 5,
+        hint: "Share of pre-retirement income you will need in retirement. Advisors suggest 70-80%."
+      }
     ],
     calculate(v) {
       // ── Extract & validate inputs
@@ -1032,136 +2289,298 @@ const TOOLS = {
         table: schedule,
       };
     },
-
-    // ── How-To Guide
     howTo: [
-      'Enter your current age and annual income to set a baseline - the calculator uses your age to determine the exact number of years until retirement.',
-      'Add your current retirement savings balance (401k, IRA, brokerage accounts) and your monthly contribution amount.',
-      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and your expected inflation rate (2.5-3% historical average).',
-      'Choose your desired retirement age and life expectancy - the calculator projects how long your nest egg needs to last.',
-      'Review your results: projected nest egg, target savings goal using the 4% rule, monthly retirement income, and any additional savings needed to reach your goal.',
+      "Enter your current age and desired retirement age.",
+      "Input your current retirement savings balance across all accounts (401k, IRA, taxable).",
+      "Enter the monthly amount you are currently contributing to retirement savings.",
+      "Specify your estimated annual spending in retirement.",
+      "Input any expected monthly Social Security or pension benefits.",
+      "Review your target nest egg, projected retirement balance, and any potential savings gap."
     ],
-
-    // ── Real-World Examples
     examples: [
       {
-        title: 'Starting at 25 - The Power of Early Saving',
-        input: 'Age: 25, Income: $55,000, Savings: $0, Monthly: $500, Return: 7%, Inflation: 3%, Retire: 65, Live to: 95',
-        result: 'Nest Egg: $1,197,000+ | Monthly Income: ~$3,990 | Replacement Rate: 87%',
+        title: "Early Career Saver (Age 28)",
+        input: "Current Age: 28 | Retires: 65 | Savings: $30,000 | Monthly: $700 | Return: 7.5%",
+        result: "Projected Nest Egg at 65: ~$2,050,000 (Easily exceeds target)"
       },
       {
-        title: 'Mid-Career Catch-Up (Age 35)',
-        input: 'Age: 35, Income: $80,000, Savings: $30,000, Monthly: $1,000, Return: 7%, Inflation: 3%, Retire: 65, Live to: 90',
-        result: 'Nest Egg: $1,185,000+ | Monthly Income: ~$3,950 | Replacement Rate: 59%',
+        title: "Mid-Career Catch Up (Age 45)",
+        input: "Current Age: 45 | Retires: 67 | Savings: $150,000 | Monthly: $1,500 | Return: 7.0%",
+        result: "Projected Nest Egg at 67: ~$1,480,000 (Covers $60,000/yr with Social Security)"
       },
       {
-        title: 'Aggressive Early Retirement at 55',
-        input: 'Age: 25, Income: $75,000, Savings: $10,000, Monthly: $1,500, Return: 8%, Inflation: 3%, Retire: 55, Live to: 90',
-        result: 'Nest Egg: $1,625,000+ | Monthly Income: ~$5,417 | Replacement Rate: 87%',
+        title: "Near Retirement (Age 58)",
+        input: "Current Age: 58 | Retires: 66 | Savings: $650,000 | Monthly: $2,000 | Return: 6.0%",
+        result: "Projected Nest Egg at 66: ~$1,280,000 (Generates ~$51,200/yr safely)"
       },
+      {
+        title: "High-Income Saver",
+        input: "Current Age: 35 | Retires: 60 | Savings: $200,000 | Monthly: $3,000 | Return: 7.5%",
+        result: "Projected Nest Egg at 60: ~$3,540,000 (Achieves Early Financial Freedom)"
+      }
     ],
-    formula: 'Real Return = (1 + Nominal Return) / (1 + Inflation Rate) - 1 | FV = PV x (1 + r)^n | FV = PMT x [((1 + r_monthly)^n - 1) / r_monthly] | 4% Rule: Annual Withdrawal = Nest Egg x 0.04 | Target Nest Egg = Desired Annual Income x 25',
-
-    // ── SEO Article Content
+    formula: "Target Nest Egg = (Annual Retirement Expenses − Annual Guaranteed Income) ÷ Safe Withdrawal Rate (e.g. 0.04). Future Value = P(1+r)^t + PMT × [((1+r)^t − 1) / r].",
     article: {
-      heading: 'The Ultimate Early Career Retirement Projection Tool',
-      intro: 'Standard retirement calculators assume a static income, but early-career professionals typically see rapid salary progression over time. Our specialized retirement calculator for early career professionals accounts for inflation-adjusted compound growth, realistic return rates, and the 4% rule to give you a clear roadmap to financial independence - starting from wherever you are today.',
+      heading: "The Comprehensive Guide to Planning Your Retirement",
+      intro: "Planning for retirement is one of the most critical long-term financial journeys you will undertake. Estimating how much money you need to retire comfortably requires balancing your current age, retirement target age, expected living expenses, investment returns, inflation, and guaranteed income sources like Social Security. The GetCalcu Retirement Calculator gives you a clear roadmap to reach your retirement milestone on your own terms.",
       sections: [
-        { heading: 'Why Standard Calculators Fail Young Professionals', body: 'Most retirement calculators assume your income stays flat for decades. Early-career professionals, however, often see salaries double or triple in their first 10-15 years. Static-income tools underestimate how much you can actually save as your earnings grow, leading to overly conservative projections. Our calculator lets you model rising contributions over a 35-40 year horizon.' },
-        { heading: 'How Compound Growth Works Over 35 Years', body: 'Compounding over 35+ years is extraordinary. At a 7% real return, money doubles roughly every 10 years — so a dollar invested at 25 doubles ~3.5 times by 65. Inflation is the counterforce: at 3%, purchasing power halves over ~24 years. That is why our calculator uses the Fisher equation to report real, inflation-adjusted growth rather than misleading nominal figures.' },
-        { heading: 'The 4% Rule and Your Target Nest Egg', body: 'The 4% rule (from the Trinity Study) says you can safely withdraw 4% of your portfolio in year one of retirement, adjusting for inflation, with a high chance of lasting 30 years. That means your target nest egg is about 25x your desired first-year retirement expenses. Our calculator computes this target from your income and replacement rate, then tells you whether you are on track.' },
-      ],
+        {
+          heading: "The 4% Safe Withdrawal Rule Explained",
+          body: "The 4% rule originated from the landmark Trinity Study. It states that an investor with a balanced portfolio of stocks and bonds (such as 60% stocks / 40% bonds) can withdraw 4% of their portfolio value in the first year of retirement, and adjust that dollar amount for inflation every subsequent year, with a 95%+ probability that their portfolio will last at least 30 years. Under this rule, your target retirement nest egg equals your annual spending divided by 0.04 (or multiplied by 25)."
+        },
+        {
+          heading: "Estimating Your Annual Retirement Living Expenses",
+          body: "A common rule of thumb is the 70% to 80% replacement rule, which assumes you will spend 70% to 80% of your pre-retirement income in retirement because mortgage payments may be finished, daily commuting costs vanish, and payroll taxes stop. However, active retirees often spend just as much or more during early retirement years on travel, hobbies, and family."
+        },
+        {
+          heading: "Integrating Social Security and Pension Benefits",
+          body: "Social Security provides an inflation-indexed lifetime income stream. You can claim benefits as early as age 62 (at a permanent 30% reduction), wait until your Full Retirement Age (FRA, currently age 67 for those born in 1960 or later), or delay claiming until age 70 for an 8% annual boost in benefits. Every dollar of guaranteed Social Security or pension income directly lowers the amount you need to withdraw from your private investment portfolio."
+        },
+        {
+          heading: "Tax Diversification: 401(k), Traditional IRA, and Roth Accounts",
+          body: "Having money in different tax buckets provides immense flexibility in retirement. Traditional 401(k)s and IRAs give upfront tax deductions, but withdrawals are taxed as ordinary income. Roth accounts require after-tax contributions today, but all qualified withdrawals in retirement are 100% tax-free. Maintaining both allows you to control your taxable income bracket during retirement."
+        },
+        {
+          heading: "The Impact of Inflation on Retirement Purchasing Power",
+          body: "Over a 30-year retirement, even moderate 2.5% to 3% annual inflation more than doubles the cost of goods and services. A portfolio must remain invested in growth assets (equities) throughout retirement to generate returns that outpace inflation and protect your standard of living."
+        },
+        {
+          heading: "Accounting for Healthcare and Long-Term Care Costs",
+          body: "Healthcare is often one of the largest single expenses in retirement. Medicare eligibility begins at age 65, but Medicare does not cover everything (deductibles, copays, vision, dental, and long-term custodial nursing care are out-of-pocket). Funding a Health Savings Account (HSA) during your working years creates a triple-tax-advantaged medical nest egg."
+        },
+        {
+          heading: "Required Minimum Distributions (RMDs)",
+          body: "Under current US tax law (SECURE 2.0 Act), owners of Traditional 401(k)s and IRAs must begin taking mandatory annual taxable withdrawals (RMDs) starting at age 73 (increasing to age 75 in 2033). Planning ahead with Roth conversions in lower-income early retirement years can minimize unexpected tax spikes from RMDs."
+        },
+        {
+          heading: "Catch-Up Contributions for Savers Age 50 and Older",
+          body: "If you started saving later in life, IRS rules allow individuals age 50 and older to make additional \"catch-up\" contributions to 401(k)s, 403(b)s, and IRAs beyond standard annual limits, helping accelerate retirement savings in peak earning years."
+        }
+      ]
     },
-
-    // ── Schema-Ready FAQs (targets Google Featured Snippets / PAA)
     faqs: [
       {
-        q: 'How much money do I need to retire comfortably?',
-        a: 'A widely accepted guideline is the 4% Rule, which suggests you need approximately 25 times your expected annual retirement expenses saved in investments. For early career professionals, a good rule of thumb is to aim for 1x your annual salary saved by age 30, 3x by 40, 6x by 50, and 8x by 60. Use our retirement calculator to find your personalized target nest egg based on your income, age, and desired retirement lifestyle.',
+        q: "How much money do I need to retire comfortably?",
+        a: "A widely accepted benchmark is the 25x rule: you need roughly 25 times your expected annual retirement expenses (minus guaranteed income like Social Security). If you need $60,000 per year from your investments, you will need a portfolio of roughly $1,500,000."
       },
       {
-        q: 'How much should an early career professional have saved?',
-        a: 'By age 25-30, a common benchmark is to have saved at least 1x your annual salary. If you start saving 15% of your income at age 25 with a 7% average annual return, you could accumulate over $1 million by age 65. The key advantage for early career professionals is time - even small contributions grow exponentially through compound interest over 35-40 year horizons.',
+        q: "What is the 4% safe withdrawal rule?",
+        a: "The 4% rule states that you can withdraw 4% of your initial retirement portfolio in your first year of retirement, and adjust that dollar amount for inflation each year thereafter, with a very high probability that your money will last 30 years."
       },
       {
-        q: 'What is a realistic investment return rate over 30 years?',
-        a: 'The S&P 500 has historically returned approximately 10% before inflation and 7-8% after inflation (real return) over long periods. For a balanced portfolio (60% stocks / 40% bonds), a realistic assumption is 6-7% nominal or 4-5% real return. Our calculator uses the Fisher equation - (1 + nominal return) / (1 + inflation rate) - 1 - to compute the inflation-adjusted real return, giving you a more accurate long-term projection.',
+        q: "When can I start claiming Social Security benefits?",
+        a: "You can claim as early as age 62, but your monthly benefit is permanently reduced by up to 30%. Waiting until your Full Retirement Age (age 67 for those born 1960 or later) gives 100% of your benefit, while delaying to age 70 increases payments by 8% per year."
       },
       {
-        q: 'What percentage of my current income should I replace in retirement?',
-        a: 'Most financial advisors recommend aiming to replace 70% to 80% of your pre-retirement annual income to maintain your current lifestyle. This accounts for reduced expenses in retirement (no commuting, lower taxes, no retirement savings contributions) while still covering housing, healthcare, and leisure. Our calculator defaults to 80% and shows your projected replacement rate based on your actual savings trajectory.',
+        q: "What is the difference between a Traditional 401(k) and a Roth 401(k)?",
+        a: "A Traditional 401(k) uses pre-tax contributions, lowering your taxable income today, but withdrawals in retirement are taxed as ordinary income. A Roth 401(k) uses after-tax contributions, but all future withdrawals in retirement are 100% tax-free."
       },
       {
-        q: 'How does inflation impact my retirement savings?',
-        a: 'Inflation erodes purchasing power over time. At an average annual inflation rate of 2.5% to 3%, the real value of money decreases by roughly half over 25-30 years - meaning $1,000,000 in 30 years will only buy what $412,000 buys today. Our retirement calculator automatically adjusts for inflation using the Fisher equation, showing both nominal future values and inflation-adjusted (today\'s dollar) figures so you can plan accurately.',
+        q: "How much should I contribute to my 401(k)?",
+        a: "At a minimum, contribute enough to capture 100% of your employer matching contribution (which is free money). Financial planners generally recommend saving 15% of your gross annual income across all retirement accounts."
       },
       {
-        q: 'What is the 4% rule for retirement planning?',
-        a: 'The 4% rule is a retirement planning guideline developed from the Trinity Study. It suggests you can withdraw 4% of your retirement portfolio in the first year of retirement (adjusting for inflation annually) with a low probability of running out of money over a 30-year retirement. For example, if your portfolio is $1,000,000, you could withdraw $40,000 in your first year. Our calculator applies this rule to your projected nest egg to estimate your monthly retirement income.',
+        q: "What is an IRA and who can open one?",
+        a: "An Individual Retirement Account (IRA) is a personal tax-advantaged retirement account open to anyone with earned income. You can choose between a Traditional IRA (tax-deductible contributions) or a Roth IRA (tax-free withdrawals)."
       },
       {
-        q: 'Can I retire early if I start saving at 25?',
-        a: 'Yes! Starting at 25 gives you a massive advantage due to compound interest. If you save $500 per month with a 7% return, you could accumulate $1.2M by 65. To retire early at 55, you would need to save approximately $1,500-$2,000 per month - but the earlier you start, the less you need to save each month to reach the same goal. Use our retirement calculator to experiment with different retirement ages and see the impact on your monthly contribution needs.',
+        q: "What are Required Minimum Distributions (RMDs)?",
+        a: "RMDs are mandatory annual taxable withdrawals that the IRS requires you to start taking from Traditional 401(k)s and IRAs once you reach age 73 (rising to 75 in 2033)."
       },
+      {
+        q: "How does inflation affect my retirement plan?",
+        a: "Inflation increases the cost of living over time, eroding purchasing power. Your retirement portfolio should remain partially invested in equities (stocks) throughout retirement so returns outpace inflation."
+      },
+      {
+        q: "What happens to my 401(k) if I change jobs?",
+        a: "You can leave it in your old employer plan, roll it over into your new employer 401(k), or roll it over into a personal rollover IRA with broader investment choices and lower fees."
+      },
+      {
+        q: "What is sequence of returns risk in retirement?",
+        a: "It is the risk of experiencing a severe stock market downturn in the first few years after you begin withdrawing money in retirement, which can permanently impair portfolio longevity."
+      },
+      {
+        q: "What is an HSA and why is it useful for retirement?",
+        a: "A Health Savings Account (HSA) offers triple tax advantages: tax-deductible contributions, tax-free growth, and tax-free withdrawals for qualified medical expenses. After age 65, non-medical withdrawals are taxed just like a standard Traditional IRA."
+      },
+      {
+        q: "Can I retire early before age 65?",
+        a: "Yes, but you must plan for healthcare bridge coverage (such as ACA marketplace health plans) before Medicare starts at 65, and ensure you have penalty-free access to funds (using taxable accounts, Roth IRA contribution withdrawals, or Rule 72t SEPP payments)."
+      },
+      {
+        q: "What are catch-up contributions?",
+        a: "The IRS allows individuals age 50 and older to contribute extra money each year to 401(k)s and IRAs above the standard annual limits."
+      },
+      {
+        q: "How should my investment asset allocation shift in retirement?",
+        a: "Retirees typically shift toward a balanced allocation (e.g. 50% to 60% stocks for ongoing inflation growth and 40% to 50% bonds/cash for stability and short-term income needs)."
+      },
+      {
+        q: "What is the biggest risk to retirement security?",
+        a: "The three biggest risks are outliving your money (longevity risk), healthcare and nursing care expenses, and inflation eroding fixed purchasing power over multi-decade retirements."
+      }
     ],
+    related: [
+      "fire-calculator",
+      "investment-calculator",
+      "compound-interest-calculator",
+      "savings-calculator",
+      "inflation-calculator",
+      "net-worth-calculator"
+    ]
   },
-  'savings-calculator': {
-    name: 'Savings & Strategy Calculator',
-    category: 'Finance',
-    icon: 'fa-piggy-bank',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.',
-    metaTitle: 'Savings Calculator | Biweekly vs Monthly & HYSA Growth — GetCalcu',
-    metaDescription: 'Free online Savings Calculator. Compare biweekly vs monthly deposits, estimate real HYSA returns after tax and inflation, and pinpoint your exact goal completion timeline.',
+  "savings-calculator": {
+    name: "Savings & Strategy Calculator",
+    category: "Finance",
+    icon: "fa-piggy-bank",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.",
+    metaTitle: "Savings Calculator | High-Yield Savings, Interest & Goals — GetCalcu",
+    metaDescription: "Free savings calculator to project your savings account growth with regular deposits, APY rates, and target timelines. Plan emergency funds and big purchases.",
     keywords: [
-      'biweekly vs monthly savings calculator',
-      'hysa inflation calculator',
-      'emergency fund months calculator',
-      'savings goal timeline calculator',
-      'interest calculator with tax',
+      "savings calculator",
+      "high yield savings account calculator",
+      "savings goal calculator",
+      "how much interest will I earn on savings",
+      "savings account interest calculator",
+      "emergency fund calculator",
+      "monthly savings plan",
+      "apy savings calculator",
+      "compound savings calculator",
+      "save 10000 calculator"
     ],
     fields: [
-      { id: 'mode', label: 'Savings Strategy Mode', type: 'select', default: 'biweekly-monthly',
+      {
+        id: "mode",
+        label: "Savings Strategy Mode",
+        type: "select",
+        default: "biweekly-monthly",
         options: [
-          { value: 'biweekly-monthly', label: 'Biweekly vs Monthly Growth Comparison' },
-          { value: 'goal-timeline', label: 'Target Goal & Exact Date Timeline' },
-          { value: 'hysa-real-yield', label: 'HYSA Net Return (Tax & Inflation Adjusted)' },
-          { value: 'emergency-fund', label: 'Emergency Fund Expenses Calculator' },
+          {
+            value: "biweekly-monthly",
+            label: "Biweekly vs Monthly Growth Comparison"
+          },
+          {
+            value: "goal-timeline",
+            label: "Target Goal & Exact Date Timeline"
+          },
+          {
+            value: "hysa-real-yield",
+            label: "HYSA Net Return (Tax & Inflation Adjusted)"
+          },
+          {
+            value: "emergency-fund",
+            label: "Emergency Fund Expenses Calculator"
+          }
         ],
-        hint: 'Choose a savings strategy to model. Each mode surfaces only the inputs it needs.' },
-      { id: 'initial_deposit', label: 'Initial Deposit / Current Savings ($)', type: 'number', default: 5000, min: 0, step: 100,
-        hint: 'Your starting balance or current savings today. Use 0 if you are starting from scratch.' },
-      { id: 'recurring_deposit', label: 'Monthly-Equivalent Deposit ($)', type: 'number', default: 250, min: 0, step: 25,
+        hint: "Choose a savings strategy to model. Each mode surfaces only the inputs it needs."
+      },
+      {
+        id: "initial_deposit",
+        label: "Initial Deposit / Current Savings ($)",
+        type: "number",
+        default: 5000,
+        min: 0,
+        step: 100,
+        hint: "Your starting balance or current savings today. Use 0 if you are starting from scratch."
+      },
+      {
+        id: "recurring_deposit",
+        label: "Monthly-Equivalent Deposit ($)",
+        type: "number",
+        default: 250,
+        min: 0,
+        step: 25,
         condition: v => ['biweekly-monthly','goal-timeline','hysa-real-yield'].includes(v.mode),
-        hint: 'The amount you deposit per paycheck cycle. In Biweekly vs Monthly mode this is the monthly-equivalent payment.' },
-      { id: 'deposit_frequency', label: 'Deposit Frequency', type: 'select', default: 'biweekly',
+        hint: "The amount you deposit per paycheck cycle. In Biweekly vs Monthly mode this is the monthly-equivalent payment."
+      },
+      {
+        id: "deposit_frequency",
+        label: "Deposit Frequency",
+        type: "select",
+        default: "biweekly",
         condition: v => ['biweekly-monthly','goal-timeline','hysa-real-yield'].includes(v.mode),
         options: [
-          { value: 'biweekly', label: 'Biweekly (26/yr)' },
-          { value: 'monthly', label: 'Monthly (12/yr)' },
-          { value: 'weekly', label: 'Weekly (52/yr)' },
+          {
+            value: "biweekly",
+            label: "Biweekly (26/yr)"
+          },
+          {
+            value: "monthly",
+            label: "Monthly (12/yr)"
+          },
+          {
+            value: "weekly",
+            label: "Weekly (52/yr)"
+          }
         ],
-        hint: 'How often you contribute. Used for compounding cadence in Growth and Goal modes.' },
-      { id: 'target_goal', label: 'Target Goal Amount ($)', type: 'number', default: 25000, min: 0, step: 500,
+        hint: "How often you contribute. Used for compounding cadence in Growth and Goal modes."
+      },
+      {
+        id: "target_goal",
+        label: "Target Goal Amount ($)",
+        type: "number",
+        default: 25000,
+        min: 0,
+        step: 500,
         condition: v => ['goal-timeline','emergency-fund'].includes(v.mode),
-        hint: 'The total balance you want to reach. The calculator projects the exact month and year you cross this line.' },
-      { id: 'essential_expenses', label: 'Essential Monthly Expenses ($)', type: 'number', default: 3500, min: 0, step: 100,
+        hint: "The total balance you want to reach. The calculator projects the exact month and year you cross this line."
+      },
+      {
+        id: "essential_expenses",
+        label: "Essential Monthly Expenses ($)",
+        type: "number",
+        default: 3500,
+        min: 0,
+        step: 100,
         condition: v => v.mode === 'emergency-fund',
-        hint: 'Non-negotiable monthly costs: rent/mortgage, utilities, food, insurance, and minimum debt payments.' },
-      { id: 'interest_rate', label: 'Annual Interest Rate / HYSA APY (%)', type: 'number', default: 4.5, min: 0, max: 30, step: 0.1,
-        hint: 'Stated annual yield. For a High-Yield Savings Account use the advertised APY (commonly 3-5%).' },
-      { id: 'tax_rate', label: 'Marginal Income Tax Rate (%)', type: 'number', default: 22, min: 0, max: 50, step: 1,
+        hint: "Non-negotiable monthly costs: rent/mortgage, utilities, food, insurance, and minimum debt payments."
+      },
+      {
+        id: "interest_rate",
+        label: "Annual Interest Rate / HYSA APY (%)",
+        type: "number",
+        default: 4.5,
+        min: 0,
+        max: 30,
+        step: 0.1,
+        hint: "Stated annual yield. For a High-Yield Savings Account use the advertised APY (commonly 3-5%)."
+      },
+      {
+        id: "tax_rate",
+        label: "Marginal Income Tax Rate (%)",
+        type: "number",
+        default: 22,
+        min: 0,
+        max: 50,
+        step: 1,
         condition: v => v.mode === 'hysa-real-yield',
-        hint: 'Your marginal federal + state income tax bracket applied to interest earned.' },
-      { id: 'inflation_rate', label: 'Expected Inflation Rate (%)', type: 'number', default: 2.5, min: 0, max: 15, step: 0.1,
+        hint: "Your marginal federal + state income tax bracket applied to interest earned."
+      },
+      {
+        id: "inflation_rate",
+        label: "Expected Inflation Rate (%)",
+        type: "number",
+        default: 2.5,
+        min: 0,
+        max: 15,
+        step: 0.1,
         condition: v => v.mode === 'hysa-real-yield',
-        hint: 'Expected annual price increase that erodes purchasing power. US long-run average is about 2.5-3%.' },
-      { id: 'duration_years', label: 'Savings Duration (Years)', type: 'number', default: 5, min: 1, max: 50, step: 1,
+        hint: "Expected annual price increase that erodes purchasing power. US long-run average is about 2.5-3%."
+      },
+      {
+        id: "duration_years",
+        label: "Savings Duration (Years)",
+        type: "number",
+        default: 5,
+        min: 1,
+        max: 50,
+        step: 1,
         condition: v => ['biweekly-monthly','hysa-real-yield'].includes(v.mode),
-        hint: 'The planning horizon over which growth, compounding, and real-yield erosion are measured.' },
+        hint: "The planning horizon over which growth, compounding, and real-yield erosion are measured."
+      }
     ],
-
     fieldLabels(v) {
       if (v.mode === 'biweekly-monthly') return { initial_deposit: 'Initial Deposit / Current Savings ($)', recurring_deposit: 'Monthly-Equivalent Deposit ($)', interest_rate: 'Annual Interest Rate (%)', target_goal: 'Target Goal Amount ($)' };
       if (v.mode === 'goal-timeline') return { initial_deposit: 'Current Savings ($)', recurring_deposit: 'Recurring Deposit ($)', interest_rate: 'Annual Interest Rate (%)', target_goal: 'Target Goal Amount ($)' };
@@ -1298,86 +2717,265 @@ const TOOLS = {
       return errorResult('Unknown mode selected.');
     },
     howTo: [
-      'Choose a strategy mode - Biweekly vs Monthly, Target Goal & Date, HYSA Net Return, or Emergency Fund. Only the inputs that mode needs appear.',
-      'Enter your current savings or initial deposit. Use 0 if you are starting from scratch.',
-      'Add your recurring deposit amount and how often you contribute (biweekly, monthly, or weekly).',
-      'For goal and HYSA modes, set your target amount, HYSA APY, marginal tax rate, and expected inflation.',
-      'For the emergency-fund mode, enter your essential monthly expenses; the tool sizes 3- and 6-month buffers automatically.',
-      'Read the headline insight, then review the stat tiles, growth chart, and schedule/comparison table for the full picture.',
-      'Use "Copy Results" to grab the numbers or "Save Result" to store the scenario to your GetCalcu history.',
+      "Enter your starting initial savings balance.",
+      "Input the monthly deposit amount you plan to save.",
+      "Specify the annual interest rate (APY) offered by your savings account.",
+      "Enter the number of years or months you plan to save.",
+      "Select the compounding frequency (most HYSAs compound daily).",
+      "Review your total accumulated balance, total deposits made, and total interest earned."
     ],
     examples: [
-      { title: 'Biweekly edge over 5 years', input: '$5,000 start, $250/mo-equivalent, 4.5% APY, 5 years', result: 'Biweekly $24,466 vs Monthly $23,046 → +$1,421 extra (≈$171 pure compounding)' },
-      { title: 'HYSA real return reality check', input: '$5,000 at 4.5% APY, 22% tax, 2.5% inflation, $250/mo, 5 years', result: 'Real return ≈ 0.99% — $5,000 → ≈$19,735 in today\'s dollars' },
-      { title: 'Goal timeline to $25,000', input: '$5,000 start, $250/mo, 4.5% APY, goal $25,000', result: 'Reached in 66 months (5 yr 6 mo) — projected Jan 2032' },
-      { title: 'Emergency fund gap', input: '$5,000 saved, $3,500/mo essential expenses', result: '1.4 months covered · $16,000 short of a 6-month buffer' },
+      {
+        title: "Emergency Fund Goal",
+        input: "Starting: $2,000 | Monthly: $400 | APY: 4.5% | Time: 3 Years",
+        result: "Total Saved: ~$17,500 (Deposits: $16,400 | Interest: ~$1,100)"
+      },
+      {
+        title: "House Down Payment Fund",
+        input: "Starting: $10,000 | Monthly: $1,200 | APY: 4.75% | Time: 4 Years",
+        result: "Total Saved: ~$74,800 (Interest Earned: ~$7,200)"
+      },
+      {
+        title: "Vacation Sinking Fund",
+        input: "Starting: $500 | Monthly: $250 | APY: 4.25% | Time: 1 Year",
+        result: "Total Saved: ~$3,580 (Ready for travel)"
+      },
+      {
+        title: "Lump Sum High-Yield CD",
+        input: "Starting: $25,000 | Monthly: $0 | APY: 5.0% | Time: 5 Years",
+        result: "Total Balance: ~$32,000 (Risk-Free Interest: ~$7,000)"
+      }
     ],
-    formula: 'Biweekly vs Monthly: FV = P0(1+r/k)^(kt) + PMT * [((1+r/k)^(kt)-1)/(r/k)] with k=26 (biweekly) vs k=12 (monthly) | Post-Tax Real Yield: r_net = r_nominal*(1-tau) and r_real = (1+r_net)/(1+pi)-1 | Goal Months: smallest n with P0(1+r_m)^n + PMT_m*(((1+r_m)^n-1)/r_m) >= G | Emergency Coverage: Months = P0/E, G3=3E, G6=6E',
-
+    formula: "Total Savings = P(1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P is starting balance, PMT is monthly deposit, r is annual rate (APY), n is compounding frequency, and t is time in years.",
     article: {
-      heading: 'Smart Savings Strategies: Biweekly Acceleration, HYSA Net Yields & Timelines',
-      intro: 'Most savings calculators stop at a single compound-interest projection — but real-world wealth building is shaped by forces those tools ignore. The GetCalcu Savings & Strategy Calculator models the factors that actually move your balance: biweekly paycheck timing that sneaks in an extra deposit each year, income tax that clips your HYSA interest, and inflation that quietly erodes what those dollars can buy. Across four focused modes, it shows your true trajectory instead of a rosy headline number.',
+      heading: "How to Build and Optimize Your Savings Plan",
+      intro: "Whether you are saving for a home down payment, building a 6-month emergency safety net, or planning a dream vacation, having a structured savings plan makes your goal achievable. The GetCalcu Savings Calculator shows you exactly how fast your money grows with regular deposits and current high-yield savings interest rates, helping you reach your target date with confidence.",
       sections: [
-        { heading: 'Why basic savings calculators fall short', body: 'A standard calculator applies one rate to one contribution schedule and prints a future value. That ignores how you actually get paid. If you are paid biweekly, you receive 26 checks a year — and contributing from every check means 26 half-deposits, the equivalent of 13 monthly payments instead of 12. It also ignores that HYSA interest is ordinary income, taxed at your marginal bracket, and that inflation shrinks the purchasing power of every dollar you keep. Without accounting for tax and inflation, an advertised 4.5% APY can quietly become a sub-1% real return.' },
-        { heading: 'The math behind your real HYSA return', body: 'Two steps convert a bank\'s advertised APY into your true purchasing-power yield. First, tax the interest: your after-tax nominal return is r_net = r_nominal x (1 - Tax Rate). Second, remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + Inflation Rate) - 1. The result is what your savings actually earn in today\'s dollars. At a 4.5% APY, 22% tax, and 2.5% inflation, the real return is under 1% — a number most savers never see because their bank only displays the gross rate.' },
-        { heading: 'Biweekly acceleration, goal timelines, and emergency funds', body: 'The same compounding engine powers the other three modes. Biweekly acceleration quantifies the edge from one extra monthly payment per year. The goal-timeline engine walks your balance forward month by month until it crosses your target, then projects the exact calendar month and year you will arrive. And the emergency-fund mode translates a lump sum into months of essential-expense coverage, sizing the 3- and 6-month buffers most advisors recommend holding in a liquid, high-yield account.' },
-      ],
+        {
+          heading: "High-Yield Savings Accounts (HYSA) vs. Traditional Bank Accounts",
+          body: "Traditional brick-and-mortar banks often pay negligible interest rates (frequently 0.01% to 0.05% APY), meaning $20,000 earns just a few dollars a year. Online High-Yield Savings Accounts (HYSAs) typically offer interest rates between 4.0% and 5.0% APY. On that same $20,000 balance, an HYSA generates $800 to $1,000 in passive interest every year while maintaining full FDIC insurance and daily liquidity."
+        },
+        {
+          heading: "Building a Resilient 3-to-6 Month Emergency Fund",
+          body: "An emergency fund is money set aside strictly for unexpected essential events, such as medical bills, major car repairs, home maintenance, or temporary job loss. Financial planners recommend saving 3 to 6 months of essential living expenses (rent/mortgage, groceries, utilities, insurance, and loan minimums) in a liquid, high-yield savings account."
+        },
+        {
+          heading: "Automating Your Savings: The \"Pay Yourself First\" Strategy",
+          body: "The most effective way to save consistently is automation. Rather than saving whatever money happens to be left over at the end of the month, set up an automatic bank transfer on each payday directly into your dedicated savings account. When you treat savings like a non-negotiable bill, your wealth builds effortlessly."
+        },
+        {
+          heading: "Sinking Funds: Saving for Specific Known Expenses",
+          body: "A sinking fund is a separate savings bucket for anticipated upcoming expenses that occur irregularly, such as annual car insurance premiums, holiday gifts, home repairs, or property taxes. Dividing the anticipated total cost by the number of months until the bill is due prevents budget surprises and credit card debt."
+        },
+        {
+          heading: "Certificates of Deposit (CDs) vs. Money Market Accounts",
+          body: "Certificates of Deposit (CDs) lock in a guaranteed fixed interest rate for a specific term (such as 6 months, 1 year, or 5 years) in exchange for keeping your money untouched until maturity. Money Market Accounts (MMAs) offer competitive interest rates with added check-writing or debit card access. Both are FDIC-insured up to $250,000 per depositor per institution."
+        },
+        {
+          heading: "Understanding FDIC and NCUA Insurance Limits",
+          body: "Cash held in US banks is insured by the Federal Deposit Insurance Corporation (FDIC) up to $250,000 per depositor, per insured bank, for each account ownership category. Credit unions provide equivalent federal protection through the National Credit Union Administration (NCUA). For balances above $250,000, spreading funds across multiple institutions ensures complete coverage."
+        },
+        {
+          heading: "When to Save vs. When to Invest",
+          body: "Money needed within the next 3 to 5 years (emergency funds, down payments, wedding expenses) belongs in safe, liquid savings vehicles where principal is protected from market downturns. Money earmarked for long-term horizons (10+ years, such as retirement) should be invested in diversified index funds to outpace inflation and compound wealth."
+        },
+        {
+          heading: "Overcoming Savings Plateaus and Lifestyle Creep",
+          body: "As your income increases through raises and bonuses, lifestyle inflation naturally tempts you to spend more. A high-leverage rule of thumb is to allocate at least 50% of every raise or bonus directly into savings and investments before upgrading your standard of living."
+        }
+      ]
     },
-
     faqs: [
-      { q: 'Does saving biweekly build money faster than saving monthly?', a: 'Yes. Because a year contains 52 weeks, saving biweekly results in 26 half-deposits—equivalent to 13 full monthly payments per year. This extra deposit accelerates compounding and builds wealth faster over multi-year horizons.' },
-      { q: 'Is interest earned from a High-Yield Savings Account (HYSA) taxable?', a: 'Yes. In most jurisdictions, interest earned from bank savings accounts and HYSAs is classified as ordinary income and subject to taxation at your marginal income tax bracket.' },
-      { q: 'How many months of expenses should be in an emergency fund?', a: 'Financial advisors typically recommend holding 3 to 6 months of essential living expenses (rent/mortgage, utilities, food, debt minimums) in a liquid, accessible account like a High-Yield Savings Account.' },
-      { q: 'How do you calculate the real return on a savings account after tax and inflation?', a: 'First reduce the advertised APY by your tax rate to get the post-tax nominal return: r_net = APY x (1 - tax rate). Then remove inflation with the Fisher equation: r_real = (1 + r_net) / (1 + inflation) - 1. For a 4.5% APY at a 22% tax bracket with 2.5% inflation, the post-tax return is 3.51% and the real return is about 0.99%.' },
-            { q: 'How long will it take to reach my savings goal?', a: 'Divide the problem into months: project your balance forward each month as initial savings grown by the monthly rate plus your monthly contribution, and stop at the first month the balance meets or exceeds your goal. The Savings & Strategy Calculator performs this month-by-month walk and converts the result into an exact calendar month and year, so you see not just "5 years 6 months" but a projected completion date like January 2032.' },
+      {
+        q: "What is a High-Yield Savings Account (HYSA)?",
+        a: "A High-Yield Savings Account is a federally insured savings account that pays a much higher Annual Percentage Yield (APY)—often 10 to 20 times higher than traditional national brick-and-mortar bank accounts."
+      },
+      {
+        q: "How much should I keep in an emergency savings fund?",
+        a: "Most financial advisors recommend keeping 3 to 6 months of essential living expenses (housing, utilities, food, debt payments, insurance) in an easily accessible high-yield savings account."
+      },
+      {
+        q: "How often does interest compound on savings accounts?",
+        a: "Most online high-yield savings accounts compound interest daily and credit the accrued interest to your account on the last day of each monthly billing statement."
+      },
+      {
+        q: "Are high-yield savings accounts safe?",
+        a: "Yes, as long as the financial institution is member FDIC (for banks) or NCUA (for credit unions). Deposits are insured up to $250,000 per depositor, per ownership category."
+      },
+      {
+        q: "What is the difference between APY and interest rate on savings?",
+        a: "The interest rate is the base rate without compounding. APY (Annual Percentage Yield) reflects the total amount of interest you earn in a full year with compounding included."
+      },
+      {
+        q: "Can savings account interest rates change?",
+        a: "Yes. High-yield savings accounts have variable rates that fluctuate when central bank benchmark interest rates (Federal Reserve rate) rise or fall."
+      },
+      {
+        q: "Do I have to pay taxes on savings account interest?",
+        a: "Yes. Interest earned on bank savings accounts is considered taxable income by the IRS. Your bank will send you a Form 1099-INT at tax time if you earn $10 or more in interest."
+      },
+      {
+        q: "What is a Certificate of Deposit (CD)?",
+        a: "A CD is a fixed-term savings product that locks in a guaranteed interest rate for a specific timeframe (e.g. 6 months to 5 years). In exchange for the guaranteed rate, you agree not to withdraw funds before maturity."
+      },
+      {
+        q: "What is the \"Pay Yourself First\" savings strategy?",
+        a: "Paying yourself first means automatically routing a portion of your paycheck into savings as soon as you get paid, before spending money on discretionary living expenses."
+      },
+      {
+        q: "How can I save $10,000 in one year?",
+        a: "To save $10,000 in 12 months, you need to save approximately $833.33 per month (or about $192.30 per week). Placing it in a 4.5% HYSA earns over $240 in additional interest along the way."
+      },
+      {
+        q: "What is a sinking fund?",
+        a: "A sinking fund is a designated savings fund set aside for a planned future expense, such as car maintenance, holiday gifts, or annual property taxes, paid for over time rather than all at once."
+      },
+      {
+        q: "Should I pay off debt before building savings?",
+        a: "First build a small starter emergency fund of $1,000 to $2,000 to prevent relying on credit cards for minor surprises. Then aggressively pay down high-interest debt (above 7% to 8%) before fully funding a 6-month reserve."
+      },
+      {
+        q: "What happens if I exceed the $250,000 FDIC insurance limit?",
+        a: "Any balance exceeding $250,000 at a single institution is uninsured in the event of a bank failure. You can protect larger sums by opening accounts across multiple different banks or utilizing deposit-sweep programs."
+      },
+      {
+        q: "Can I withdraw money from an HYSA anytime?",
+        a: "Yes. HYSAs offer high liquidity. While some banks limit certain electronic transfers to 6 per month, you can transfer money back to your checking account within 1 to 2 business days."
+      },
+      {
+        q: "Is saving cash better than investing in the stock market?",
+        a: "Savings accounts are better for short-term goals (under 3-5 years) where you cannot afford market losses. Investing in the stock market is better for long-term goals (5-10+ years) where compound growth outpaces inflation."
+      }
     ],
+    related: [
+      "compound-interest-calculator",
+      "investment-calculator",
+      "budget-planner",
+      "net-worth-calculator",
+      "inflation-calculator",
+      "retirement-calculator"
+    ]
   },
-
-  // ── Credit Card Payoff & Strategy Calculator ───────────────────────────────
-  'credit-card-payoff-calculator': {
-    name: 'Credit Card Payoff & Strategy Calculator',
-    category: 'Finance',
-    icon: 'fa-credit-card',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate credit card debt payoff dates, expose minimum payment interest traps, analyze 0% APR balance transfer fees, and compare Avalanche vs Snowball payoff strategies.',
-    metaTitle: 'Credit Card Payoff Calculator | Minimum Payment Trap & 0% APR - GetCalcu',
-    metaDescription: 'Free online Credit Card Payoff Calculator. Calculate exact debt-free dates, compare minimum payment costs vs extra monthly deposits, and analyze 0% APR balance transfer savings.',
+  "credit-card-payoff-calculator": {
+    name: "Credit Card Payoff & Strategy Calculator",
+    category: "Finance",
+    icon: "fa-credit-card",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate credit card debt payoff dates, expose minimum payment interest traps, analyze 0% APR balance transfer fees, and compare Avalanche vs Snowball payoff strategies.",
+    metaTitle: "Credit Card Payoff Calculator | Debt Snowball vs Avalanche — GetCalcu",
+    metaDescription: "Calculate how fast you can pay off credit card debt. Compare Debt Avalanche vs Debt Snowball methods, calculate interest savings, and see your debt-free date.",
     keywords: [
-      'credit card payoff calculator',
-      'credit card minimum payment trap calculator',
-      '0 apr balance transfer fee calculator',
-      'credit card debt free date calculator',
-      'avalanche vs snowball debt payoff calculator',
+      "credit card payoff calculator",
+      "debt payoff calculator",
+      "credit card interest calculator",
+      "debt avalanche calculator",
+      "debt snowball calculator",
+      "how long to pay off credit card",
+      "credit card minimum payment calculator",
+      "debt free date calculator",
+      "balance transfer payoff calculator",
+      "credit card consolidation calculator"
     ],
     fields: [
-      { id: 'mode', label: 'Strategy Mode', type: 'select', default: 'min-payment',
+      {
+        id: "mode",
+        label: "Strategy Mode",
+        type: "select",
+        default: "min-payment",
         options: [
-          { value: 'min-payment',        label: 'Minimum Payment Trap & Fixed Monthly Payoff' },
-          { value: 'target-date',        label: 'Exact Target Debt-Free Date Goal' },
-          { value: 'balance-transfer',   label: '0% APR Balance Transfer Savings' },
-          { value: 'avalanche-snowball', label: 'Avalanche vs Snowball Multi-Card Strategy' },
+          {
+            value: "min-payment",
+            label: "Minimum Payment Trap & Fixed Monthly Payoff"
+          },
+          {
+            value: "target-date",
+            label: "Exact Target Debt-Free Date Goal"
+          },
+          {
+            value: "balance-transfer",
+            label: "0% APR Balance Transfer Savings"
+          },
+          {
+            value: "avalanche-snowball",
+            label: "Avalanche vs Snowball Multi-Card Strategy"
+          }
         ],
-        hint: 'Choose what to analyze. Each mode exposes a different cost of carrying credit card debt.' },
-      { id: 'balance', label: 'Total Credit Card Balance ($)', type: 'number', default: 7500, min: 0, step: 100,
-        hint: 'The total outstanding balance across the card(s) you want to pay off.' },
-      { id: 'apr', label: 'Annual Interest Rate / APR (%)', type: 'number', default: 21.5, min: 0, max: 40, step: 0.1,
-        hint: 'The stated Annual Percentage Rate. Credit card APRs commonly range from 18% to 29% and accrue interest daily.' },
-      { id: 'min_pct', label: 'Minimum Payment Percentage (%)', type: 'number', default: 2.5, min: 1, max: 10, step: 0.5,
+        hint: "Choose what to analyze. Each mode exposes a different cost of carrying credit card debt."
+      },
+      {
+        id: "balance",
+        label: "Total Credit Card Balance ($)",
+        type: "number",
+        default: 7500,
+        min: 0,
+        step: 100,
+        hint: "The total outstanding balance across the card(s) you want to pay off."
+      },
+      {
+        id: "apr",
+        label: "Annual Interest Rate / APR (%)",
+        type: "number",
+        default: 21.5,
+        min: 0,
+        max: 40,
+        step: 0.1,
+        hint: "The stated Annual Percentage Rate. Credit card APRs commonly range from 18% to 29% and accrue interest daily."
+      },
+      {
+        id: "min_pct",
+        label: "Minimum Payment Percentage (%)",
+        type: "number",
+        default: 2.5,
+        min: 1,
+        max: 10,
+        step: 0.5,
         condition: v => v.mode === 'min-payment' || v.mode === 'avalanche-snowball',
-        hint: 'The percent of the balance your lender sets as the minimum each month (typically 2%-3%). Lenders also apply a $25 floor.' },
-      { id: 'monthly_payment', label: 'Planned Monthly Payment ($)', type: 'number', default: 250, min: 0, step: 25,
+        hint: "The percent of the balance your lender sets as the minimum each month (typically 2%-3%). Lenders also apply a $25 floor."
+      },
+      {
+        id: "monthly_payment",
+        label: "Planned Monthly Payment ($)",
+        type: "number",
+        default: 250,
+        min: 0,
+        step: 25,
         condition: v => v.mode === 'min-payment' || v.mode === 'balance-transfer' || v.mode === 'avalanche-snowball',
-        hint: 'The amount you commit to paying each month. Must exceed the monthly interest charge to actually reduce the balance.' },
-      { id: 'target_months', label: 'Target Debt-Free Timeframe (Months)', type: 'number', default: 24, min: 1, max: 120, step: 1,
+        hint: "The amount you commit to paying each month. Must exceed the monthly interest charge to actually reduce the balance."
+      },
+      {
+        id: "target_months",
+        label: "Target Debt-Free Timeframe (Months)",
+        type: "number",
+        default: 24,
+        min: 1,
+        max: 120,
+        step: 1,
         condition: v => v.mode === 'target-date',
-        hint: 'The number of months within which you want to be 100% debt-free. The calculator solves for the exact monthly payment required.' },
-      { id: 'transfer_fee', label: 'Balance Transfer Fee (%)', type: 'number', default: 3, min: 0, max: 10, step: 0.5,
+        hint: "The number of months within which you want to be 100% debt-free. The calculator solves for the exact monthly payment required."
+      },
+      {
+        id: "transfer_fee",
+        label: "Balance Transfer Fee (%)",
+        type: "number",
+        default: 3,
+        min: 0,
+        max: 10,
+        step: 0.5,
         condition: v => v.mode === 'balance-transfer',
-        hint: 'The upfront one-time fee the new card charges to move your balance (typically 3%-5%). Charged immediately on top of your balance.' },
-      { id: 'promo_months', label: 'Promotional 0% APR Duration (Months)', type: 'number', default: 18, min: 3, max: 36, step: 1,
+        hint: "The upfront one-time fee the new card charges to move your balance (typically 3%-5%). Charged immediately on top of your balance."
+      },
+      {
+        id: "promo_months",
+        label: "Promotional 0% APR Duration (Months)",
+        type: "number",
+        default: 18,
+        min: 3,
+        max: 36,
+        step: 1,
         condition: v => v.mode === 'balance-transfer',
-        hint: 'The intro 0% interest window (commonly 12-21 months). Any balance left after this reverts to the regular APR.' },
+        hint: "The intro 0% interest window (commonly 12-21 months). Any balance left after this reverts to the regular APR."
+      }
     ],
     fieldLabels(v) {
       if (v.mode === 'min-payment')        return { monthly_payment: 'Planned Fixed Monthly Payment ($)' };
@@ -1672,120 +3270,493 @@ const TOOLS = {
       return errorResult('Unknown mode selected.');
     },
     howTo: [
-      'Pick a Strategy Mode — each reveals a different cost of carrying debt: the minimum-payment trap, a target debt-free date, a 0% balance transfer, or Avalanche vs Snowball.',
-      'Enter your total credit card balance and APR. Only the inputs the selected mode needs will appear.',
-      'For minimum-payment and strategy modes, set your minimum payment % and the monthly amount you can actually pay.',
-      'Read the insight callout for the plain-language verdict, then review the stat tiles, comparison bars, and payoff schedule.',
-      'Adjust the monthly payment or target timeframe to see exactly how much interest and time you can cut.',
+      "Enter your total current credit card balance.",
+      "Input the annual percentage rate (APR) charged on your card.",
+      "Enter the monthly payment amount you can commit toward paying off the debt.",
+      "Review the total months until you become debt-free and the total interest you will pay.",
+      "Increase your monthly payment by $50 or $100 to see how many years and dollars of interest you save."
     ],
     examples: [
-      { title: 'The minimum-payment trap', input: 'Balance $7,500, APR 21.5%, Min 2.5%, Pay $250/mo', result: 'Minimums take decades and cost thousands in interest; a fixed $250/mo payment clears it in ~3 years and saves thousands.' },
-      { title: 'Target debt-free in 24 months', input: 'Balance $7,500, APR 21.5%, Goal 24 months', result: 'Required payment ~$391/mo to be 100% debt-free in 2 years.' },
-      { title: 'Is a 0% balance transfer worth it?', input: 'Balance $7,500, APR 21.5%, Pay $250/mo, 3% fee, 18-mo promo', result: 'Net savings after the upfront fee, plus the ~$417/mo needed to clear the balance before the promo expires.' },
-      { title: 'Avalanche beats Snowball on interest', input: 'Total $7,500, APR 21.5%, Min 2.5%, Budget $300/mo', result: 'Avalanche saves more in interest than Snowball for a near-identical payoff timeline.' },
+      {
+        title: "Moderate Debt ($5,000 at 22% APR)",
+        input: "Balance: $5,000 | APR: 22% | Payment: $250/mo",
+        result: "Debt-Free in 26 Months | Total Interest: ~$1,320 (vs. $6,800 on minimums)"
+      },
+      {
+        title: "Heavy Debt Aggressive Payoff",
+        input: "Balance: $15,000 | APR: 24.99% | Payment: $650/mo",
+        result: "Debt-Free in 32 Months | Saved over $14,000 in interest"
+      },
+      {
+        title: "Fast 1-Year Blitz ($3,000 Balance)",
+        input: "Balance: $3,000 | APR: 19.99% | Payment: $280/mo",
+        result: "Debt-Free in 12 Months | Total Interest Paid: Only ~$340"
+      },
+      {
+        title: "Minimum Payment Comparison ($8,000 Balance)",
+        input: "Balance: $8,000 | APR: 25% | Fixed Payment: $400/mo vs Min ($160/mo)",
+        result: "Fixed Payment saves 18 years and ~$11,500 in interest"
+      }
     ],
-    formula: 'Daily periodic rate: i_daily = APR / 365 | Monthly factor (daily compounding): i_month = (1 + i_daily)^30 - 1 | Monthly interest: I = Balance x i_month | Fixed payoff payment: PMT = (B x i_month) / (1 - (1 + i_month)^-n) | Transfer fee: Fee = B x (transferFee% / 100) | Net transfer savings = Interest(stay) - Fee - Interest(post-promo) | Minimum payment: max($25 floor, Balance x minPct%)',
+    formula: "Months to Payoff n = −ln(1 − (r × B) / PMT) / ln(1 + r), where B is balance, r is monthly rate (APR / 12), and PMT is fixed monthly payment.",
     article: {
-      heading: 'Breaking Credit Card Debt: Minimum Payment Traps, APR Math & Payoff Strategies',
-      intro: "Carrying a high-APR credit card balance compounds aggressively against you. Because most cards accrue interest daily, every day you carry a balance adds to the principal that next month's interest is charged on. Minimum payment structures are engineered by lenders to keep borrowers paying for decades — often costing more in interest than the original purchase. Strategic payoff planning reverses that drag. The GetCalcu Credit Card Payoff Calculator models the exact math behind your balance and exposes four high-leverage strategies: escaping the minimum-payment trap, hitting a target debt-free date, evaluating a 0% APR balance transfer, and comparing the Debt Avalanche versus Debt Snowball methods.",
+      heading: "The Complete Strategy to Pay Off Credit Card Debt Fast",
+      intro: "Credit card debt is one of the most expensive forms of consumer borrowing due to compounding double-digit interest rates (frequently 20% to 30% APR). Making only the minimum payment keeps you trapped in debt for decades. The GetCalcu Credit Card Payoff Calculator shows you your exact debt-free date, total interest charges, and how much money you save by adding extra monthly payments or switching payoff strategies.",
       sections: [
-        { heading: 'How credit card interest actually compounds', body: 'Credit cards use a daily periodic rate: i_daily = APR ÷ 365. Interest accrues each day, so the effective monthly rate is i_month = (1 + i_daily)^30 - 1 — slightly higher than simply dividing the APR by 12. Each month, interest is added to your balance before your payment is applied; whatever remains rolls forward and is charged interest again. This is why a payment that barely covers interest makes almost no progress on the principal.' },
-        { heading: 'The minimum payment trap, quantified', body: 'A minimum payment is usually 2%-3% of the balance (with a $25 floor). On a $7,500 balance at 21.5% APR, the minimum starts near $188 while the monthly interest is about $128, so only roughly $60 reduces principal. As the balance shrinks the minimum shrinks too, stretching payoff to 25-30 years and pushing total interest past the original balance. Paying a fixed amount instead of the declining minimum collapses that timeline.' },
-        { heading: 'Solving for a target debt-free date', body: "To be debt-free in exactly n months, solve the amortization formula for the payment: PMT = (B × i_month) ÷ (1 − (1 + i_month)^−n). This is the payment that, applied every month, drives the balance to exactly zero at month n. It must exceed the first month's interest (the break-even) or the balance never declines." },
-        { heading: 'Are 0% APR balance transfers worth the fee?', body: 'A transfer charges an upfront fee of 3%-5% of the balance but sets interest to 0% for a promotional window (often 12-21 months). The transfer wins when the interest you would have paid on the current card exceeds the fee plus any residual interest after the promo. The critical number is the payment needed to clear the balance before the promo ends: Balance ÷ promo months. Fall short and the leftover reverts to a high regular APR.' },
-        { heading: 'Debt Avalanche vs Debt Snowball', body: 'Both methods pay minimums on every card, then funnel all extra cash at one target card. The Debt Avalanche targets the highest-APR card first — mathematically optimal, it minimizes total interest. The Debt Snowball targets the smallest balance first — it costs slightly more interest but delivers quicker psychological wins as cards disappear, which raises the odds of sticking with the plan. With multiple cards, the Avalanche typically saves hundreds more for a near-identical timeline.' },
-      ],
+        {
+          heading: "The Minimum Payment Trap: Why Balances Last for Decades",
+          body: "Credit card minimum payments are typically calculated as just 1% to 2% of the principal balance plus accrued monthly interest, or a flat $25 to $35 minimum. Paying only this amount barely covers the monthly interest charge, leaving almost nothing to reduce the actual balance. On a $5,000 balance at 24% APR, making only minimum payments can take over 20 years to pay off and cost more than $8,000 in interest alone."
+        },
+        {
+          heading: "Debt Avalanche Method: Mathematically Maximum Interest Savings",
+          body: "The Debt Avalanche strategy focuses on paying off debts in order of highest interest rate first, while paying minimums on the rest. Once your highest-APR card is completely paid off, you roll its entire payment into the card with the next highest APR. This strategy minimizes total interest paid and mathematically gets you out of debt in the shortest possible time."
+        },
+        {
+          heading: "Debt Snowball Method: Psychological Momentum and Quick Wins",
+          body: "Popularized by Dave Ramsey, the Debt Snowball strategy focuses on paying off debts from smallest dollar balance to largest, regardless of interest rates. Knocking out small balances quickly provides psychological motivation, builds momentum, and rapidly frees up minimum monthly cash flow."
+        },
+        {
+          heading: "How Daily Compound Interest Multiplies Credit Card Debt",
+          body: "Credit card companies calculate interest using a Daily Periodic Rate (APR divided by 365) applied to your average daily balance. Because interest compounds daily throughout the billing cycle, carrying balances accelerates interest accumulation much faster than standard annual loans."
+        },
+        {
+          heading: "0% APR Balance Transfer Cards: When and How to Use Them",
+          body: "A 0% APR balance transfer credit card allows you to move high-interest debt to a new card that charges zero interest for a promotional period (usually 12 to 21 months). While cards typically charge an upfront 3% to 5% transfer fee, pausing interest allows 100% of your payments to directly reduce principal during the promotional window."
+        },
+        {
+          heading: "Personal Debt Consolidation Loans as an Alternative",
+          body: "If you have multiple high-interest credit cards, taking out a fixed-rate personal consolidation loan at 8% to 12% APR can cut your interest rate in half, replace multiple payments with a single predictable monthly bill, and establish a guaranteed 3 to 5-year payoff timeline."
+        },
+        {
+          heading: "How Credit Card Payoff Improves Your Credit Score",
+          body: "Credit utilization (the percentage of your total available credit lines being used) makes up 30% of your FICO credit score. Paying down card balances below 30%, and ideally below 10% utilization, produces rapid, dramatic improvements in your credit score."
+        },
+        {
+          heading: "Preventing the Cycle: Building a Buffer While Paying Off Debt",
+          body: "The most common reason people fall back into credit card debt is unexpected expenses (car repairs, medical bills). Maintaining a $1,000 to $2,000 cash emergency buffer ensures that surprise life events do not force you back onto high-interest credit cards while in repayment mode."
+        }
+      ]
     },
     faqs: [
-      { q: 'How long does it take to pay off a credit card by making minimum payments?', a: 'Paying only the minimum on a typical credit card (2% to 3% of balance at 21% APR) can take between 15 and 30 years to fully clear, resulting in interest costs that often exceed the original principal. Use the minimum-payment mode to see your exact timeline.' },
-      { q: 'What is the difference between the Debt Avalanche and Debt Snowball payoff methods?', a: 'The Debt Avalanche method targets cards with the highest APR first to minimize total interest cost. The Debt Snowball method targets the smallest balance first to build momentum through quick psychological wins. The Avalanche typically saves more in interest; the Snowball can improve adherence for some borrowers.' },
-      { q: 'Is a 0% APR balance transfer worth the upfront transfer fee?', a: 'Yes, provided the interest saved over the promotional period (usually 12 to 21 months) significantly exceeds the 3% to 5% upfront transfer fee, and the balance is paid off before the promo period ends. If any balance remains when the promo expires, it is typically charged the full regular APR from the original transfer date.' },
-      { q: 'What is the "minimum payment trap"?', a: 'The minimum-payment trap describes how small minimum payments (often 2%-3% of balance with a $25 floor) barely cover monthly interest, causing the principal to decline extremely slowly. On a $7,500 balance at 21.5% APR, paying only the minimum can stretch payoff to decades and cost more in interest than the original purchase.' },
-      { q: 'How do I calculate the exact monthly payment needed to be debt-free by a target date?', a: 'Solve the amortization formula for the payment: PMT = (B × i_month) ÷ (1 − (1 + i_month)^−n). This payment, applied every month, drives the balance to exactly zero at month n. It must exceed the first month\'s interest break-even or the balance never declines.' },
-    ],
-  },
-
-  // ── Rent vs Buy Calculator ─────────────────────────────────────
-  'rent-vs-buy-calculator': {
-    name: 'Rent vs. Buy Calculator',
-    category: 'Finance',
-    icon: 'fa-house-chimney',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Comprehensive financial comparison of renting versus buying a home. Calculate net costs, equity buildup, break-even points, opportunity costs, and net worth over time with intelligent recommendations.',
-    metaTitle: 'Rent vs Buy Calculator | Break-Even Analysis & Net Worth Comparison — GetCalcu',
-    metaDescription: 'Free Rent vs Buy Calculator with break-even analysis, net worth comparison, equity buildup, opportunity cost, and intelligent recommendations. Should you rent or buy?',
-    keywords: [
-      'rent vs buy calculator',
-      'should I rent or buy',
-      'rent vs buy break-even calculator',
-      'buy vs rent calculator',
-      'house buying calculator',
-      'renting versus owning',
-      'opportunity cost calculator',
-      'rent or buy decision',
-      'home buying vs renting',
-      'rent vs buy 2026',
-      'is it better to rent or buy',
-      'home equity calculator',
-      'rent vs buy net worth',
-      'buying a house vs renting calculator',
+      {
+        q: "Why does paying only the credit card minimum take so long?",
+        a: "Minimum payments are designed to cover primarily the monthly interest charges plus a tiny 1% portion of the principal balance, keeping you in debt for decades while maximizing bank interest profits."
+      },
+      {
+        q: "What is the Debt Avalanche payoff method?",
+        a: "The Debt Avalanche method prioritizes paying extra money toward the debt with the highest interest rate first while paying minimums on others. It is the mathematically fastest way to pay off debt and minimizes interest costs."
+      },
+      {
+        q: "What is the Debt Snowball payoff method?",
+        a: "The Debt Snowball method prioritizes paying off the smallest balance first regardless of interest rate. It builds quick psychological momentum and reduces the number of open accounts faster."
+      },
+      {
+        q: "How does credit card interest compound?",
+        a: "Credit card interest compounds daily using your Daily Periodic Rate (APR ÷ 365) multiplied by your average daily balance, which is then added to your balance each billing statement."
+      },
+      {
+        q: "Is a 0% APR balance transfer card a good idea?",
+        a: "Yes, if you have good credit and a disciplined plan to pay off the entire balance before the 0% promotional period ends (usually 12 to 21 months), even after paying the standard 3% to 5% transfer fee."
+      },
+      {
+        q: "How does paying off credit card debt boost my credit score?",
+        a: "Credit utilization accounts for 30% of your credit score. Lowering your balance below 30% (and ideally below 10%) of your credit limit immediately increases your credit score."
+      },
+      {
+        q: "Can I negotiate a lower interest rate with my credit card company?",
+        a: "Yes. Calling your card issuer, highlighting your on-time payment history, and asking for a hardship rate reduction or promotional APR often results in a lower interest rate."
+      },
+      {
+        q: "Should I close my credit cards after paying them off?",
+        a: "Generally no. Keeping cards open preserves your credit history length and total available credit limit, keeping your credit utilization low. Only close cards that charge expensive annual fees."
+      },
+      {
+        q: "What is a personal debt consolidation loan?",
+        a: "A debt consolidation loan is an installment loan with a fixed interest rate and fixed term used to pay off multiple credit card balances, combining them into one single monthly payment."
+      },
+      {
+        q: "Should I use savings to pay off credit card debt?",
+        a: "Keep a small emergency reserve ($1,000 to $2,000) for true emergencies, and use excess savings to pay down high-interest credit card debt, as 20%+ APR debt costs far more than any savings account earns."
+      },
+      {
+        q: "What happens if I stop making credit card payments?",
+        a: "Missed payments incur late fees, trigger penalty APRs (up to 29.99%), severely damage your credit score, and after 180 days the debt is charged off and sent to collections or legal action."
+      },
+      {
+        q: "What is credit counseling or a Debt Management Plan (DMP)?",
+        a: "Non-profit credit counseling agencies can negotiate reduced interest rates and fee waivers with your creditors through a Debt Management Plan, consolidating payments without taking out a new loan."
+      },
+      {
+        q: "How much extra should I pay above the minimum?",
+        a: "Even an extra $50 to $100 per month above the minimum payment can cut your payoff time by 10 to 15 years and save thousands of dollars in interest."
+      },
+      {
+        q: "What is a credit card grace period?",
+        a: "A grace period is the 21-to-25 day window between your billing statement date and payment due date. If you pay your previous statement balance in full every month, no interest is charged."
+      },
+      {
+        q: "How can I stop using credit cards while paying them off?",
+        a: "Remove card numbers from online shopping autofill, leave physical cards at home, and switch to a debit card or cash for daily expenses while in payoff mode."
+      }
     ],
     related: [
-      'house-affordability-calculator',
-      'mortgage-calculator',
-      'amortization-calculator',
-      'budget-planner',
-      'retirement-calculator',
-      'savings-calculator',
-      'investment-calculator',
-      'compound-interest-calculator',
-      'inflation-calculator',
+      "budget-planner",
+      "loan-calculator",
+      "loan-interest-calculator",
+      "savings-calculator",
+      "net-worth-calculator",
+      "compound-interest-calculator"
+    ]
+  },
+  "rent-vs-buy-calculator": {
+    name: "Rent vs. Buy Calculator",
+    category: "Finance",
+    icon: "fa-house-chimney",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Comprehensive financial comparison of renting versus buying a home. Calculate net costs, equity buildup, break-even points, opportunity costs, and net worth over time with intelligent recommendations.",
+    metaTitle: "Rent vs Buy Calculator | Break-Even Analysis & Net Worth Comparison — GetCalcu",
+    metaDescription: "Free Rent vs Buy Calculator with break-even analysis, net worth comparison, equity buildup, opportunity cost, and intelligent recommendations. Should you rent or buy?",
+    keywords: [
+      "rent vs buy calculator",
+      "should I rent or buy",
+      "rent vs buy break-even calculator",
+      "buy vs rent calculator",
+      "house buying calculator",
+      "renting versus owning",
+      "opportunity cost calculator",
+      "rent or buy decision",
+      "home buying vs renting",
+      "rent vs buy 2026",
+      "is it better to rent or buy",
+      "home equity calculator",
+      "rent vs buy net worth",
+      "buying a house vs renting calculator"
+    ],
+    related: [
+      "house-affordability-calculator",
+      "mortgage-calculator",
+      "amortization-calculator",
+      "budget-planner",
+      "retirement-calculator",
+      "savings-calculator",
+      "investment-calculator",
+      "compound-interest-calculator",
+      "inflation-calculator"
     ],
     fields: [
-      // ── Basic Inputs ──
-      { id: 'basic_section', type: 'section', label: 'Basic Inputs', icon: 'fa-sliders' },
-      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'range', default: 450000, min: 50000, max: 5000000, step: 5000, hint: 'The total purchase price of the home you are considering buying.' },
-      { id: 'down_payment_type', label: 'Down Payment Mode', type: 'select', default: 'percent',
+      {
+        id: "basic_section",
+        type: "section",
+        label: "Basic Inputs",
+        icon: "fa-sliders"
+      },
+      {
+        id: "home_price",
+        label: "Home Purchase Price ($)",
+        type: "range",
+        default: 450000,
+        min: 50000,
+        max: 5000000,
+        step: 5000,
+        hint: "The total purchase price of the home you are considering buying."
+      },
+      {
+        id: "down_payment_type",
+        label: "Down Payment Mode",
+        type: "select",
+        default: "percent",
         options: [
-          { value: 'percent', label: 'Percentage (%)' },
-          { value: 'dollar', label: 'Dollar Amount ($)' },
-        ], hint: 'Switch between entering your down payment as a percentage or a specific dollar amount.' },
-      { id: 'down_payment', label: 'Down Payment', type: 'range', default: 20, min: 0, max: 100, step: 0.5, hint: 'The cash you pay upfront. 20% is standard to avoid PMI. The calculator converts this to a dollar amount based on the home price.' },
-      { id: 'mortgage_rate', label: 'Mortgage Interest Rate (%)', type: 'range', default: 6.25, min: 0, max: 20, step: 0.05, hint: 'The annual interest rate (APR) on your mortgage. Current 30-year fixed rates typically range 6-8%.' },
-      { id: 'loan_term', label: 'Loan Term', type: 'select', default: 30,
+          {
+            value: "percent",
+            label: "Percentage (%)"
+          },
+          {
+            value: "dollar",
+            label: "Dollar Amount ($)"
+          }
+        ],
+        hint: "Switch between entering your down payment as a percentage or a specific dollar amount."
+      },
+      {
+        id: "down_payment",
+        label: "Down Payment",
+        type: "range",
+        default: 20,
+        min: 0,
+        max: 100,
+        step: 0.5,
+        hint: "The cash you pay upfront. 20% is standard to avoid PMI. The calculator converts this to a dollar amount based on the home price."
+      },
+      {
+        id: "mortgage_rate",
+        label: "Mortgage Interest Rate (%)",
+        type: "range",
+        default: 6.25,
+        min: 0,
+        max: 20,
+        step: 0.05,
+        hint: "The annual interest rate (APR) on your mortgage. Current 30-year fixed rates typically range 6-8%."
+      },
+      {
+        id: "loan_term",
+        label: "Loan Term",
+        type: "select",
+        default: 30,
         options: [
-          { value: 15, label: '15 Years' },
-          { value: 20, label: '20 Years' },
-          { value: 30, label: '30 Years' },
-        ], hint: 'How long you will take to repay the mortgage. Shorter terms build equity faster but have higher monthly payments.' },
-      { id: 'current_rent', label: 'Current Monthly Rent ($)', type: 'range', default: 2200, min: 0, max: 20000, step: 50, hint: 'What you currently pay (or would pay) for rent each month.' },
-      { id: 'years_staying', label: 'Expected Years Staying in the Home', type: 'range', default: 8, min: 1, max: 40, step: 1, hint: 'This is one of the most influential variables. Buying has high upfront costs that take several years to recover. The longer you stay, the more equity you build and the more buying tends to win. If you plan to move within 3-5 years, renting is often cheaper.' },
-      { id: 'rent_increase', label: 'Expected Annual Rent Increase (%)', type: 'range', default: 3.0, min: 0, max: 15, step: 0.1, hint: 'The average yearly percentage increase in rent. Historical average is about 2-4% annually.' },
-      { id: 'home_appreciation', label: 'Expected Home Appreciation (%)', type: 'range', default: 3.5, min: -5, max: 15, step: 0.1, hint: 'Expected annual increase in home value. Historical US average is about 3-5% per year.' },
-      { id: 'investment_return', label: 'Expected Investment Return (%)', type: 'range', default: 7.0, min: 0, max: 20, step: 0.1, hint: 'The annual return you could earn by investing your down payment and closing costs instead of buying. S&P 500 long-term average: 7-10%.' },
-
-      // ── Advanced Options (collapsible) ──
-      { id: 'advanced_section', type: 'section', label: 'Advanced Options', icon: 'fa-gear', collapsible: true },
-      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 5400, min: 0, step: 100, hint: 'Yearly property tax based on your local government rate. Typically 1-2% of home value annually.' },
-      { id: 'property_tax_growth', label: 'Property Tax Growth (%)', type: 'number', default: 2.0, min: 0, max: 10, step: 0.1, hint: 'Annual increase in property taxes. Often matches or exceeds inflation.' },
-      { id: 'home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1400, min: 0, step: 100, hint: 'Yearly homeowners insurance premium. Covers damage, liability, and personal property.' },
-      { id: 'insurance_growth', label: 'Insurance Growth (%)', type: 'number', default: 3.0, min: 0, max: 10, step: 0.1, hint: 'Annual increase in home insurance premiums.' },
-      { id: 'hoa_fees', label: 'Monthly HOA Fees ($)', type: 'number', default: 0, min: 0, step: 25, hint: 'Monthly homeowners association fees for common area maintenance (condos, townhomes, some neighborhoods).' },
-      { id: 'pmi', label: 'Monthly PMI ($)', type: 'number', default: 0, min: 0, step: 10, hint: 'Private Mortgage Insurance when down payment is less than 20%. Typically 0.5-1% of loan amount annually, divided by 12.' },
-      { id: 'annual_maintenance', label: 'Annual Maintenance ($)', type: 'number', default: 4500, min: 0, step: 100, hint: 'Estimated yearly maintenance and repairs. A common rule is 1-2% of home value annually.' },
-      { id: 'maintenance_growth', label: 'Maintenance Growth (%)', type: 'number', default: 2.5, min: 0, max: 10, step: 0.1, hint: 'Annual increase in maintenance costs as the home ages.' },
-      { id: 'closing_costs', label: 'Closing Costs ($)', type: 'number', default: 13500, min: 0, step: 500, hint: 'One-time costs when buying: loan origination, appraisal, title insurance, attorney fees. Typically 2-5% of home price.' },
-      { id: 'selling_costs', label: 'Selling Costs (%)', type: 'number', default: 6.0, min: 0, max: 15, step: 0.1, hint: 'Costs when selling: realtor commission (typically 5-6%), closing fees, capital gains tax if applicable.' },
-      { id: 'mortgage_origination', label: 'Mortgage Origination Fee (%)', type: 'number', default: 1.0, min: 0, max: 5, step: 0.1, hint: 'Lender fee for processing the mortgage, typically 0.5-1.5% of loan amount.' },
-      { id: 'inflation_rate', label: 'Annual Inflation Rate (%)', type: 'number', default: 3.0, min: 0, max: 10, step: 0.1, hint: 'Expected annual inflation rate. Affects future costs and the real value of money over time.' },
-      { id: 'discount_rate', label: 'Discount Rate (%)', type: 'number', default: 3.0, min: 0, max: 15, step: 0.1, hint: 'The rate used to discount future cash flows to present value. Often set near the inflation rate for a real-terms comparison.' },
-      { id: 'realtor_commission', label: 'Realtor Commission (%)', type: 'number', default: 5.0, min: 0, max: 10, step: 0.1, hint: 'The portion of the sale price paid to real estate agents when selling. Typically 5-6%.' },
-      { id: 'misc_ownership', label: 'Miscellaneous Ownership Costs ($/yr)', type: 'number', default: 500, min: 0, step: 100, hint: 'Other annual ownership costs: pest control, landscaping, appliance repairs, etc.' },
-      { id: 'investment_tax_rate', label: 'Investment Tax Rate (%)', type: 'number', default: 15, min: 0, max: 50, step: 1, hint: 'Tax rate on investment gains (capital gains tax). Long-term gains are typically 15% for most investors.' },
-      { id: 'marginal_tax_rate', label: 'Marginal Tax Rate (%)', type: 'number', default: 24, min: 0, max: 50, step: 1, hint: 'Your federal + state marginal tax bracket. Affects the tax deductibility of mortgage interest.' },
-      { id: 'renters_insurance', label: 'Annual Renters Insurance ($)', type: 'number', default: 200, min: 0, step: 50, hint: 'Yearly renters insurance to cover personal belongings and liability while renting.' },
-      { id: 'moving_costs', label: 'Expected Moving Costs ($)', type: 'number', default: 2000, min: 0, step: 500, hint: 'One-time moving expenses if you buy. Includes movers, truck rental, packing supplies.' },
+          {
+            value: 15,
+            label: "15 Years"
+          },
+          {
+            value: 20,
+            label: "20 Years"
+          },
+          {
+            value: 30,
+            label: "30 Years"
+          }
+        ],
+        hint: "How long you will take to repay the mortgage. Shorter terms build equity faster but have higher monthly payments."
+      },
+      {
+        id: "current_rent",
+        label: "Current Monthly Rent ($)",
+        type: "range",
+        default: 2200,
+        min: 0,
+        max: 20000,
+        step: 50,
+        hint: "What you currently pay (or would pay) for rent each month."
+      },
+      {
+        id: "years_staying",
+        label: "Expected Years Staying in the Home",
+        type: "range",
+        default: 8,
+        min: 1,
+        max: 40,
+        step: 1,
+        hint: "This is one of the most influential variables. Buying has high upfront costs that take several years to recover. The longer you stay, the more equity you build and the more buying tends to win. If you plan to move within 3-5 years, renting is often cheaper."
+      },
+      {
+        id: "rent_increase",
+        label: "Expected Annual Rent Increase (%)",
+        type: "range",
+        default: 3,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: "The average yearly percentage increase in rent. Historical average is about 2-4% annually."
+      },
+      {
+        id: "home_appreciation",
+        label: "Expected Home Appreciation (%)",
+        type: "range",
+        default: 3.5,
+        min: -5,
+        max: 15,
+        step: 0.1,
+        hint: "Expected annual increase in home value. Historical US average is about 3-5% per year."
+      },
+      {
+        id: "investment_return",
+        label: "Expected Investment Return (%)",
+        type: "range",
+        default: 7,
+        min: 0,
+        max: 20,
+        step: 0.1,
+        hint: "The annual return you could earn by investing your down payment and closing costs instead of buying. S&P 500 long-term average: 7-10%."
+      },
+      {
+        id: "advanced_section",
+        type: "section",
+        label: "Advanced Options",
+        icon: "fa-gear",
+        collapsible: true
+      },
+      {
+        id: "property_tax",
+        label: "Annual Property Tax ($)",
+        type: "number",
+        default: 5400,
+        min: 0,
+        step: 100,
+        hint: "Yearly property tax based on your local government rate. Typically 1-2% of home value annually."
+      },
+      {
+        id: "property_tax_growth",
+        label: "Property Tax Growth (%)",
+        type: "number",
+        default: 2,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: "Annual increase in property taxes. Often matches or exceeds inflation."
+      },
+      {
+        id: "home_insurance",
+        label: "Annual Home Insurance ($)",
+        type: "number",
+        default: 1400,
+        min: 0,
+        step: 100,
+        hint: "Yearly homeowners insurance premium. Covers damage, liability, and personal property."
+      },
+      {
+        id: "insurance_growth",
+        label: "Insurance Growth (%)",
+        type: "number",
+        default: 3,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: "Annual increase in home insurance premiums."
+      },
+      {
+        id: "hoa_fees",
+        label: "Monthly HOA Fees ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 25,
+        hint: "Monthly homeowners association fees for common area maintenance (condos, townhomes, some neighborhoods)."
+      },
+      {
+        id: "pmi",
+        label: "Monthly PMI ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 10,
+        hint: "Private Mortgage Insurance when down payment is less than 20%. Typically 0.5-1% of loan amount annually, divided by 12."
+      },
+      {
+        id: "annual_maintenance",
+        label: "Annual Maintenance ($)",
+        type: "number",
+        default: 4500,
+        min: 0,
+        step: 100,
+        hint: "Estimated yearly maintenance and repairs. A common rule is 1-2% of home value annually."
+      },
+      {
+        id: "maintenance_growth",
+        label: "Maintenance Growth (%)",
+        type: "number",
+        default: 2.5,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: "Annual increase in maintenance costs as the home ages."
+      },
+      {
+        id: "closing_costs",
+        label: "Closing Costs ($)",
+        type: "number",
+        default: 13500,
+        min: 0,
+        step: 500,
+        hint: "One-time costs when buying: loan origination, appraisal, title insurance, attorney fees. Typically 2-5% of home price."
+      },
+      {
+        id: "selling_costs",
+        label: "Selling Costs (%)",
+        type: "number",
+        default: 6,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: "Costs when selling: realtor commission (typically 5-6%), closing fees, capital gains tax if applicable."
+      },
+      {
+        id: "mortgage_origination",
+        label: "Mortgage Origination Fee (%)",
+        type: "number",
+        default: 1,
+        min: 0,
+        max: 5,
+        step: 0.1,
+        hint: "Lender fee for processing the mortgage, typically 0.5-1.5% of loan amount."
+      },
+      {
+        id: "inflation_rate",
+        label: "Annual Inflation Rate (%)",
+        type: "number",
+        default: 3,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: "Expected annual inflation rate. Affects future costs and the real value of money over time."
+      },
+      {
+        id: "discount_rate",
+        label: "Discount Rate (%)",
+        type: "number",
+        default: 3,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: "The rate used to discount future cash flows to present value. Often set near the inflation rate for a real-terms comparison."
+      },
+      {
+        id: "realtor_commission",
+        label: "Realtor Commission (%)",
+        type: "number",
+        default: 5,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: "The portion of the sale price paid to real estate agents when selling. Typically 5-6%."
+      },
+      {
+        id: "misc_ownership",
+        label: "Miscellaneous Ownership Costs ($/yr)",
+        type: "number",
+        default: 500,
+        min: 0,
+        step: 100,
+        hint: "Other annual ownership costs: pest control, landscaping, appliance repairs, etc."
+      },
+      {
+        id: "investment_tax_rate",
+        label: "Investment Tax Rate (%)",
+        type: "number",
+        default: 15,
+        min: 0,
+        max: 50,
+        step: 1,
+        hint: "Tax rate on investment gains (capital gains tax). Long-term gains are typically 15% for most investors."
+      },
+      {
+        id: "marginal_tax_rate",
+        label: "Marginal Tax Rate (%)",
+        type: "number",
+        default: 24,
+        min: 0,
+        max: 50,
+        step: 1,
+        hint: "Your federal + state marginal tax bracket. Affects the tax deductibility of mortgage interest."
+      },
+      {
+        id: "renters_insurance",
+        label: "Annual Renters Insurance ($)",
+        type: "number",
+        default: 200,
+        min: 0,
+        step: 50,
+        hint: "Yearly renters insurance to cover personal belongings and liability while renting."
+      },
+      {
+        id: "moving_costs",
+        label: "Expected Moving Costs ($)",
+        type: "number",
+        default: 2000,
+        min: 0,
+        step: 500,
+        hint: "One-time moving expenses if you buy. Includes movers, truck rental, packing supplies."
+      }
     ],
     fieldLabels(v) {
       if (v.down_payment_type === 'dollar') {
@@ -2314,185 +4285,307 @@ const TOOLS = {
         journey,
       };
     },
-
-    // ── How-To Guide
     howTo: [
-      'Enter the home purchase price using the slider or type a specific amount.',
-      'Choose your down payment mode — percentage or dollar amount — and set the value.',
-      'Set your mortgage rate, loan term, current rent, and how many years you plan to stay.',
-      'Adjust expected rent increase, home appreciation, and investment return.',
-      'Expand "Advanced Options" to customize property tax, insurance, HOA, PMI, maintenance, closing costs, and more.',
-      'Review the executive dashboard, recommendation, charts, and year-by-year comparison table.',
-      'Read the personalized insights to understand which assumptions matter most.',
-      'Follow the suggested next-step calculators based on your result.',
+      "Enter the home purchase price using the slider or type a specific amount.",
+      "Choose your down payment mode — percentage or dollar amount — and set the value.",
+      "Set your mortgage rate, loan term, current rent, and how many years you plan to stay.",
+      "Adjust expected rent increase, home appreciation, and investment return.",
+      "Expand \"Advanced Options\" to customize property tax, insurance, HOA, PMI, maintenance, closing costs, and more.",
+      "Review the executive dashboard, recommendation, charts, and year-by-year comparison table.",
+      "Read the personalized insights to understand which assumptions matter most.",
+      "Follow the suggested next-step calculators based on your result."
     ],
-
-    // ── Real-World Examples
     examples: [
       {
-        title: 'Young Professional (Rent)',
-        input: '$350,000 home, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return',
-        result: 'Renting wins. High upfront costs and a short horizon make buying uneconomical; investing the down payment outperforms.',
+        title: "Young Professional (Rent)",
+        input: "$350,000 home, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return",
+        result: "Renting wins. High upfront costs and a short horizon make buying uneconomical; investing the down payment outperforms."
       },
       {
-        title: 'Growing Family (Buy)',
-        input: '$500,000 home, 20% down, 6% rate, $2,400 rent, 15-year horizon, 3% appreciation',
-        result: 'Buying wins strongly. Long tenure recovers costs and builds substantial equity and appreciation.',
+        title: "Growing Family (Buy)",
+        input: "$500,000 home, 20% down, 6% rate, $2,400 rent, 15-year horizon, 3% appreciation",
+        result: "Buying wins strongly. Long tenure recovers costs and builds substantial equity and appreciation."
       },
       {
-        title: 'High Mortgage Rate Environment',
-        input: '$450,000 home, 20% down, 7.5% rate, $2,200 rent, 8-year horizon',
-        result: 'Higher rates delay break-even. Compare 5%, 6%, 7%, and 8% to see how the recommendation shifts.',
+        title: "High Mortgage Rate Environment",
+        input: "$450,000 home, 20% down, 7.5% rate, $2,200 rent, 8-year horizon",
+        result: "Higher rates delay break-even. Compare 5%, 6%, 7%, and 8% to see how the recommendation shifts."
       },
       {
-        title: 'Typical 20% Down Purchase',
-        input: '$450,000 home, 20% down, 6.25% rate, 30yr, $2,200 rent, 3.5% appreciation, 7% investment return, 8 years',
-        result: 'Buying wins by ~$36,800. Break-even around Year 4-5. High confidence if staying 7+ years.',
+        title: "Typical 20% Down Purchase",
+        input: "$450,000 home, 20% down, 6.25% rate, 30yr, $2,200 rent, 3.5% appreciation, 7% investment return, 8 years",
+        result: "Buying wins by ~$36,800. Break-even around Year 4-5. High confidence if staying 7+ years."
       },
       {
-        title: 'Low Down Payment Scenario',
-        input: '$450,000 home, 5% down, PMI required, 6.5% rate, 30yr, $2,200 rent, 8 years',
-        result: 'PMI and higher loan costs delay break-even to Year 6-7. Still favorable long-term with appreciation.',
+        title: "Low Down Payment Scenario",
+        input: "$450,000 home, 5% down, PMI required, 6.5% rate, 30yr, $2,200 rent, 8 years",
+        result: "PMI and higher loan costs delay break-even to Year 6-7. Still favorable long-term with appreciation."
       },
       {
-        title: 'High Rent Growth Market',
-        input: '$450,000 home, 20% down, $2,500 rent, 5% annual rent increases, 8 years',
-        result: 'Buying wins by ~$78,000. Rapid rent growth makes buying advantageous by Year 3.',
+        title: "High Rent Growth Market",
+        input: "$450,000 home, 20% down, $2,500 rent, 5% annual rent increases, 8 years",
+        result: "Buying wins by ~$78,000. Rapid rent growth makes buying advantageous by Year 3."
       },
       {
-        title: 'Short Time Horizon',
-        input: '$450,000 home, 20% down, plan to move in 3 years, $2,200 rent, 8 years',
-        result: 'Renting likely wins. Transaction costs (closing + selling) erase equity gains in under 5 years.',
-      },
+        title: "Short Time Horizon",
+        input: "$450,000 home, 20% down, plan to move in 3 years, $2,200 rent, 8 years",
+        result: "Renting likely wins. Transaction costs (closing + selling) erase equity gains in under 5 years."
+      }
     ],
-    formula: 'Monthly P&I = P × [r(1+r)^n] / [(1+r)^n − 1] | Equity = Home Value − Remaining Balance | Net Proceeds = Equity − Selling Costs | Opportunity Cost = Invested Capital × (1 + Return)^t | Net Worth (Buy) = Equity − Cumulative Costs | Net Worth (Rent) = Investment Portfolio − Cumulative Rent',
-
-    // ── SEO Article Content
+    formula: "Monthly P&I = P × [r(1+r)^n] / [(1+r)^n − 1] | Equity = Home Value − Remaining Balance | Net Proceeds = Equity − Selling Costs | Opportunity Cost = Invested Capital × (1 + Return)^t | Net Worth (Buy) = Equity − Cumulative Costs | Net Worth (Rent) = Investment Portfolio − Cumulative Rent",
     article: {
-      heading: 'The Complete Guide to the Rent vs. Buy Decision',
-      intro: 'The rent vs. buy question is one of the most significant financial decisions most people will make. It involves far more than comparing a monthly rent check to a mortgage payment — it requires understanding equity buildup, opportunity cost, tax implications, transaction costs, and how time in the market changes the math. The GetCalcu Rent vs. Buy Calculator models all of these factors to give you a clear, data-driven answer tailored to your situation.',
+      heading: "The Complete Guide to the Rent vs. Buy Decision",
+      intro: "The rent vs. buy question is one of the most significant financial decisions most people will make. It involves far more than comparing a monthly rent check to a mortgage payment — it requires understanding equity buildup, opportunity cost, tax implications, transaction costs, and how time in the market changes the math. The GetCalcu Rent vs. Buy Calculator models all of these factors to give you a clear, data-driven answer tailored to your situation.",
       sections: [
-        { heading: 'When Buying Makes Financial Sense', body: 'Buying typically wins when you plan to stay 7+ years, home appreciation is steady, rent inflation is high, and your mortgage payment is close to your current rent. Over long horizons, fixed mortgage payments stay stable while rents compound upward, and principal payments build equity that you keep when you sell. The calculator shows your exact break-even year.' },
-        { heading: 'When Renting Is the Better Decision', body: 'Renting often wins for short time horizons (under 5 years), when you value flexibility to relocate, when the opportunity cost of your down payment is high, or when home prices are stagnant. Renting avoids transaction costs, maintenance, and property taxes, and frees up capital that can be invested. Our calculator compares both strategies fairly.' },
-        { heading: 'Understanding Opportunity Cost', body: 'When you buy, you tie up a large down payment (often 20% of the home price) plus closing costs. That capital could otherwise be invested. If you invest $90,000 plus $13,500 in closing costs at a 7% annual return, it grows substantially over 10 years. The calculator compares that investment growth against the equity you build in the home, revealing which strategy creates more wealth.' },
-        { heading: 'The 5% Rule Explained', body: 'The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. Multiply the home price by 5% and compare to your annual rent. If rent is lower, renting wins on pure cash flow — but this rule ignores equity and appreciation, so use the full calculator for the complete picture.' },
-        { heading: 'Building Home Equity', body: 'Each mortgage payment splits into interest and principal. Early payments are mostly interest; later payments are mostly principal. As you pay down the loan and the home appreciates, your equity grows. When you sell, you keep the equity minus selling costs. The calculator charts your principal, appreciation, and total equity year by year.' },
-        { heading: 'Hidden Costs of Homeownership', body: 'Beyond the mortgage, owners pay closing costs (2-5% of price), property taxes, homeowners insurance, maintenance (1-2% of value annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell). These hidden costs can add tens of thousands of dollars and are why buying is not always cheaper than renting.' },
-        { heading: 'Common Mistakes People Make', body: 'The most common mistakes are buying too early (before you can afford it or before you plan to stay long enough), ignoring opportunity cost, underestimating maintenance, staying too short a time to recover transaction costs, and overestimating appreciation. Our calculator helps you avoid these by modeling realistic assumptions.' },
-        { heading: 'How Home Appreciation and Rent Inflation Affect the Decision', body: 'In hot markets where home values rise 5-7% annually, buying builds wealth faster through appreciation. In markets with high rent growth (5%+ annually), buying provides payment stability while renters face escalating costs. Conversely, in stagnant or declining markets, appreciation may not offset ownership costs, and low rent growth favors renting.' },
-      ],
+        {
+          heading: "When Buying Makes Financial Sense",
+          body: "Buying typically wins when you plan to stay 7+ years, home appreciation is steady, rent inflation is high, and your mortgage payment is close to your current rent. Over long horizons, fixed mortgage payments stay stable while rents compound upward, and principal payments build equity that you keep when you sell. The calculator shows your exact break-even year."
+        },
+        {
+          heading: "When Renting Is the Better Decision",
+          body: "Renting often wins for short time horizons (under 5 years), when you value flexibility to relocate, when the opportunity cost of your down payment is high, or when home prices are stagnant. Renting avoids transaction costs, maintenance, and property taxes, and frees up capital that can be invested. Our calculator compares both strategies fairly."
+        },
+        {
+          heading: "Understanding Opportunity Cost",
+          body: "When you buy, you tie up a large down payment (often 20% of the home price) plus closing costs. That capital could otherwise be invested. If you invest $90,000 plus $13,500 in closing costs at a 7% annual return, it grows substantially over 10 years. The calculator compares that investment growth against the equity you build in the home, revealing which strategy creates more wealth."
+        },
+        {
+          heading: "The 5% Rule Explained",
+          body: "The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. Multiply the home price by 5% and compare to your annual rent. If rent is lower, renting wins on pure cash flow — but this rule ignores equity and appreciation, so use the full calculator for the complete picture."
+        },
+        {
+          heading: "Building Home Equity",
+          body: "Each mortgage payment splits into interest and principal. Early payments are mostly interest; later payments are mostly principal. As you pay down the loan and the home appreciates, your equity grows. When you sell, you keep the equity minus selling costs. The calculator charts your principal, appreciation, and total equity year by year."
+        },
+        {
+          heading: "Hidden Costs of Homeownership",
+          body: "Beyond the mortgage, owners pay closing costs (2-5% of price), property taxes, homeowners insurance, maintenance (1-2% of value annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell). These hidden costs can add tens of thousands of dollars and are why buying is not always cheaper than renting."
+        },
+        {
+          heading: "Common Mistakes People Make",
+          body: "The most common mistakes are buying too early (before you can afford it or before you plan to stay long enough), ignoring opportunity cost, underestimating maintenance, staying too short a time to recover transaction costs, and overestimating appreciation. Our calculator helps you avoid these by modeling realistic assumptions."
+        },
+        {
+          heading: "How Home Appreciation and Rent Inflation Affect the Decision",
+          body: "In hot markets where home values rise 5-7% annually, buying builds wealth faster through appreciation. In markets with high rent growth (5%+ annually), buying provides payment stability while renters face escalating costs. Conversely, in stagnant or declining markets, appreciation may not offset ownership costs, and low rent growth favors renting."
+        }
+      ]
     },
-
-    // ── Schema-Ready FAQs (15-20)
     faqs: [
       {
-        q: 'What is the 5% rule for renting vs buying?',
-        a: 'The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. More precisely, multiply the home price by 5% and compare to your annual rent × 12. If rent is lower, renting wins on pure cash flow. However, this rule ignores equity buildup and appreciation, so use our full calculator for the complete picture.',
+        q: "What is the 5% rule for renting vs buying?",
+        a: "The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. More precisely, multiply the home price by 5% and compare to your annual rent × 12. If rent is lower, renting wins on pure cash flow. However, this rule ignores equity buildup and appreciation, so use our full calculator for the complete picture."
       },
       {
-        q: 'Is renting throwing money away?',
-        a: 'No. Renting provides housing flexibility, no maintenance responsibilities, and preserves capital that can be invested. While you do not build equity, you also avoid transaction costs (closing costs, selling commissions) and maintenance expenses. In some markets and time horizons, renting creates more net worth than buying because the opportunity cost of the down payment exceeds the equity you would build. Our calculator compares both strategies fairly.',
+        q: "Is renting throwing money away?",
+        a: "No. Renting provides housing flexibility, no maintenance responsibilities, and preserves capital that can be invested. While you do not build equity, you also avoid transaction costs (closing costs, selling commissions) and maintenance expenses. In some markets and time horizons, renting creates more net worth than buying because the opportunity cost of the down payment exceeds the equity you would build. Our calculator compares both strategies fairly."
       },
       {
-        q: 'How much home appreciation should I assume?',
-        a: 'The long-term US historical average is about 3-5% annually, but this varies dramatically by market and time period. Over the next 10 years, many analysts expect 2-4% appreciation. In hot markets, 5-7% is possible; in stagnant markets, 0-2%. Use a conservative estimate (2-3%) for planning, and test higher scenarios to see sensitivity. Our calculator lets you adjust this assumption instantly.',
+        q: "How much home appreciation should I assume?",
+        a: "The long-term US historical average is about 3-5% annually, but this varies dramatically by market and time period. Over the next 10 years, many analysts expect 2-4% appreciation. In hot markets, 5-7% is possible; in stagnant markets, 0-2%. Use a conservative estimate (2-3%) for planning, and test higher scenarios to see sensitivity. Our calculator lets you adjust this assumption instantly."
       },
       {
-        q: 'How long should I stay before buying?',
-        a: 'The break-even point — where buying becomes cheaper than renting — typically occurs between 3 and 7 years, depending on your down payment, mortgage rate, home appreciation, rent growth, and local transaction costs. If you plan to move within 3 years, renting is usually cheaper due to high upfront buying costs. If you plan to stay 7+ years, buying typically builds more wealth. Use our calculator to find your exact break-even year.',
+        q: "How long should I stay before buying?",
+        a: "The break-even point — where buying becomes cheaper than renting — typically occurs between 3 and 7 years, depending on your down payment, mortgage rate, home appreciation, rent growth, and local transaction costs. If you plan to move within 3 years, renting is usually cheaper due to high upfront buying costs. If you plan to stay 7+ years, buying typically builds more wealth. Use our calculator to find your exact break-even year."
       },
       {
-        q: 'How does inflation affect the rent vs. buy decision?',
-        a: 'Inflation raises both rents and ownership costs (property taxes, insurance, maintenance), but in different ways. Rents typically increase with inflation (or faster in hot markets), exposing renters to rising costs. Fixed-rate mortgages provide payment stability — your principal and interest stay the same for 30 years. However, property taxes and insurance rise with inflation. The net effect usually favors buying over long periods because the mortgage is fixed while rents compound upward.',
+        q: "How does inflation affect the rent vs. buy decision?",
+        a: "Inflation raises both rents and ownership costs (property taxes, insurance, maintenance), but in different ways. Rents typically increase with inflation (or faster in hot markets), exposing renters to rising costs. Fixed-rate mortgages provide payment stability — your principal and interest stay the same for 30 years. However, property taxes and insurance rise with inflation. The net effect usually favors buying over long periods because the mortgage is fixed while rents compound upward."
       },
       {
-        q: 'What investment return should I assume for the opportunity cost?',
-        a: 'For the opportunity cost calculation, use a realistic long-term investment return. The S&P 500 has averaged about 10% before inflation (7-8% after inflation) over decades. A diversified 60/40 portfolio averages 6-7%. For conservative planning, use 6-7%; for aggressive planning, 8-10%. The key insight: if you can earn 7-8% on investments and your home appreciates 3-4%, the opportunity cost of your down payment is real and can exceed equity buildup in the early years.',
+        q: "What investment return should I assume for the opportunity cost?",
+        a: "For the opportunity cost calculation, use a realistic long-term investment return. The S&P 500 has averaged about 10% before inflation (7-8% after inflation) over decades. A diversified 60/40 portfolio averages 6-7%. For conservative planning, use 6-7%; for aggressive planning, 8-10%. The key insight: if you can earn 7-8% on investments and your home appreciates 3-4%, the opportunity cost of your down payment is real and can exceed equity buildup in the early years."
       },
       {
-        q: 'Does buying always build wealth?',
-        a: 'No. Buying builds wealth when home appreciation plus equity buildup exceeds the total cost of ownership (mortgage interest, taxes, insurance, maintenance, transaction costs). In scenarios with low appreciation, high transaction costs, or short time horizons, renting and investing the down payment can create more net worth. Our calculator objectively compares both strategies to show which creates more wealth in your specific situation.',
+        q: "Does buying always build wealth?",
+        a: "No. Buying builds wealth when home appreciation plus equity buildup exceeds the total cost of ownership (mortgage interest, taxes, insurance, maintenance, transaction costs). In scenarios with low appreciation, high transaction costs, or short time horizons, renting and investing the down payment can create more net worth. Our calculator objectively compares both strategies to show which creates more wealth in your specific situation."
       },
       {
-        q: 'What is the break-even point in a rent vs buy decision?',
-        a: 'The break-even point is the year when the cumulative net worth of buying (home equity minus ownership costs) exceeds the cumulative net worth of renting (investment portfolio minus rent paid). Before this point, renting is financially ahead; after it, buying wins. It typically falls between years 3 and 7. Our calculator identifies your exact break-even year based on your assumptions.',
+        q: "What is the break-even point in a rent vs buy decision?",
+        a: "The break-even point is the year when the cumulative net worth of buying (home equity minus ownership costs) exceeds the cumulative net worth of renting (investment portfolio minus rent paid). Before this point, renting is financially ahead; after it, buying wins. It typically falls between years 3 and 7. Our calculator identifies your exact break-even year based on your assumptions."
       },
       {
-        q: 'How does the down payment affect the rent vs buy decision?',
-        a: 'A larger down payment reduces your loan amount, lowers monthly payments, and can eliminate PMI (at 20%+). However, it also increases the opportunity cost — more capital tied up that could be invested. A smaller down payment preserves liquidity but adds PMI and higher interest costs. The optimal down payment balances these trade-offs; our calculator lets you test different amounts.',
+        q: "How does the down payment affect the rent vs buy decision?",
+        a: "A larger down payment reduces your loan amount, lowers monthly payments, and can eliminate PMI (at 20%+). However, it also increases the opportunity cost — more capital tied up that could be invested. A smaller down payment preserves liquidity but adds PMI and higher interest costs. The optimal down payment balances these trade-offs; our calculator lets you test different amounts."
       },
       {
-        q: 'What is opportunity cost in the context of buying a home?',
-        a: 'Opportunity cost is the potential return you give up by tying up capital in a home instead of investing it. When you put $90,000 down and pay $13,500 in closing costs, that $103,500 could instead grow in the stock market. If it earns 7% annually, it compounds significantly over a decade. The calculator compares this forgone investment growth against the equity you build in the home.',
+        q: "What is opportunity cost in the context of buying a home?",
+        a: "Opportunity cost is the potential return you give up by tying up capital in a home instead of investing it. When you put $90,000 down and pay $13,500 in closing costs, that $103,500 could instead grow in the stock market. If it earns 7% annually, it compounds significantly over a decade. The calculator compares this forgone investment growth against the equity you build in the home."
       },
       {
-        q: 'How do mortgage rates affect the rent vs buy decision?',
-        a: 'Higher mortgage rates increase monthly payments and total interest, delaying the break-even point and making renting more attractive. At 5% vs 8%, the difference on a $360,000 loan is hundreds of dollars per month and tens of thousands in total interest. In high-rate environments, renting and investing may outperform buying, especially over shorter horizons. Use our calculator to compare rate scenarios.',
+        q: "How do mortgage rates affect the rent vs buy decision?",
+        a: "Higher mortgage rates increase monthly payments and total interest, delaying the break-even point and making renting more attractive. At 5% vs 8%, the difference on a $360,000 loan is hundreds of dollars per month and tens of thousands in total interest. In high-rate environments, renting and investing may outperform buying, especially over shorter horizons. Use our calculator to compare rate scenarios."
       },
       {
-        q: 'Should I include maintenance costs when comparing rent vs buy?',
-        a: 'Absolutely. Maintenance is a real, ongoing ownership cost that renters do not pay. A common rule is 1-2% of home value annually — on a $450,000 home, that is $4,500-$9,000 per year. Over 10 years, that is $45,000-$90,000. Underestimating maintenance is one of the most common mistakes in rent vs buy comparisons. Our calculator includes it by default.',
+        q: "Should I include maintenance costs when comparing rent vs buy?",
+        a: "Absolutely. Maintenance is a real, ongoing ownership cost that renters do not pay. A common rule is 1-2% of home value annually — on a $450,000 home, that is $4,500-$9,000 per year. Over 10 years, that is $45,000-$90,000. Underestimating maintenance is one of the most common mistakes in rent vs buy comparisons. Our calculator includes it by default."
       },
       {
-        q: 'What are the hidden costs of buying a home?',
-        a: 'Hidden costs include closing costs (2-5% of price: origination, appraisal, title, attorney), property taxes, homeowners insurance, maintenance (1-2% annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell: realtor commission, closing fees). These can add tens of thousands of dollars and are why buying is not always cheaper than renting.',
+        q: "What are the hidden costs of buying a home?",
+        a: "Hidden costs include closing costs (2-5% of price: origination, appraisal, title, attorney), property taxes, homeowners insurance, maintenance (1-2% annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell: realtor commission, closing fees). These can add tens of thousands of dollars and are why buying is not always cheaper than renting."
       },
       {
-        q: 'How do selling costs affect the rent vs buy decision?',
-        a: 'Selling costs — typically 6-10% of the sale price (realtor commission plus closing fees) — are deducted from your equity when you sell. On a $500,000 home, that is $30,000-$50,000. These costs are why buying is risky for short horizons: if you sell within a few years, selling costs can erase all your equity gains. Our calculator includes selling costs in the net cost of buying.',
+        q: "How do selling costs affect the rent vs buy decision?",
+        a: "Selling costs — typically 6-10% of the sale price (realtor commission plus closing fees) — are deducted from your equity when you sell. On a $500,000 home, that is $30,000-$50,000. These costs are why buying is risky for short horizons: if you sell within a few years, selling costs can erase all your equity gains. Our calculator includes selling costs in the net cost of buying."
       },
       {
-        q: 'Is it better to rent and invest the difference?',
-        a: 'Sometimes, yes. If your monthly ownership cost exceeds rent, the renter can invest the difference. Combined with investing the down payment, this can outperform home equity — especially with high investment returns, low appreciation, or short horizons. However, over long horizons with steady appreciation, home equity usually wins because you benefit from both principal paydown and appreciation. Our calculator models both paths.',
+        q: "Is it better to rent and invest the difference?",
+        a: "Sometimes, yes. If your monthly ownership cost exceeds rent, the renter can invest the difference. Combined with investing the down payment, this can outperform home equity — especially with high investment returns, low appreciation, or short horizons. However, over long horizons with steady appreciation, home equity usually wins because you benefit from both principal paydown and appreciation. Our calculator models both paths."
       },
       {
-        q: 'How does the expected years staying affect the decision?',
-        a: 'The number of years you stay is one of the most influential variables. Buying has high upfront costs (closing, moving, origination) that take 3-7 years to recover. If you stay fewer than 5 years, renting is often cheaper. If you stay 7+ years, buying typically builds more wealth. The longer you stay, the more equity and appreciation accumulate, and the more buying wins.',
+        q: "How does the expected years staying affect the decision?",
+        a: "The number of years you stay is one of the most influential variables. Buying has high upfront costs (closing, moving, origination) that take 3-7 years to recover. If you stay fewer than 5 years, renting is often cheaper. If you stay 7+ years, buying typically builds more wealth. The longer you stay, the more equity and appreciation accumulate, and the more buying wins."
       },
       {
-        q: 'What is PMI and how does it affect the decision?',
-        a: 'Private Mortgage Insurance (PMI) protects the lender when you put down less than 20%. It typically costs 0.5-1% of the loan amount annually, added to your monthly payment. On a $400,000 loan, that is $2,000-$4,000 per year. PMI increases ownership costs and delays the break-even point, making renting relatively more attractive for low-down-payment buyers.',
+        q: "What is PMI and how does it affect the decision?",
+        a: "Private Mortgage Insurance (PMI) protects the lender when you put down less than 20%. It typically costs 0.5-1% of the loan amount annually, added to your monthly payment. On a $400,000 loan, that is $2,000-$4,000 per year. PMI increases ownership costs and delays the break-even point, making renting relatively more attractive for low-down-payment buyers."
       },
       {
-        q: 'How do HOA fees factor into the rent vs buy comparison?',
-        a: 'HOA fees cover common-area maintenance in condos, townhomes, and some neighborhoods. They can range from $100 to $1,000+ per month and typically rise over time. These are real ownership costs that renters do not pay. Our calculator includes monthly HOA fees in the total cost of buying, so you get an accurate comparison.',
+        q: "How do HOA fees factor into the rent vs buy comparison?",
+        a: "HOA fees cover common-area maintenance in condos, townhomes, and some neighborhoods. They can range from $100 to $1,000+ per month and typically rise over time. These are real ownership costs that renters do not pay. Our calculator includes monthly HOA fees in the total cost of buying, so you get an accurate comparison."
       },
       {
-        q: 'What is the difference between net cost of buying and net cost of renting?',
-        a: 'The net cost of buying is your total cash outflows (mortgage payments, taxes, insurance, maintenance, HOA, PMI, closing costs, selling costs) minus the equity you keep when you sell. The net cost of renting is your total rent plus renters insurance minus the value of your investment portfolio (down payment + savings invested). The option with the lower net cost is financially better.',
+        q: "What is the difference between net cost of buying and net cost of renting?",
+        a: "The net cost of buying is your total cash outflows (mortgage payments, taxes, insurance, maintenance, HOA, PMI, closing costs, selling costs) minus the equity you keep when you sell. The net cost of renting is your total rent plus renters insurance minus the value of your investment portfolio (down payment + savings invested). The option with the lower net cost is financially better."
       },
       {
-        q: 'How should I use this calculator to make my decision?',
-        a: 'Start with realistic assumptions for your situation, then test sensitivity: try different time horizons, mortgage rates, appreciation rates, and rent increases. Look at the break-even year and the financial advantage. Read the personalized insights to understand which variables matter most. Finally, use the suggested next-step calculators to plan your budget, mortgage, or savings strategy.',
-      },
-    ],
+        q: "How should I use this calculator to make my decision?",
+        a: "Start with realistic assumptions for your situation, then test sensitivity: try different time horizons, mortgage rates, appreciation rates, and rent increases. Look at the break-even year and the financial advantage. Read the personalized insights to understand which variables matter most. Finally, use the suggested next-step calculators to plan your budget, mortgage, or savings strategy."
+      }
+    ]
   },
-
-  // ── House Affordability Calculator ─────────────────────────────────────
-  'house-affordability-calculator': {
-    name: 'House Affordability Calculator',
-    category: 'Finance',
-    icon: 'fa-house',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.',
-    metaDescription: 'Free house affordability calculator — determine your maximum home purchase price based on DTI ratios, income, debt, and down payment.',
-    keywords: ['house affordability calculator', 'how much house can i afford', 'dti calculator', '28 36 rule', 'fha loan calculator'],
+  "house-affordability-calculator": {
+    name: "House Affordability Calculator",
+    category: "Finance",
+    icon: "fa-house",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.",
+    metaDescription: "Find out how much house you can afford based on your annual income, down payment, monthly debts, and the 28/36 debt-to-income rule. Clear, realistic home buying budget.",
+    keywords: [
+      "house affordability calculator",
+      "how much house can I afford",
+      "home affordability calculator",
+      "home buying budget calculator",
+      "how much mortgage can I afford",
+      "debt to income home affordability",
+      "maximum house price calculator",
+      "income needed for 400k house",
+      "28 36 rule calculator",
+      "first time home buyer budget"
+    ],
     fields: [
-      { id: 'annual_income', label: 'Annual Gross Household Income ($)', type: 'number', default: 105000, min: 0, step: 1000, hint: 'Total yearly household income before taxes.' },
-      { id: 'monthly_debt', label: 'Monthly Debt Payments ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'Car loans, student loans, credit cards, etc.' },
-      { id: 'down_payment', label: 'Cash Saved for Down Payment ($)', type: 'number', default: 60000, min: 0, step: 1000, hint: 'Cash available for down payment.' },
-      { id: 'loan_term', label: 'Loan Term (Years)', type: 'select', default: 30, options: [15,20,30].map(v => ({ value: v, label: v + ' years' })), hint: 'How long to repay the mortgage.' },
-      { id: 'mortgage_rate', label: 'Estimated Mortgage Rate (%)', type: 'number', default: 6.75, min: 0.01, max: 20, step: 0.05, hint: 'Expected annual interest rate (APR).' },
-      { id: 'property_tax_rate', label: 'Annual Property Tax Rate (%)', type: 'number', default: 1.2, min: 0, max: 5, step: 0.1, hint: 'Effective annual property tax rate (typically 0.5-2%).' },
-      { id: 'home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1500, min: 0, step: 100, hint: 'Yearly homeowners insurance premium.' },
-      { id: 'hoa_fees', label: 'Monthly HOA / Co-op Fee ($)', type: 'number', default: 0, min: 0, step: 25, hint: 'Monthly HOA or co-op fees.' },
-      { id: 'lender_rule', label: 'Lender Rule Preference', type: 'select', default: 'conventional', options: [
-        { value: 'conventional', label: 'Conventional 28/36 Rule' },
-        { value: 'fha', label: 'FHA Loan 31/43 Rule' },
-        { value: 'va', label: 'VA Loan 41% DTI' },
-        { value: 'aggressive', label: 'Aggressive 36/45 Rule' },
-      ], hint: 'Choose the lender guideline to use.' },
+      {
+        id: "annual_income",
+        label: "Annual Gross Household Income ($)",
+        type: "number",
+        default: 105000,
+        min: 0,
+        step: 1000,
+        hint: "Total yearly household income before taxes."
+      },
+      {
+        id: "monthly_debt",
+        label: "Monthly Debt Payments ($)",
+        type: "number",
+        default: 500,
+        min: 0,
+        step: 50,
+        hint: "Car loans, student loans, credit cards, etc."
+      },
+      {
+        id: "down_payment",
+        label: "Cash Saved for Down Payment ($)",
+        type: "number",
+        default: 60000,
+        min: 0,
+        step: 1000,
+        hint: "Cash available for down payment."
+      },
+      {
+        id: "loan_term",
+        label: "Loan Term (Years)",
+        type: "select",
+        default: 30,
+        options: [
+          {
+            value: 15,
+            label: "15 years"
+          },
+          {
+            value: 20,
+            label: "20 years"
+          },
+          {
+            value: 30,
+            label: "30 years"
+          }
+        ],
+        hint: "How long to repay the mortgage."
+      },
+      {
+        id: "mortgage_rate",
+        label: "Estimated Mortgage Rate (%)",
+        type: "number",
+        default: 6.75,
+        min: 0.01,
+        max: 20,
+        step: 0.05,
+        hint: "Expected annual interest rate (APR)."
+      },
+      {
+        id: "property_tax_rate",
+        label: "Annual Property Tax Rate (%)",
+        type: "number",
+        default: 1.2,
+        min: 0,
+        max: 5,
+        step: 0.1,
+        hint: "Effective annual property tax rate (typically 0.5-2%)."
+      },
+      {
+        id: "home_insurance",
+        label: "Annual Home Insurance ($)",
+        type: "number",
+        default: 1500,
+        min: 0,
+        step: 100,
+        hint: "Yearly homeowners insurance premium."
+      },
+      {
+        id: "hoa_fees",
+        label: "Monthly HOA / Co-op Fee ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 25,
+        hint: "Monthly HOA or co-op fees."
+      },
+      {
+        id: "lender_rule",
+        label: "Lender Rule Preference",
+        type: "select",
+        default: "conventional",
+        options: [
+          {
+            value: "conventional",
+            label: "Conventional 28/36 Rule"
+          },
+          {
+            value: "fha",
+            label: "FHA Loan 31/43 Rule"
+          },
+          {
+            value: "va",
+            label: "VA Loan 41% DTI"
+          },
+          {
+            value: "aggressive",
+            label: "Aggressive 36/45 Rule"
+          }
+        ],
+        hint: "Choose the lender guideline to use."
+      }
     ],
     calculate(v) {
       const annualIncome = safeNum(v.annual_income, 0);
@@ -2617,107 +4710,199 @@ const TOOLS = {
         },
       };
     },
-
     howTo: [
-      'Enter your annual gross household income and monthly debt payments (car loans, student loans, credit cards).',
-      'Add your down payment savings, loan term, and estimated mortgage rate.',
-      'Set your property tax rate, home insurance, and any HOA fees.',
-      'Choose your lender rule preference — Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45.',
-      'Review your recommended affordable home price, max loan amount, and monthly payment breakdown.',
-      'Check the three-scenario comparison table to see conservative, target, and aggressive purchase limits.',
+      "Enter your annual household gross income (before taxes).",
+      "Input your total monthly debt payments (car loans, student loans, minimum credit card payments).",
+      "Enter the cash amount you have saved for a down payment.",
+      "Set the current mortgage interest rate and loan term (usually 30 years).",
+      "Include estimated annual property taxes, homeowners insurance, and any HOA fees.",
+      "Review your recommended purchase price, maximum loan amount, and estimated monthly payment breakdown."
     ],
-
     examples: [
-      { title: 'Typical First-Time Buyer', input: 'Income: $105,000, Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr', result: 'Affordable home: ~$350,000 | Monthly PITI: ~$2,400 | Front DTI: 28% | Back DTI: 36%' },
-      { title: 'FHA Loan with Higher DTI', input: 'Income: $80,000, Debt: $800/mo, Down: $20,000, Rate: 6.5%, 30yr, FHA', result: 'Affordable home: ~$280,000 | Monthly PITI: ~$1,900 | Front DTI: 31% | Back DTI: 43%' },
-      { title: 'VA Loan Zero Down', input: 'Income: $90,000, Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA', result: 'Affordable home: ~$320,000 | Monthly PITI: ~$2,100 | Back DTI: 41%' },
+      {
+        title: "Single Earner, Moderate Debt",
+        input: "Income: $85,000/yr | Debts: $400/mo | Down Payment: $40,000 | Rate: 6.5%",
+        result: "Affordable Home: ~$310,000 | Monthly Payment: ~$1,980"
+      },
+      {
+        title: "Dual Income, Debt-Free",
+        input: "Income: $150,000/yr | Debts: $0/mo | Down Payment: $100,000 | Rate: 6.25%",
+        result: "Affordable Home: ~$590,000 | Monthly Payment: ~$3,500"
+      },
+      {
+        title: "High Income in High-Cost Market",
+        input: "Income: $220,000/yr | Debts: $800/mo | Down Payment: $180,000 | Rate: 6.5%",
+        result: "Affordable Home: ~$840,000 | Monthly Payment: ~$5,130"
+      },
+      {
+        title: "First-Time Buyer (Low Down Payment)",
+        input: "Income: $70,000/yr | Debts: $250/mo | Down Payment: $15,000 | Rate: 6.75%",
+        result: "Affordable Home: ~$240,000 | Monthly Payment: ~$1,630"
+      }
     ],
-    formula: 'Max Housing Payment = Gross Monthly Income × Front-End Ratio | Available for Housing = (Gross Monthly Income × Back-End Ratio) − Monthly Debt | Max Loan = PV of Available for PI | Recommended Price = Max Loan + Down Payment',
-
+    formula: "Max Monthly Payment = Min[(Gross Monthly Income × 0.28), (Gross Monthly Income × 0.36 − Monthly Debts)]. Max Purchase Price = Loan Principal (derived from Max Payment & interest rate) + Down Payment.",
     article: {
-      heading: 'The Complete Guide to House Affordability and DTI Ratios',
-      intro: 'Lenders use two key ratios to determine how much house you can afford: the front-end DTI (housing ratio) and back-end DTI (total debt ratio). The GetCalcu House Affordability Calculator applies these rules — including the 28/36 conventional standard, FHA 31/43 limits, VA 41% back-end focus, and aggressive 36/45 scenarios — to show you exactly what home price fits your financial situation.',
+      heading: "How Much House Can You Realistically Afford?",
+      intro: "Figuring out how much home you can afford is about more than just finding the maximum loan a bank is willing to approve. A comfortable home purchase leaves room in your monthly budget for everyday living, emergency savings, retirement contributions, and fun. The GetCalcu House Affordability Calculator combines your income, existing monthly debts, down payment, and standard lending rules to give you a clear, realistic purchase price range.",
       sections: [
-        { heading: 'Understanding Front-End vs Back-End DTI', body: 'Front-end DTI measures housing costs (principal, interest, taxes, insurance, HOA) as a percentage of gross monthly income. Back-end DTI measures all monthly debt obligations — including the new mortgage payment — as a percentage of gross monthly income. Lenders use the more restrictive of the two to ensure you are not overextended.' },
-        { heading: 'The 28/36 Rule (Conventional Loans)', body: 'Conventional loans typically require front-end DTI ≤ 28% and back-end DTI ≤ 36%. That means your total housing payment should not exceed 28% of your gross monthly income, and all debt combined (housing plus car loans, student loans, credit cards) should not exceed 36%. If your existing debt is high, the back-end ratio becomes the binding constraint.' },
-        { heading: 'FHA 31/43 and VA 41% Rules', body: 'FHA loans allow higher ratios — 31% front-end and 43% back-end — making them accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). VA loans focus primarily on the back-end DTI (41%) and do not require a down payment, but they do require the residual income test to ensure you can cover living expenses after paying the mortgage.' },
-        { heading: 'How Down Payment and Interest Rate Affect Affordability', body: 'A larger down payment directly increases your affordable home price by reducing the loan amount. A lower interest rate increases your purchasing power by lowering the monthly payment for a given loan size. Use the calculator to test different down-payment and rate scenarios to find your optimal buying window.' },
-      ],
+        {
+          heading: "The 28/36 Debt-to-Income (DTI) Rule Explained",
+          body: "The 28/36 rule is the classic benchmark used by financial advisors and mortgage underwriters to determine safe home loan limits. The \"front-end\" 28% rule states that your total housing expenses (mortgage principal, interest, taxes, and insurance) should not exceed 28% of your gross monthly income. The \"back-end\" 36% rule states that your total debt payments (housing expenses plus car loans, student loans, credit cards, and personal loans) should not exceed 36% of your gross monthly income."
+        },
+        {
+          heading: "Gross Income vs. Take-Home Pay",
+          body: "Lenders calculate affordability using your gross income (before taxes and deductions), but your actual bills are paid from your net take-home pay. If you have significant paycheck deductions for health insurance, 401(k) retirement contributions, or state taxes, a mortgage approved at the maximum lending limit can feel uncomfortably tight. Always evaluate how the monthly payment fits your actual net monthly bank deposit."
+        },
+        {
+          heading: "How Down Payment and Cash Reserves Shape Affordability",
+          body: "Every dollar in down payment directly increases the purchase price you can afford while keeping your monthly mortgage payment steady. However, never spend all your savings on the down payment. Lenders look for cash reserves (typically 2 to 6 months of living expenses), and homeowners need an emergency fund for unexpected repairs, moving expenses, and maintenance."
+        },
+        {
+          heading: "The Impact of Interest Rates on Your Buying Power",
+          body: "Mortgage interest rates directly dictate your purchasing power. A 1% increase in interest rates reduces your home buying budget by roughly 10% for the exact same monthly payment. When rates are higher, buyers often choose to put down more cash, buy down the rate with discount points, or look at slightly lower price brackets."
+        },
+        {
+          heading: "Hidden Costs of Homeownership to Budget For",
+          body: "Beyond the monthly PITI payment, homeowners must budget for regular maintenance (plan on 1% to 2% of the home value annually), utility bills (which are typically higher than in an apartment), HOA (Homeowners Association) dues if applicable, and periodic repairs like roofing, plumbing, or HVAC servicing."
+        },
+        {
+          heading: "How Existing Debts Shrink Your Mortgage Budget",
+          body: "Because lenders cap your total back-end debt ratio, every monthly debt payment reduces your potential mortgage payment dollar-for-dollar. For example, a $450 monthly car payment and $250 student loan payment can lower the maximum home loan you qualify for by $80,000 to $100,000. Paying down revolving debts before applying for a mortgage gives an immediate boost to your buying power."
+        },
+        {
+          heading: "Conservative vs. Aggressive Affordability Targets",
+          body: "A conservative budget keeps housing costs at or below 25% of take-home pay on a 15-year or 30-year loan, maximizing your ability to invest and travel. An aggressive budget pushes toward the maximum underwriter limit of 43% to 45% DTI, which may be necessary in high-cost-of-living metropolitan areas but requires strict budgeting in other areas of life."
+        },
+        {
+          heading: "Steps to Increase Your Home Buying Budget",
+          body: "If your target home price is currently out of reach, focus on three high-leverage levers: pay down existing non-mortgage debts to lower your back-end DTI, save a larger down payment to eliminate PMI and reduce the loan size, and improve your credit score above 740 to secure the lowest available interest rates."
+        }
+      ]
     },
-
     faqs: [
-      { q: 'Can I afford a $500k house on $100k income?', a: 'With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario.' },
-      { q: 'What is the 28/36 rule in home buying?', a: 'The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment.' },
-      { q: 'How does monthly debt affect home buying power?', a: 'Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power.' },
-      { q: 'What is the difference between FHA 31/43 and Conventional 28/36?', a: 'FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas.' },
-      { q: 'How much income is needed for a $400k home?', a: 'For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark.' },
-      { q: 'Do HOA fees count toward DTI?', a: 'Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit.' },
-      { q: 'Can I get a mortgage with a 50% DTI?', a: 'Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage.' },
+      {
+        q: "How much of my income should go toward a mortgage?",
+        a: "A general financial standard is the 28% front-end rule, meaning your monthly housing payment (principal, interest, taxes, and insurance) should not exceed 28% of your gross monthly income. Some conservative experts recommend keeping it under 25% of your take-home pay."
+      },
+      {
+        q: "What is the 28/36 rule in real estate?",
+        a: "The 28/36 rule means your total housing costs should not exceed 28% of your gross monthly income, and your total debt payments (housing + student loans, car notes, credit cards) should not exceed 36% of your gross monthly income."
+      },
+      {
+        q: "How does my credit score affect home affordability?",
+        a: "A higher credit score qualifies you for lower interest rates and lower PMI rates. Lowering your interest rate by just 0.5% saves hundreds of dollars every month, which directly increases the maximum home price you can afford for the same budget."
+      },
+      {
+        q: "What income do I need to buy a $400,000 house?",
+        a: "With a 20% down payment ($80,000) and a 6.5% interest rate on a 30-year fixed loan, you will generally need an annual household income between $95,000 and $115,000, depending on your other monthly debts, local property taxes, and insurance costs."
+      },
+      {
+        q: "Should I include bonuses or commissions in my income?",
+        a: "Lenders typically allow you to include bonuses, commissions, or overtime income only if you have a consistent 2-year history of receiving that income and it is likely to continue."
+      },
+      {
+        q: "How much should I keep in savings after buying a home?",
+        a: "You should keep at least 3 to 6 months of essential living expenses in an emergency fund after paying your down payment and closing costs. This protects you against emergency home repairs, medical bills, or job changes."
+      },
+      {
+        q: "What are closing costs and how do they impact affordability?",
+        a: "Closing costs are fees paid at the closing of a real estate transaction (lender fees, title search, appraisal, escrow funding), typically totaling 2% to 5% of the loan amount. They are paid in cash in addition to your down payment."
+      },
+      {
+        q: "Does having car or student loan debt hurt how much I can borrow?",
+        a: "Yes. Every dollar you owe on monthly debt payments reduces the monthly room available for a mortgage payment under lender debt-to-income limits. Paying off a car loan or student loan can significantly boost your borrowing limit."
+      },
+      {
+        q: "What if I am self-employed or a 1099 contractor?",
+        a: "Self-employed borrowers generally need to provide 2 years of complete personal and business tax returns. Lenders use your net taxable business income (after deductions and write-offs), rather than your gross revenue."
+      },
+      {
+        q: "Can I get approved for more than I can afford?",
+        a: "Yes. Mortgage lenders often approve borrowers for the absolute maximum debt limit allowed by lending guidelines (up to 43% or 50% DTI in some programs). That does not mean it is financially wise to spend that full amount."
+      },
+      {
+        q: "How do property taxes affect how much house I can buy?",
+        a: "Property taxes are part of your monthly payment. In high-tax areas (where taxes exceed 2% of the home value), your monthly escrow payment is higher, which reduces the loan amount and home price you can afford compared to low-tax areas."
+      },
+      {
+        q: "Is it better to buy a cheaper house or stretch my budget?",
+        a: "Buying below your maximum budget gives you financial flexibility to build savings, invest, handle unexpected maintenance, and weather economic downturns without the stress of being \"house poor.\""
+      },
+      {
+        q: "How does an HOA fee affect my affordability?",
+        a: "HOA (Homeowners Association) fees are added directly to your monthly debt obligations. A $300/month HOA fee reduces your purchasing power by approximately $40,000 to $50,000 in mortgage loan size."
+      },
+      {
+        q: "What is the difference between pre-qualification and pre-approval?",
+        a: "Pre-qualification is an informal estimate of what you might borrow based on self-reported numbers. Pre-approval is a verified lender commitment based on actual credit checks, tax returns, pay stubs, and bank statements."
+      },
+      {
+        q: "Can I use gift funds for my down payment?",
+        a: "Yes, most conventional and government loan programs allow down payment gift funds from immediate family members, provided you submit a signed gift letter verifying the money does not need to be repaid."
+      }
     ],
-
     faqSchema: {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "mainEntity": [
+      mainEntity: [
         {
           "@type": "Question",
-          "name": "Can I afford a $500k house on $100k income?",
-          "acceptedAnswer": {
+          name: "Can I afford a $500k house on $100k income?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario."
+            text: "With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario."
           }
         },
         {
           "@type": "Question",
-          "name": "What is the 28/36 rule in home buying?",
-          "acceptedAnswer": {
+          name: "What is the 28/36 rule in home buying?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment."
+            text: "The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment."
           }
         },
         {
           "@type": "Question",
-          "name": "How does monthly debt affect home buying power?",
-          "acceptedAnswer": {
+          name: "How does monthly debt affect home buying power?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power."
+            text: "Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power."
           }
         },
         {
           "@type": "Question",
-          "name": "What is the difference between FHA 31/43 and Conventional 28/36?",
-          "acceptedAnswer": {
+          name: "What is the difference between FHA 31/43 and Conventional 28/36?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas."
+            text: "FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas."
           }
         },
         {
           "@type": "Question",
-          "name": "How much income is needed for a $400k home?",
-          "acceptedAnswer": {
+          name: "How much income is needed for a $400k home?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark."
+            text: "For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark."
           }
         },
         {
           "@type": "Question",
-          "name": "Do HOA fees count toward DTI?",
-          "acceptedAnswer": {
+          name: "Do HOA fees count toward DTI?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit."
+            text: "Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit."
           }
         },
         {
           "@type": "Question",
-          "name": "Can I get a mortgage with a 50% DTI?",
-          "acceptedAnswer": {
+          name: "Can I get a mortgage with a 50% DTI?",
+          acceptedAnswer: {
             "@type": "Answer",
-            "text": "Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage."
+            text: "Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage."
           }
-        },
+        }
       ]
     },
-
     renderResults(results, container) {
       if (results.error) {
         container.innerHTML = '<div class="error-message">' + results.stats[0].value + '</div>';
@@ -2768,7 +4953,6 @@ const TOOLS = {
         this.renderChart(results, 'chart-' + container.id);
       }
     },
-
     renderChart(results, canvasId) {
       const canvas = document.getElementById(canvasId);
       if (!canvas || !results.chart) return;
@@ -2825,44 +5009,86 @@ const TOOLS = {
         });
       }
     },
+    metaTitle: "House Affordability Calculator | How Much House Can I Afford? — GetCalcu",
+    related: [
+      "mortgage-calculator",
+      "rent-vs-buy-calculator",
+      "amortization-calculator",
+      "budget-planner",
+      "savings-calculator",
+      "net-worth-calculator"
+    ]
   },
-
-  // ── Inflation Calculator ─────────────────────────────────────
-  'inflation-calculator': {
-    id: 'inflation-calculator',
-    name: 'Inflation Calculator',
-    category: 'Finance',
-    icon: 'fa-arrow-trend-up',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate how inflation impacts your money\'s purchasing power over time and find out how much you will need in the future.',
-    metaTitle: 'Inflation Calculator – Future Purchasing Power & Purchasing Loss | GetCalcu',
-    metaDescription: 'Free interactive Inflation Calculator. See how inflation reduces your money\'s buying power over time with dynamic charts and real-time scenario sliders.',
+  "inflation-calculator": {
+    id: "inflation-calculator",
+    name: "Inflation Calculator",
+    category: "Finance",
+    icon: "fa-arrow-trend-up",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate how inflation impacts your money's purchasing power over time and find out how much you will need in the future.",
+    metaTitle: "Inflation Calculator | Historical CPI, Future Value & Purchasing Power — GetCalcu",
+    metaDescription: "Calculate how inflation impacts the future purchasing power of your money. Model historical CPI rates, future cost of living, and real investment returns.",
     keywords: [
-      'inflation calculator',
-      'purchasing power calculator',
-      'future value of money inflation',
-      'inflation adjustment calculator',
-      'historical inflation rate calculator',
-      'inflation rate calculator',
-      'buying power calculator',
-      'inflation impact on savings',
-      'future cost calculator',
-      'inflation adjusted value',
+      "inflation calculator",
+      "purchasing power calculator",
+      "future value inflation calculator",
+      "cpi inflation calculator",
+      "cost of living inflation calculator",
+      "real value of money calculator",
+      "inflation adjusted return",
+      "how much will 100k be worth in 20 years",
+      "historical inflation calculator",
+      "inflation erosion calculator"
     ],
     fields: [
-      { id: 'mode', label: 'Calculation Mode', type: 'select', default: 'future-cost',
+      {
+        id: "mode",
+        label: "Calculation Mode",
+        type: "select",
+        default: "future-cost",
         options: [
-          { value: 'future-cost', label: 'Future Cost / Eroded Value' },
-          { value: 'target-power', label: 'Target Purchasing Power Needed' },
+          {
+            value: "future-cost",
+            label: "Future Cost / Eroded Value"
+          },
+          {
+            value: "target-power",
+            label: "Target Purchasing Power Needed"
+          }
         ],
-        hint: 'Choose whether to see how much a current amount will be worth in the future, or how much you need in the future to match today\'s buying power.' },
-      { id: 'initial_amount', label: 'Initial Amount ($)', type: 'range', default: 1000, min: 100, max: 1000000, step: 100,
-        hint: 'The amount of money you want to analyze. Drag the slider or type a value.' },
-      { id: 'inflation_rate', label: 'Annual Inflation Rate (%)', type: 'range', default: 3.5, min: 0.1, max: 20, step: 0.1,
-        hint: 'The expected yearly inflation rate. The US long-run average is about 2.5-3.5%.' },
-      { id: 'years', label: 'Time Horizon (Years)', type: 'range', default: 10, min: 1, max: 50, step: 1,
-        hint: 'How many years into the future you want to project. Longer horizons show more dramatic erosion.' },
+        hint: "Choose whether to see how much a current amount will be worth in the future, or how much you need in the future to match today's buying power."
+      },
+      {
+        id: "initial_amount",
+        label: "Initial Amount ($)",
+        type: "range",
+        default: 1000,
+        min: 100,
+        max: 1000000,
+        step: 100,
+        hint: "The amount of money you want to analyze. Drag the slider or type a value."
+      },
+      {
+        id: "inflation_rate",
+        label: "Annual Inflation Rate (%)",
+        type: "range",
+        default: 3.5,
+        min: 0.1,
+        max: 20,
+        step: 0.1,
+        hint: "The expected yearly inflation rate. The US long-run average is about 2.5-3.5%."
+      },
+      {
+        id: "years",
+        label: "Time Horizon (Years)",
+        type: "range",
+        default: 10,
+        min: 1,
+        max: 50,
+        step: 1,
+        hint: "How many years into the future you want to project. Longer horizons show more dramatic erosion."
+      }
     ],
     fieldLabels(v) {
       if (v.mode === 'target-power') return { initial_amount: 'Today\'s Purchasing Power ($)' };
@@ -2977,73 +5203,268 @@ const TOOLS = {
       };
     },
     howTo: [
-      'Enter the amount of money you want to analyze — use the slider or type directly.',
-      'Set the annual inflation rate (default 3.5%, the US historical average).',
-      'Choose your time horizon — how many years into the future to project.',
-      'Switch between "Future Cost" mode and "Target Purchasing Power" mode to see different perspectives.',
-      'Review the purchasing power loss, real value remaining, and cumulative inflation stats.',
-      'Scroll down to see the year-by-year breakdown table and the interactive chart.',
+      "Enter the starting dollar amount.",
+      "Input the expected annual inflation rate (historical US average is ~2.5% to 3.5%).",
+      "Specify the number of years into the future (or past).",
+      "Review the future equivalent price needed to match today purchasing power.",
+      "Review the chart showing purchasing power decline over time."
     ],
     examples: [
-      { title: 'Inflation Erodes $1,000 Over 10 Years', input: 'Amount: $1,000, Rate: 3.5%, Years: 10', result: 'Future Cost: ~$1,411 | Real Value: ~$709 | Loss: ~$302 (21.4%)' },
-      { title: 'High Inflation Scenario', input: 'Amount: $10,000, Rate: 8%, Years: 15', result: 'Future Cost: ~$31,722 | Real Value: ~$3,152 | Loss: ~$21,722 (68.5%)' },
-      { title: 'Long-Term Erosion Over 30 Years', input: 'Amount: $50,000, Rate: 3%, Years: 30', result: 'Future Cost: ~$121,363 | Real Value: ~$20,599 | Loss: ~$71,363 (58.8%)' },
+      {
+        title: "Retirement Expenses in 20 Years",
+        input: "Today Spending: $60,000/yr | Inflation: 3.0% | Time: 20 Years",
+        result: "Future Cost for Same Lifestyle: ~$108,360/yr (80% increase)"
+      },
+      {
+        title: "College Tuition Inflation Projection",
+        input: "Today Tuition: $30,000/yr | Higher-Ed Inflation: 4.5% | Time: 15 Years",
+        result: "Future Tuition: ~$58,050/yr (Nearly doubled)"
+      },
+      {
+        title: "Cash Purchasing Power Loss",
+        input: "Initial Cash: $100,000 | Inflation: 3.2% | Time: 10 Years",
+        result: "Purchasing Power in 10 Yrs: ~$72,900 (Lost ~$27,100 of value)"
+      },
+      {
+        title: "Low Inflation 10-Year Horizon",
+        input: "Amount: $10,000 | Inflation: 2.0% | Time: 10 Years",
+        result: "Future Equivalent: ~$12,190"
+      }
     ],
-    formula: 'FV = PV × (1 + i)^n | Real Value = PV / (1 + i)^n | Purchasing Power Loss = FV − PV | Cumulative Inflation = (1 + i)^n − 1',
+    formula: "Future Cost = Present Value × (1 + r)^t | Future Purchasing Power = Present Value ÷ (1 + r)^t, where r is annual inflation rate and t is number of years.",
     article: {
-      heading: 'How Inflation Erodes Your Purchasing Power and What You Can Do About It',
-      intro: 'Inflation is the silent thief of wealth — it steadily reduces what your money can buy over time. The GetCalcu Inflation Calculator shows you exactly how much purchasing power your money will lose at any inflation rate, over any time horizon, with interactive sliders and a dynamic chart that makes the erosion visible.',
+      heading: "Understanding Inflation and Protecting Your Purchasing Power",
+      intro: "Inflation is the steady increase in the general prices of goods and services over time. As prices rise, every dollar you hold buys fewer groceries, fewer gallons of gas, and less housing. The GetCalcu Inflation Calculator helps you project future price increases, calculate historical purchasing power changes, and discover how to protect your wealth from inflationary erosion.",
       sections: [
-        { heading: 'The Mathematical Formula Behind Inflation', body: 'The future value of money under inflation is calculated using the compound interest formula in reverse: FV = PV × (1 + i)^n, where PV is today\'s amount, i is the annual inflation rate, and n is the number of years. At a 3.5% inflation rate, money loses roughly half its purchasing power every 20 years — a dollar today is worth about 50 cents in 20 years.' },
-        { heading: 'How Inflation Affects Different Assets', body: 'Cash and savings accounts are hit hardest by inflation because they earn little to no interest. Real estate historically appreciates at or above inflation rates. The stock market, over long periods, has returned 7-10% annually, significantly outpacing inflation. Bonds and fixed-income investments can struggle during high inflation periods, as their fixed payments lose real value.' },
-        { heading: 'Actionable Steps to Hedge Against Inflation', body: 'To protect your purchasing power, consider: (1) High-Yield Savings Accounts (HYSA) earning 4-5% APY to at least keep pace with inflation. (2) Treasury Inflation-Protected Securities (TIPS) that adjust with CPI. (3) Low-cost index funds tracking the S&P 500, which have historically returned 7-10% annually. (4) Real estate investments that appreciate and provide rental income. (5) I-Bonds that offer inflation-adjusted returns.' },
-      ],
+        {
+          heading: "What Causes Inflation? (Demand-Pull and Cost-Push)",
+          body: "Inflation typically stems from two economic forces. Demand-pull inflation happens when consumer and business demand for goods and services outpaces production capacity (\"too much money chasing too few goods\"). Cost-push inflation occurs when raw material and production costs rise (such as surges in oil prices or supply chain bottlenecks), forcing businesses to raise prices."
+        },
+        {
+          heading: "The Consumer Price Index (CPI) Explained",
+          body: "The Consumer Price Index (CPI), published monthly by the US Bureau of Labor Statistics, is the standard metric used to track inflation. It measures price changes in a representative basket of everyday goods and services, including food, housing, transportation, medical care, apparel, and education."
+        },
+        {
+          heading: "The Rule of 72 Applied to Inflation",
+          body: "You can use the Rule of 72 to calculate how quickly prices will double at a given inflation rate. Divide 72 by the annual inflation rate. At a 3% inflation rate, prices double in approximately 24 years (72 ÷ 3 = 24). At a 6% inflation rate, prices double in just 12 years."
+        },
+        {
+          heading: "The Hidden Danger of Holding Excess Cash",
+          body: "While cash in a checking account feels safe because the nominal balance never drops, inflation steadily erodes its real purchasing power. A $50,000 cash balance earning 0% interest loses over $18,000 of its purchasing power in 10 years at a modest 3% inflation rate."
+        },
+        {
+          heading: "Nominal Returns vs. Real Returns in Investing",
+          body: "Nominal return is the raw percentage gain of your investments. Real return is your gain after subtracting inflation. If your stock portfolio gains 9% in a year when inflation is 3.5%, your real wealth growth is 5.5%. Beating inflation is the primary reason long-term investors allocate money to equities and real estate."
+        },
+        {
+          heading: "Inflation-Hedging Assets (Real Estate, Equities, TIPS)",
+          body: "Historically, the most effective assets for beating inflation are equities (companies can raise product prices to protect profit margins), real estate (rents and property values increase with inflation), and Treasury Inflation-Protected Securities (TIPS), whose principal value adjusts upward with the CPI."
+        },
+        {
+          heading: "How Inflation Affects Fixed-Rate Borrowers vs. Savers",
+          body: "Inflation harms cash savers by reducing their purchasing power, but it benefits fixed-rate mortgage borrowers. When you have a 30-year fixed mortgage, your monthly payment remains unchanged for decades, meaning you repay the loan with future dollars that are worth less in real purchasing power."
+        },
+        {
+          heading: "COLA: Cost-of-Living Adjustments in Benefits",
+          body: "Social Security benefits and certain government pensions include annual Cost-of-Living Adjustments (COLA) linked to the Consumer Price Index, ensuring monthly benefit checks increase automatically to keep pace with rising living costs."
+        }
+      ]
     },
     faqs: [
-      { q: 'How is inflation calculated and how does it affect my money?', a: 'Inflation is calculated as the percentage increase in the general price level of goods and services over time, typically measured by the Consumer Price Index (CPI). It affects your money by reducing purchasing power — the same dollar buys fewer goods tomorrow than it does today. The formula FV = PV × (1 + i)^n shows how much money you will need in the future to maintain the same standard of living.' },
-      { q: 'What is the average inflation rate in the United States?', a: 'The US long-run average inflation rate is approximately 2.5% to 3.5% per year, based on CPI data dating back to 1913. The Federal Reserve targets a 2% annual inflation rate as optimal for economic growth. However, rates can vary significantly — from deflation during the Great Depression to double-digit inflation in the late 1970s and early 1980s.' },
-      { q: 'How much will $1,000 be worth in 10 years with inflation?', a: 'At a 3.5% average annual inflation rate, $1,000 today will be worth approximately $709 in today\'s purchasing power after 10 years. You would need about $1,411 in future dollars to buy what $1,000 buys today. This means inflation erodes about $302 (21.4%) of the future value.' },
-      { q: 'What is the difference between nominal and real value?', a: 'Nominal value is the face value of money in future dollars — the number printed on the bill. Real value adjusts for inflation to show what that money is actually worth in today\'s purchasing power. For example, $1,411 in 10 years is the nominal amount, but its real value (purchasing power equivalent to today\'s dollars) is only $1,000.' },
-      { q: 'How does inflation impact retirement savings?', a: 'Inflation significantly impacts retirement savings by reducing the real value of your nest egg over time. A $1,000,000 retirement fund at age 65 will have the purchasing power of only about $412,000 in 30 years at 3% inflation. This is why retirement calculators use inflation-adjusted returns and why financial advisors recommend growth-oriented investments for long-term retirement goals.' },
-      { q: 'What investments perform best during high inflation?', a: 'Historically, the best-performing assets during high inflation include: real estate (property values and rents rise with inflation), commodities (gold, oil, agricultural products), Treasury Inflation-Protected Securities (TIPS), I-Bonds, and stocks in sectors with pricing power (energy, healthcare, consumer staples). Cash and long-term fixed-rate bonds tend to perform poorly during high inflation.' },
+      {
+        q: "What is inflation?",
+        a: "Inflation is the rate at which the general prices of goods and services increase over time, causing each unit of currency to buy fewer goods and services."
+      },
+      {
+        q: "How is inflation measured?",
+        a: "In the United States, inflation is primarily measured by the Consumer Price Index (CPI), which tracks price changes across a standard basket of consumer goods, housing, food, and energy."
+      },
+      {
+        q: "What is a normal annual rate of inflation?",
+        a: "The US Federal Reserve targets an average long-term inflation rate of 2.0% per year, though historical US inflation over the past 50 years has averaged around 3.0% to 3.5%."
+      },
+      {
+        q: "What is purchasing power?",
+        a: "Purchasing power is the amount of goods or services that one unit of money can buy. As inflation rises, purchasing power falls."
+      },
+      {
+        q: "What is the difference between nominal and real return?",
+        a: "Nominal return is the stated percentage gain on an investment. Real return is your actual gain after subtracting the rate of inflation."
+      },
+      {
+        q: "How do I protect my savings from inflation?",
+        a: "To beat inflation, invest in growth assets such as diversified stock index funds, real estate, High-Yield Savings Accounts (HYSAs), Series I Savings Bonds, and Treasury Inflation-Protected Securities (TIPS)."
+      },
+      {
+        q: "Does inflation help borrowers with fixed-rate mortgages?",
+        a: "Yes. Borrowers with fixed-rate loans pay the same fixed dollar payment every month, while their income tends to rise with inflation, repaying the loan with cheaper dollars over time."
+      },
+      {
+        q: "What is hyperinflation?",
+        a: "Hyperinflation is rapid, out-of-control inflation typically exceeding 50% per month, which quickly destroys the practical value of a local currency."
+      },
+      {
+        q: "What are TIPS (Treasury Inflation-Protected Securities)?",
+        a: "TIPS are US government bonds whose principal value increases with inflation as measured by the CPI, providing guaranteed inflation protection."
+      },
+      {
+        q: "What is stagflation?",
+        a: "Stagflation is an unusual and difficult economic condition characterized by high inflation, slow economic growth, and high unemployment."
+      },
+      {
+        q: "How does inflation affect retirees on fixed incomes?",
+        a: "Retirees living on fixed, non-indexed pensions suffer declining purchasing power over time. Having investments in equities or Social Security with annual COLA adjustments helps offset this risk."
+      },
+      {
+        q: "What is shrinkflation?",
+        a: "Shrinkflation occurs when manufacturers reduce the size or quantity of a product package while keeping the retail price unchanged, effectively increasing the cost per unit."
+      },
+      {
+        q: "Why do central banks aim for 2% inflation rather than 0%?",
+        a: "A small positive inflation rate stimulates economic spending and investment while providing a safety buffer against damaging deflation (falling prices, which can cause recessions)."
+      },
+      {
+        q: "What is core inflation vs. headline inflation?",
+        a: "Headline inflation includes all goods in the CPI basket. Core inflation excludes volatile food and energy prices to reveal the underlying long-term inflation trend."
+      },
+      {
+        q: "How much will $100,000 be worth in 20 years at 3% inflation?",
+        a: "At 3% annual inflation, $100,000 in cash will lose roughly 45% of its purchasing power over 20 years, having the equivalent buying power of about $55,360 today."
+      }
     ],
+    related: [
+      "investment-calculator",
+      "compound-interest-calculator",
+      "savings-calculator",
+      "retirement-calculator",
+      "fire-calculator",
+      "budget-planner"
+    ]
   },
-
-  // ── Net Worth Calculator ─────────────────────────────────────
-  'net-worth-calculator': {
-    name: 'Net Worth Calculator',
-    category: 'Finance',
-    icon: 'fa-scale-balanced',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate your total net worth by tracking all assets and liabilities. See your asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights.',
-    metaTitle: 'Net Worth Calculator | Track Assets & Liabilities — GetCalcu',
-    metaDescription: 'Free Net Worth Calculator — instantly calculate your total net worth, asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights. Track cash, investments, property, retirement, and debts.',
+  "net-worth-calculator": {
+    name: "Net Worth Calculator",
+    category: "Finance",
+    icon: "fa-scale-balanced",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate your total net worth by tracking all assets and liabilities. See your asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights.",
+    metaTitle: "Net Worth Calculator | Calculate Your Total Wealth & Assets — GetCalcu",
+    metaDescription: "Free net worth calculator to calculate your total assets minus liabilities. Track liquid wealth, property equity, retirement balances, and overall financial health.",
     keywords: [
-      'net worth calculator',
-      'calculate net worth',
-      'net worth tracker',
-      'assets and liabilities calculator',
-      'personal net worth',
-      'wealth calculator',
-      'debt to asset ratio calculator',
-      'how to calculate net worth',
-      'net worth formula',
-      'financial health calculator',
+      "net worth calculator",
+      "calculate my net worth",
+      "total wealth calculator",
+      "assets minus liabilities calculator",
+      "personal net worth tracker",
+      "liquid net worth calculator",
+      "average net worth by age",
+      "how to calculate net worth",
+      "financial health calculator",
+      "wealth tracker calculator"
     ],
     fields: [
-      { id: 'sec_assets', type: 'section', label: 'Assets — What You Own', icon: 'fa-arrow-trend-up' },
-      { id: 'cash_savings',    label: 'Cash & Savings ($)',    type: 'number', default: 15000,  min: 0, step: 100,  hint: 'Checking accounts, savings accounts, cash on hand, and emergency funds.' },
-      { id: 'investments',     label: 'Investments ($)',       type: 'number', default: 45000,  min: 0, step: 100,  hint: 'Stocks, bonds, mutual funds, ETFs, and brokerage accounts (not retirement).' },
-      { id: 'retirement',      label: 'Retirement Accounts ($)', type: 'number', default: 60000, min: 0, step: 100,  hint: '401(k), IRA, Roth IRA, 403(b), and pension values.' },
-      { id: 'home_value',      label: 'Home Value ($)',        type: 'number', default: 350000, min: 0, step: 1000, hint: 'Current market value of your primary residence or real estate.' },
-      { id: 'vehicles',        label: 'Vehicles ($)',          type: 'number', default: 20000,  min: 0, step: 500,  hint: 'Current resale value of cars, motorcycles, boats, or RVs.' },
-      { id: 'other_assets',    label: 'Other Assets ($)',      type: 'number', default: 10000,  min: 0, step: 100,  hint: 'Business equity, collectibles, jewelry, and other valuables.' },
-      { id: 'sec_liabilities', type: 'section', label: 'Liabilities — What You Owe', icon: 'fa-arrow-trend-down' },
-      { id: 'credit_cards',    label: 'Credit Card Debt ($)',  type: 'number', default: 5000,   min: 0, step: 100,  hint: 'Total outstanding balance across all credit cards.' },
-      { id: 'personal_loans',  label: 'Personal Loans ($)',    type: 'number', default: 8000,   min: 0, step: 100,  hint: 'Personal, student, or auto loans you are repaying.' },
-      { id: 'mortgage',        label: 'Mortgage Balance ($)',  type: 'number', default: 250000, min: 0, step: 1000, hint: 'Remaining principal on your home mortgage.' },
-      { id: 'other_debt',      label: 'Other Debt ($)',        type: 'number', default: 2000,   min: 0, step: 100,  hint: 'Medical bills, tax debt, and any other outstanding obligations.' },
+      {
+        id: "sec_assets",
+        type: "section",
+        label: "Assets — What You Own",
+        icon: "fa-arrow-trend-up"
+      },
+      {
+        id: "cash_savings",
+        label: "Cash & Savings ($)",
+        type: "number",
+        default: 15000,
+        min: 0,
+        step: 100,
+        hint: "Checking accounts, savings accounts, cash on hand, and emergency funds."
+      },
+      {
+        id: "investments",
+        label: "Investments ($)",
+        type: "number",
+        default: 45000,
+        min: 0,
+        step: 100,
+        hint: "Stocks, bonds, mutual funds, ETFs, and brokerage accounts (not retirement)."
+      },
+      {
+        id: "retirement",
+        label: "Retirement Accounts ($)",
+        type: "number",
+        default: 60000,
+        min: 0,
+        step: 100,
+        hint: "401(k), IRA, Roth IRA, 403(b), and pension values."
+      },
+      {
+        id: "home_value",
+        label: "Home Value ($)",
+        type: "number",
+        default: 350000,
+        min: 0,
+        step: 1000,
+        hint: "Current market value of your primary residence or real estate."
+      },
+      {
+        id: "vehicles",
+        label: "Vehicles ($)",
+        type: "number",
+        default: 20000,
+        min: 0,
+        step: 500,
+        hint: "Current resale value of cars, motorcycles, boats, or RVs."
+      },
+      {
+        id: "other_assets",
+        label: "Other Assets ($)",
+        type: "number",
+        default: 10000,
+        min: 0,
+        step: 100,
+        hint: "Business equity, collectibles, jewelry, and other valuables."
+      },
+      {
+        id: "sec_liabilities",
+        type: "section",
+        label: "Liabilities — What You Owe",
+        icon: "fa-arrow-trend-down"
+      },
+      {
+        id: "credit_cards",
+        label: "Credit Card Debt ($)",
+        type: "number",
+        default: 5000,
+        min: 0,
+        step: 100,
+        hint: "Total outstanding balance across all credit cards."
+      },
+      {
+        id: "personal_loans",
+        label: "Personal Loans ($)",
+        type: "number",
+        default: 8000,
+        min: 0,
+        step: 100,
+        hint: "Personal, student, or auto loans you are repaying."
+      },
+      {
+        id: "mortgage",
+        label: "Mortgage Balance ($)",
+        type: "number",
+        default: 250000,
+        min: 0,
+        step: 1000,
+        hint: "Remaining principal on your home mortgage."
+      },
+      {
+        id: "other_debt",
+        label: "Other Debt ($)",
+        type: "number",
+        default: 2000,
+        min: 0,
+        step: 100,
+        hint: "Medical bills, tax debt, and any other outstanding obligations."
+      }
     ],
     calculate(v) {
       const cash       = safeNum(v.cash_savings, 0);
@@ -3121,85 +5542,289 @@ const TOOLS = {
         liabilityTable: liabilityRows,
       };
     },
-
     howTo: [
-      'Enter the value of each asset you own — cash, investments, retirement accounts, home, vehicles, and other valuables.',
-      'Enter the balance of each liability you owe — credit cards, personal loans, mortgage, and other debt.',
-      'Your net worth is calculated instantly as Total Assets minus Total Liabilities.',
-      'Review the asset and liability breakdown charts to see where your wealth is concentrated.',
-      'Check your debt-to-asset ratio and liquid-to-debt ratio to assess financial health.',
-      'Use the insight callout for a personalized recommendation on improving your net worth.',
+      "List your liquid cash assets (checking accounts, high-yield savings, CDs, emergency funds).",
+      "Add your investment assets (taxable brokerage, 401k, IRAs, mutual funds, crypto).",
+      "Include physical asset values (home market value, vehicle fair market value).",
+      "List all short-term liabilities (credit card balances, personal loans, medical debt).",
+      "List long-term liabilities (mortgage balance, student loans, auto loans).",
+      "Review your total net worth, liquid net worth, asset allocation, and debt-to-asset ratio."
     ],
     examples: [
-      { title: 'Early Career Professional', input: 'Cash: $15k, Investments: $45k, Retirement: $60k, Home: $350k, Vehicles: $20k | Debt: $5k CC, $8k Loans, $250k Mortgage', result: 'Net Worth: ~$227,000 | Debt-to-Asset: 50%' },
-      { title: 'Debt-Heavy Situation', input: 'Cash: $5k, Investments: $10k, Home: $200k | Debt: $15k CC, $20k Loans, $180k Mortgage', result: 'Net Worth: $0 | Debt-to-Asset: 88% — Focus on debt' },
-      { title: 'Strong Financial Health', input: 'Cash: $50k, Investments: $150k, Retirement: $200k, Home: $500k | Debt: $0 CC, $0 Loans, $150k Mortgage', result: 'Net Worth: ~$750,000 | Debt-to-Asset: 17%' },
+      {
+        title: "Young Professional Starting Out",
+        input: "Assets: $25,000 (Savings & 401k) | Liabilities: $35,000 (Student Loans)",
+        result: "Net Worth: -$10,000 (Normal starting trajectory; turns positive quickly)"
+      },
+      {
+        title: "Mid-Career Homeowner",
+        input: "Assets: $580,000 (Home $400k + Investments $180k) | Liabilities: $260,000 (Mortgage)",
+        result: "Net Worth: $320,000 ($140k home equity + $180k investments)"
+      },
+      {
+        title: "Debt-Free Investor",
+        input: "Assets: $750,000 (Index Funds, Cash, Paid-off Home) | Liabilities: $0",
+        result: "Net Worth: $750,000 (100% Asset Equity)"
+      },
+      {
+        title: "High-Income High-Debt Scenario",
+        input: "Assets: $400,000 | Liabilities: $350,000 (Mortgage + 2 Car Loans + Cards)",
+        result: "Net Worth: $50,000 (Focus on debt reduction to unlock rapid growth)"
+      }
     ],
-    formula: 'Net Worth = Total Assets \u2212 Total Liabilities | Debt-to-Asset Ratio = (Total Liabilities \u00f7 Total Assets) \u00d7 100 | Asset-to-Liability Ratio = Total Assets \u00f7 Total Liabilities | Liquid-to-Debt Ratio = (Cash + Investments) \u00f7 Total Liabilities \u00d7 100',
+    formula: "Net Worth = Total Assets (Cash + Investments + Real Estate + Vehicles) − Total Liabilities (Mortgages + Auto Loans + Student Loans + Credit Card Balances).",
     article: {
-      heading: 'How to Calculate Your Net Worth and Build Lasting Wealth',
-      intro: 'Your net worth is the single clearest number that captures your financial position — everything you own minus everything you owe. The GetCalcu Net Worth Calculator makes it effortless to track this number, understand where your wealth is concentrated, and identify the fastest path to growing it.',
+      heading: "How to Calculate and Grow Your Total Net Worth",
+      intro: "Your net worth is the single most comprehensive scorecard of your overall financial health. While income measures how much cash flows into your life, net worth measures how much wealth you actually keep and grow. The GetCalcu Net Worth Calculator helps you organize everything you own (assets) and everything you owe (liabilities) to see your true financial standing.",
       sections: [
-        { heading: 'Why Net Worth Matters More Than Income', body: 'Income is what you earn; net worth is what you keep. Two people earning the same salary can have wildly different net worths depending on how much they save, invest, and owe. Tracking net worth monthly reveals whether your financial habits are actually building wealth or just cycling money through your accounts.' },
-        { heading: 'Assets vs Liabilities: The Core Equation', body: 'Assets are anything you own that has value — cash, investments, retirement accounts, real estate, vehicles, and valuables. Liabilities are what you owe — credit cards, loans, and mortgages. Net worth is simply assets minus liabilities. A positive net worth means you own more than you owe; a negative one signals it is time to prioritize debt reduction.' },
-        { heading: 'Using Ratios to Assess Financial Health', body: 'Beyond the headline number, ratios reveal the quality of your balance sheet. The debt-to-asset ratio (liabilities \u00f7 assets) shows how leveraged you are — under 30% is healthy, over 50% is debt-heavy. The liquid-to-debt ratio (cash + investments \u00f7 liabilities) shows whether you could cover your debts with liquid assets in an emergency.' },
-      ],
+        {
+          heading: "The Basic Net Worth Formula: Assets Minus Liabilities",
+          body: "Your net worth is calculated with one simple equation: Total Assets − Total Liabilities = Net Worth. Assets are everything you own that has monetary value (cash, bank accounts, investments, real estate equity, vehicles). Liabilities are everything you owe to creditors (mortgages, student loans, car loans, credit card balances, personal debts)."
+        },
+        {
+          heading: "Liquid Net Worth vs. Total Net Worth",
+          body: "Total net worth includes illiquid assets like real estate equity, private business interests, and vehicles. Liquid net worth counts only assets that can be converted to cash immediately without significant loss of value (checking, savings, money market accounts, and taxable stock portfolios). Liquid net worth reflects your financial flexibility and resilience in an emergency."
+        },
+        {
+          heading: "How Home Equity Factors Into Net Worth",
+          body: "Home equity equals the current realistic market value of your property minus your remaining mortgage balance. If your home is worth $450,000 and you owe $280,000 on your mortgage, you have $170,000 in home equity asset value. When valuing real estate, use conservative estimates and account for potential 6% selling transaction costs."
+        },
+        {
+          heading: "Valuing Vehicles and Personal Property Realistically",
+          body: "Vehicles, furniture, and electronics are depreciating assets that lose value rapidly. Use realistic private-party Kelley Blue Book values for vehicles, and avoid listing everyday consumer goods or clothing unless they are high-value certified collectibles, jewelry, or art."
+        },
+        {
+          heading: "Net Worth Benchmarks by Age",
+          body: "In The Millionaire Next Door, authors Thomas Stanley and William Danko provide a classic formula for expected net worth: (Age × Annual Pre-Tax Household Income) ÷ 10. For example, a 40-year-old earning $100,000 has an expected benchmark net worth of $400,000."
+        },
+        {
+          heading: "Why Having a Negative Net Worth Is Normal Early On",
+          body: "Young adults and recent graduates often have a negative net worth due to student loans and entry-level salaries. As you pay down debt principal and invest in appreciating assets, your net worth naturally crosses into positive territory and accelerates through compounding."
+        },
+        {
+          heading: "The Two High-Leverage Drivers of Net Worth Growth",
+          body: "Growing your net worth comes down to two primary levers: widening your savings rate (increasing income while controlling lifestyle spending) and allocating your surplus savings into appreciating, productive assets (stock index funds, real estate, and retirement accounts)."
+        },
+        {
+          heading: "How Often Should You Track Your Net Worth?",
+          body: "Tracking your net worth once a quarter or twice a year is the sweet spot for most households. Daily or weekly tracking creates unnecessary anxiety over short-term stock market or housing fluctuations, while quarterly tracking reveals meaningful long-term trends."
+        }
+      ]
     },
     faqs: [
-      { q: 'How do I calculate my net worth?', a: 'Net worth is calculated as Total Assets minus Total Liabilities. Add up everything you own (cash, investments, retirement accounts, home value, vehicles, and other valuables), then subtract everything you owe (credit card debt, personal loans, mortgage balance, and other debts). The result is your net worth.' },
-      { q: 'What is a good net worth for my age?', a: 'A common benchmark is to have a net worth equal to 1x your annual income by age 30, 3x by 40, 6x by 50, and 8x by 60. However, these are rough guidelines — what matters most is the trend. If your net worth is growing each month, you are on the right track regardless of your starting point.' },
-      { q: 'What is a healthy debt-to-asset ratio?', a: 'A debt-to-asset ratio under 30% is generally considered healthy, 30-50% is manageable, and above 50% is debt-heavy. The ratio is calculated as Total Liabilities \u00f7 Total Assets \u00d7 100. A lower ratio means you own a larger share of your assets outright.' },
-      { q: 'Should I include my home and mortgage in net worth?', a: 'Yes. Your home is an asset at its current market value, and your mortgage is a liability at its remaining balance. Including both gives an accurate picture of your true net worth. Many people are surprised to find their home equity is their largest single asset.' },
-      { q: 'How often should I track my net worth?', a: 'Most financial experts recommend tracking net worth monthly. This cadence is frequent enough to catch problems early (like rising debt) but not so frequent that market fluctuations create noise. Monthly tracking also lets you see the compounding effect of consistent saving and investing.' },
-      { q: 'What is the difference between net worth and income?', a: 'Income is the money you earn over a period (monthly or annually), while net worth is the total value of what you own minus what you owe at a single point in time. You can have a high income and low net worth if you spend everything, or a modest income and growing net worth through disciplined saving and investing.' },
+      {
+        q: "What is net worth?",
+        a: "Net worth is the total dollar value of everything you own (your assets) minus everything you owe to creditors (your liabilities)."
+      },
+      {
+        q: "What counts as an asset when calculating net worth?",
+        a: "Assets include cash, checking and savings accounts, investment portfolios, retirement accounts (401k, IRA), real estate market value, and vehicles."
+      },
+      {
+        q: "What counts as a liability in net worth?",
+        a: "Liabilities include mortgages, student loans, car loans, credit card balances, personal loans, medical debts, and any other money owed."
+      },
+      {
+        q: "What is liquid net worth?",
+        a: "Liquid net worth includes only cash and assets that can be quickly converted to cash within days without heavy penalties (such as savings and taxable brokerage accounts), excluding real estate and vehicles."
+      },
+      {
+        q: "Should I include my primary home in my net worth?",
+        a: "Yes, your home is an asset. Include its realistic current market value under assets, and your remaining mortgage balance under liabilities. The difference is your home equity."
+      },
+      {
+        q: "Is it bad to have a negative net worth?",
+        a: "A negative net worth is common for students and young adults starting out with student loans or a new mortgage. Focus on building an emergency fund, paying down debt, and investing consistently."
+      },
+      {
+        q: "How often should I calculate my net worth?",
+        a: "Calculating your net worth quarterly or twice a year provides a clear long-term perspective without stressing over daily stock market swings."
+      },
+      {
+        q: "Does high income mean high net worth?",
+        a: "Not necessarily. A person earning $300,000 who spends $300,000 has zero net worth growth, while someone earning $70,000 who consistently invests $15,000 each year can accumulate a million-dollar net worth."
+      },
+      {
+        q: "How do I calculate expected net worth for my age?",
+        a: "A classic formula from The Millionaire Next Door is: Expected Net Worth = (Your Age × Annual Gross Income) ÷ 10."
+      },
+      {
+        q: "Should I include cars in net worth calculations?",
+        a: "You can include cars at their conservative private-party resale value (such as Kelley Blue Book), but remember they depreciate annually."
+      },
+      {
+        q: "What is the fastest way to increase net worth?",
+        a: "The fastest way is to widen the gap between income and expenses: increase earnings, keep living costs controlled, pay off high-interest debt, and invest the surplus into diversified index funds."
+      },
+      {
+        q: "How does paying off debt change net worth?",
+        a: "Paying off debt with cash does not immediately change your net worth (cash assets decrease by the same amount liabilities decrease), but eliminating future interest charges significantly accelerates your future net worth growth."
+      },
+      {
+        q: "Should personal items like jewelry or furniture be included?",
+        a: "Generally, no. Everyday furniture, clothes, and electronics lose value rapidly. Only include certified valuable jewelry, fine art, or high-value collectibles."
+      },
+      {
+        q: "How do taxes impact retirement asset values in net worth?",
+        a: "Traditional 401(k) and IRA balances are listed at current gross value, though future withdrawals will be subject to income taxes."
+      },
+      {
+        q: "What is a good debt-to-asset ratio?",
+        a: "A debt-to-asset ratio below 50% is generally considered healthy, and as you approach retirement, targeting a ratio below 10% to 20% provides strong financial freedom."
+      }
     ],
+    related: [
+      "budget-planner",
+      "retirement-calculator",
+      "investment-calculator",
+      "savings-calculator",
+      "fire-calculator",
+      "credit-card-payoff-calculator"
+    ]
   },
-
-  // ── FIRE Calculator ─────────────────────────────────────
-  'fire-calculator': {
-    id: 'fire-calculator',
-    name: 'FIRE Calculator',
-    category: 'Finance',
-    icon: 'fa-fire',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.',
-    metaTitle: 'FIRE Calculator – Financial Independence & Early Retirement',
-    metaDescription: 'Free FIRE Calculator. Calculate your FIRE number, retirement timeline, investment growth, passive income, and financial independence progress with interactive charts.',
+  "fire-calculator": {
+    id: "fire-calculator",
+    name: "FIRE Calculator",
+    category: "Finance",
+    icon: "fa-fire",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.",
+    metaTitle: "FIRE Calculator – Financial Independence & Early Retirement",
+    metaDescription: "Free FIRE Calculator. Calculate your FIRE number, retirement timeline, investment growth, passive income, and financial independence progress with interactive charts.",
     keywords: [
-      'fire calculator',
-      'financial independence calculator',
-      'early retirement calculator',
-      'coast fire calculator',
-      'fi number calculator',
-      'financial freedom calculator',
-      'retirement savings calculator',
-      'years until retirement calculator',
-      'fire number',
-      '4 percent rule calculator',
+      "fire calculator",
+      "financial independence calculator",
+      "early retirement calculator",
+      "coast fire calculator",
+      "fi number calculator",
+      "financial freedom calculator",
+      "retirement savings calculator",
+      "years until retirement calculator",
+      "fire number",
+      "4 percent rule calculator"
     ],
     fields: [
-      { id: 'annual_income',       label: 'Annual After-Tax Income ($)', type: 'range', default: 80000,  min: 10000,  max: 500000,  step: 1000,  hint: 'Your total yearly income after taxes. Used to calculate your savings rate.' },
-      { id: 'annual_expenses',     label: 'Annual Expenses ($)',         type: 'range', default: 40000,  min: 5000,   max: 300000,  step: 500,   hint: 'Your total yearly spending. The difference between income and expenses is your annual savings.' },
-      { id: 'current_portfolio',   label: 'Current Investment Portfolio ($)', type: 'range', default: 100000, min: 0, max: 10000000, step: 1000, hint: 'Your current total invested assets across all accounts (401k, IRA, brokerage, etc.).' },
-      { id: 'monthly_contribution',label: 'Monthly Investment Contribution ($)', type: 'range', default: 2000, min: 0, max: 25000, step: 100, hint: 'How much you add to your investments each month.' },
-      { id: 'annual_return',       label: 'Expected Annual Investment Return (%)', type: 'range', default: 7, min: 1, max: 15, step: 0.1, hint: 'Expected average yearly return. S&P 500 long-term average: about 7-10%. <a href="#faqs">See realistic return rates ↓</a>' },
-      { id: 'inflation_rate',      label: 'Inflation Rate (%)',          type: 'range', default: 2.5, min: 0, max: 10, step: 0.1, hint: 'Expected annual inflation rate. US historical average: 2.5-3%. <a href="#faqs">See how inflation affects FIRE ↓</a>' },
-      { id: 'withdrawal_rate',     label: 'Safe Withdrawal Rate (%)',    type: 'range', default: 4, min: 2, max: 6, step: 0.1, hint: 'The percentage of your portfolio you withdraw annually in retirement. The 4% rule is the standard benchmark. <a href="#faqs">See the 4% rule explained ↓</a>' },
-      { id: 'retirement_spending', label: 'Retirement Spending Adjustment', type: 'select', default: 'same',
+      {
+        id: "annual_income",
+        label: "Annual After-Tax Income ($)",
+        type: "range",
+        default: 80000,
+        min: 10000,
+        max: 500000,
+        step: 1000,
+        hint: "Your total yearly income after taxes. Used to calculate your savings rate."
+      },
+      {
+        id: "annual_expenses",
+        label: "Annual Expenses ($)",
+        type: "range",
+        default: 40000,
+        min: 5000,
+        max: 300000,
+        step: 500,
+        hint: "Your total yearly spending. The difference between income and expenses is your annual savings."
+      },
+      {
+        id: "current_portfolio",
+        label: "Current Investment Portfolio ($)",
+        type: "range",
+        default: 100000,
+        min: 0,
+        max: 10000000,
+        step: 1000,
+        hint: "Your current total invested assets across all accounts (401k, IRA, brokerage, etc.)."
+      },
+      {
+        id: "monthly_contribution",
+        label: "Monthly Investment Contribution ($)",
+        type: "range",
+        default: 2000,
+        min: 0,
+        max: 25000,
+        step: 100,
+        hint: "How much you add to your investments each month."
+      },
+      {
+        id: "annual_return",
+        label: "Expected Annual Investment Return (%)",
+        type: "range",
+        default: 7,
+        min: 1,
+        max: 15,
+        step: 0.1,
+        hint: "Expected average yearly return. S&P 500 long-term average: about 7-10%. <a href=\"#faqs\">See realistic return rates ↓</a>"
+      },
+      {
+        id: "inflation_rate",
+        label: "Inflation Rate (%)",
+        type: "range",
+        default: 2.5,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: "Expected annual inflation rate. US historical average: 2.5-3%. <a href=\"#faqs\">See how inflation affects FIRE ↓</a>"
+      },
+      {
+        id: "withdrawal_rate",
+        label: "Safe Withdrawal Rate (%)",
+        type: "range",
+        default: 4,
+        min: 2,
+        max: 6,
+        step: 0.1,
+        hint: "The percentage of your portfolio you withdraw annually in retirement. The 4% rule is the standard benchmark. <a href=\"#faqs\">See the 4% rule explained ↓</a>"
+      },
+      {
+        id: "retirement_spending",
+        label: "Retirement Spending Adjustment",
+        type: "select",
+        default: "same",
         options: [
-          { value: 'same',     label: 'Same Spending' },
-          { value: 'increase', label: 'Increase Spending (+20%)' },
-          { value: 'reduce',   label: 'Reduce Spending (-20%)' },
-        ], hint: 'Adjust your retirement expenses relative to your current spending. Many retirees spend less, but some plan for more travel and leisure.' },
-      { id: 'fire_mode',           label: 'Calculation Mode',            type: 'select', default: 'standard',
+          {
+            value: "same",
+            label: "Same Spending"
+          },
+          {
+            value: "increase",
+            label: "Increase Spending (+20%)"
+          },
+          {
+            value: "reduce",
+            label: "Reduce Spending (-20%)"
+          }
+        ],
+        hint: "Adjust your retirement expenses relative to your current spending. Many retirees spend less, but some plan for more travel and leisure."
+      },
+      {
+        id: "fire_mode",
+        label: "Calculation Mode",
+        type: "select",
+        default: "standard",
         options: [
-          { value: 'standard', label: 'Standard FIRE' },
-          { value: 'lean',     label: 'Lean FIRE' },
-          { value: 'fat',      label: 'Fat FIRE' },
-          { value: 'coast',    label: 'Coast FIRE' },
-          { value: 'barista',  label: 'Barista FIRE' },
-        ], hint: 'Choose your FIRE strategy. Each mode adjusts assumptions to match different retirement lifestyles. <a href="#faqs">See FIRE types explained ↓</a>' },
+          {
+            value: "standard",
+            label: "Standard FIRE"
+          },
+          {
+            value: "lean",
+            label: "Lean FIRE"
+          },
+          {
+            value: "fat",
+            label: "Fat FIRE"
+          },
+          {
+            value: "coast",
+            label: "Coast FIRE"
+          },
+          {
+            value: "barista",
+            label: "Barista FIRE"
+          }
+        ],
+        hint: "Choose your FIRE strategy. Each mode adjusts assumptions to match different retirement lifestyles. <a href=\"#faqs\">See FIRE types explained ↓</a>"
+      }
     ],
     calculate(v) {
       // ── Extract & validate inputs
@@ -3456,159 +6081,478 @@ const TOOLS = {
 
       return { stats, chart, chart2, compareChart, table, insight };
     },
-
-    // ── How-To Guide
     howTo: [
-      'Enter your annual after-tax income and annual expenses — the calculator instantly computes your savings rate.',
-      'Add your current investment portfolio value and monthly contribution amount.',
-      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and inflation rate (2.5-3% historical average).',
-      'Choose your safe withdrawal rate — the 4% rule is the standard benchmark for a 30-year retirement.',
-      'Select your retirement spending adjustment and FIRE mode (Standard, Lean, Fat, Coast, or Barista) to match your lifestyle goals.',
-      'Review your FIRE number, years until financial independence, passive income projections, and readiness score.',
-      'Use the scenario comparison table to see how increasing contributions, boosting returns, or cutting expenses accelerates your timeline.',
+      "Enter your annual after-tax income and annual expenses — the calculator instantly computes your savings rate.",
+      "Add your current investment portfolio value and monthly contribution amount.",
+      "Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and inflation rate (2.5-3% historical average).",
+      "Choose your safe withdrawal rate — the 4% rule is the standard benchmark for a 30-year retirement.",
+      "Select your retirement spending adjustment and FIRE mode (Standard, Lean, Fat, Coast, or Barista) to match your lifestyle goals.",
+      "Review your FIRE number, years until financial independence, passive income projections, and readiness score.",
+      "Use the scenario comparison table to see how increasing contributions, boosting returns, or cutting expenses accelerates your timeline."
     ],
-
-    // ── Real-World Examples
     examples: [
       {
-        title: 'Standard FIRE at 45',
-        input: 'Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7%, Inflation: 2.5%, Withdrawal: 4%',
-        result: 'FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50%',
+        title: "Standard FIRE at 45",
+        input: "Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7%, Inflation: 2.5%, Withdrawal: 4%",
+        result: "FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50%"
       },
       {
-        title: 'Lean FIRE with Minimalist Lifestyle',
-        input: 'Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Lean FIRE',
-        result: 'FIRE Number: ~$468,750 | Years to FIRE: ~14 years | Savings Rate: 58%',
+        title: "Lean FIRE with Minimalist Lifestyle",
+        input: "Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Lean FIRE",
+        result: "FIRE Number: ~$468,750 | Years to FIRE: ~14 years | Savings Rate: 58%"
       },
       {
-        title: 'Coast FIRE — Let Compounding Do the Work',
-        input: 'Income: $100,000, Expenses: $50,000, Portfolio: $200,000, Monthly: $2,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Coast FIRE',
-        result: 'Coast Number: ~$131,000 | Current portfolio exceeds coast number — compounding alone reaches FIRE',
+        title: "Coast FIRE — Let Compounding Do the Work",
+        input: "Income: $100,000, Expenses: $50,000, Portfolio: $200,000, Monthly: $2,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Coast FIRE",
+        result: "Coast Number: ~$131,000 | Current portfolio exceeds coast number — compounding alone reaches FIRE"
       },
       {
-        title: 'Aggressive Early Retirement at 40',
-        input: 'Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8%, Inflation: 2.5%, Withdrawal: 4%',
-        result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12 years | Savings Rate: 62.5%',
-      },
+        title: "Aggressive Early Retirement at 40",
+        input: "Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8%, Inflation: 2.5%, Withdrawal: 4%",
+        result: "FIRE Number: $1,125,000 | Years to FIRE: ~12 years | Savings Rate: 62.5%"
+      }
     ],
-    formula: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r] | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years | Monthly Passive Income = Portfolio × Withdrawal Rate ÷ 12',
-
-    // ── SEO Article Content
+    formula: "FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r] | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years | Monthly Passive Income = Portfolio × Withdrawal Rate ÷ 12",
     article: {
-      heading: 'The Complete Guide to FIRE: Financial Independence, Retire Early',
-      intro: 'The FIRE (Financial Independence, Retire Early) movement has transformed how millions of people think about work, savings, and life. Instead of working until 65, FIRE practitioners aggressively save and invest a large portion of their income — often 50% or more — to build a portfolio large enough to fund their lifestyle indefinitely. The GetCalcu FIRE Calculator helps you determine your FIRE number, estimate how long it will take to reach financial independence, and visualize your journey with interactive charts.',
+      heading: "The Complete Guide to FIRE: Financial Independence, Retire Early",
+      intro: "The FIRE (Financial Independence, Retire Early) movement has transformed how millions of people think about work, savings, and life. Instead of working until 65, FIRE practitioners aggressively save and invest a large portion of their income — often 50% or more — to build a portfolio large enough to fund their lifestyle indefinitely. The GetCalcu FIRE Calculator helps you determine your FIRE number, estimate how long it will take to reach financial independence, and visualize your journey with interactive charts.",
       sections: [
-        { heading: 'What is FIRE?', body: 'FIRE stands for Financial Independence, Retire Early. It is a lifestyle movement focused on saving aggressively (typically 50-70% of income) and investing those savings in low-cost index funds or other growth assets. The goal is to build a portfolio large enough that its investment returns can cover your living expenses indefinitely — giving you the freedom to retire decades earlier than the traditional retirement age of 65.' },
-        { heading: 'How FIRE Works', body: 'FIRE works through three interconnected principles: saving aggressively, investing consistently, and letting compound growth do the heavy lifting. By saving 50% or more of your income, you dramatically shorten the time needed to reach financial independence. Your investments grow through compound returns — each year\'s gains earn gains in future years. Once your portfolio reaches roughly 25 times your annual expenses (the 4% rule), you can safely withdraw 4% per year indefinitely.' },
-        { heading: 'Understanding the 4% Rule', body: 'The 4% rule originated from the Trinity Study, a landmark 1998 research paper that analyzed historical stock and bond returns. It found that withdrawing 4% of your portfolio in the first year of retirement, then adjusting for inflation each year, had a high probability of lasting 30 years. This translates to a FIRE number of 25 times your annual expenses. While the 4% rule has limitations — it assumes a 30-year retirement and historical market conditions — it remains the most widely used benchmark in the FIRE community.' },
-        { heading: 'Types of FIRE', body: 'The FIRE movement has evolved into several distinct strategies. Standard FIRE targets your current lifestyle with a 4% withdrawal rate. Lean FIRE assumes a minimalist lifestyle with significantly lower expenses (often 25-50% less). Fat FIRE targets a more luxurious retirement with higher spending. Coast FIRE means your current portfolio will grow to your FIRE number without additional contributions — you just need to cover current expenses. Barista FIRE combines part-time work with a smaller portfolio, where part-time income covers a portion of expenses.' },
-        { heading: 'How to Reach FIRE Faster', body: 'Accelerating your path to FIRE requires a multi-pronged approach. Increasing your income through career advancement, side hustles, or freelancing gives you more to save. Reducing expenses through mindful spending, downsizing, or geo-arbitrage (living in lower-cost areas) boosts your savings rate. Investing in low-cost index funds with 7-10% historical returns maximizes compound growth. Tax efficiency — using 401(k)s, IRAs, HSAs, and taxable accounts strategically — keeps more of your returns. Diversification across asset classes reduces risk. Automating your savings ensures consistency. And taking advantage of employer retirement plan matches is essentially free money.' },
-        { heading: 'Common FIRE Mistakes', body: 'Even well-intentioned FIRE practitioners make mistakes. Ignoring inflation can leave you short in retirement — always use inflation-adjusted returns. Unrealistic return assumptions (expecting 12%+ annually) can derail your plan. Spending creep — gradually increasing expenses as income rises — undermines your savings rate. Poor diversification concentrates risk in a single asset class. Early withdrawals from retirement accounts trigger penalties and taxes. And underestimating healthcare costs — especially before Medicare eligibility — is one of the most common FIRE planning errors.' },
-        { heading: 'FIRE Calculation Formula', body: 'The core FIRE formula is: FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate. For example, if your annual expenses are $50,000 and you use a 4% withdrawal rate, your FIRE number is $1,250,000. To project portfolio growth, use the compound interest formula: FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r], where P is your current portfolio, r is the monthly return rate, n is the number of months, and PMT is your monthly contribution. The inflation-adjusted FIRE number accounts for rising costs: Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation Rate)^Years.' },
-        { heading: 'Example Calculation', body: 'Consider a realistic scenario: You earn $80,000 after taxes, spend $40,000 annually, have $100,000 invested, and contribute $2,000 monthly. Your savings rate is 50%. Using a 4% withdrawal rate, your FIRE number is $1,000,000. With a 7% annual return, your portfolio grows to $1,000,000 in approximately 17.5 years. At that point, your portfolio generates $40,000 per year in passive income — exactly matching your expenses. Adjusting for 2.5% inflation, you would need approximately $1,540,000 in future dollars to maintain the same purchasing power.' },
-      ],
+        {
+          heading: "What is FIRE?",
+          body: "FIRE stands for Financial Independence, Retire Early. It is a lifestyle movement focused on saving aggressively (typically 50-70% of income) and investing those savings in low-cost index funds or other growth assets. The goal is to build a portfolio large enough that its investment returns can cover your living expenses indefinitely — giving you the freedom to retire decades earlier than the traditional retirement age of 65."
+        },
+        {
+          heading: "How FIRE Works",
+          body: "FIRE works through three interconnected principles: saving aggressively, investing consistently, and letting compound growth do the heavy lifting. By saving 50% or more of your income, you dramatically shorten the time needed to reach financial independence. Your investments grow through compound returns — each year's gains earn gains in future years. Once your portfolio reaches roughly 25 times your annual expenses (the 4% rule), you can safely withdraw 4% per year indefinitely."
+        },
+        {
+          heading: "Understanding the 4% Rule",
+          body: "The 4% rule originated from the Trinity Study, a landmark 1998 research paper that analyzed historical stock and bond returns. It found that withdrawing 4% of your portfolio in the first year of retirement, then adjusting for inflation each year, had a high probability of lasting 30 years. This translates to a FIRE number of 25 times your annual expenses. While the 4% rule has limitations — it assumes a 30-year retirement and historical market conditions — it remains the most widely used benchmark in the FIRE community."
+        },
+        {
+          heading: "Types of FIRE",
+          body: "The FIRE movement has evolved into several distinct strategies. Standard FIRE targets your current lifestyle with a 4% withdrawal rate. Lean FIRE assumes a minimalist lifestyle with significantly lower expenses (often 25-50% less). Fat FIRE targets a more luxurious retirement with higher spending. Coast FIRE means your current portfolio will grow to your FIRE number without additional contributions — you just need to cover current expenses. Barista FIRE combines part-time work with a smaller portfolio, where part-time income covers a portion of expenses."
+        },
+        {
+          heading: "How to Reach FIRE Faster",
+          body: "Accelerating your path to FIRE requires a multi-pronged approach. Increasing your income through career advancement, side hustles, or freelancing gives you more to save. Reducing expenses through mindful spending, downsizing, or geo-arbitrage (living in lower-cost areas) boosts your savings rate. Investing in low-cost index funds with 7-10% historical returns maximizes compound growth. Tax efficiency — using 401(k)s, IRAs, HSAs, and taxable accounts strategically — keeps more of your returns. Diversification across asset classes reduces risk. Automating your savings ensures consistency. And taking advantage of employer retirement plan matches is essentially free money."
+        },
+        {
+          heading: "Common FIRE Mistakes",
+          body: "Even well-intentioned FIRE practitioners make mistakes. Ignoring inflation can leave you short in retirement — always use inflation-adjusted returns. Unrealistic return assumptions (expecting 12%+ annually) can derail your plan. Spending creep — gradually increasing expenses as income rises — undermines your savings rate. Poor diversification concentrates risk in a single asset class. Early withdrawals from retirement accounts trigger penalties and taxes. And underestimating healthcare costs — especially before Medicare eligibility — is one of the most common FIRE planning errors."
+        },
+        {
+          heading: "FIRE Calculation Formula",
+          body: "The core FIRE formula is: FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate. For example, if your annual expenses are $50,000 and you use a 4% withdrawal rate, your FIRE number is $1,250,000. To project portfolio growth, use the compound interest formula: FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r], where P is your current portfolio, r is the monthly return rate, n is the number of months, and PMT is your monthly contribution. The inflation-adjusted FIRE number accounts for rising costs: Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation Rate)^Years."
+        },
+        {
+          heading: "Example Calculation",
+          body: "Consider a realistic scenario: You earn $80,000 after taxes, spend $40,000 annually, have $100,000 invested, and contribute $2,000 monthly. Your savings rate is 50%. Using a 4% withdrawal rate, your FIRE number is $1,000,000. With a 7% annual return, your portfolio grows to $1,000,000 in approximately 17.5 years. At that point, your portfolio generates $40,000 per year in passive income — exactly matching your expenses. Adjusting for 2.5% inflation, you would need approximately $1,540,000 in future dollars to maintain the same purchasing power."
+        }
+      ]
     },
-
-    // ── Schema-Ready FAQs
     faqs: [
-      { q: 'What is a good FIRE number?', a: 'A good FIRE number is typically 25 times your annual retirement expenses, based on the 4% rule. For example, if you plan to spend $40,000 per year in retirement, your FIRE number is $1,000,000. However, your specific FIRE number depends on your lifestyle, withdrawal rate, and expected retirement duration. Use our FIRE Calculator to find your personalized number.' },
-      { q: 'Is the 4% rule still valid?', a: 'The 4% rule, derived from the Trinity Study, remains a widely used benchmark but has limitations. It assumes a 30-year retirement, a 50/50 stock-bond portfolio, and historical market conditions. Some financial experts suggest a 3-3.5% withdrawal rate for longer retirements (40+ years) or conservative portfolios. The 4% rule is a useful starting point, but you should stress-test your plan with different scenarios.' },
-      { q: 'How much should I save for FIRE?', a: 'The amount you need to save depends on your target FIRE number and timeline. A common benchmark is saving 50% of your after-tax income, which typically allows FIRE in 15-20 years. Saving 25% takes about 30 years, while saving 70% can achieve FIRE in under 10 years. Use our FIRE Calculator to see how your savings rate affects your timeline.' },
-      { q: 'Can I retire at 40?', a: 'Yes, retiring at 40 is achievable with aggressive saving and investing. To retire at 40, you typically need a savings rate of 50-70% of your income and a portfolio of 25-30 times your annual expenses. For example, with $50,000 annual expenses, you would need $1.25-1.5 million. Starting early, maximizing income, and keeping expenses low are the keys to early retirement.' },
-      { q: 'What is Coast FIRE?', a: 'Coast FIRE is a FIRE strategy where your current portfolio is large enough that it will grow to your FIRE number by retirement age without any additional contributions. You "coast" on compound growth while working to cover current expenses. For example, if you need $1,000,000 at age 60 and have 30 years to grow at 7%, you only need about $131,000 today to reach that goal.' },
-      { q: 'What is Lean FIRE?', a: 'Lean FIRE is a FIRE strategy that targets a minimalist lifestyle with significantly lower expenses — often 25-50% less than a standard lifestyle. Lean FIRE practitioners typically aim for a FIRE number of $500,000-$750,000, which supports $20,000-$30,000 in annual spending at a 4% withdrawal rate. This approach requires frugal living but can be achieved much faster.' },
-      { q: 'How accurate is this calculator?', a: 'This FIRE Calculator uses standard financial formulas (compound interest, the 4% rule, inflation adjustment) and provides accurate projections based on your inputs. However, all financial projections involve uncertainty — actual market returns, inflation, and expenses will vary. Use conservative assumptions and review your plan regularly. The calculator is a planning tool, not a guarantee.' },
-      { q: 'Should inflation be included in FIRE calculations?', a: 'Yes, absolutely. Inflation erodes purchasing power over time — at 2.5% annual inflation, $1,000,000 today will only buy about $477,000 worth of goods in 30 years. Our FIRE Calculator shows both your nominal FIRE number and the inflation-adjusted amount you will actually need in future dollars.' },
-      { q: 'What investment return should I assume?', a: 'For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation, or 4-7% after inflation. A conservative planning assumption is 6-7% nominal or 4-5% real return. For a balanced 60/40 portfolio, use 5-7%. Always use a rate you are comfortable with and stress-test with lower returns.' },
-      { q: 'What happens if markets decline?', a: 'Market declines are normal and expected — the stock market has experienced 10-20% drawdowns roughly every 3-5 years. During the accumulation phase, market declines are actually beneficial because your contributions buy more shares at lower prices. The risk is highest during the withdrawal phase, which is why the 4% rule and having a cash buffer are important. Consider a bond tent or cash reserve to weather early-retirement market downturns.' },
-      { q: 'What is Barista FIRE?', a: 'Barista FIRE is a hybrid strategy where you retire from your full-time career but continue working part-time (like at a coffee shop, hence the name) to cover a portion of your expenses. This reduces the FIRE number you need, since part-time income covers some costs. It also provides health insurance benefits in some cases, which can be a significant advantage before Medicare eligibility.' },
-      { q: 'How does the savings rate affect my FIRE timeline?', a: 'Your savings rate is the single most powerful factor in your FIRE timeline. At a 10% savings rate, FIRE takes about 51 years. At 25%, it takes about 32 years. At 50%, it takes about 17 years. At 70%, it takes about 9 years. The relationship is exponential — small increases in savings rate near the high end dramatically shorten your timeline.' },
-      { q: 'What is the difference between FIRE and traditional retirement?', a: 'Traditional retirement typically means working until age 65-67, relying on Social Security, pensions, and retirement accounts. FIRE means achieving financial independence much earlier — often in your 30s, 40s, or 50s — by saving aggressively and living on investment income. FIRE gives you the freedom to choose how you spend your time, whether that means retiring completely, working part-time, or pursuing passion projects.' },
-      { q: 'How do taxes affect my FIRE plan?', a: 'Taxes can significantly impact your FIRE journey. Using tax-advantaged accounts (401(k), IRA, HSA) reduces your current tax burden and accelerates growth. In retirement, strategically withdrawing from taxable, tax-deferred, and tax-free accounts can minimize your tax bill. Consider Roth conversion ladders to access retirement funds before age 59.5 without penalties. Our calculator uses after-tax income, so your savings rate already reflects your tax situation.' },
-      { q: 'What is the 25x rule?', a: 'The 25x rule is a quick way to estimate your FIRE number: multiply your annual expenses by 25. This is derived from the 4% rule — if you can withdraw 4% of your portfolio annually, you need 25 times your annual expenses (1 ÷ 0.04 = 25). For example, $40,000 in annual expenses × 25 = $1,000,000 FIRE number.' },
-    ],
+      {
+        q: "What is a good FIRE number?",
+        a: "A good FIRE number is typically 25 times your annual retirement expenses, based on the 4% rule. For example, if you plan to spend $40,000 per year in retirement, your FIRE number is $1,000,000. However, your specific FIRE number depends on your lifestyle, withdrawal rate, and expected retirement duration. Use our FIRE Calculator to find your personalized number."
+      },
+      {
+        q: "Is the 4% rule still valid?",
+        a: "The 4% rule, derived from the Trinity Study, remains a widely used benchmark but has limitations. It assumes a 30-year retirement, a 50/50 stock-bond portfolio, and historical market conditions. Some financial experts suggest a 3-3.5% withdrawal rate for longer retirements (40+ years) or conservative portfolios. The 4% rule is a useful starting point, but you should stress-test your plan with different scenarios."
+      },
+      {
+        q: "How much should I save for FIRE?",
+        a: "The amount you need to save depends on your target FIRE number and timeline. A common benchmark is saving 50% of your after-tax income, which typically allows FIRE in 15-20 years. Saving 25% takes about 30 years, while saving 70% can achieve FIRE in under 10 years. Use our FIRE Calculator to see how your savings rate affects your timeline."
+      },
+      {
+        q: "Can I retire at 40?",
+        a: "Yes, retiring at 40 is achievable with aggressive saving and investing. To retire at 40, you typically need a savings rate of 50-70% of your income and a portfolio of 25-30 times your annual expenses. For example, with $50,000 annual expenses, you would need $1.25-1.5 million. Starting early, maximizing income, and keeping expenses low are the keys to early retirement."
+      },
+      {
+        q: "What is Coast FIRE?",
+        a: "Coast FIRE is a FIRE strategy where your current portfolio is large enough that it will grow to your FIRE number by retirement age without any additional contributions. You \"coast\" on compound growth while working to cover current expenses. For example, if you need $1,000,000 at age 60 and have 30 years to grow at 7%, you only need about $131,000 today to reach that goal."
+      },
+      {
+        q: "What is Lean FIRE?",
+        a: "Lean FIRE is a FIRE strategy that targets a minimalist lifestyle with significantly lower expenses — often 25-50% less than a standard lifestyle. Lean FIRE practitioners typically aim for a FIRE number of $500,000-$750,000, which supports $20,000-$30,000 in annual spending at a 4% withdrawal rate. This approach requires frugal living but can be achieved much faster."
+      },
+      {
+        q: "How accurate is this calculator?",
+        a: "This FIRE Calculator uses standard financial formulas (compound interest, the 4% rule, inflation adjustment) and provides accurate projections based on your inputs. However, all financial projections involve uncertainty — actual market returns, inflation, and expenses will vary. Use conservative assumptions and review your plan regularly. The calculator is a planning tool, not a guarantee."
+      },
+      {
+        q: "Should inflation be included in FIRE calculations?",
+        a: "Yes, absolutely. Inflation erodes purchasing power over time — at 2.5% annual inflation, $1,000,000 today will only buy about $477,000 worth of goods in 30 years. Our FIRE Calculator shows both your nominal FIRE number and the inflation-adjusted amount you will actually need in future dollars."
+      },
+      {
+        q: "What investment return should I assume?",
+        a: "For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation, or 4-7% after inflation. A conservative planning assumption is 6-7% nominal or 4-5% real return. For a balanced 60/40 portfolio, use 5-7%. Always use a rate you are comfortable with and stress-test with lower returns."
+      },
+      {
+        q: "What happens if markets decline?",
+        a: "Market declines are normal and expected — the stock market has experienced 10-20% drawdowns roughly every 3-5 years. During the accumulation phase, market declines are actually beneficial because your contributions buy more shares at lower prices. The risk is highest during the withdrawal phase, which is why the 4% rule and having a cash buffer are important. Consider a bond tent or cash reserve to weather early-retirement market downturns."
+      },
+      {
+        q: "What is Barista FIRE?",
+        a: "Barista FIRE is a hybrid strategy where you retire from your full-time career but continue working part-time (like at a coffee shop, hence the name) to cover a portion of your expenses. This reduces the FIRE number you need, since part-time income covers some costs. It also provides health insurance benefits in some cases, which can be a significant advantage before Medicare eligibility."
+      },
+      {
+        q: "How does the savings rate affect my FIRE timeline?",
+        a: "Your savings rate is the single most powerful factor in your FIRE timeline. At a 10% savings rate, FIRE takes about 51 years. At 25%, it takes about 32 years. At 50%, it takes about 17 years. At 70%, it takes about 9 years. The relationship is exponential — small increases in savings rate near the high end dramatically shorten your timeline."
+      },
+      {
+        q: "What is the difference between FIRE and traditional retirement?",
+        a: "Traditional retirement typically means working until age 65-67, relying on Social Security, pensions, and retirement accounts. FIRE means achieving financial independence much earlier — often in your 30s, 40s, or 50s — by saving aggressively and living on investment income. FIRE gives you the freedom to choose how you spend your time, whether that means retiring completely, working part-time, or pursuing passion projects."
+      },
+      {
+        q: "How do taxes affect my FIRE plan?",
+        a: "Taxes can significantly impact your FIRE journey. Using tax-advantaged accounts (401(k), IRA, HSA) reduces your current tax burden and accelerates growth. In retirement, strategically withdrawing from taxable, tax-deferred, and tax-free accounts can minimize your tax bill. Consider Roth conversion ladders to access retirement funds before age 59.5 without penalties. Our calculator uses after-tax income, so your savings rate already reflects your tax situation."
+      },
+      {
+        q: "What is the 25x rule?",
+        a: "The 25x rule is a quick way to estimate your FIRE number: multiply your annual expenses by 25. This is derived from the 4% rule — if you can withdraw 4% of your portfolio annually, you need 25 times your annual expenses (1 ÷ 0.04 = 25). For example, $40,000 in annual expenses × 25 = $1,000,000 FIRE number."
+      }
+    ]
   },
-
-  // ── Amortization Calculator ─────────────────────────────────────
-  'amortization-calculator': {
-    id: 'amortization-calculator',
-    name: 'Amortization Calculator',
-    category: 'Finance',
-    icon: 'fa-chart-simple',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate loan payments, generate a complete amortization schedule, visualize principal and interest over time, and analyze the impact of extra payments.',
-    metaTitle: 'Amortization Calculator – Loan Payment & Schedule | GetCalcu',
-    metaDescription: 'Free Amortization Calculator with interactive charts, payment schedule, extra payment analysis, and downloadable loan repayment tables. Compare scenarios and see how extra payments save interest.',
+  "amortization-calculator": {
+    id: "amortization-calculator",
+    name: "Amortization Calculator",
+    category: "Finance",
+    icon: "fa-chart-simple",
+    iconClass: "icon-finance",
+    tagClass: "tag-finance",
+    description: "Calculate loan payments, generate a complete amortization schedule, visualize principal and interest over time, and analyze the impact of extra payments.",
+    metaTitle: "Amortization Calculator – Loan Payment & Schedule | GetCalcu",
+    metaDescription: "Free Amortization Calculator with interactive charts, payment schedule, extra payment analysis, and downloadable loan repayment tables. Compare scenarios and see how extra payments save interest.",
     keywords: [
-      'amortization calculator',
-      'loan amortization calculator',
-      'mortgage amortization calculator',
-      'loan payment calculator',
-      'amortization schedule',
-      'mortgage payment calculator',
-      'principal and interest calculator',
-      'extra payment calculator',
-      'monthly loan payment calculator',
-      'loan repayment calculator',
+      "amortization calculator",
+      "loan amortization calculator",
+      "mortgage amortization calculator",
+      "loan payment calculator",
+      "amortization schedule",
+      "mortgage payment calculator",
+      "principal and interest calculator",
+      "extra payment calculator",
+      "monthly loan payment calculator",
+      "loan repayment calculator"
     ],
     fields: [
-      // ── Loan Details Section ──
-      { id: 'sec_loan', type: 'section', label: 'Loan Details', icon: 'fa-file-invoice' },
-      { id: 'loan_amount',     label: 'Loan Amount ($)',               type: 'range', default: 300000, min: 1000,   max: 5000000, step: 1000,  hint: 'The total amount you are borrowing (the principal).' },
-      { id: 'interest_rate',   label: 'Annual Interest Rate (%)',      type: 'range', default: 6.5,    min: 0,      max: 25,      step: 0.05,  hint: 'The yearly interest rate (APR) on your loan.' },
-      { id: 'loan_term',       label: 'Loan Term',                     type: 'select', default: 30,
-        options: [5,10,15,20,25,30,40].map(v => ({ value: v, label: `${v} Years` })), hint: 'How long you have to repay the loan in full.' },
-      { id: 'payment_freq',    label: 'Payment Frequency',             type: 'select', default: 'monthly',
+      {
+        id: "sec_loan",
+        type: "section",
+        label: "Loan Details",
+        icon: "fa-file-invoice"
+      },
+      {
+        id: "loan_amount",
+        label: "Loan Amount ($)",
+        type: "range",
+        default: 300000,
+        min: 1000,
+        max: 5000000,
+        step: 1000,
+        hint: "The total amount you are borrowing (the principal)."
+      },
+      {
+        id: "interest_rate",
+        label: "Annual Interest Rate (%)",
+        type: "range",
+        default: 6.5,
+        min: 0,
+        max: 25,
+        step: 0.05,
+        hint: "The yearly interest rate (APR) on your loan."
+      },
+      {
+        id: "loan_term",
+        label: "Loan Term",
+        type: "select",
+        default: 30,
         options: [
-          { value: 'monthly',  label: 'Monthly (12/yr)' },
-          { value: 'biweekly', label: 'Bi-Weekly (26/yr)' },
-          { value: 'weekly',   label: 'Weekly (52/yr)' },
-        ], hint: 'How often you make payments. More frequent payments reduce total interest.' },
-      { id: 'compounding_freq', label: 'Compounding Frequency',        type: 'select', default: 'monthly',
+          {
+            value: 5,
+            label: "5 Years"
+          },
+          {
+            value: 10,
+            label: "10 Years"
+          },
+          {
+            value: 15,
+            label: "15 Years"
+          },
+          {
+            value: 20,
+            label: "20 Years"
+          },
+          {
+            value: 25,
+            label: "25 Years"
+          },
+          {
+            value: 30,
+            label: "30 Years"
+          },
+          {
+            value: 40,
+            label: "40 Years"
+          }
+        ],
+        hint: "How long you have to repay the loan in full."
+      },
+      {
+        id: "payment_freq",
+        label: "Payment Frequency",
+        type: "select",
+        default: "monthly",
         options: [
-          { value: 'monthly',      label: 'Monthly (12/yr)' },
-          { value: 'quarterly',    label: 'Quarterly (4/yr)' },
-          { value: 'semi-annual',  label: 'Semi-Annual (2/yr)' },
-          { value: 'annually',     label: 'Annual (1/yr)' },
-        ], hint: 'How often interest is compounded. Monthly is standard for most loans.' },
-      { id: 'loan_start_date', label: 'Loan Start Date',               type: 'date', default: () => {
+          {
+            value: "monthly",
+            label: "Monthly (12/yr)"
+          },
+          {
+            value: "biweekly",
+            label: "Bi-Weekly (26/yr)"
+          },
+          {
+            value: "weekly",
+            label: "Weekly (52/yr)"
+          }
+        ],
+        hint: "How often you make payments. More frequent payments reduce total interest."
+      },
+      {
+        id: "compounding_freq",
+        label: "Compounding Frequency",
+        type: "select",
+        default: "monthly",
+        options: [
+          {
+            value: "monthly",
+            label: "Monthly (12/yr)"
+          },
+          {
+            value: "quarterly",
+            label: "Quarterly (4/yr)"
+          },
+          {
+            value: "semi-annual",
+            label: "Semi-Annual (2/yr)"
+          },
+          {
+            value: "annually",
+            label: "Annual (1/yr)"
+          }
+        ],
+        hint: "How often interest is compounded. Monthly is standard for most loans."
+      },
+      {
+        id: "loan_start_date",
+        label: "Loan Start Date",
+        type: "date",
+        default: () => {
         const d = new Date(); d.setMonth(d.getMonth() - 3); return d.toISOString().split('T')[0];
-      }, hint: 'When the loan begins. Used to generate the payment schedule with dates.' },
-
-      // ── Extra Payments Section ──
-      { id: 'sec_extra', type: 'section', label: 'Extra Payments', icon: 'fa-bolt' },
-      { id: 'extra_monthly',   label: 'Extra Monthly Payment ($)',     type: 'range', default: 0,      min: 0,      max: 10000,   step: 50,    hint: 'Additional amount paid each month to reduce principal faster.' },
-      { id: 'extra_one_time',  label: 'One-Time Extra Payment ($)',    type: 'number', default: 0,     min: 0,      step: 100,    hint: 'A single lump-sum extra payment made at a specific date.' },
-      { id: 'extra_one_time_date', label: 'One-Time Payment Date',     type: 'date', default: () => {
+      },
+        hint: "When the loan begins. Used to generate the payment schedule with dates."
+      },
+      {
+        id: "sec_extra",
+        type: "section",
+        label: "Extra Payments",
+        icon: "fa-bolt"
+      },
+      {
+        id: "extra_monthly",
+        label: "Extra Monthly Payment ($)",
+        type: "range",
+        default: 0,
+        min: 0,
+        max: 10000,
+        step: 50,
+        hint: "Additional amount paid each month to reduce principal faster."
+      },
+      {
+        id: "extra_one_time",
+        label: "One-Time Extra Payment ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 100,
+        hint: "A single lump-sum extra payment made at a specific date."
+      },
+      {
+        id: "extra_one_time_date",
+        label: "One-Time Payment Date",
+        type: "date",
+        default: () => {
         const d = new Date(); d.setMonth(d.getMonth() + 12); return d.toISOString().split('T')[0];
-      }, condition: v => safeNum(v.extra_one_time, 0) > 0, hint: 'When the one-time extra payment is made.' },
-      { id: 'extra_annual',    label: 'Annual Extra Payment ($)',      type: 'number', default: 0,     min: 0,      step: 100,    hint: 'An extra payment made once every year (e.g. from a bonus or tax refund).' },
-
-      // ── Taxes & Insurance Section ──
-      { id: 'sec_tax_ins', type: 'section', label: 'Taxes & Insurance', icon: 'fa-shield' },
-      { id: 'include_tax_insurance', label: 'Include Taxes & Insurance', type: 'select', default: 'no',
+      },
+        condition: v => safeNum(v.extra_one_time, 0) > 0,
+        hint: "When the one-time extra payment is made."
+      },
+      {
+        id: "extra_annual",
+        label: "Annual Extra Payment ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 100,
+        hint: "An extra payment made once every year (e.g. from a bonus or tax refund)."
+      },
+      {
+        id: "sec_tax_ins",
+        type: "section",
+        label: "Taxes & Insurance",
+        icon: "fa-shield"
+      },
+      {
+        id: "include_tax_insurance",
+        label: "Include Taxes & Insurance",
+        type: "select",
+        default: "no",
         options: [
-          { value: 'no',  label: 'No — Show Principal & Interest Only' },
-          { value: 'yes', label: 'Yes — Include Full Monthly Housing Payment' },
-        ], hint: 'Toggle to include property taxes, insurance, HOA, and PMI in your monthly payment.' },
-      { id: 'annual_property_tax',  label: 'Annual Property Tax ($)',  type: 'number', default: 4800,  min: 0,      step: 100,   condition: v => v.include_tax_insurance === 'yes', hint: 'Yearly property tax, spread across monthly payments.' },
-      { id: 'annual_home_insurance', label: 'Annual Home Insurance ($)', type: 'number', default: 1200, min: 0,     step: 100,   condition: v => v.include_tax_insurance === 'yes', hint: 'Yearly homeowners insurance premium.' },
-      { id: 'hoa_fees',        label: 'Monthly HOA Fees ($)',          type: 'number', default: 0,     min: 0,      step: 25,    condition: v => v.include_tax_insurance === 'yes', hint: 'Monthly homeowners association fees.' },
-      { id: 'pmi',             label: 'Monthly PMI ($)',               type: 'number', default: 0,     min: 0,      step: 10,    condition: v => v.include_tax_insurance === 'yes', hint: 'Private Mortgage Insurance (required when down payment is less than 20%).' },
-
-      // ── Comparison Mode Section ──
-      { id: 'sec_compare', type: 'section', label: 'Comparison Mode', icon: 'fa-not-equal' },
-      { id: 'comparison_mode', label: 'Comparison Mode', type: 'select', default: 'single',
+          {
+            value: "no",
+            label: "No — Show Principal & Interest Only"
+          },
+          {
+            value: "yes",
+            label: "Yes — Include Full Monthly Housing Payment"
+          }
+        ],
+        hint: "Toggle to include property taxes, insurance, HOA, and PMI in your monthly payment."
+      },
+      {
+        id: "annual_property_tax",
+        label: "Annual Property Tax ($)",
+        type: "number",
+        default: 4800,
+        min: 0,
+        step: 100,
+        condition: v => v.include_tax_insurance === 'yes',
+        hint: "Yearly property tax, spread across monthly payments."
+      },
+      {
+        id: "annual_home_insurance",
+        label: "Annual Home Insurance ($)",
+        type: "number",
+        default: 1200,
+        min: 0,
+        step: 100,
+        condition: v => v.include_tax_insurance === 'yes',
+        hint: "Yearly homeowners insurance premium."
+      },
+      {
+        id: "hoa_fees",
+        label: "Monthly HOA Fees ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 25,
+        condition: v => v.include_tax_insurance === 'yes',
+        hint: "Monthly homeowners association fees."
+      },
+      {
+        id: "pmi",
+        label: "Monthly PMI ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 10,
+        condition: v => v.include_tax_insurance === 'yes',
+        hint: "Private Mortgage Insurance (required when down payment is less than 20%)."
+      },
+      {
+        id: "sec_compare",
+        type: "section",
+        label: "Comparison Mode",
+        icon: "fa-not-equal"
+      },
+      {
+        id: "comparison_mode",
+        label: "Comparison Mode",
+        type: "select",
+        default: "single",
         options: [
-          { value: 'single',  label: 'Single Scenario' },
-          { value: 'compare', label: 'Compare Two Scenarios' },
-        ], hint: 'Compare two loan scenarios side by side to see the difference in payments and interest.' },
-      { id: 'compare_loan_amount',  label: 'Scenario B: Loan Amount ($)',    type: 'number', default: 300000, min: 1000,  step: 1000, condition: v => v.comparison_mode === 'compare', hint: 'Loan amount for the second scenario.' },
-      { id: 'compare_interest_rate', label: 'Scenario B: Interest Rate (%)', type: 'number', default: 5.9,   min: 0,     step: 0.05, condition: v => v.comparison_mode === 'compare', hint: 'Annual interest rate for the second scenario.' },
-      { id: 'compare_loan_term',     label: 'Scenario B: Loan Term',         type: 'select', default: 15,
-        options: [5,10,15,20,25,30,40].map(v => ({ value: v, label: `${v} Years` })), condition: v => v.comparison_mode === 'compare', hint: 'Loan term for the second scenario.' },
-      { id: 'compare_extra_monthly', label: 'Scenario B: Extra Monthly ($)', type: 'number', default: 0,     min: 0,     step: 50,   condition: v => v.comparison_mode === 'compare', hint: 'Extra monthly payment for the second scenario.' },
+          {
+            value: "single",
+            label: "Single Scenario"
+          },
+          {
+            value: "compare",
+            label: "Compare Two Scenarios"
+          }
+        ],
+        hint: "Compare two loan scenarios side by side to see the difference in payments and interest."
+      },
+      {
+        id: "compare_loan_amount",
+        label: "Scenario B: Loan Amount ($)",
+        type: "number",
+        default: 300000,
+        min: 1000,
+        step: 1000,
+        condition: v => v.comparison_mode === 'compare',
+        hint: "Loan amount for the second scenario."
+      },
+      {
+        id: "compare_interest_rate",
+        label: "Scenario B: Interest Rate (%)",
+        type: "number",
+        default: 5.9,
+        min: 0,
+        step: 0.05,
+        condition: v => v.comparison_mode === 'compare',
+        hint: "Annual interest rate for the second scenario."
+      },
+      {
+        id: "compare_loan_term",
+        label: "Scenario B: Loan Term",
+        type: "select",
+        default: 15,
+        options: [
+          {
+            value: 5,
+            label: "5 Years"
+          },
+          {
+            value: 10,
+            label: "10 Years"
+          },
+          {
+            value: 15,
+            label: "15 Years"
+          },
+          {
+            value: 20,
+            label: "20 Years"
+          },
+          {
+            value: 25,
+            label: "25 Years"
+          },
+          {
+            value: 30,
+            label: "30 Years"
+          },
+          {
+            value: 40,
+            label: "40 Years"
+          }
+        ],
+        condition: v => v.comparison_mode === 'compare',
+        hint: "Loan term for the second scenario."
+      },
+      {
+        id: "compare_extra_monthly",
+        label: "Scenario B: Extra Monthly ($)",
+        type: "number",
+        default: 0,
+        min: 0,
+        step: 50,
+        condition: v => v.comparison_mode === 'compare',
+        hint: "Extra monthly payment for the second scenario."
+      }
     ],
     fieldLabels(v) {
       return {};
@@ -4001,96 +6945,194 @@ const TOOLS = {
 
       return result;
     },
-
-    // ── How-To Guide ──
     howTo: [
-      'Enter the loan amount you are borrowing, the annual interest rate (APR), and choose your loan term from the dropdown.',
-      'Select your payment frequency — monthly, bi-weekly, or weekly. More frequent payments reduce total interest.',
-      'Choose the compounding frequency (monthly is standard for most loans) and set the loan start date.',
-      'Add any extra payments — monthly, one-time, or annual — to see how much interest and time you can save.',
-      'Optionally toggle "Include Taxes & Insurance" to add property tax, insurance, HOA, and PMI for a full monthly housing payment.',
-      'Enable "Comparison Mode" to compare two loan scenarios side by side, such as a 30-year vs 15-year term.',
-      'Review the KPI dashboard, interactive charts, and the full amortization schedule. Export the schedule as CSV if needed.',
+      "Enter the loan amount you are borrowing, the annual interest rate (APR), and choose your loan term from the dropdown.",
+      "Select your payment frequency — monthly, bi-weekly, or weekly. More frequent payments reduce total interest.",
+      "Choose the compounding frequency (monthly is standard for most loans) and set the loan start date.",
+      "Add any extra payments — monthly, one-time, or annual — to see how much interest and time you can save.",
+      "Optionally toggle \"Include Taxes & Insurance\" to add property tax, insurance, HOA, and PMI for a full monthly housing payment.",
+      "Enable \"Comparison Mode\" to compare two loan scenarios side by side, such as a 30-year vs 15-year term.",
+      "Review the KPI dashboard, interactive charts, and the full amortization schedule. Export the schedule as CSV if needed."
     ],
-
-    // ── Real-World Examples ──
     examples: [
       {
-        title: '30-Year Fixed Mortgage',
-        input: 'Loan: $300,000, Rate: 6.5%, Term: 30 years, Monthly payments',
-        result: 'Monthly Payment: ~$1,896 | Total Interest: ~$382,000 | Payoff: 30 years',
+        title: "30-Year Fixed Mortgage",
+        input: "Loan: $300,000, Rate: 6.5%, Term: 30 years, Monthly payments",
+        result: "Monthly Payment: ~$1,896 | Total Interest: ~$382,000 | Payoff: 30 years"
       },
       {
-        title: '15-Year vs 30-Year Comparison',
-        input: 'Scenario A: $300,000 at 6.5% for 30yr vs Scenario B: $300,000 at 5.9% for 15yr',
-        result: '15yr saves ~$280,000 in interest and pays off 15 years earlier, but monthly payment is ~$1,000 higher',
+        title: "15-Year vs 30-Year Comparison",
+        input: "Scenario A: $300,000 at 6.5% for 30yr vs Scenario B: $300,000 at 5.9% for 15yr",
+        result: "15yr saves ~$280,000 in interest and pays off 15 years earlier, but monthly payment is ~$1,000 higher"
       },
       {
-        title: 'Extra Monthly Payments Save Thousands',
-        input: 'Loan: $300,000, Rate: 6.5%, Term: 30 years, Extra: $200/mo',
-        result: 'Interest Saved: ~$78,000 | Time Saved: ~5 years | Payoff: ~25 years',
+        title: "Extra Monthly Payments Save Thousands",
+        input: "Loan: $300,000, Rate: 6.5%, Term: 30 years, Extra: $200/mo",
+        result: "Interest Saved: ~$78,000 | Time Saved: ~5 years | Payoff: ~25 years"
       },
       {
-        title: 'Bi-Weekly Payments Accelerate Payoff',
-        input: 'Loan: $300,000, Rate: 6.5%, Term: 30 years, Bi-Weekly payments',
-        result: 'Interest Saved: ~$64,000 | Time Saved: ~4 years vs monthly payments',
-      },
+        title: "Bi-Weekly Payments Accelerate Payoff",
+        input: "Loan: $300,000, Rate: 6.5%, Term: 30 years, Bi-Weekly payments",
+        result: "Interest Saved: ~$64,000 | Time Saved: ~4 years vs monthly payments"
+      }
     ],
-
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | r = periodic rate = (1 + APR/compounding periods)^(compounding periods/payments per year) − 1 | Total Interest = (M × n) − P | Interest Savings = Total Interest(no extras) − Total Interest(with extras)',
-
-    // ── SEO Article Content ──
+    formula: "M = P × [r(1+r)^n] / [(1+r)^n − 1] | r = periodic rate = (1 + APR/compounding periods)^(compounding periods/payments per year) − 1 | Total Interest = (M × n) − P | Interest Savings = Total Interest(no extras) − Total Interest(with extras)",
     article: {
-      heading: 'How to Calculate Loan Amortization and Save Thousands in Interest',
-      intro: 'Loan amortization is the process of spreading out a loan into a series of fixed payments over time. Each payment covers both interest and principal, with the interest portion decreasing as the principal is paid down. The GetCalcu Amortization Calculator not only computes your monthly payment but also generates a complete payment-by-payment schedule, showing exactly how much goes to principal versus interest over the life of the loan. It also models the powerful impact of extra payments — helping you understand how paying just a little more each month can save tens of thousands of dollars in interest.',
+      heading: "How to Calculate Loan Amortization and Save Thousands in Interest",
+      intro: "Loan amortization is the process of spreading out a loan into a series of fixed payments over time. Each payment covers both interest and principal, with the interest portion decreasing as the principal is paid down. The GetCalcu Amortization Calculator not only computes your monthly payment but also generates a complete payment-by-payment schedule, showing exactly how much goes to principal versus interest over the life of the loan. It also models the powerful impact of extra payments — helping you understand how paying just a little more each month can save tens of thousands of dollars in interest.",
       sections: [
-        { heading: 'What Is Loan Amortization?', body: 'Amortization is the process of gradually paying off a debt through regular, scheduled payments. Each payment is split into two parts: the interest portion (the cost of borrowing) and the principal portion (the amount that reduces your loan balance). In the early years of a loan, most of each payment goes toward interest because the outstanding balance is largest. As the principal declines, the interest portion shrinks, and more of your payment goes toward reducing the principal. By the final payment, the entire loan balance reaches zero.' },
-        { heading: 'How Amortization Works', body: 'The amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] calculates the fixed payment amount needed to fully repay a loan over its term. In this formula, P is the loan principal (the amount borrowed), r is the periodic interest rate (annual rate divided by payments per year, adjusted for compounding), and n is the total number of payments. For a $300,000 loan at 6.5% over 30 years with monthly payments, the monthly payment is approximately $1,896. The first payment applies about $1,625 to interest and only $271 to principal. By year 15, the split is roughly $1,200 interest and $696 principal. By the final year, nearly the entire payment goes to principal.' },
-        { heading: 'Understanding the Amortization Formula', body: 'The standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] calculates the fixed payment M. Let\'s break down each variable: P (Principal) is the total amount borrowed, $300,000 in our example. r (Periodic Interest Rate) is the annual rate divided by the number of payments per year, adjusted for compounding frequency. For a 6.5% annual rate with monthly compounding and monthly payments, the periodic rate is approximately 0.5417% (6.5% ÷ 12). n (Total Payments) is the loan term in years multiplied by payments per year — 360 for a 30-year monthly loan. The term (1+r)^n is the compound growth factor. For our example, (1 + 0.005417)^360 ≈ 6.99. Plugging this in: M = 300,000 × [0.005417 × 6.99] / [6.99 − 1] = 300,000 × 0.03787 / 5.99 ≈ $1,896. This is the amount you pay every month for 30 years to fully repay the loan.' },
-        { heading: 'Why Early Payments Save Money', body: 'Extra payments made early in the loan term have an outsized impact because they reduce the principal balance that future interest is calculated on. A single extra payment of $200 in the first month reduces the principal by $200, which saves the interest that $200 would have generated over the remaining 359 months. At 6.5%, that $200 saves approximately $200 × (1.005417^359 − 1) ≈ $1,200 in interest over the life of the loan. This is the power of compound interest working in reverse — paying down principal early prevents compound interest from accumulating on that principal. Making $200 extra each month on a $300,000 loan at 6.5% saves approximately $78,000 in interest and cuts the loan term by 5 years.' },
-        { heading: 'Mortgage vs Auto vs Personal Loans', body: 'Amortization works the same way for all types of installment loans, but the numbers differ dramatically. Mortgages typically have the longest terms (15-30 years) and the largest loan amounts, making them the most sensitive to interest rates and extra payments. Auto loans typically run 3-7 years with moderate rates (5-10%). Personal loans are usually 2-5 years with higher rates (6-36%). The shorter the term, the less total interest you pay, but the higher the monthly payment. Our calculator works for all loan types — just adjust the loan amount, rate, and term to match your specific situation.' },
-        { heading: 'Fixed vs Adjustable Rate Loans', body: 'Fixed-rate loans lock in your interest rate for the entire loan term, giving you predictable payments that never change. Adjustable-rate mortgages (ARMs) start with a lower rate for an initial period (typically 3-10 years), then adjust periodically based on market indices. ARMs can save money if you plan to sell or refinance before the rate adjusts, but they carry the risk of higher payments if rates rise. Our calculator models fixed-rate loans accurately. For ARMs, you would need to recalculate after each rate adjustment period using the new rate.' },
-        { heading: 'Common Loan Repayment Mistakes', body: 'The most common mistake is paying only the minimum payment, which maximizes total interest. Ignoring refinancing opportunities when rates drop can cost tens of thousands. Missing payments not only incurs late fees but also damages your credit score, making future borrowing more expensive. Choosing an unnecessarily long term to minimize monthly payments often results in paying more than double the original loan amount in interest. Finally, not understanding how extra payments are applied — some lenders apply extra payments to future payments rather than reducing principal — can undermine your payoff strategy.' },
-        { heading: 'Tips to Pay Off Loans Faster', body: 'Making extra monthly payments is the most effective strategy — even $50 extra per month on a $300,000 mortgage saves over $30,000 in interest. Switching to bi-weekly payments (half the monthly payment every two weeks) results in 26 half-payments per year, equivalent to 13 full monthly payments — one extra payment annually. Applying lump-sum payments from bonuses, tax refunds, or gifts directly to principal accelerates payoff. Refinancing to a lower rate or shorter term can also save interest, but factor in closing costs. Finally, optimizing your budget to free up even $100 per month for debt repayment can save thousands over the life of your loan.' },
-        { heading: 'Example Amortization Schedule', body: 'Consider a $300,000 loan at 6.5% interest over 30 years with monthly payments. The first payment of $1,896 consists of $271 in principal and $1,625 in interest. After 5 years (60 payments), the remaining balance is approximately $278,000, and the interest portion has dropped to about $1,506. After 15 years (180 payments), the balance is approximately $189,000, and the interest portion is about $1,025. After 25 years (300 payments), the balance is approximately $67,000, and the interest portion is about $365. The final payment brings the balance to zero. This progressive shift from interest-heavy to principal-heavy payments is the hallmark of amortization. Our calculator generates this complete schedule for any loan scenario.' },
-        { heading: 'Frequently Asked Questions', body: 'What is an amortization schedule? It is a table showing each payment\'s split between principal and interest over the loan term. How is loan interest calculated? Interest for each period is calculated as the remaining balance multiplied by the periodic interest rate. Why do early payments contain more interest? Because the loan balance is largest at the start, so the interest charged on that balance is higher. Can I pay off my mortgage early? Yes, most mortgages allow early repayment without penalty, but check your loan agreement for prepayment penalties. Do extra payments reduce interest? Absolutely — every dollar of extra principal paid early saves the interest that dollar would have accrued over the remaining loan term. How often should I make extra payments? Monthly extra payments are most effective because they reduce the balance sooner. What happens if interest rates change? For fixed-rate loans, the rate stays the same. For ARMs, the rate adjusts periodically. Can I export the schedule? Yes, the amortization schedule can be copied or exported. Is this calculator accurate? It uses standard amortization formulas and is accurate for any fixed-rate loan. Does it work for auto loans? Yes, simply enter your auto loan amount, rate, and term.' },
-      ],
+        {
+          heading: "What Is Loan Amortization?",
+          body: "Amortization is the process of gradually paying off a debt through regular, scheduled payments. Each payment is split into two parts: the interest portion (the cost of borrowing) and the principal portion (the amount that reduces your loan balance). In the early years of a loan, most of each payment goes toward interest because the outstanding balance is largest. As the principal declines, the interest portion shrinks, and more of your payment goes toward reducing the principal. By the final payment, the entire loan balance reaches zero."
+        },
+        {
+          heading: "How Amortization Works",
+          body: "The amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] calculates the fixed payment amount needed to fully repay a loan over its term. In this formula, P is the loan principal (the amount borrowed), r is the periodic interest rate (annual rate divided by payments per year, adjusted for compounding), and n is the total number of payments. For a $300,000 loan at 6.5% over 30 years with monthly payments, the monthly payment is approximately $1,896. The first payment applies about $1,625 to interest and only $271 to principal. By year 15, the split is roughly $1,200 interest and $696 principal. By the final year, nearly the entire payment goes to principal."
+        },
+        {
+          heading: "Understanding the Amortization Formula",
+          body: "The standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] calculates the fixed payment M. Let's break down each variable: P (Principal) is the total amount borrowed, $300,000 in our example. r (Periodic Interest Rate) is the annual rate divided by the number of payments per year, adjusted for compounding frequency. For a 6.5% annual rate with monthly compounding and monthly payments, the periodic rate is approximately 0.5417% (6.5% ÷ 12). n (Total Payments) is the loan term in years multiplied by payments per year — 360 for a 30-year monthly loan. The term (1+r)^n is the compound growth factor. For our example, (1 + 0.005417)^360 ≈ 6.99. Plugging this in: M = 300,000 × [0.005417 × 6.99] / [6.99 − 1] = 300,000 × 0.03787 / 5.99 ≈ $1,896. This is the amount you pay every month for 30 years to fully repay the loan."
+        },
+        {
+          heading: "Why Early Payments Save Money",
+          body: "Extra payments made early in the loan term have an outsized impact because they reduce the principal balance that future interest is calculated on. A single extra payment of $200 in the first month reduces the principal by $200, which saves the interest that $200 would have generated over the remaining 359 months. At 6.5%, that $200 saves approximately $200 × (1.005417^359 − 1) ≈ $1,200 in interest over the life of the loan. This is the power of compound interest working in reverse — paying down principal early prevents compound interest from accumulating on that principal. Making $200 extra each month on a $300,000 loan at 6.5% saves approximately $78,000 in interest and cuts the loan term by 5 years."
+        },
+        {
+          heading: "Mortgage vs Auto vs Personal Loans",
+          body: "Amortization works the same way for all types of installment loans, but the numbers differ dramatically. Mortgages typically have the longest terms (15-30 years) and the largest loan amounts, making them the most sensitive to interest rates and extra payments. Auto loans typically run 3-7 years with moderate rates (5-10%). Personal loans are usually 2-5 years with higher rates (6-36%). The shorter the term, the less total interest you pay, but the higher the monthly payment. Our calculator works for all loan types — just adjust the loan amount, rate, and term to match your specific situation."
+        },
+        {
+          heading: "Fixed vs Adjustable Rate Loans",
+          body: "Fixed-rate loans lock in your interest rate for the entire loan term, giving you predictable payments that never change. Adjustable-rate mortgages (ARMs) start with a lower rate for an initial period (typically 3-10 years), then adjust periodically based on market indices. ARMs can save money if you plan to sell or refinance before the rate adjusts, but they carry the risk of higher payments if rates rise. Our calculator models fixed-rate loans accurately. For ARMs, you would need to recalculate after each rate adjustment period using the new rate."
+        },
+        {
+          heading: "Common Loan Repayment Mistakes",
+          body: "The most common mistake is paying only the minimum payment, which maximizes total interest. Ignoring refinancing opportunities when rates drop can cost tens of thousands. Missing payments not only incurs late fees but also damages your credit score, making future borrowing more expensive. Choosing an unnecessarily long term to minimize monthly payments often results in paying more than double the original loan amount in interest. Finally, not understanding how extra payments are applied — some lenders apply extra payments to future payments rather than reducing principal — can undermine your payoff strategy."
+        },
+        {
+          heading: "Tips to Pay Off Loans Faster",
+          body: "Making extra monthly payments is the most effective strategy — even $50 extra per month on a $300,000 mortgage saves over $30,000 in interest. Switching to bi-weekly payments (half the monthly payment every two weeks) results in 26 half-payments per year, equivalent to 13 full monthly payments — one extra payment annually. Applying lump-sum payments from bonuses, tax refunds, or gifts directly to principal accelerates payoff. Refinancing to a lower rate or shorter term can also save interest, but factor in closing costs. Finally, optimizing your budget to free up even $100 per month for debt repayment can save thousands over the life of your loan."
+        },
+        {
+          heading: "Example Amortization Schedule",
+          body: "Consider a $300,000 loan at 6.5% interest over 30 years with monthly payments. The first payment of $1,896 consists of $271 in principal and $1,625 in interest. After 5 years (60 payments), the remaining balance is approximately $278,000, and the interest portion has dropped to about $1,506. After 15 years (180 payments), the balance is approximately $189,000, and the interest portion is about $1,025. After 25 years (300 payments), the balance is approximately $67,000, and the interest portion is about $365. The final payment brings the balance to zero. This progressive shift from interest-heavy to principal-heavy payments is the hallmark of amortization. Our calculator generates this complete schedule for any loan scenario."
+        },
+        {
+          heading: "Frequently Asked Questions",
+          body: "What is an amortization schedule? It is a table showing each payment's split between principal and interest over the loan term. How is loan interest calculated? Interest for each period is calculated as the remaining balance multiplied by the periodic interest rate. Why do early payments contain more interest? Because the loan balance is largest at the start, so the interest charged on that balance is higher. Can I pay off my mortgage early? Yes, most mortgages allow early repayment without penalty, but check your loan agreement for prepayment penalties. Do extra payments reduce interest? Absolutely — every dollar of extra principal paid early saves the interest that dollar would have accrued over the remaining loan term. How often should I make extra payments? Monthly extra payments are most effective because they reduce the balance sooner. What happens if interest rates change? For fixed-rate loans, the rate stays the same. For ARMs, the rate adjusts periodically. Can I export the schedule? Yes, the amortization schedule can be copied or exported. Is this calculator accurate? It uses standard amortization formulas and is accurate for any fixed-rate loan. Does it work for auto loans? Yes, simply enter your auto loan amount, rate, and term."
+        }
+      ]
     },
-
-    // ── Schema-Ready FAQs ──
     faqs: [
-      { q: 'What is an amortization schedule?', a: 'An amortization schedule is a complete table showing every payment over the life of a loan, broken down into principal and interest portions. It shows the remaining balance after each payment, how much interest you pay each period, and how much of your payment goes toward reducing the principal. Our calculator generates a full amortization schedule for any loan scenario, including extra payments.' },
-      { q: 'How is loan interest calculated?', a: 'Loan interest for each payment period is calculated by multiplying the current outstanding loan balance by the periodic interest rate. The periodic rate is the annual percentage rate (APR) divided by the number of payment periods per year, adjusted for compounding frequency. For example, on a $300,000 loan at 6.5% APR with monthly payments, the first month\'s interest is $300,000 × (6.5% ÷ 12) = $1,625.' },
-      { q: 'Why do early payments contain more interest?', a: 'Early payments contain more interest because the loan balance is at its highest at the beginning of the loan term. Interest is calculated on the outstanding balance, so a larger balance generates more interest. As the principal is gradually paid down, the interest portion of each payment decreases, and more of the fixed payment goes toward reducing the principal.' },
-      { q: 'Can I pay off my mortgage early?', a: 'Yes, most mortgages allow early repayment without penalty. However, some loans have prepayment penalties, typically 1-3% of the outstanding balance if paid off within the first 3-5 years. Always check your loan agreement or ask your lender. Our calculator shows how extra payments accelerate your payoff and save interest.' },
-      { q: 'Do extra payments reduce interest?', a: 'Yes, every extra dollar you pay toward principal reduces the balance that future interest is calculated on. This creates a compounding effect — paying $200 extra in the first month of a $300,000 loan at 6.5% saves approximately $1,200 in interest over the remaining 30 years. The earlier you make extra payments, the more interest you save.' },
-      { q: 'How often should I make extra payments?', a: 'Monthly extra payments are the most effective because they reduce the principal balance sooner, giving you the maximum interest savings. However, any extra payment — whether monthly, one-time, or annual — saves interest. Switching to bi-weekly payments (half your monthly payment every two weeks) effectively makes one extra payment per year, which can save thousands in interest.' },
-      { q: 'What happens if interest rates change?', a: 'For fixed-rate loans, the interest rate is locked for the entire loan term, so your payment never changes. For adjustable-rate mortgages (ARMs), the rate adjusts periodically based on market indices. Our calculator models fixed-rate amortization. For ARMs, you would need to recalculate after each adjustment period using the new rate.' },
-      { q: 'Can I export the amortization schedule?', a: 'Yes, the amortization schedule generated by our calculator can be copied to your clipboard using the "Copy Results" button. You can paste it into a spreadsheet application like Excel or Google Sheets for further analysis, filtering, or printing.' },
-      { q: 'Is this calculator accurate?', a: 'Yes, this calculator uses the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] and accurately computes the payment breakdown for any fixed-rate loan. It accounts for different payment frequencies, compounding frequencies, and extra payments. The results are suitable for mortgages, auto loans, personal loans, student loans, and business loans.' },
-      { q: 'Does it work for auto loans?', a: 'Yes, simply enter your auto loan amount, interest rate, and loan term. Auto loans typically have shorter terms (3-7 years) and are fully amortizing, meaning they are paid off by the end of the term. Our calculator handles any loan amount, rate, and term combination.' },
-      { q: 'What is the difference between simple interest and amortized interest?', a: 'Simple interest is calculated only on the original principal amount, while amortized interest is calculated on the declining balance. Most installment loans (mortgages, auto loans, personal loans) use amortized interest, where each payment covers the interest accrued since the last payment plus a portion of principal. This is why early payments are mostly interest — the balance is highest at the start.' },
-      { q: 'How does payment frequency affect total interest?', a: 'More frequent payments reduce total interest because principal is paid down sooner, reducing the balance that interest accrues on. Bi-weekly payments (26 per year) are equivalent to 13 monthly payments per year (one extra payment annually), which can save thousands in interest and shorten the loan term by several years. Weekly payments save even more.' },
-      { q: 'What is the effective interest rate?', a: 'The effective interest rate (also called the annual equivalent rate or APR) accounts for the effect of compounding frequency. It represents the true annual cost of borrowing. For example, a loan with a 6.5% nominal rate compounded monthly has an effective rate of approximately 6.70%. Our calculator displays both the nominal and effective rate.' },
-      { q: 'How does compounding frequency affect my loan?', a: 'Compounding frequency determines how often interest is calculated and added to the loan balance. More frequent compounding (daily or monthly) results in slightly more total interest compared to less frequent compounding (quarterly or annually). Most mortgages use monthly compounding, while some personal loans may use daily or quarterly compounding. Our calculator accurately models any compounding frequency.' },
-      { q: 'Can I compare two loan scenarios?', a: 'Yes, our calculator includes a built-in comparison mode that lets you compare two loan scenarios side by side. You can compare different loan amounts, interest rates, terms, and extra payment amounts. The comparison shows the difference in monthly payment, total interest, total cost, and payoff time.' },
-    ],
+      {
+        q: "What is an amortization schedule?",
+        a: "An amortization schedule is a complete table showing every payment over the life of a loan, broken down into principal and interest portions. It shows the remaining balance after each payment, how much interest you pay each period, and how much of your payment goes toward reducing the principal. Our calculator generates a full amortization schedule for any loan scenario, including extra payments."
+      },
+      {
+        q: "How is loan interest calculated?",
+        a: "Loan interest for each payment period is calculated by multiplying the current outstanding loan balance by the periodic interest rate. The periodic rate is the annual percentage rate (APR) divided by the number of payment periods per year, adjusted for compounding frequency. For example, on a $300,000 loan at 6.5% APR with monthly payments, the first month's interest is $300,000 × (6.5% ÷ 12) = $1,625."
+      },
+      {
+        q: "Why do early payments contain more interest?",
+        a: "Early payments contain more interest because the loan balance is at its highest at the beginning of the loan term. Interest is calculated on the outstanding balance, so a larger balance generates more interest. As the principal is gradually paid down, the interest portion of each payment decreases, and more of the fixed payment goes toward reducing the principal."
+      },
+      {
+        q: "Can I pay off my mortgage early?",
+        a: "Yes, most mortgages allow early repayment without penalty. However, some loans have prepayment penalties, typically 1-3% of the outstanding balance if paid off within the first 3-5 years. Always check your loan agreement or ask your lender. Our calculator shows how extra payments accelerate your payoff and save interest."
+      },
+      {
+        q: "Do extra payments reduce interest?",
+        a: "Yes, every extra dollar you pay toward principal reduces the balance that future interest is calculated on. This creates a compounding effect — paying $200 extra in the first month of a $300,000 loan at 6.5% saves approximately $1,200 in interest over the remaining 30 years. The earlier you make extra payments, the more interest you save."
+      },
+      {
+        q: "How often should I make extra payments?",
+        a: "Monthly extra payments are the most effective because they reduce the principal balance sooner, giving you the maximum interest savings. However, any extra payment — whether monthly, one-time, or annual — saves interest. Switching to bi-weekly payments (half your monthly payment every two weeks) effectively makes one extra payment per year, which can save thousands in interest."
+      },
+      {
+        q: "What happens if interest rates change?",
+        a: "For fixed-rate loans, the interest rate is locked for the entire loan term, so your payment never changes. For adjustable-rate mortgages (ARMs), the rate adjusts periodically based on market indices. Our calculator models fixed-rate amortization. For ARMs, you would need to recalculate after each adjustment period using the new rate."
+      },
+      {
+        q: "Can I export the amortization schedule?",
+        a: "Yes, the amortization schedule generated by our calculator can be copied to your clipboard using the \"Copy Results\" button. You can paste it into a spreadsheet application like Excel or Google Sheets for further analysis, filtering, or printing."
+      },
+      {
+        q: "Is this calculator accurate?",
+        a: "Yes, this calculator uses the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1] and accurately computes the payment breakdown for any fixed-rate loan. It accounts for different payment frequencies, compounding frequencies, and extra payments. The results are suitable for mortgages, auto loans, personal loans, student loans, and business loans."
+      },
+      {
+        q: "Does it work for auto loans?",
+        a: "Yes, simply enter your auto loan amount, interest rate, and loan term. Auto loans typically have shorter terms (3-7 years) and are fully amortizing, meaning they are paid off by the end of the term. Our calculator handles any loan amount, rate, and term combination."
+      },
+      {
+        q: "What is the difference between simple interest and amortized interest?",
+        a: "Simple interest is calculated only on the original principal amount, while amortized interest is calculated on the declining balance. Most installment loans (mortgages, auto loans, personal loans) use amortized interest, where each payment covers the interest accrued since the last payment plus a portion of principal. This is why early payments are mostly interest — the balance is highest at the start."
+      },
+      {
+        q: "How does payment frequency affect total interest?",
+        a: "More frequent payments reduce total interest because principal is paid down sooner, reducing the balance that interest accrues on. Bi-weekly payments (26 per year) are equivalent to 13 monthly payments per year (one extra payment annually), which can save thousands in interest and shorten the loan term by several years. Weekly payments save even more."
+      },
+      {
+        q: "What is the effective interest rate?",
+        a: "The effective interest rate (also called the annual equivalent rate or APR) accounts for the effect of compounding frequency. It represents the true annual cost of borrowing. For example, a loan with a 6.5% nominal rate compounded monthly has an effective rate of approximately 6.70%. Our calculator displays both the nominal and effective rate."
+      },
+      {
+        q: "How does compounding frequency affect my loan?",
+        a: "Compounding frequency determines how often interest is calculated and added to the loan balance. More frequent compounding (daily or monthly) results in slightly more total interest compared to less frequent compounding (quarterly or annually). Most mortgages use monthly compounding, while some personal loans may use daily or quarterly compounding. Our calculator accurately models any compounding frequency."
+      },
+      {
+        q: "Can I compare two loan scenarios?",
+        a: "Yes, our calculator includes a built-in comparison mode that lets you compare two loan scenarios side by side. You can compare different loan amounts, interest rates, terms, and extra payment amounts. The comparison shows the difference in monthly payment, total interest, total cost, and payoff time."
+      }
+    ]
   },
-
-  // ── Tip Calculator ───────────────────────────────────────────────
-  'tip-calculator': {
-    name: 'Tip Calculator',
-    category: 'Math',
-    icon: 'fa-receipt',
-    iconClass: 'icon-math',
-    tagClass: 'tag-math',
-    description: 'Calculate tip amounts, split bills among friends, and find the total per person with tax included.',
-    metaDescription: 'Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.',
+  "tip-calculator": {
+    name: "Tip Calculator",
+    category: "Math",
+    icon: "fa-receipt",
+    iconClass: "icon-math",
+    tagClass: "tag-math",
+    description: "Calculate tip amounts, split bills among friends, and find the total per person with tax included.",
+    metaDescription: "Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.",
     fields: [
-      { id: 'bill_amount', label: 'Bill Amount ($)', type: 'number', default: 50, min: 0, step: 0.01, hint: 'The total amount of the bill before tip.' },
-      { id: 'tip_percent', label: 'Tip Percentage (%)', type: 'number', default: 18, min: 0, max: 100, step: 0.5, hint: 'The tip percentage you want to leave. Standard is 15-20%.' },
-      { id: 'tax_percent', label: 'Tax Percentage (%)', type: 'number', default: 0, min: 0, max: 100, step: 0.5, hint: 'Sales tax percentage (optional).' },
-      { id: 'num_people', label: 'Number of People', type: 'number', default: 1, min: 1, step: 1, hint: 'How many people are splitting the bill.' },
+      {
+        id: "bill_amount",
+        label: "Bill Amount ($)",
+        type: "number",
+        default: 50,
+        min: 0,
+        step: 0.01,
+        hint: "The total amount of the bill before tip."
+      },
+      {
+        id: "tip_percent",
+        label: "Tip Percentage (%)",
+        type: "number",
+        default: 18,
+        min: 0,
+        max: 100,
+        step: 0.5,
+        hint: "The tip percentage you want to leave. Standard is 15-20%."
+      },
+      {
+        id: "tax_percent",
+        label: "Tax Percentage (%)",
+        type: "number",
+        default: 0,
+        min: 0,
+        max: 100,
+        step: 0.5,
+        hint: "Sales tax percentage (optional)."
+      },
+      {
+        id: "num_people",
+        label: "Number of People",
+        type: "number",
+        default: 1,
+        min: 1,
+        step: 1,
+        hint: "How many people are splitting the bill."
+      }
     ],
     calculate(v) {
       const bill = safeNum(v.bill_amount, 0);
@@ -4114,33 +7156,62 @@ const TOOLS = {
       };
     },
     article: {
-      heading: 'How to Calculate Tips and Split Bills Fairly',
-      intro: 'Tipping is a standard part of dining and service culture in many countries. Knowing how to calculate a tip quickly and fairly ensures you reward good service appropriately and split bills accurately among friends.',
+      heading: "How to Calculate Tips and Split Bills Fairly",
+      intro: "Tipping is a standard part of dining and service culture in many countries. Knowing how to calculate a tip quickly and fairly ensures you reward good service appropriately and split bills accurately among friends.",
       sections: [
-        { heading: 'The Standard Tip Formula', body: 'Tip = Bill Amount × (Tip Percentage / 100). For example, on a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9. The total is $50 + $9 = $59. For a quick mental calculation, round the bill to the nearest ten and multiply by 0.18, or simply double the tax amount for an approximate 18% tip.' },
-        { heading: 'Splitting the Bill', body: 'To split a bill evenly, divide the total (including tip and tax) by the number of people. For example, a $59 total split among 4 people is $59 ÷ 4 = $14.75 per person. If you want to tip on the pre-tax amount only, calculate the tip separately and add it to the taxed total before dividing.' },
-        { heading: 'Tipping Etiquette', body: 'In the United States, 15-20% is standard for good service at restaurants. For buffets, 10-15% is typical. For taxis and rideshares, 10-15% is standard. For hotel bellhops, $1-2 per bag is customary. For hotel housekeeping, $2-5 per night is typical. Always check local customs when traveling internationally, as tipping practices vary widely.' },
-      ],
+        {
+          heading: "The Standard Tip Formula",
+          body: "Tip = Bill Amount × (Tip Percentage / 100). For example, on a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9. The total is $50 + $9 = $59. For a quick mental calculation, round the bill to the nearest ten and multiply by 0.18, or simply double the tax amount for an approximate 18% tip."
+        },
+        {
+          heading: "Splitting the Bill",
+          body: "To split a bill evenly, divide the total (including tip and tax) by the number of people. For example, a $59 total split among 4 people is $59 ÷ 4 = $14.75 per person. If you want to tip on the pre-tax amount only, calculate the tip separately and add it to the taxed total before dividing."
+        },
+        {
+          heading: "Tipping Etiquette",
+          body: "In the United States, 15-20% is standard for good service at restaurants. For buffets, 10-15% is typical. For taxis and rideshares, 10-15% is standard. For hotel bellhops, $1-2 per bag is customary. For hotel housekeeping, $2-5 per night is typical. Always check local customs when traveling internationally, as tipping practices vary widely."
+        }
+      ]
     },
     howTo: [
-      'Enter the total bill amount before tip and tax.',
-      'Set the tip percentage (15-20% is standard for good service).',
-      'Enter the sales tax percentage if applicable.',
-      'Enter the number of people splitting the bill.',
-      'The calculator shows the tip amount, tax, total, and per-person amounts.',
+      "Enter the total bill amount before tip and tax.",
+      "Set the tip percentage (15-20% is standard for good service).",
+      "Enter the sales tax percentage if applicable.",
+      "Enter the number of people splitting the bill.",
+      "The calculator shows the tip amount, tax, total, and per-person amounts."
     ],
-    formula: 'Tip = Bill × (Tip% / 100) | Tax = Bill × (Tax% / 100) | Total = Bill + Tax + Tip | Per Person = Total / Number of People',
+    formula: "Tip = Bill × (Tip% / 100) | Tax = Bill × (Tax% / 100) | Total = Bill + Tax + Tip | Per Person = Total / Number of People",
     examples: [
-      { title: 'Dinner for Two', input: 'Bill: $85, Tip: 20%, Tax: 8%, People: 2', result: 'Tip: $17.00 | Tax: $6.80 | Total: $108.80 | Per Person: $54.40' },
-      { title: 'Large Group', input: 'Bill: $240, Tip: 18%, Tax: 0%, People: 6', result: 'Tip: $43.20 | Total: $283.20 | Per Person: $47.20' },
+      {
+        title: "Dinner for Two",
+        input: "Bill: $85, Tip: 20%, Tax: 8%, People: 2",
+        result: "Tip: $17.00 | Tax: $6.80 | Total: $108.80 | Per Person: $54.40"
+      },
+      {
+        title: "Large Group",
+        input: "Bill: $240, Tip: 18%, Tax: 0%, People: 6",
+        result: "Tip: $43.20 | Total: $283.20 | Per Person: $47.20"
+      }
     ],
     faqs: [
-      { q: 'How do I calculate a tip?', a: 'Tip = Bill Amount × (Tip Percentage / 100). For a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9.' },
-      { q: 'How do I split a bill?', a: 'Divide the total (bill + tax + tip) by the number of people. For example, a $59 total split among 4 people is $14.75 each.' },
-      { q: 'What is a good tip percentage?', a: 'In the US, 15-20% is standard for good restaurant service. 10-15% for buffets, 10-15% for taxis, and $1-2 per bag for hotel bellhops.' },
-      { q: 'Should I tip on the pre-tax or post-tax amount?', a: 'Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity.' },
-    ],
-  },
+      {
+        q: "How do I calculate a tip?",
+        a: "Tip = Bill Amount × (Tip Percentage / 100). For a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9."
+      },
+      {
+        q: "How do I split a bill?",
+        a: "Divide the total (bill + tax + tip) by the number of people. For example, a $59 total split among 4 people is $14.75 each."
+      },
+      {
+        q: "What is a good tip percentage?",
+        a: "In the US, 15-20% is standard for good restaurant service. 10-15% for buffets, 10-15% for taxis, and $1-2 per bag for hotel bellhops."
+      },
+      {
+        q: "Should I tip on the pre-tax or post-tax amount?",
+        a: "Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity."
+      }
+    ]
+  }
 };
 
 if (typeof window !== 'undefined') {
