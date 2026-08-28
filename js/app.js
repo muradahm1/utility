@@ -130,6 +130,7 @@ function initCategoryPage() {
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeColor(savedTheme);
 
     const themeSwitch = document.getElementById('theme-toggle-switch');
     if (themeSwitch) {
@@ -138,6 +139,7 @@ function initTheme() {
             const theme = e.target.checked ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
+            updateThemeColor(theme);
         });
     }
 
@@ -150,7 +152,15 @@ function initTheme() {
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('theme', next);
             updateThemeIcon(themeBtn, next);
+            updateThemeColor(next);
         });
+    }
+}
+
+function updateThemeColor(theme) {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', theme === 'dark' ? '#0F172A' : '#6366F1');
     }
 }
 

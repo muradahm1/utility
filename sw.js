@@ -11,9 +11,9 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'getcalcu-v2';
-const STATIC_CACHE = 'getcalcu-static-v2';
-const PAGE_CACHE = 'getcalcu-pages-v2';
+const CACHE_NAME = 'getcalcu-v3';
+const STATIC_CACHE = 'getcalcu-static-v3';
+const PAGE_CACHE = 'getcalcu-pages-v3';
 
 // Core shell assets to precache on install
 const PRECACHE_URLS = [
@@ -32,12 +32,30 @@ const PRECACHE_URLS = [
   '/css/webfonts/fa-brands-400.woff2',
   '/js/tools.js',
   '/js/tools-template.js',
+  '/js/core/index.js',
+  '/js/core/tools.js',
+  '/js/core/router.js',
+  '/js/core/calculator-engine.js',
+  '/js/core/migration.js',
+  '/js/utils/index.js',
+  '/js/utils/math.js',
+  '/js/utils/currency.js',
+  '/js/utils/date.js',
+  '/js/modules/charts.js',
+  '/js/modules/validation.js',
+  '/js/modules/formatting.js',
+  '/js/modules/faq.js',
+  '/js/modules/related-tools.js',
+  '/js/modules/recommendations.js',
+  '/js/modules/budget-planner.js',
+  '/js/modules/error-boundary.js',
   '/js/config.js',
   '/js/supabase.js',
   '/js/app.js',
   '/js/tool-runner.js',
   '/js/cookie-consent.js',
   '/js/maintenance-banner.js',
+  '/js/pwa.js',
   '/manifest.json',
   '/favicon.png',
 ];

@@ -117,6 +117,22 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
+                <!-- Loading skeleton shown while tool initializes (Phase 5.5) -->
+                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
+                    <div class="skeleton-form">
+                        <div class="skeleton-line tall"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                    <div class="skeleton-results">
+                        <div class="skeleton-line full"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                    </div>
+                </div>
                 <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
                     <span class="ad-slot-label">Advertisement</span>
                 </div>
@@ -185,7 +201,6 @@
     <script src="/js/modules/faq.js" type="module"></script>
     <script src="/js/modules/related-tools.js" type="module"></script>
     <script src="/js/modules/recommendations.js" type="module"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/config.js"></script>
     <script src="/js/supabase.js"></script>
@@ -194,6 +209,7 @@
     <script src="/js/app.js"></script>
     <script src="/js/cookie-consent.js"></script>
     <script src="/js/maintenance-banner.js"></script>
+    <script src="/js/pwa.js" defer></script>
     <script>
         // Redirect legacy ?slug= URLs to pretty URLs
         (function() {
