@@ -254,10 +254,9 @@ const toolPageTemplate = (tool) => {
     <link rel="shortcut icon" href="/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
 
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to content</a>

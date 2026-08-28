@@ -7,7 +7,7 @@
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
-  font-display: block;
+  font-display: swap;
   src: url("webfonts/fa-solid-900.woff2") format("woff2");
 }
 
@@ -15,7 +15,7 @@
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 400;
-  font-display: block;
+  font-display: swap;
   src: url("webfonts/fa-regular-400.woff2") format("woff2");
 }
 
@@ -23,7 +23,7 @@
   font-family: "Font Awesome 6 Brands";
   font-style: normal;
   font-weight: 400;
-  font-display: block;
+  font-display: swap;
   src: url("webfonts/fa-brands-400.woff2") format("woff2");
 }
 
@@ -40,107 +40,107 @@
 .fa-regular { font-family: "Font Awesome 6 Free"; font-weight: 400; }
 .fa-brands { font-family: "Font Awesome 6 Brands"; font-weight: 400; }
 
-.solid.fa-arrow-right::before { content: "\f061"; }
-.solid.fa-arrow-trend-down::before { content: "\e097"; }
-.solid.fa-arrow-trend-up::before { content: "\e098"; }
-.solid.fa-arrow-up::before { content: "\f062"; }
-.solid.fa-bars::before { content: "\f0c9"; }
-.solid.fa-bolt::before { content: "\f0e7"; }
-.solid.fa-bookmark::before { content: "\f02e"; }
-.solid.fa-brain::before { content: "\f5dc"; }
-.solid.fa-briefcase::before { content: "\f0b1"; }
-.solid.fa-bug::before { content: "\f188"; }
-.solid.fa-bullseye::before { content: "\f140"; }
-.solid.fa-calculator::before { content: "\f1ec"; }
-.solid.fa-calendar::before { content: "\f133"; }
-.solid.fa-calendar-days::before { content: "\f073"; }
-.solid.fa-chart-line::before { content: "\f201"; }
-.solid.fa-chart-pie::before { content: "\f200"; }
-.solid.fa-chart-simple::before { content: "\e473"; }
-.solid.fa-check::before { content: "\f00c"; }
-.solid.fa-chevron-down::before { content: "\f078"; }
-.brands.fa-chrome::before { content: "\f268"; }
-.solid.fa-circle::before { content: "\f111"; }
-.solid.fa-circle-check::before { content: "\f058"; }
-.solid.fa-circle-exclamation::before { content: "\f06a"; }
-.solid.fa-circle-info::before { content: "\f05a"; }
-.solid.fa-circle-notch::before { content: "\f1ce"; }
-.solid.fa-clock::before { content: "\f017"; }
-.solid.fa-clock-rotate-left::before { content: "\f1da"; }
-.solid.fa-cookie-bite::before { content: "\f564"; }
-.regular.fa-copy::before { content: "\f0c5"; }
-.solid.fa-credit-card::before { content: "\f09d"; }
-.solid.fa-dollar-sign::before { content: "\24"; }
-.brands.fa-edge::before { content: "\f282"; }
-.solid.fa-envelope::before { content: "\f0e0"; }
-.solid.fa-eye::before { content: "\f06e"; }
-.solid.fa-eye-slash::before { content: "\f070"; }
-.solid.fa-face-smile::before { content: "\f118"; }
-.brands.fa-facebook::before { content: "\f09a"; }
-.solid.fa-file-invoice::before { content: "\f570"; }
-.solid.fa-file-pdf::before { content: "\f1c1"; }
-.solid.fa-fire::before { content: "\f06d"; }
-.brands.fa-firefox-browser::before { content: "\e007"; }
-.solid.fa-flag-checkered::before { content: "\f11e"; }
-.solid.fa-folder-open::before { content: "\f07c"; }
-.solid.fa-gauge-high::before { content: "\f625"; }
-.solid.fa-gear::before { content: "\f013"; }
-.solid.fa-gears::before { content: "\f085"; }
-.solid.fa-gift::before { content: "\f06b"; }
-.solid.fa-globe::before { content: "\f0ac"; }
-.solid.fa-graduation-cap::before { content: "\f19d"; }
-.solid.fa-hand-holding-dollar::before { content: "\f4c0"; }
-.solid.fa-heart::before { content: "\f004"; }
-.solid.fa-heart-pulse::before { content: "\f21e"; }
-.solid.fa-helmet-safety::before { content: "\f807"; }
-.solid.fa-house::before { content: "\f015"; }
-.solid.fa-house-chimney::before { content: "\e3af"; }
-.solid.fa-house-circle-check::before { content: "\e509"; }
-.solid.fa-infinity::before { content: "\f534"; }
-.solid.fa-key::before { content: "\f084"; }
-.solid.fa-lightbulb::before { content: "\f0eb"; }
-.brands.fa-linkedin::before { content: "\f08c"; }
-.solid.fa-lock::before { content: "\f023"; }
-.solid.fa-magnifying-glass::before { content: "\f002"; }
-.solid.fa-mobile-screen::before { content: "\f3cf"; }
-.solid.fa-money-bill-wave::before { content: "\f53a"; }
-.solid.fa-moon::before { content: "\f186"; }
-.solid.fa-not-equal::before { content: "\f53e"; }
-.solid.fa-paint-roller::before { content: "\f5aa"; }
-.solid.fa-paper-plane::before { content: "\f1d8"; }
-.solid.fa-percent::before { content: "\25"; }
-.solid.fa-piggy-bank::before { content: "\f4d3"; }
-.solid.fa-plus::before { content: "\2b"; }
-.solid.fa-receipt::before { content: "\f543"; }
-.solid.fa-rectangle-ad::before { content: "\f641"; }
-.solid.fa-right-to-bracket::before { content: "\f2f6"; }
-.solid.fa-rotate-left::before { content: "\f2ea"; }
-.solid.fa-rotate-right::before { content: "\f2f9"; }
-.solid.fa-route::before { content: "\f4d7"; }
-.solid.fa-ruler-combined::before { content: "\f546"; }
-.solid.fa-sack-dollar::before { content: "\f81d"; }
-.brands.fa-safari::before { content: "\f267"; }
-.solid.fa-scale-balanced::before { content: "\f24e"; }
-.solid.fa-scale-unbalanced::before { content: "\f515"; }
-.solid.fa-screwdriver-wrench::before { content: "\f7d9"; }
-.solid.fa-shield::before { content: "\f132"; }
-.solid.fa-shield-halved::before { content: "\f3ed"; }
-.solid.fa-sliders::before { content: "\f1de"; }
-.solid.fa-sort::before { content: "\f0dc"; }
-.solid.fa-sort-down::before { content: "\f0dd"; }
-.solid.fa-sort-up::before { content: "\f0de"; }
-.solid.fa-spinner::before { content: "\f110"; }
-.solid.fa-sun::before { content: "\f185"; }
-.solid.fa-table-cells-large::before { content: "\f009"; }
-.solid.fa-table-list::before { content: "\f00b"; }
-.solid.fa-trash::before { content: "\f1f8"; }
-.solid.fa-trash-can::before { content: "\f2ed"; }
-.solid.fa-triangle-exclamation::before { content: "\f071"; }
-.solid.fa-truck-ramp-box::before { content: "\f4de"; }
-.brands.fa-twitter::before { content: "\f099"; }
-.solid.fa-umbrella::before { content: "\f0e9"; }
-.solid.fa-universal-access::before { content: "\f29a"; }
-.solid.fa-user-lock::before { content: "\f502"; }
-.solid.fa-wallet::before { content: "\f555"; }
-.solid.fa-wand-magic-sparkles::before { content: "\e2ca"; }
-.solid.fa-xmark::before { content: "\f00d"; }
+.fa-solid.fa-arrow-right::before { content: "\f061"; }
+.fa-solid.fa-arrow-trend-down::before { content: "\e097"; }
+.fa-solid.fa-arrow-trend-up::before { content: "\e098"; }
+.fa-solid.fa-arrow-up::before { content: "\f062"; }
+.fa-solid.fa-bars::before { content: "\f0c9"; }
+.fa-solid.fa-bolt::before { content: "\f0e7"; }
+.fa-solid.fa-bookmark::before { content: "\f02e"; }
+.fa-solid.fa-brain::before { content: "\f5dc"; }
+.fa-solid.fa-briefcase::before { content: "\f0b1"; }
+.fa-solid.fa-bug::before { content: "\f188"; }
+.fa-solid.fa-bullseye::before { content: "\f140"; }
+.fa-solid.fa-calculator::before { content: "\f1ec"; }
+.fa-solid.fa-calendar::before { content: "\f133"; }
+.fa-solid.fa-calendar-days::before { content: "\f073"; }
+.fa-solid.fa-chart-line::before { content: "\f201"; }
+.fa-solid.fa-chart-pie::before { content: "\f200"; }
+.fa-solid.fa-chart-simple::before { content: "\e473"; }
+.fa-solid.fa-check::before { content: "\f00c"; }
+.fa-solid.fa-chevron-down::before { content: "\f078"; }
+.fa-brands.fa-chrome::before { content: "\f268"; }
+.fa-solid.fa-circle::before { content: "\f111"; }
+.fa-solid.fa-circle-check::before { content: "\f058"; }
+.fa-solid.fa-circle-exclamation::before { content: "\f06a"; }
+.fa-solid.fa-circle-info::before { content: "\f05a"; }
+.fa-solid.fa-circle-notch::before { content: "\f1ce"; }
+.fa-solid.fa-clock::before { content: "\f017"; }
+.fa-solid.fa-clock-rotate-left::before { content: "\f1da"; }
+.fa-solid.fa-cookie-bite::before { content: "\f564"; }
+.fa-regular.fa-copy::before { content: "\f0c5"; }
+.fa-solid.fa-credit-card::before { content: "\f09d"; }
+.fa-solid.fa-dollar-sign::before { content: "\24"; }
+.fa-brands.fa-edge::before { content: "\f282"; }
+.fa-solid.fa-envelope::before { content: "\f0e0"; }
+.fa-solid.fa-eye::before { content: "\f06e"; }
+.fa-solid.fa-eye-slash::before { content: "\f070"; }
+.fa-solid.fa-face-smile::before { content: "\f118"; }
+.fa-brands.fa-facebook::before { content: "\f09a"; }
+.fa-solid.fa-file-invoice::before { content: "\f570"; }
+.fa-solid.fa-file-pdf::before { content: "\f1c1"; }
+.fa-solid.fa-fire::before { content: "\f06d"; }
+.fa-brands.fa-firefox-browser::before { content: "\e007"; }
+.fa-solid.fa-flag-checkered::before { content: "\f11e"; }
+.fa-solid.fa-folder-open::before { content: "\f07c"; }
+.fa-solid.fa-gauge-high::before { content: "\f625"; }
+.fa-solid.fa-gear::before { content: "\f013"; }
+.fa-solid.fa-gears::before { content: "\f085"; }
+.fa-solid.fa-gift::before { content: "\f06b"; }
+.fa-solid.fa-globe::before { content: "\f0ac"; }
+.fa-solid.fa-graduation-cap::before { content: "\f19d"; }
+.fa-solid.fa-hand-holding-dollar::before { content: "\f4c0"; }
+.fa-solid.fa-heart::before { content: "\f004"; }
+.fa-solid.fa-heart-pulse::before { content: "\f21e"; }
+.fa-solid.fa-helmet-safety::before { content: "\f807"; }
+.fa-solid.fa-house::before { content: "\f015"; }
+.fa-solid.fa-house-chimney::before { content: "\e3af"; }
+.fa-solid.fa-house-circle-check::before { content: "\e509"; }
+.fa-solid.fa-infinity::before { content: "\f534"; }
+.fa-solid.fa-key::before { content: "\f084"; }
+.fa-solid.fa-lightbulb::before { content: "\f0eb"; }
+.fa-brands.fa-linkedin::before { content: "\f08c"; }
+.fa-solid.fa-lock::before { content: "\f023"; }
+.fa-solid.fa-magnifying-glass::before { content: "\f002"; }
+.fa-solid.fa-mobile-screen::before { content: "\f3cf"; }
+.fa-solid.fa-money-bill-wave::before { content: "\f53a"; }
+.fa-solid.fa-moon::before { content: "\f186"; }
+.fa-solid.fa-not-equal::before { content: "\f53e"; }
+.fa-solid.fa-paint-roller::before { content: "\f5aa"; }
+.fa-solid.fa-paper-plane::before { content: "\f1d8"; }
+.fa-solid.fa-percent::before { content: "\25"; }
+.fa-solid.fa-piggy-bank::before { content: "\f4d3"; }
+.fa-solid.fa-plus::before { content: "\2b"; }
+.fa-solid.fa-receipt::before { content: "\f543"; }
+.fa-solid.fa-rectangle-ad::before { content: "\f641"; }
+.fa-solid.fa-right-to-bracket::before { content: "\f2f6"; }
+.fa-solid.fa-rotate-left::before { content: "\f2ea"; }
+.fa-solid.fa-rotate-right::before { content: "\f2f9"; }
+.fa-solid.fa-route::before { content: "\f4d7"; }
+.fa-solid.fa-ruler-combined::before { content: "\f546"; }
+.fa-solid.fa-sack-dollar::before { content: "\f81d"; }
+.fa-brands.fa-safari::before { content: "\f267"; }
+.fa-solid.fa-scale-balanced::before { content: "\f24e"; }
+.fa-solid.fa-scale-unbalanced::before { content: "\f515"; }
+.fa-solid.fa-screwdriver-wrench::before { content: "\f7d9"; }
+.fa-solid.fa-shield::before { content: "\f132"; }
+.fa-solid.fa-shield-halved::before { content: "\f3ed"; }
+.fa-solid.fa-sliders::before { content: "\f1de"; }
+.fa-solid.fa-sort::before { content: "\f0dc"; }
+.fa-solid.fa-sort-down::before { content: "\f0dd"; }
+.fa-solid.fa-sort-up::before { content: "\f0de"; }
+.fa-solid.fa-spinner::before { content: "\f110"; }
+.fa-solid.fa-sun::before { content: "\f185"; }
+.fa-solid.fa-table-cells-large::before { content: "\f009"; }
+.fa-solid.fa-table-list::before { content: "\f00b"; }
+.fa-solid.fa-trash::before { content: "\f1f8"; }
+.fa-solid.fa-trash-can::before { content: "\f2ed"; }
+.fa-solid.fa-triangle-exclamation::before { content: "\f071"; }
+.fa-solid.fa-truck-ramp-box::before { content: "\f4de"; }
+.fa-brands.fa-twitter::before { content: "\f099"; }
+.fa-solid.fa-umbrella::before { content: "\f0e9"; }
+.fa-solid.fa-universal-access::before { content: "\f29a"; }
+.fa-solid.fa-user-lock::before { content: "\f502"; }
+.fa-solid.fa-wallet::before { content: "\f555"; }
+.fa-solid.fa-wand-magic-sparkles::before { content: "\e2ca"; }
+.fa-solid.fa-xmark::before { content: "\f00d"; }

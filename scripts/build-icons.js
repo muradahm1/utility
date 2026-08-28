@@ -91,21 +91,21 @@ const FONT_FACES = {
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 900;
-  font-display: block;
+  font-display: swap;
   src: url("webfonts/fa-solid-900.woff2") format("woff2");
 }`,
     regular: `@font-face {
   font-family: "Font Awesome 6 Free";
   font-style: normal;
   font-weight: 400;
-  font-display: block;
+  font-display: swap;
   src: url("webfonts/fa-regular-400.woff2") format("woff2");
 }`,
     brands: `@font-face {
   font-family: "Font Awesome 6 Brands";
   font-style: normal;
   font-weight: 400;
-  font-display: block;
+  font-display: swap;
   src: url("webfonts/fa-brands-400.woff2") format("woff2");
 }`
 };
@@ -136,7 +136,7 @@ css += `.fa-solid, .fa-regular, .fa-brands {
 ` + NL;
 
 for (const r of resolved) {
-    css += `.${r.prefix}.${r.cls}::before { content: "\\${r.unicode}"; }` + NL;
+    css += `.fa-${r.prefix}.${r.cls}::before { content: "\\${r.unicode}"; }` + NL;
 }
 
 const outPath = path.join(__dirname, '..', 'css', 'icons.css');

@@ -1,8 +1,13 @@
-﻿// ── Phase 5.11: Lazy-load Chart.js for legacy calculators ──────
-// Some legacy calculators in this file use `new Chart()` directly.
-// Load Chart.js dynamically so it's only fetched when a chart is needed.
+﻿// ── Phase 5.11: Lazy-load Chart.js ONLY when a chart is actually needed ──
+// Some legacy calculators in this file use `new Chart()` directly. On the
+// homepage Chart is undefined, so this would otherwise inject the ~200KB
+// Chart.js library onto pages that never render a chart (slowing first paint).
+// We only inject it when a tool/result chart canvas is present in the DOM.
 (function () {
-    if (typeof document !== 'undefined' && document.head && typeof Chart === 'undefined') {
+    if (typeof document !== 'undefined' && document.head &&
+        typeof Chart === 'undefined' &&
+        document.getElementById('tool-runner-container') &&
+        document.querySelector('#result-chart, #result-chart-2, #result-chart-3, #result-chart-4, .chart-container canvas, #budget-chart, .chart-wrapper canvas')) {
         var s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
         s.async = true;
