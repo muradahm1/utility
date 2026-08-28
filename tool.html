@@ -10,20 +10,27 @@
     <meta name="description" content="">
     <link rel="canonical" href="" id="canonical-tag">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <!-- Google Analytics & Tag Manager DataLayer Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
     </script>
-     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
-<!-- End Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
+    <!-- End Google Tag Manager -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="GetCalcu">
     <meta property="og:title" content="">
@@ -48,7 +55,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
     <body>
@@ -69,7 +76,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- Sidebar -->
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -162,7 +169,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -191,41 +198,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <!-- Legacy Tools Registry must load before the migration layer reads it -->
-    <script src="js/tools.js"></script>
+    <script src="/js/tools.js"></script>
     
     <!-- Template-based New Tools (add new tools here) -->
-    <script src="js/tools-template.js"></script>
+    <script src="/js/tools-template.js"></script>
 
     <!-- Core Architecture — index.js re-exports all core modules -->
-    <script src="js/core/index.js" type="module"></script>
+    <script src="/js/core/index.js" type="module"></script>
     
     <!-- Feature Modules (only load what's needed) -->
-    <script src="js/modules/validation.js" type="module"></script>
-    <script src="js/modules/charts.js" type="module"></script>
-    <script src="js/modules/formatting.js" type="module"></script>
-    <script src="js/modules/faq.js" type="module"></script>
-    <script src="js/modules/related-tools.js" type="module"></script>
-    <script src="js/modules/recommendations.js" type="module"></script>
-    <script src="js/modules/error-boundary.js" type="module"></script>
+    <script src="/js/modules/validation.js" type="module"></script>
+    <script src="/js/modules/charts.js" type="module"></script>
+    <script src="/js/modules/formatting.js" type="module"></script>
+    <script src="/js/modules/faq.js" type="module"></script>
+    <script src="/js/modules/related-tools.js" type="module"></script>
+    <script src="/js/modules/recommendations.js" type="module"></script>
+    <script src="/js/modules/error-boundary.js" type="module"></script>
     
     <!-- Third-party Libraries (Chart.js is lazy-loaded by ChartManager when needed) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- App Configuration -->
-    <script src="js/config.js"></script>
-    <script src="js/supabase.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/supabase.js"></script>
     
     <!-- Budget Planner Module (Chart.js is lazy-loaded by ChartManager when needed) -->
-    <script src="js/modules/budget-planner.js" type="module"></script>
+    <script src="/js/modules/budget-planner.js" type="module"></script>
     
     <!-- Tool Runner — imports migration.js, which imports the rest of core -->
-    <script src="js/tool-runner.js" type="module"></script>
+    <script src="/js/tool-runner.js" type="module"></script>
     
     <!-- App Initialization -->
-    <script src="js/app.js"></script>
-    <script src="js/cookie-consent.js"></script>
-    <script src="js/maintenance-banner.js"></script>
-    <script src="js/pwa.js" defer></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/cookie-consent.js"></script>
+    <script src="/js/maintenance-banner.js"></script>
+    <script src="/js/pwa.js" defer></script>
 </body>
 </html>
 
