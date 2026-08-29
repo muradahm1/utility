@@ -12,6 +12,13 @@ import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml, buildTableSpecHtml } from './core/calculator-engine.js';
 import { ChartManager } from './modules/charts.js';
 import { initErrorBoundary } from './modules/error-boundary.js';
+import { exportToCSV, exportToJSON } from './modules/export.js';
+import { generateResultsPDF } from './modules/pdf.js';
+import { printResults } from './modules/print.js';
+import { share } from './modules/sharing.js';
+import { buildCalculatorFAQ } from './modules/faq.js';
+import { getRelatedTools } from './modules/related-tools.js';
+import { getPersonalizedRecommendations } from './modules/recommendations.js';
 
 // Initialize global error boundary (Phase 5.4)
 initErrorBoundary();
@@ -311,7 +318,7 @@ function initLegacyRunner(tool, slug, container) {
             buildChartsHtml(result) +
             buildBreakdownTablesHtml(result) +
             buildInsightsHtml(result.insights) +
-            buildCopyBtn();
+            buildResultsToolbarHtml(result);
 
         if (result.table) {
             const tableContainer = document.querySelector('.calc-data-table');
@@ -329,7 +336,7 @@ function initLegacyRunner(tool, slug, container) {
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
         if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
         if (result.chart3) renderChart(result.chart3, 'result-chart-4');
-        bindCopyBtn(result.stats);
+        bindResultsToolbar(result);
 
         tool.fields.forEach(field => {
             const group = document.querySelector(`.form-group[data-field="${field.id}"]`);
@@ -348,28 +355,126 @@ function initLegacyRunner(tool, slug, container) {
         });
     }
 
-    function buildCopyBtn() {
-        return `<button class="btn btn-outline btn-sm copy-results-btn" id="copy-results-btn" style="margin-top:16px;"><i class="fa-regular fa-copy"></i> Copy Results</button>`;
+    function buildResultsToolbarHtml(result) {
+        return `
+            <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+                <button class="btn btn-outline btn-sm action-btn" id="action-share-btn" title="Share calculation with current inputs"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn" title="Download PDF Report"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn" title="Export CSV Data"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-print-btn" title="Print results"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+                <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn" title="Copy results text"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+            </div>
+        `;
     }
 
-    function bindCopyBtn(stats) {
-        const btn = document.getElementById('copy-results-btn');
-        if (!btn) return;
-        btn.addEventListener('click', async () => {
-            const text = stats.map(s => `${s.label}: ${s.value}`).join('\n');
-            try {
-                await navigator.clipboard.writeText(text);
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                btn.style.color = '#10B981';
-                btn.style.borderColor = '#10B981';
-                setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
-            } catch {
-                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Copy failed';
-                btn.style.color = '#EF4444';
-                btn.style.borderColor = '#EF4444';
-                setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
-            }
-        });
+    function showActionToast(message, isError = false) {
+        const existing = document.querySelector('.action-toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'action-toast';
+        if (isError) toast.style.background = '#EF4444';
+        toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-triangle-exclamation' : 'fa-check'}"></i> <span>${escapeHtml(message)}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    function bindResultsToolbar(result) {
+        const shareBtn = document.getElementById('action-share-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', async () => {
+                const currentUrl = window.location.href;
+                const shareData = {
+                    title: `${tool.name} — GetCalcu`,
+                    text: `Check out this ${tool.name} calculation on GetCalcu`,
+                    url: currentUrl
+                };
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                        return;
+                    } catch (e) {
+                        // User dismissed or unsupported
+                    }
+                }
+                try {
+                    await navigator.clipboard.writeText(currentUrl);
+                    showActionToast('Scenario link copied to clipboard!');
+                } catch {
+                    showActionToast('Link copied!');
+                }
+            });
+        }
+
+        const pdfBtn = document.getElementById('action-pdf-btn');
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', async () => {
+                pdfBtn.disabled = true;
+                pdfBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Generating...</span>';
+                try {
+                    await generateResultsPDF(tool, result);
+                    showActionToast('PDF report downloaded!');
+                } catch (e) {
+                    console.error('PDF error:', e);
+                    showActionToast('PDF generation failed. You can use Print.', true);
+                } finally {
+                    pdfBtn.disabled = false;
+                    pdfBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> <span>PDF</span>';
+                }
+            });
+        }
+
+        const csvBtn = document.getElementById('action-csv-btn');
+        if (csvBtn) {
+            csvBtn.addEventListener('click', () => {
+                if (result.table && Array.isArray(result.table) && result.table.length > 0) {
+                    exportToCSV(result.table, { filename: `${slug}-schedule.csv` });
+                    showActionToast('Schedule exported as CSV!');
+                } else if (result.table && result.table.rows && Array.isArray(result.table.rows)) {
+                    exportToCSV(result.table.rows, { filename: `${slug}-data.csv` });
+                    showActionToast('Data exported as CSV!');
+                } else if (result.stats && Array.isArray(result.stats)) {
+                    const exportRows = result.stats.map(s => ({ Metric: s.label, Value: s.value }));
+                    exportToCSV(exportRows, { filename: `${slug}-summary.csv` });
+                    showActionToast('Summary exported as CSV!');
+                } else {
+                    showActionToast('No exportable data available.', true);
+                }
+            });
+        }
+
+        const printBtn = document.getElementById('action-print-btn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                printResults({ title: `${tool.name} Results` });
+            });
+        }
+
+        const copyBtn = document.getElementById('copy-results-btn');
+        if (copyBtn && result && result.stats) {
+            copyBtn.addEventListener('click', async () => {
+                const text = result.stats.map(s => `${s.label}: ${s.value}`).join('\n');
+                try {
+                    await navigator.clipboard.writeText(text);
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
+                    copyBtn.style.color = '#10B981';
+                    copyBtn.style.borderColor = '#10B981';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy</span>';
+                        copyBtn.style.color = '';
+                        copyBtn.style.borderColor = '';
+                    }, 2000);
+                } catch {
+                    copyBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span>Failed</span>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy</span>';
+                    }, 2000);
+                }
+            });
+        }
     }
 
     function render() {
@@ -415,7 +520,7 @@ function initLegacyRunner(tool, slug, container) {
                         ${buildChartsHtml(result)}
                         ${buildBreakdownTablesHtml(result)}
                         ${buildInsightsHtml(result.insights)}
-                        ${buildCopyBtn()}
+                        ${buildResultsToolbarHtml(result)}
                     </div>
                 </div>
                 ${tableHtml}
@@ -433,7 +538,7 @@ function initLegacyRunner(tool, slug, container) {
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
         if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
         if (result.chart3) renderChart(result.chart3, 'result-chart-4');
-        bindCopyBtn(result.stats);
+        bindResultsToolbar(result);
         initSaveButton();
         initResetButton();
     }
@@ -568,16 +673,15 @@ function initLegacyRunner(tool, slug, container) {
             html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Examples</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">${exHtml}</div></div>`;
         }
         if (tool.faqs && tool.faqs.length) {
-            const faqHtml = tool.faqs.map(f => `<details style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:8px;"><summary style="font-size:14px;font-weight:700;cursor:pointer;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;">${escapeHtml(f.q)} <i class="fa-solid fa-chevron-down" style="font-size:12px;color:var(--text-secondary);"></i></summary><p style="font-size:13px;color:var(--text-secondary);margin-top:10px;line-height:1.7;">${escapeHtml(f.a)}</p></details>`).join('');
-            html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 id="faqs" style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>${faqHtml}</div>`;
+            html += `<div class="tool-runner-card" style="margin-top:24px;">${buildCalculatorFAQ(tool, { searchable: false })}</div>`;
         }
         return html;
     }
 
     function buildRelatedToolsHtml() {
-        const related = Object.entries(TOOLS).filter(([s, t]) => s !== slug && (t.category === tool.category || (tool.related && tool.related.includes(s)))).slice(0, 4);
+        const related = getRelatedTools(slug, { limit: 4 });
         if (!related.length) return '';
-        const cards = related.map(([s, t]) => `<a href="/tool/${encodeURIComponent(s)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass)}"><i class="fa-solid ${escapeHtml(t.icon)}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description)}</p><span class="tag ${escapeHtml(t.tagClass)}">${escapeHtml(t.category)}</span></a>`).join('');
+        const cards = related.map(t => `<a href="/tool/${encodeURIComponent(t.slug)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(t.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description || '')}</p><span class="tag ${escapeHtml(t.tagClass || 'tag-finance')}">${escapeHtml(t.category || '')}</span></a>`).join('');
         return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Related Calculators</h2><div class="tools-grid">${cards}</div></div>`;
     }
 

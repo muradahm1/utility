@@ -77,7 +77,12 @@ export function unregisterTool(slug) {
  * @returns {Object|undefined} Tool definition or undefined
  */
 export function getTool(slug) {
-    return TOOLS[slug] || undefined;
+    if (TOOLS[slug]) return TOOLS[slug];
+    if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS[slug]) {
+        TOOLS[slug] = window.TOOLS[slug];
+        return TOOLS[slug];
+    }
+    return undefined;
 }
 
 /**

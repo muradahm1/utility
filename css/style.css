@@ -2996,15 +2996,67 @@ body.has-maintenance-banner {
     min-width: 120px;
 }
 
-/* ── Tool Results Toolbar (Phase 5.8) ───────────────────────── */
-.tool-results-toolbar {
+/* ── Tool Results Toolbar (Phase 5.8 & Phase 6) ─────────────── */
+.tool-results-toolbar,
+.results-action-toolbar {
     display: flex;
+    align-items: center;
     gap: 8px;
     margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
 }
-.tool-results-toolbar .btn {
-    min-width: 100px;
+
+.results-action-toolbar .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.results-action-toolbar .action-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.results-meta-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.action-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--text-primary);
+    color: var(--bg-card);
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    animation: toastSlideUp 0.25s ease-out;
+}
+
+@keyframes toastSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 
