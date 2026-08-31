@@ -12,8 +12,8 @@
  */
 
 const CACHE_NAME = 'getcalcu-v3';
-const STATIC_CACHE = 'getcalcu-static-v3';
-const PAGE_CACHE = 'getcalcu-pages-v3';
+const STATIC_CACHE = 'getcalcu-static-v4';
+const PAGE_CACHE = 'getcalcu-pages-v4';
 
 // Core shell assets to precache on install
 const PRECACHE_URLS = [
@@ -34,36 +34,36 @@ const PRECACHE_URLS = [
   '/js/tools-template.js',
   '/js/core/index.js',
   '/js/core/tools.js',
-  '/js/core/router.js',
   '/js/core/calculator-engine.js',
   '/js/core/migration.js',
   '/js/utils/index.js',
-  '/js/utils/math.js',
-  '/js/utils/currency.js',
-  '/js/utils/date.js',
-  '/js/modules/charts.js',
-  '/js/modules/validation.js',
-  '/js/modules/formatting.js',
+  '/js/modules/export.js',
+  '/js/modules/print.js',
+  '/js/modules/pdf.js',
+  '/js/modules/sharing.js',
+  '/js/modules/recommendations.js',
+  '/js/modules/tables.js',
   '/js/modules/faq.js',
   '/js/modules/related-tools.js',
-  '/js/modules/recommendations.js',
-  '/js/modules/budget-planner.js',
+  '/js/modules/charts.js',
   '/js/modules/error-boundary.js',
-  '/js/config.js',
-  '/js/supabase.js',
   '/js/app.js',
   '/js/tool-runner.js',
-  '/js/cookie-consent.js',
-  '/js/maintenance-banner.js',
   '/js/pwa.js',
   '/manifest.json',
   '/favicon.png',
+  '/favicon-32x32.png',
+  '/favicon-96x96.png',
+  '/favicon-192x192.png',
+  '/apple-touch-icon.png',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // Assets that should be cache-first (never change)
 const CACHE_FIRST = /\.(css|js|png|jpg|jpeg|svg|webp|gif|ico|woff2?|ttf)$/;
 
-// API endpoints that should always hit the network
+// API & external CDN endpoints that should always hit network directly
 const NETWORK_ONLY = [
   'supabase.co',
   'emailjs.com',
@@ -71,6 +71,8 @@ const NETWORK_ONLY = [
   'googletagmanager.com',
   'google.com/g/collect',
   'analytics.google.com',
+  'cdnjs.cloudflare.com',
+  'cdn.jsdelivr.net'
 ];
 
 // ── Install: precache core shell ────────────────────────────────

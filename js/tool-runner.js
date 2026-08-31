@@ -415,7 +415,7 @@ function initLegacyRunner(tool, slug, container) {
                 pdfBtn.disabled = true;
                 pdfBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Generating...</span>';
                 try {
-                    await generateResultsPDF(tool, result);
+                    await generateResultsPDF(tool, result, values);
                     showActionToast('PDF report downloaded!');
                 } catch (e) {
                     console.error('PDF error:', e);
