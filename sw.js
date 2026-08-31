@@ -11,53 +11,22 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'getcalcu-v3';
-const STATIC_CACHE = 'getcalcu-static-v4';
-const PAGE_CACHE = 'getcalcu-pages-v4';
+const CACHE_NAME = 'getcalcu-v5';
+const STATIC_CACHE = 'getcalcu-static-v5';
+const PAGE_CACHE = 'getcalcu-pages-v5';
 
-// Core shell assets to precache on install
+// Core shell assets to precache on install (lightweight to prevent bandwidth congestion)
 const PRECACHE_URLS = [
   '/',
   '/index.html',
-  '/tool.html',
-  '/about.html',
-  '/contact.html',
-  '/privacy.html',
-  '/terms.html',
-  '/cookie-policy.html',
   '/css/style.css',
   '/css/icons.css',
   '/css/webfonts/fa-solid-900.woff2',
-  '/css/webfonts/fa-regular-400.woff2',
-  '/css/webfonts/fa-brands-400.woff2',
   '/js/tools.js',
   '/js/tools-template.js',
-  '/js/core/index.js',
-  '/js/core/tools.js',
-  '/js/core/calculator-engine.js',
-  '/js/core/migration.js',
-  '/js/utils/index.js',
-  '/js/modules/export.js',
-  '/js/modules/print.js',
-  '/js/modules/pdf.js',
-  '/js/modules/sharing.js',
-  '/js/modules/recommendations.js',
-  '/js/modules/tables.js',
-  '/js/modules/faq.js',
-  '/js/modules/related-tools.js',
-  '/js/modules/charts.js',
-  '/js/modules/error-boundary.js',
   '/js/app.js',
-  '/js/tool-runner.js',
-  '/js/pwa.js',
-  '/manifest.json',
   '/favicon.png',
-  '/favicon-32x32.png',
-  '/favicon-96x96.png',
-  '/favicon-192x192.png',
-  '/apple-touch-icon.png',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/manifest.json'
 ];
 
 // Assets that should be cache-first (never change)

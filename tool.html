@@ -54,6 +54,9 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
 
+    <!-- Font Preload for instant icon rendering -->
+    <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="/css/style.css">
@@ -198,41 +201,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
-    <!-- Legacy Tools Registry must load before the migration layer reads it -->
+    <!-- Legacy Tools Registry must load before tool-runner reads it -->
     <script src="/js/tools.js"></script>
-    
-    <!-- Template-based New Tools (add new tools here) -->
     <script src="/js/tools-template.js"></script>
-
-    <!-- Core Architecture — index.js re-exports all core modules -->
-    <script src="/js/core/index.js" type="module"></script>
     
-    <!-- Feature Modules (only load what's needed) -->
-    <script src="/js/modules/validation.js" type="module"></script>
-    <script src="/js/modules/charts.js" type="module"></script>
-    <script src="/js/modules/formatting.js" type="module"></script>
-    <script src="/js/modules/faq.js" type="module"></script>
-    <script src="/js/modules/related-tools.js" type="module"></script>
-    <script src="/js/modules/recommendations.js" type="module"></script>
-    <script src="/js/modules/error-boundary.js" type="module"></script>
-    
-    <!-- Third-party Libraries (Chart.js is lazy-loaded by ChartManager when needed) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- App Configuration -->
-    <script src="/js/config.js"></script>
-    <script src="/js/supabase.js"></script>
-    
-    <!-- Budget Planner Module (Chart.js is lazy-loaded by ChartManager when needed) -->
+    <!-- Budget Planner Module (only for budget planner) -->
     <script src="/js/modules/budget-planner.js" type="module"></script>
     
-    <!-- Tool Runner — imports migration.js, which imports the rest of core -->
+    <!-- Tool Runner — modular engine handles all imports -->
     <script src="/js/tool-runner.js" type="module"></script>
     
     <!-- App Initialization -->
     <script src="/js/app.js"></script>
-    <script src="/js/cookie-consent.js"></script>
-    <script src="/js/maintenance-banner.js"></script>
+    <script src="/js/config.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="/js/supabase.js" defer></script>
+    <script src="/js/cookie-consent.js" defer></script>
+    <script src="/js/maintenance-banner.js" defer></script>
     <script src="/js/pwa.js" defer></script>
 </body>
 </html>
