@@ -288,14 +288,14 @@ function initLegacyRunner(tool, slug, container) {
                 continue;
             }
             if (field.type === 'select') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}">${field.options.map(o => `<option value="${o.value}" ${values[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${values[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
                 continue;
             }
             if (field.type === 'range') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${attrs}><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${values[field.id]}" ${attrs}></div><span class="field-error hidden" data-error="${field.id}"></span></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${values[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
                 continue;
             }
-            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${attrs}><span class="field-error hidden" data-error="${field.id}"></span></div>`;
+            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
         }
         if (inCollapsible) html += '</div></details>';
         return html;
@@ -395,6 +395,7 @@ function initLegacyRunner(tool, slug, container) {
                 if (navigator.share) {
                     try {
                         await navigator.share(shareData);
+                        trackEvent('calculator_action', { action_type: 'share' });
                         return;
                     } catch (e) {
                         // User dismissed or unsupported
@@ -403,6 +404,7 @@ function initLegacyRunner(tool, slug, container) {
                 try {
                     await navigator.clipboard.writeText(currentUrl);
                     showActionToast('Scenario link copied to clipboard!');
+                    trackEvent('calculator_action', { action_type: 'share' });
                 } catch {
                     showActionToast('Link copied!');
                 }
@@ -417,6 +419,7 @@ function initLegacyRunner(tool, slug, container) {
                 try {
                     await generateResultsPDF(tool, result, values);
                     showActionToast('PDF report downloaded!');
+                    trackEvent('calculator_action', { action_type: 'pdf_download' });
                 } catch (e) {
                     console.error('PDF error:', e);
                     showActionToast('PDF generation failed. You can use Print.', true);
@@ -433,13 +436,16 @@ function initLegacyRunner(tool, slug, container) {
                 if (result.table && Array.isArray(result.table) && result.table.length > 0) {
                     exportToCSV(result.table, { filename: `${slug}-schedule.csv` });
                     showActionToast('Schedule exported as CSV!');
+                    trackEvent('calculator_action', { action_type: 'csv_export' });
                 } else if (result.table && result.table.rows && Array.isArray(result.table.rows)) {
                     exportToCSV(result.table.rows, { filename: `${slug}-data.csv` });
                     showActionToast('Data exported as CSV!');
+                    trackEvent('calculator_action', { action_type: 'csv_export' });
                 } else if (result.stats && Array.isArray(result.stats)) {
                     const exportRows = result.stats.map(s => ({ Metric: s.label, Value: s.value }));
                     exportToCSV(exportRows, { filename: `${slug}-summary.csv` });
                     showActionToast('Summary exported as CSV!');
+                    trackEvent('calculator_action', { action_type: 'csv_export' });
                 } else {
                     showActionToast('No exportable data available.', true);
                 }
@@ -450,6 +456,7 @@ function initLegacyRunner(tool, slug, container) {
         if (printBtn) {
             printBtn.addEventListener('click', () => {
                 printResults({ title: `${tool.name} Results` });
+                trackEvent('calculator_action', { action_type: 'print' });
             });
         }
 
@@ -462,6 +469,7 @@ function initLegacyRunner(tool, slug, container) {
                     copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
                     copyBtn.style.color = '#10B981';
                     copyBtn.style.borderColor = '#10B981';
+                    trackEvent('calculator_action', { action_type: 'copy' });
                     setTimeout(() => {
                         copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy</span>';
                         copyBtn.style.color = '';
@@ -473,6 +481,17 @@ function initLegacyRunner(tool, slug, container) {
                         copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy</span>';
                     }, 2000);
                 }
+            });
+        }
+    }
+
+    function trackEvent(eventName, eventParams = {}) {
+        if (typeof window !== 'undefined' && window.dataLayer && Array.isArray(window.dataLayer)) {
+            window.dataLayer.push({
+                event: eventName,
+                calculator_slug: slug,
+                calculator_name: tool?.name,
+                ...eventParams
             });
         }
     }
@@ -510,7 +529,7 @@ function initLegacyRunner(tool, slug, container) {
                 <div class="tool-header"><h1>${escapeHtml(tool.name)}</h1><p>${escapeHtml(tool.description)}</p></div>
                 <div class="tool-grid-workspace">
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
-                    <div class="calculator-results-card">
+                    <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
                         ${result.error ? '' : buildInsightHtml(result.insight)}
                         ${buildRecommendationHtml(result.recommendation)}
                         ${buildSummaryHtml(result.summary)}
@@ -541,6 +560,7 @@ function initLegacyRunner(tool, slug, container) {
         bindResultsToolbar(result);
         initSaveButton();
         initResetButton();
+        trackEvent('calculator_viewed');
     }
 
     function validateField(field, rawValue) {
@@ -555,9 +575,19 @@ function initLegacyRunner(tool, slug, container) {
 
     function showFieldError(fieldId, message) {
         const input = document.getElementById(fieldId);
-        const errEl = document.querySelector(`[data-error="${fieldId}"]`);
-        if (input) input.classList.toggle('input-error', !!message);
-        if (errEl) { errEl.textContent = message || ''; errEl.classList.toggle('hidden', !message); }
+        const errEl = document.getElementById(`error-${fieldId}`) || document.querySelector(`[data-error="${fieldId}"]`);
+        if (input) {
+            input.classList.toggle('input-error', !!message);
+            if (message) {
+                input.setAttribute('aria-invalid', 'true');
+            } else {
+                input.removeAttribute('aria-invalid');
+            }
+        }
+        if (errEl) {
+            errEl.textContent = message || '';
+            errEl.classList.toggle('hidden', !message);
+        }
     }
 
     function handleInputChange(e) {

@@ -171,7 +171,7 @@ function buildBreadcrumbJsonLd(tool) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${BASE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: tool.category, item: `${BASE_URL}/?category=${tool.category.toLowerCase()}` },
+      { '@type': 'ListItem', position: 2, name: tool.category, item: `${BASE_URL}/` },
       { '@type': 'ListItem', position: 3, name: tool.name, item: buildCanonical(tool.slug) },
     ],
   };
