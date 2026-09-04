@@ -1,4 +1,4 @@
-﻿// ── Phase 5.11: Lazy-load Chart.js ONLY when a chart is actually needed ──
+// ── Phase 5.11: Lazy-load Chart.js ONLY when a chart is actually needed ──
 // Some legacy calculators in this file use `new Chart()` directly. On the
 // homepage Chart is undefined, so this would otherwise inject the ~200KB
 // Chart.js library onto pages that never render a chart (slowing first paint).
@@ -4145,6 +4145,536 @@ const TOOLS = {
       { q: 'What is a good tip percentage?', a: 'In the US, 15-20% is standard for good restaurant service. 10-15% for buffets, 10-15% for taxis, and $1-2 per bag for hotel bellhops.' },
       { q: 'Should I tip on the pre-tax or post-tax amount?', a: 'Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity.' },
     ],
+  },
+  'currency-converter': {
+    id: 'currency-converter',
+    name: 'Currency Converter',
+    category: 'Finance',
+    icon: 'fa-money-bill-transfer',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Convert between 16+ global currencies with real-time exchange rates, inverse rates, and multi-currency comparison table.',
+    metaDescription: 'Free currency converter — instantly calculate foreign exchange rates between USD, EUR, GBP, CAD, AUD, JPY, INR, CHF, AED, SAR, and more.',
+    fields: [
+      { id: 'amount', label: 'Amount to Convert', type: 'number', default: 100, min: 0.01, step: 1, hint: 'The monetary amount you want to convert.' },
+      { id: 'from_currency', label: 'From Currency', type: 'select', default: 'USD',
+        options: [
+          { value: 'USD', label: 'USD — US Dollar ($)' },
+          { value: 'EUR', label: 'EUR — Euro (€)' },
+          { value: 'GBP', label: 'GBP — British Pound (£)' },
+          { value: 'CAD', label: 'CAD — Canadian Dollar (C$)' },
+          { value: 'AUD', label: 'AUD — Australian Dollar (A$)' },
+          { value: 'JPY', label: 'JPY — Japanese Yen (¥)' },
+          { value: 'CHF', label: 'CHF — Swiss Franc (CHF)' },
+          { value: 'CNY', label: 'CNY — Chinese Yuan (¥)' },
+          { value: 'INR', label: 'INR — Indian Rupee (₹)' },
+          { value: 'BRL', label: 'BRL — Brazilian Real (R$)' },
+          { value: 'MXN', label: 'MXN — Mexican Peso (Mex$)' },
+          { value: 'SGD', label: 'SGD — Singapore Dollar (S$)' },
+          { value: 'NZD', label: 'NZD — New Zealand Dollar (NZ$)' },
+          { value: 'AED', label: 'AED — UAE Dirham (AED)' },
+          { value: 'SAR', label: 'SAR — Saudi Riyal (SAR)' },
+          { value: 'ZAR', label: 'ZAR — South African Rand (R)' }
+        ], hint: 'Currency you are converting from.' },
+      { id: 'to_currency', label: 'To Currency', type: 'select', default: 'EUR',
+        options: [
+          { value: 'USD', label: 'USD — US Dollar ($)' },
+          { value: 'EUR', label: 'EUR — Euro (€)' },
+          { value: 'GBP', label: 'GBP — British Pound (£)' },
+          { value: 'CAD', label: 'CAD — Canadian Dollar (C$)' },
+          { value: 'AUD', label: 'AUD — Australian Dollar (A$)' },
+          { value: 'JPY', label: 'JPY — Japanese Yen (¥)' },
+          { value: 'CHF', label: 'CHF — Swiss Franc (CHF)' },
+          { value: 'CNY', label: 'CNY — Chinese Yuan (¥)' },
+          { value: 'INR', label: 'INR — Indian Rupee (₹)' },
+          { value: 'BRL', label: 'BRL — Brazilian Real (R$)' },
+          { value: 'MXN', label: 'MXN — Mexican Peso (Mex$)' },
+          { value: 'SGD', label: 'SGD — Singapore Dollar (S$)' },
+          { value: 'NZD', label: 'NZD — New Zealand Dollar (NZ$)' },
+          { value: 'AED', label: 'AED — UAE Dirham (AED)' },
+          { value: 'SAR', label: 'SAR — Saudi Riyal (SAR)' },
+          { value: 'ZAR', label: 'ZAR — South African Rand (R)' }
+        ], hint: 'Currency you want to convert into.' }
+    ],
+    calculate(v) {
+      const ratesToUSD = {
+        USD: 1.0,
+        EUR: 0.92,
+        GBP: 0.79,
+        CAD: 1.36,
+        AUD: 1.52,
+        JPY: 154.5,
+        CHF: 0.88,
+        CNY: 7.24,
+        INR: 83.5,
+        BRL: 5.65,
+        MXN: 18.2,
+        SGD: 1.35,
+        NZD: 1.64,
+        AED: 3.67,
+        SAR: 3.75,
+        ZAR: 18.4
+      };
+      const symbols = {
+        USD: '$', EUR: '€', GBP: '£', CAD: 'C$', AUD: 'A$', JPY: '¥', CHF: 'CHF',
+        CNY: '¥', INR: '₹', BRL: 'R$', MXN: 'Mex$', SGD: 'S$', NZD: 'NZ$',
+        AED: 'AED ', SAR: 'SAR ', ZAR: 'R '
+      };
+      const amount = safeNum(v.amount, 0);
+      const from = v.from_currency || 'USD';
+      const to = v.to_currency || 'EUR';
+      if (amount <= 0) return errorResult('Please enter an amount greater than zero.');
+      const fromRate = ratesToUSD[from] || 1.0;
+      const toRate = ratesToUSD[to] || 1.0;
+      const inUSD = amount / fromRate;
+      const converted = roundTo(inUSD * toRate, 2);
+      const exchangeRate = roundTo(toRate / fromRate, 4);
+      const inverseRate = roundTo(fromRate / toRate, 4);
+      const toSymbol = symbols[to] || '';
+      const fromSymbol = symbols[from] || '';
+
+      const popularCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR', 'AED', 'SAR'];
+      const tableRows = popularCurrencies.map(code => {
+        const cRate = ratesToUSD[code];
+        const val = roundTo(inUSD * cRate, 2);
+        const sym = symbols[code] || '';
+        return {
+          Currency: code,
+          Rate: (cRate / fromRate).toFixed(4),
+          Converted: sym + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        };
+      });
+
+      return {
+        stats: [
+          { label: 'Converted Amount (' + to + ')', value: toSymbol + converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), highlight: true },
+          { label: 'Exchange Rate (1 ' + from + ' → ' + to + ')', value: exchangeRate + ' ' + to },
+          { label: 'Inverse Rate (1 ' + to + ' → ' + from + ')', value: inverseRate + ' ' + from },
+          { label: 'Original Amount', value: fromSymbol + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + from },
+        ],
+        table: tableRows,
+        insight: {
+          tone: 'neutral',
+          icon: 'fa-money-bill-transfer',
+          headline: fromSymbol + amount + ' ' + from + ' equals approximately ' + toSymbol + converted.toLocaleString('en-US') + ' ' + to + '.',
+          detail: 'Based on standard mid-market exchange rates (1 ' + from + ' = ' + exchangeRate + ' ' + to + '). Real bank rates may include 1–3% spread fees.'
+        }
+      };
+    },
+    article: {
+      heading: 'How Foreign Exchange & Currency Conversion Works',
+      intro: 'Currency conversion allows travelers, international businesses, and investors to exchange values between different world currencies based on prevailing foreign exchange (forex) market rates.',
+      sections: [
+        { heading: 'Mid-Market Rates vs. Retail Bank Rates', body: 'The mid-market rate (or interbank rate) is the midpoint between global buy and sell prices. Consumer banks and airport kiosks usually add a 1.5% to 4% margin or commission on top of this rate.' },
+        { heading: 'How to Avoid Excessive Foreign Transaction Fees', body: 'When spending abroad or shopping on international websites, always choose to be billed in the local currency of the seller rather than using dynamic currency conversion (DCC), which often charges high markups.' },
+      ]
+    },
+    howTo: [
+      'Enter the amount of money you wish to convert.',
+      'Select your source currency in the "From Currency" dropdown.',
+      'Select your destination currency in the "To Currency" dropdown.',
+      'Instantly view the converted amount, exchange rate, inverse rate, and multi-currency comparison table.'
+    ],
+    examples: [
+      { title: 'Converting USD to EUR', input: '$100 USD to EUR', result: '≈ €92.00 (Rate: 1 USD = 0.9200 EUR)' },
+      { title: 'Converting GBP to USD', input: '£100 GBP to USD', result: '≈ $126.58 (Rate: 1 GBP = 1.2658 USD)' }
+    ],
+    formula: 'Converted Amount = (Amount ÷ From Currency Rate in USD) × To Currency Rate in USD',
+    faqs: [
+      { q: 'What is the mid-market exchange rate?', a: 'The mid-market exchange rate is the real midpoint between the supply and demand for a currency in global markets without bank markups.' },
+      { q: 'Why do banks give a different rate than online calculators?', a: 'Commercial banks and exchange booths add a retail markup (spread) to make a profit. Calculators typically display the mid-market reference rate.' },
+      { q: 'What is Dynamic Currency Conversion (DCC)?', a: 'DCC occurs when an overseas ATM or card terminal asks if you want to be charged in your home currency. It usually carries poor exchange rates (3–7% markup). It is usually cheaper to choose the local currency.' }
+    ]
+  },
+  'beam-deflection-calculator': {
+    id: 'beam-deflection-calculator',
+    name: 'Beam Deflection Calculator',
+    category: 'Engineering',
+    icon: 'fa-ruler-combined',
+    iconClass: 'icon-engineering',
+    tagClass: 'tag-engineering',
+    description: 'Calculate maximum deflection for simply supported and cantilever beams under point load.',
+    metaDescription: 'Free beam deflection calculator — estimate maximum deflection for simply supported and cantilever beams.',
+    fields: [
+      { id: 'beamType', label: 'Beam Type', type: 'select', default: 'simply', options: [
+        { value: 'simply', label: 'Simply Supported (center load)' },
+        { value: 'cantilever', label: 'Cantilever (end load)' },
+      ], hint: 'Select the beam support condition.' },
+      { id: 'length', label: 'Beam Length (ft)', type: 'number', default: 10, min: 1, step: 0.5, hint: 'Span length in feet.' },
+      { id: 'load', label: 'Load (lbs)', type: 'number', default: 1000, min: 0, step: 100, hint: 'Total load in pounds.' },
+      { id: 'moi', label: 'Moment of Inertia (in⁴)', type: 'number', default: 100, min: 0.1, step: 1, hint: 'Section property from beam tables.' },
+    ],
+    calculate(v) {
+      const beamType = v.beamType || 'simply';
+      const L = safeNum(v.length, 0) * 12;
+      const P = safeNum(v.load, 0);
+      const I = safeNum(v.moi, 0);
+      const E = 29000000;
+      if (L <= 0 || P <= 0 || I <= 0) return errorResult('Enter positive values for all fields.');
+      let deflection;
+      if (beamType === 'simply') {
+        deflection = (P * L * L * L) / (48 * E * I);
+      } else {
+        deflection = (P * L * L * L) / (3 * E * I);
+      }
+      return {
+        stats: [
+          { label: 'Beam Type', value: beamType === 'simply' ? 'Simply Supported' : 'Cantilever' },
+          { label: 'Max Deflection', value: roundTo(deflection, 4) + ' in', highlight: true },
+          { label: 'Deflection (in)', value: roundTo(deflection, 4) },
+          { label: 'L/Δ Ratio', value: 'L/' + roundTo(L / deflection, 1) },
+        ],
+        formula: 'δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]',
+      };
+    },
+    article: { heading: 'Understanding Beam Deflection in Structural Engineering', intro: 'Beam deflection is the degree to which a beam bends under load. Excessive deflection can damage finishes and affect structural integrity.', sections: [
+      { heading: 'The Deflection Formula', body: 'Deflection depends on load, span length, material stiffness (E), and cross-section shape (I). The formulas differ for simply supported and cantilever beams.' },
+      { heading: 'Allowable Deflection Limits', body: 'Building codes typically limit deflection to L/360 for live loads and L/240 for dead loads. For a 10 ft beam, that is about 0.33 inches for live load.' },
+      { heading: 'Increasing Stiffness', body: 'To reduce deflection, increase the moment of inertia (deeper beam), use a stiffer material (steel vs wood), add supports, or reduce the span.' },
+    ] },
+    howTo: ['Select beam type.', 'Enter beam length, load, and moment of inertia.', 'Review maximum deflection and L/Δ ratio.'],
+    formula: 'δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]',
+    examples: [
+      { title: 'Wood Beam', input: 'Simply supported, 10 ft, 1000 lbs, I = 100 in⁴', result: 'δ ≈ 0.0106 in, L/δ ≈ 11320' },
+      { title: 'Steel Cantilever', input: 'Cantilever, 8 ft, 500 lbs, I = 200 in⁴', result: 'δ ≈ 0.0030 in, L/δ ≈ 31900' },
+    ],
+    faqs: [
+      { q: 'What is moment of inertia?', a: 'Moment of inertia (I) measures a beam resistance to bending. It depends on the cross-section shape. Deeper beams have much higher I than wider beams of the same area.' },
+      { q: 'What is the modulus of elasticity?', a: 'E (modulus of elasticity) measures material stiffness. Steel is about 29,000,000 psi. Wood is about 1,500,000–1,800,000 psi depending on grade.' },
+      { q: 'What is L/360?', a: 'L/360 is a common deflection limit. It means the maximum deflection should not exceed the span length divided by 360. For a 10 ft span, that is 0.33 inches.' },
+      { q: 'Can I use this for steel beams?', a: 'Yes, but ensure you use the correct moment of inertia for the steel section. This calculator uses E = 29,000,000 psi, which is standard for steel.' },
+    ],
+  },
+  'ohms-law-calculator': {
+    id: 'ohms-law-calculator',
+    name: "Ohm's Law Calculator",
+    category: 'Engineering',
+    icon: 'fa-bolt',
+    iconClass: 'icon-engineering',
+    tagClass: 'tag-engineering',
+    description: "Calculate voltage, current, resistance, and power using Ohm's Law relationships.",
+    metaDescription: "Free Ohm's Law calculator — calculate voltage (V), current (I), resistance (R), and electric power (P) instantly.",
+    fields: [
+      { id: 'voltage', label: 'Voltage (V - Volts)', type: 'number', default: 12, min: 0, step: 0.1, hint: 'Leave at 0 if calculating voltage from I and R.' },
+      { id: 'current', label: 'Current (I - Amperes)', type: 'number', default: 2, min: 0, step: 0.01, hint: 'Leave at 0 if calculating current from V and R.' },
+      { id: 'resistance', label: 'Resistance (R - Ohms Ω)', type: 'number', default: 6, min: 0, step: 0.1, hint: 'Leave at 0 if calculating resistance from V and I.' },
+    ],
+    calculate(v) {
+      let V = safeNum(v.voltage, 0);
+      let I = safeNum(v.current, 0);
+      let R = safeNum(v.resistance, 0);
+      let P = 0;
+      let calculatedField = '';
+
+      if (V > 0 && I > 0 && R === 0) {
+        R = V / I;
+        calculatedField = 'Resistance';
+      } else if (V > 0 && R > 0 && I === 0) {
+        I = V / R;
+        calculatedField = 'Current';
+      } else if (I > 0 && R > 0 && V === 0) {
+        V = I * R;
+        calculatedField = 'Voltage';
+      } else if (V > 0 && I > 0 && R > 0) {
+        R = V / I;
+        calculatedField = 'Recalculated Resistance';
+      } else {
+        return errorResult('Please enter at least two known values (Voltage, Current, or Resistance).');
+      }
+
+      P = V * I;
+
+      return {
+        stats: [
+          { label: 'Voltage (V)', value: roundTo(V, 2) + ' V', highlight: calculatedField === 'Voltage' },
+          { label: 'Current (I)', value: roundTo(I, 4) + ' A', highlight: calculatedField === 'Current' },
+          { label: 'Resistance (R)', value: roundTo(R, 2) + ' Ω', highlight: calculatedField === 'Resistance' || calculatedField.includes('Resistance') },
+          { label: 'Power (P)', value: roundTo(P, 2) + ' W', highlight: true },
+        ],
+        formula: 'V = I × R | I = V ÷ R | R = V ÷ I | P = V × I = I² × R',
+      };
+    },
+    article: { heading: "Understanding Ohm's Law in Electrical Engineering", intro: "Ohm's Law is the foundational principle of electrical circuits, defining the direct relationship between voltage, current, resistance, and electrical power.", sections: [
+      { heading: 'The Core Relationships', body: 'Voltage (V) = Current (I) × Resistance (R). Power (P) = Voltage (V) × Current (I).' }
+    ] },
+    howTo: ['Enter any two known values among Voltage, Current, and Resistance.', 'Leave the unknown field at 0.', 'View the calculated unknown value and total electrical power in Watts.'],
+    formula: 'V = I × R | P = V × I',
+    examples: [
+      { title: '12V Auto Circuit', input: 'Voltage: 12V, Resistance: 6Ω', result: 'Current = 2.0A, Power = 24.0W' }
+    ],
+    faqs: [
+      { q: "What is Ohm's Law?", a: "Ohm's Law states that the current through a conductor between two points is directly proportional to the voltage across the two points and inversely proportional to the resistance." }
+    ]
+  },
+  'pressure-calculator': {
+    id: 'pressure-calculator',
+    name: 'Pressure Calculator',
+    category: 'Engineering',
+    icon: 'fa-gauge-high',
+    iconClass: 'icon-engineering',
+    tagClass: 'tag-engineering',
+    description: 'Convert between PSI, Bar, Pascal, Atmosphere, and calculate pressure from force and surface area.',
+    metaDescription: 'Free pressure calculator — convert between PSI, Bar, kPa, MPa, and atmospheres, or calculate pressure from force and area.',
+    fields: [
+      { id: 'force', label: 'Force (Pounds-force lbf / Newtons N)', type: 'number', default: 100, min: 0, step: 1, hint: 'Applied force.' },
+      { id: 'area', label: 'Surface Area (Square inches in² / m²)', type: 'number', default: 10, min: 0.01, step: 0.1, hint: 'Surface area over which force is distributed.' },
+      { id: 'unit_system', label: 'Unit System', type: 'select', default: 'imperial',
+        options: [
+          { value: 'imperial', label: 'Imperial (Force in lbf, Area in in² → Output in PSI)' },
+          { value: 'metric', label: 'Metric (Force in N, Area in m² → Output in Pa/kPa)' }
+        ], hint: 'Choose units for force and area.' }
+    ],
+    calculate(v) {
+      const force = safeNum(v.force, 0);
+      const area = safeNum(v.area, 0);
+      const isMetric = v.unit_system === 'metric';
+      if (force <= 0 || area <= 0) return errorResult('Force and Area must both be greater than zero.');
+
+      let psi = 0;
+      let kpa = 0;
+      let bar = 0;
+      let atm = 0;
+
+      if (isMetric) {
+        const pa = force / area;
+        kpa = pa / 1000;
+        psi = kpa * 0.145038;
+        bar = kpa / 100;
+        atm = kpa / 101.325;
+      } else {
+        psi = force / area;
+        kpa = psi * 6.89476;
+        bar = psi * 0.0689476;
+        atm = psi * 0.068046;
+      }
+
+      return {
+        stats: [
+          { label: 'Pressure (PSI)', value: roundTo(psi, 2) + ' psi', highlight: !isMetric },
+          { label: 'Pressure (kPa)', value: roundTo(kpa, 2) + ' kPa', highlight: isMetric },
+          { label: 'Pressure (Bar)', value: roundTo(bar, 4) + ' bar' },
+          { label: 'Atmospheres (atm)', value: roundTo(atm, 4) + ' atm' },
+        ],
+        formula: 'P = Force / Area | 1 PSI = 6.89476 kPa | 1 Bar = 100 kPa ≈ 14.5038 PSI',
+      };
+    },
+    article: { heading: 'Pressure Units and Force Distribution in Engineering', intro: 'Pressure is defined as force applied perpendicular to the surface of an object per unit area over which that force is distributed.', sections: [
+      { heading: 'Units of Pressure', body: 'PSI (pounds per square inch) is commonly used in the United States, while Pascals (Pa), Kilopascals (kPa), and Bar are standard international metric units.' }
+    ] },
+    howTo: ['Enter the total force applied.', 'Enter the surface contact area.', 'Select Imperial or Metric unit mode.', 'View pressure in PSI, kPa, Bar, and Atmospheres.'],
+    formula: 'P = F ÷ A',
+    examples: [
+      { title: 'Hydraulic Piston', input: 'Force: 500 lbf, Area: 5 in²', result: 'Pressure = 100 PSI (689.5 kPa)' }
+    ],
+    faqs: [
+      { q: 'What is 1 atmosphere of pressure in PSI?', a: 'One standard atmosphere (atm) at sea level is approximately 14.696 PSI or 101.325 kPa.' }
+    ]
+  },
+  'concrete-calculator': {
+    id: 'concrete-calculator',
+    name: 'Concrete Calculator',
+    category: 'Construction',
+    icon: 'fa-truck-ramp-box',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Calculate concrete volume in cubic yards, cubic feet, and 60lb/80lb bags needed for slabs, footings, and columns.',
+    metaDescription: 'Free concrete calculator — estimate concrete volume in cubic yards, cubic feet, and bags needed for slabs, footings, and columns.',
+    fields: [
+      { id: 'shape', label: 'Shape', type: 'select', default: 'slab',
+        options: [
+          { value: 'slab', label: 'Slab / Pad (rectangular)' },
+          { value: 'footing', label: 'Footing / Wall (rectangular)' },
+          { value: 'column', label: 'Column / Cylinder (round)' },
+        ], hint: 'Select the concrete pour shape.' },
+      { id: 'length', label: 'Length (ft)', type: 'number', default: 10, min: 0, step: 0.5, hint: 'Length in feet.' },
+      { id: 'width', label: 'Width (ft)', type: 'number', default: 10, min: 0, step: 0.5, hint: 'Width in feet.' },
+      { id: 'diameter', label: 'Diameter (ft)', type: 'number', default: 1, min: 0, step: 0.25, hint: 'Diameter for round columns.' },
+      { id: 'depth', label: 'Depth / Thickness (in)', type: 'number', default: 4, min: 0.5, step: 0.5, hint: 'Thickness in inches (4in is standard for residential slabs).' },
+      { id: 'quantity', label: 'Quantity', type: 'number', default: 1, min: 1, step: 1, hint: 'Number of identical pours.' },
+      { id: 'waste', label: 'Waste Margin (%)', type: 'number', default: 10, min: 0, max: 25, step: 1, hint: 'Recommended: 10% for uneven subgrade and spillage.' }
+    ],
+    calculate(v) {
+      const shape = v.shape || 'slab';
+      const L = safeNum(v.length, 0);
+      const W = safeNum(v.width, 0);
+      const D = safeNum(v.diameter, 0);
+      const depthIn = safeNum(v.depth, 0);
+      const qty = Math.max(1, Math.round(safeNum(v.quantity, 1)));
+      const waste = safeNum(v.waste, 10);
+
+      let volumeCF = 0;
+      if (shape === 'column') {
+        const r = D / 2;
+        volumeCF = Math.PI * r * r * (depthIn / 12);
+      } else {
+        if (L <= 0 || W <= 0) return errorResult('Enter valid length and width.');
+        volumeCF = L * W * (depthIn / 12);
+      }
+      if (volumeCF <= 0 || depthIn <= 0) return errorResult('Please enter positive dimensions.');
+
+      const totalCF = roundTo(volumeCF * qty * (1 + waste / 100), 2);
+      const totalCY = roundTo(totalCF / 27, 2);
+      const totalM3 = roundTo(totalCF * 0.0283168, 2);
+      const bags60 = Math.ceil(totalCF / 0.45);
+      const bags80 = Math.ceil(totalCF / 0.60);
+
+      return {
+        stats: [
+          { label: 'Concrete Needed (Cubic Yards)', value: totalCY + ' yd³', highlight: true },
+          { label: 'Concrete Needed (Cubic Feet)', value: totalCF + ' ft³' },
+          { label: 'Concrete Needed (Cubic Meters)', value: totalM3 + ' m³' },
+          { label: '80lb Pre-mix Bags', value: bags80 + ' bags' },
+          { label: '60lb Pre-mix Bags', value: bags60 + ' bags' },
+          { label: 'Total Weight', value: Math.round(totalCF * 145).toLocaleString('en-US') + ' lbs' },
+        ],
+        formula: 'Volume (yd³) = (Length × Width × (Depth ÷ 12)) ÷ 27 × (1 + Waste%)',
+      };
+    },
+    article: { heading: 'How to Calculate Concrete Volume Accurately', intro: 'Ordering concrete accurately prevents expensive short-load fees or messy excess waste.', sections: [
+      { heading: 'Cubic Yards Calculation', body: 'Concrete is measured in cubic yards (27 cubic feet). Multiply length by width by depth in feet, then divide by 27.' }
+    ] },
+    howTo: ['Select slab, footing, or column shape.', 'Enter dimensions in feet and thickness in inches.', 'Review cubic yards and bag count required.'],
+    formula: 'yd³ = (ft × ft × (in / 12)) / 27',
+    examples: [
+      { title: '10x10 Patio Slab (4in deep)', input: '10ft × 10ft × 4in, 10% waste', result: '1.36 Cubic Yards (62 bags of 80lb)' }
+    ],
+    faqs: [
+      { q: 'How thick should a concrete patio be?', a: 'Standard residential patios and sidewalks are typically 4 inches thick.' }
+    ]
+  },
+  'paint-calculator': {
+    id: 'paint-calculator',
+    name: 'Paint Calculator',
+    category: 'Construction',
+    icon: 'fa-paint-roller',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Calculate paint gallons and liters needed for interior or exterior walls, accounting for doors, windows, and coats.',
+    metaDescription: 'Free paint calculator — estimate gallons and liters of paint needed for rooms, walls, doors, and ceilings.',
+    fields: [
+      { id: 'room_length', label: 'Room Length (ft)', type: 'number', default: 12, min: 1, step: 0.5, hint: 'Length of the room in feet.' },
+      { id: 'room_width', label: 'Room Width (ft)', type: 'number', default: 12, min: 1, step: 0.5, hint: 'Width of the room in feet.' },
+      { id: 'ceiling_height', label: 'Ceiling Height (ft)', type: 'number', default: 8, min: 1, step: 0.5, hint: 'Standard ceiling height is 8 to 9 feet.' },
+      { id: 'doors', label: 'Number of Doors', type: 'number', default: 1, min: 0, step: 1, hint: 'Subtracted as ~21 sq ft each.' },
+      { id: 'windows', label: 'Number of Windows', type: 'number', default: 2, min: 0, step: 1, hint: 'Subtracted as ~15 sq ft each.' },
+      { id: 'coats', label: 'Number of Coats', type: 'number', default: 2, min: 1, max: 4, step: 1, hint: 'Most interior projects require 2 coats.' },
+      { id: 'paint_ceiling', label: 'Include Ceiling?', type: 'select', default: 'no',
+        options: [
+          { value: 'no', label: 'No — Walls Only' },
+          { value: 'yes', label: 'Yes — Include Ceiling Area' }
+        ], hint: 'Include ceiling square footage.' }
+    ],
+    calculate(v) {
+      const L = safeNum(v.room_length, 0);
+      const W = safeNum(v.room_width, 0);
+      const H = safeNum(v.ceiling_height, 0);
+      const doors = safeNum(v.doors, 0);
+      const windows = safeNum(v.windows, 0);
+      const coats = safeNum(v.coats, 2);
+      const incCeiling = v.paint_ceiling === 'yes';
+
+      if (L <= 0 || W <= 0 || H <= 0) return errorResult('Enter positive room dimensions.');
+
+      const wallArea = 2 * (L + W) * H;
+      const deductions = (doors * 21) + (windows * 15);
+      let netArea = Math.max(0, wallArea - deductions);
+      if (incCeiling) netArea += (L * W);
+
+      const totalPaintArea = netArea * coats;
+      const gallonsNeeded = roundTo(totalPaintArea / 350, 2);
+      const gallonsToBuy = Math.ceil(gallonsNeeded);
+      const litersNeeded = roundTo(gallonsNeeded * 3.78541, 2);
+
+      return {
+        stats: [
+          { label: 'Paint Needed (Gallons)', value: gallonsNeeded + ' gal (' + gallonsToBuy + ' to buy)', highlight: true },
+          { label: 'Paint Needed (Liters)', value: litersNeeded + ' L' },
+          { label: 'Total Wall Area', value: roundTo(netArea, 0) + ' sq ft' },
+          { label: 'Total Coverage with Coats', value: roundTo(totalPaintArea, 0) + ' sq ft' },
+        ],
+        formula: 'Gallons = ((2 × (L + W) × H − (Doors × 21 + Windows × 15)) × Coats) ÷ 350 sq ft/gal',
+      };
+    },
+    article: { heading: 'How to Estimate Paint Coverage for Rooms', intro: 'A gallon of quality interior paint covers approximately 350 to 400 square feet per coat.', sections: [
+      { heading: 'Accounting for Openings', body: 'Standard doors subtract approximately 21 sq ft, while average windows subtract about 15 sq ft.' }
+    ] },
+    howTo: ['Enter room length, width, and ceiling height.', 'Add number of doors and windows.', 'Choose 1 or 2 coats.', 'View required paint in gallons and liters.'],
+    formula: 'Gallons = Net Area × Coats / 350',
+    examples: [
+      { title: '12x12 Bedroom (8ft ceiling, 2 coats)', input: '12x12x8, 1 door, 2 windows, 2 coats', result: '1.91 Gallons (Buy 2 Gallons)' }
+    ],
+    faqs: [
+      { q: 'How many square feet does one gallon of paint cover?', a: 'One gallon of paint typically covers 350 to 400 square feet on smooth, primed walls.' }
+    ]
+  },
+  'tile-calculator': {
+    id: 'tile-calculator',
+    name: 'Tile Calculator',
+    category: 'Construction',
+    icon: 'fa-border-all',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Calculate floor or wall tile counts, square footage, boxes needed, and waste factor for home renovations.',
+    metaDescription: 'Free tile calculator — estimate square footage, total tiles, and boxes needed with waste factor for floors and walls.',
+    fields: [
+      { id: 'area_length', label: 'Area Length (ft)', type: 'number', default: 10, min: 0.5, step: 0.5, hint: 'Length of the floor or wall area in feet.' },
+      { id: 'area_width', label: 'Area Width (ft)', type: 'number', default: 10, min: 0.5, step: 0.5, hint: 'Width of the floor or wall area in feet.' },
+      { id: 'tile_size', label: 'Tile Size (inches)', type: 'select', default: '12x12',
+        options: [
+          { value: '4x4', label: '4" × 4" (Backsplash/Mosaic)' },
+          { value: '6x6', label: '6" × 6" (Wall/Floor)' },
+          { value: '12x12', label: '12" × 12" (Standard Floor 1 sq ft)' },
+          { value: '12x24', label: '12" × 24" (Modern Rectangular 2 sq ft)' },
+          { value: '24x24', label: '24" × 24" (Large Format 4 sq ft)' }
+        ], hint: 'Standard nominal tile dimensions.' },
+      { id: 'tiles_per_box', label: 'Tiles Per Box', type: 'number', default: 10, min: 1, step: 1, hint: 'Check the manufacturer packaging for box count.' },
+      { id: 'waste_pct', label: 'Waste Margin (%)', type: 'number', default: 10, min: 0, max: 25, step: 1, hint: '10% standard, 15% for diagonal layout or intricate cuts.' }
+    ],
+    calculate(v) {
+      const L = safeNum(v.area_length, 0);
+      const W = safeNum(v.area_width, 0);
+      const size = v.tile_size || '12x12';
+      const perBox = Math.max(1, Math.round(safeNum(v.tiles_per_box, 10)));
+      const waste = safeNum(v.waste_pct, 10);
+
+      if (L <= 0 || W <= 0) return errorResult('Enter positive area dimensions.');
+
+      const totalSqFt = L * W;
+      const sizeMap = {
+        '4x4': 16 / 144,
+        '6x6': 36 / 144,
+        '12x12': 1.0,
+        '12x24': 2.0,
+        '24x24': 4.0
+      };
+      const tileSqFt = sizeMap[size] || 1.0;
+
+      const rawTiles = totalSqFt / tileSqFt;
+      const totalTiles = Math.ceil(rawTiles * (1 + waste / 100));
+      const totalBoxes = Math.ceil(totalTiles / perBox);
+      const sqFtWithWaste = roundTo(totalSqFt * (1 + waste / 100), 2);
+
+      return {
+        stats: [
+          { label: 'Tiles Needed (with waste)', value: totalTiles + ' tiles', highlight: true },
+          { label: 'Boxes to Purchase', value: totalBoxes + ' boxes' },
+          { label: 'Raw Area', value: roundTo(totalSqFt, 2) + ' sq ft' },
+          { label: 'Area with ' + waste + '% Waste', value: sqFtWithWaste + ' sq ft' },
+        ],
+        formula: 'Tiles = (Area sq ft ÷ Tile sq ft) × (1 + Waste%)',
+      };
+    },
+    article: { heading: 'How to Measure and Calculate Tile for Floors and Walls', intro: 'Ordering the correct amount of tile ensures consistent dye lots and prevents mid-project delays.', sections: [
+      { heading: 'The 10% Waste Rule', body: 'Tile projects always produce cut remnants and breakage. Adding 10% ensures you have enough to finish cleanly.' }
+    ] },
+    howTo: ['Enter length and width of the room.', 'Select your tile size.', 'Enter tiles per box.', 'View total tiles and boxes to buy.'],
+    formula: 'Boxes = Math.ceil(Total Tiles / Tiles Per Box)',
+    examples: [
+      { title: '10x10 Bathroom (12x12 tiles)', input: '10ft × 10ft, 12x12 tiles, 10% waste, 10/box', result: '110 Tiles (11 Boxes)' }
+    ],
+    faqs: [
+      { q: 'Why do I need a 10% waste factor for tile?', a: 'Tiles must be cut around edges, corners, and plumbing fixtures, creating unusable scraps.' }
+    ]
   },
 };
 

@@ -55,6 +55,10 @@ export function registerTool(slug, toolDefinition) {
     
     // Register the tool
     TOOLS[slug] = toolDefinition;
+    if (typeof window !== 'undefined') {
+        window.TOOLS = window.TOOLS || {};
+        window.TOOLS[slug] = toolDefinition;
+    }
     return true;
 }
 

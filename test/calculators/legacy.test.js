@@ -196,3 +196,55 @@ describe('Percentage Calculator (regression)', () => {
         expect(r.stats.length).toBeGreaterThan(0);
     });
 });
+
+describe('Currency Converter (Feature)', () => {
+    const calc = () => TOOLS()['currency-converter'];
+
+    it('exists and has calculate method', () => {
+        expect(calc()).toBeDefined();
+        expect(typeof calc().calculate).toBe('function');
+    });
+
+    it('converts USD to EUR correctly', () => {
+        const r = calc().calculate({ amount: 100, from_currency: 'USD', to_currency: 'EUR' });
+        expect(r.error).toBeFalsy();
+        expect(r.stats).toBeDefined();
+        expect(r.stats[0].value).toContain('92.00');
+        expect(r.table).toBeDefined();
+        expect(r.table.length).toBeGreaterThan(0);
+    });
+
+    it('handles zero or negative amount with errorResult', () => {
+        const r = calc().calculate({ amount: 0, from_currency: 'USD', to_currency: 'EUR' });
+        expect(r.error).toBe(true);
+    });
+});
+
+describe('Beam Deflection Calculator (Engineering)', () => {
+    const calc = () => TOOLS()['beam-deflection-calculator'];
+
+    it('exists and has calculate method', () => {
+        expect(calc()).toBeDefined();
+        expect(typeof calc().calculate).toBe('function');
+    });
+
+    it('calculates simply supported beam deflection', () => {
+        const r = calc().calculate({ beamType: 'simply', length: 10, load: 1000, moi: 100 });
+        expect(r.error).toBeFalsy();
+        expect(r.stats).toBeDefined();
+        expect(r.stats.some(s => s.label === 'Beam Type')).toBe(true);
+        expect(r.stats.some(s => s.label === 'Max Deflection')).toBe(true);
+    });
+
+    it('calculates cantilever beam deflection', () => {
+        const r = calc().calculate({ beamType: 'cantilever', length: 8, load: 500, moi: 200 });
+        expect(r.error).toBeFalsy();
+        expect(r.stats).toBeDefined();
+    });
+
+    it('returns error on invalid inputs', () => {
+        const r = calc().calculate({ beamType: 'simply', length: 0, load: 1000, moi: 100 });
+        expect(r.error).toBe(true);
+    });
+});
+
