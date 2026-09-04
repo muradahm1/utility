@@ -26,7 +26,7 @@
 
     <!-- Structured Data -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Percentage Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free percentage calculator — find percentages, percent change, and compute values instantly.","url":"https://www.getcalcu.com/tool/percentage-calculator"}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":3,"name":"Percentage Calculator","item":"https://www.getcalcu.com/tool/percentage-calculator"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://www.getcalcu.com/category/math"},{"@type":"ListItem","position":3,"name":"Percentage Calculator","item":"https://www.getcalcu.com/tool/percentage-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I calculate what percent one number is of another?","acceptedAnswer":{"@type":"Answer","text":"To find what percent X is of Y, divide X by Y and multiply by 100: (X ÷ Y) × 100. For example, 25 is what percent of 200? (25 ÷ 200) × 100 = 12.5%. Our calculator does this in the \"X is what % of Y?\" mode."}},{"@type":"Question","name":"How do I calculate a percentage of a number?","acceptedAnswer":{"@type":"Answer","text":"To calculate X% of Y, multiply Y by X divided by 100: Y × (X ÷ 100). For example, 20% of 250 = 250 × 0.20 = 50. Use the \"What is X% of Y?\" mode for this calculation."}},{"@type":"Question","name":"How do I calculate percentage increase or decrease?","acceptedAnswer":{"@type":"Answer","text":"Percentage change is calculated as ((New Value − Old Value) ÷ Old Value) × 100. A positive result is an increase and a negative result is a decrease. For example, a change from 50 to 65 = ((65−50) ÷ 50) × 100 = 30% increase."}},{"@type":"Question","name":"How do I calculate a discount percentage?","acceptedAnswer":{"@type":"Answer","text":"To find a discount, calculate the percentage of the original price, then subtract it. For a 25% discount on an $80 item: 25% of $80 = $20, so the sale price is $80 − $20 = $60. Use \"What is X% of Y?\" mode to find the discount amount."}},{"@type":"Question","name":"What is the difference between percentage points and percent change?","acceptedAnswer":{"@type":"Answer","text":"Percentage points measure the absolute difference between two percentages, while percent change measures the relative difference. If an interest rate rises from 5% to 7%, that is a 2 percentage-point increase but a 40% relative increase ((7−5) ÷ 5 × 100)."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Percentages Quickly and Accurately","description":"Percentages are everywhere — discounts, tips, taxes, grades, and statistics. The GetCalcu Percentage Calculator handles three common calculations in one tool: \"X is what % of Y?\", \"What is X% of Y?\", and percentage change between two values.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Percentage Calculator","url":"https://www.getcalcu.com/tool/percentage-calculator"}</script>
 
@@ -70,20 +70,21 @@
     <!-- End Google Tag Manager (noscript) -->
     <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="app-container">
+        
         <aside class="sidebar">
             <a href="/" class="brand">
                 <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
-                <a href="/" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-                <a href="/?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
-                <a href="/?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
-                <a href="/?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
-                <a href="/?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
-                <a href="/?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
-                <a href="/?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
-                <a href="/?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+                <a href="/" class="nav-item "><i class="fa-solid fa-house"></i><span>Home</span></a>
+                <a href="/category/finance" class="nav-item "><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+                <a href="/category/health" class="nav-item "><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+                <a href="/category/business" class="nav-item "><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+                <a href="/category/education" class="nav-item "><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+                <a href="/category/construction" class="nav-item "><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+                <a href="/category/engineering" class="nav-item "><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
+                <a href="/category/math" class="nav-item active"><i class="fa-solid fa-percent"></i><span>Math</span></a>
                 <a href="/history" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
             </nav>
             <div class="sidebar-footer">
@@ -121,7 +122,7 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes (Phase 5.5) -->
+                <!-- Loading skeleton shown while tool initializes -->
                 <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
                     <div class="skeleton-form">
                         <div class="skeleton-line tall"></div>

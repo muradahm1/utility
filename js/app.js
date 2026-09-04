@@ -70,13 +70,15 @@ function initBackToTop() {
     window.addEventListener('scroll', toggleVisibility, { passive: true });
 }
 
-// Category Page Rendering
+// Category Page Rendering (supports /category/:slug and ?category=:slug)
 function initCategoryPage() {
+    const path = window.location.pathname;
+    const catMatch = path.match(/^\/category\/([a-z0-9-]+)\/?$/);
     const params = new URLSearchParams(window.location.search);
-    const category = params.get('category');
+    const category = catMatch ? catMatch[1] : params.get('category');
     if (!category) return;
 
-    // Hide homepage-only sections
+    // Hide homepage-only sections if rendered dynamically on index
     const hero = document.getElementById('hero-section');
     const categoriesSection = document.getElementById('all-categories');
     if (hero) hero.style.display = 'none';
@@ -93,18 +95,19 @@ function initCategoryPage() {
     const viewLink = toolsSection.querySelector('.view-link');
     if (viewLink) viewLink.style.display = 'none';
 
+    // If pre-rendered content is already present, don't overwrite unless empty
+    const grid = toolsSection.querySelector('.tools-grid');
+    if (!grid) return;
+
     // Filter tools by category (case-insensitive)
     let filteredTools = [];
     if (typeof TOOLS !== 'undefined') {
         filteredTools = Object.entries(TOOLS)
-            .filter(([slug, tool]) => tool.category.toLowerCase() === category.toLowerCase())
+            .filter(([slug, tool]) => (tool.category || '').toLowerCase() === category.toLowerCase())
             .map(([slug, tool]) => ({ slug, ...tool }));
     }
 
-    const grid = toolsSection.querySelector('.tools-grid');
-    if (!grid) return;
-
-    if (filteredTools.length === 0) {
+    if (filteredTools.length === 0 && !grid.children.length) {
         grid.innerHTML = `
             <div class="tool-not-found" style="grid-column: 1 / -1;">
                 <div class="not-found-icon" style="background:rgba(99,102,241,0.1); color:var(--primary-color);">
@@ -114,9 +117,9 @@ function initCategoryPage() {
                 <p>Check back soon.</p>
             </div>
         `;
-    } else {
+    } else if (filteredTools.length > 0 && !grid.querySelector('.tool-card')) {
         grid.innerHTML = filteredTools.map(tool => `
-            <a href="/tool?slug=${tool.slug}" class="tool-card">
+            <a href="/tool/${tool.slug}" class="tool-card">
                 <div class="tool-icon ${tool.iconClass || ''}"><i class="fa-solid ${tool.icon || 'fa-calculator'}"></i></div>
                 <h3>${tool.name}</h3>
                 <p>${tool.description || ''}</p>
@@ -192,35 +195,38 @@ function initHeroSearch() {
 
 // Active Nav State
 function initActiveNav() {
-    const path = window.location.pathname; // e.g., '/', '/tool', '/history'
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
     const params = new URLSearchParams(window.location.search);
-    const category = params.get('category');
-    const slug = params.get('slug');
-
-    // On tool pages, resolve the category from the TOOLS registry
-    let activeCategory = category;
-    if (path === '/tool' && slug && typeof TOOLS !== 'undefined' && TOOLS[slug]) {
-        activeCategory = TOOLS[slug].category.toLowerCase();
+    const categoryParam = params.get('category');
+    
+    // Resolve active category
+    let activeCategory = categoryParam;
+    const catMatch = path.match(/^\/category\/([a-z0-9-]+)$/);
+    if (catMatch) {
+        activeCategory = catMatch[1];
+    } else {
+        const toolMatch = path.match(/^\/tool\/([a-z0-9-]+)$/);
+        const slug = toolMatch ? toolMatch[1] : params.get('slug');
+        if (slug && typeof TOOLS !== 'undefined' && TOOLS[slug]) {
+            activeCategory = (TOOLS[slug].category || '').toLowerCase();
+        }
     }
 
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         const href = item.getAttribute('href');
-        if (!href) return; // Should not happen
+        if (!href) return;
+        
         const itemUrl = new URL(href, window.location.origin);
-        const itemPath = itemUrl.pathname;
-        const itemQuery = itemUrl.search;
-        const itemCategory = new URLSearchParams(itemQuery || '').get('category');
+        const itemPath = itemUrl.pathname.replace(/\/$/, '') || '/';
+        const itemCategory = itemPath.match(/^\/category\/([a-z0-9-]+)$/)?.[1] 
+            || new URLSearchParams(itemUrl.search).get('category');
 
-        if (path === '/tool') {
-            if (itemPath === '/' && itemCategory && itemCategory === activeCategory) {
-                item.classList.add('active');
-            }
-            return;
-        }
-        const pathMatch = (itemPath === path);
-        // Explicit parentheses to avoid operator precedence ambiguity
-        if ((pathMatch && itemCategory === category) || (path === '/' && itemPath === '/' && !category)) {
+        if (activeCategory && itemCategory && itemCategory.toLowerCase() === activeCategory.toLowerCase()) {
+            item.classList.add('active');
+        } else if (!activeCategory && path === '/' && itemPath === '/') {
+            item.classList.add('active');
+        } else if (path === itemPath && !activeCategory) {
             item.classList.add('active');
         }
     });
