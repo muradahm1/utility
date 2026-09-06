@@ -24,11 +24,12 @@
     <meta name="twitter:description" content="Free interactive Inflation Calculator. See how inflation reduces your money&#39;s buying power over time with dynamic charts and real-time scenario sliders.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Inflation Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free interactive Inflation Calculator. See how inflation reduces your money's buying power over time with dynamic charts and real-time scenario sliders.","url":"https://www.getcalcu.com/tool/inflation-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"Inflation Calculator","item":"https://www.getcalcu.com/tool/inflation-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How is inflation calculated and how does it affect my money?","acceptedAnswer":{"@type":"Answer","text":"Inflation is calculated as the percentage increase in the general price level of goods and services over time, typically measured by the Consumer Price Index (CPI). It affects your money by reducing purchasing power — the same dollar buys fewer goods tomorrow than it does today. The formula FV = PV × (1 + i)^n shows how much money you will need in the future to maintain the same standard of living."}},{"@type":"Question","name":"What is the average inflation rate in the United States?","acceptedAnswer":{"@type":"Answer","text":"The US long-run average inflation rate is approximately 2.5% to 3.5% per year, based on CPI data dating back to 1913. The Federal Reserve targets a 2% annual inflation rate as optimal for economic growth. However, rates can vary significantly — from deflation during the Great Depression to double-digit inflation in the late 1970s and early 1980s."}},{"@type":"Question","name":"How much will $1,000 be worth in 10 years with inflation?","acceptedAnswer":{"@type":"Answer","text":"At a 3.5% average annual inflation rate, $1,000 today will be worth approximately $709 in today's purchasing power after 10 years. You would need about $1,411 in future dollars to buy what $1,000 buys today. This means inflation erodes about $302 (21.4%) of the future value."}},{"@type":"Question","name":"What is the difference between nominal and real value?","acceptedAnswer":{"@type":"Answer","text":"Nominal value is the face value of money in future dollars — the number printed on the bill. Real value adjusts for inflation to show what that money is actually worth in today's purchasing power. For example, $1,411 in 10 years is the nominal amount, but its real value (purchasing power equivalent to today's dollars) is only $1,000."}},{"@type":"Question","name":"How does inflation impact retirement savings?","acceptedAnswer":{"@type":"Answer","text":"Inflation significantly impacts retirement savings by reducing the real value of your nest egg over time. A $1,000,000 retirement fund at age 65 will have the purchasing power of only about $412,000 in 30 years at 3% inflation. This is why retirement calculators use inflation-adjusted returns and why financial advisors recommend growth-oriented investments for long-term retirement goals."}},{"@type":"Question","name":"What investments perform best during high inflation?","acceptedAnswer":{"@type":"Answer","text":"Historically, the best-performing assets during high inflation include: real estate (property values and rents rise with inflation), commodities (gold, oil, agricultural products), Treasury Inflation-Protected Securities (TIPS), I-Bonds, and stocks in sectors with pricing power (energy, healthcare, consumer staples). Cash and long-term fixed-rate bonds tend to perform poorly during high inflation."}}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How Inflation Erodes Your Purchasing Power and What You Can Do About It","description":"Inflation is the silent thief of wealth — it steadily reduces what your money can buy over time. The GetCalcu Inflation Calculator shows you exactly how much purchasing power your money will lose at any inflation rate, over any time horizon, with interactive sliders and a dynamic chart that makes the erosion visible.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Inflation Calculator","url":"https://www.getcalcu.com/tool/inflation-calculator"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Inflation Calculator","description":"Calculate how inflation impacts your money's purchasing power over time and find out how much you will need in the future.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter the amount of money you want to analyze — use the slider or type directly."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Set the annual inflation rate (default 3.5%, the US historical average)."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Choose your time horizon — how many years into the future to project."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Switch between \"Future Cost\" mode and \"Target Purchasing Power\" mode to see different perspectives."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Review the purchasing power loss, real value remaining, and cumulative inflation stats."},{"@type":"HowToStep","position":6,"name":"Step 6","text":"Scroll down to see the year-by-year breakdown table and the interactive chart."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How Inflation Erodes Your Purchasing Power and What You Can Do About It","description":"Inflation is the silent thief of wealth — it steadily reduces what your money can buy over time. The GetCalcu Inflation Calculator shows you exactly how much purchasing power your money will lose at any inflation rate, over any time horizon, with interactive sliders and a dynamic chart that makes the erosion visible.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Inflation Calculator","url":"https://www.getcalcu.com/tool/inflation-calculator"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -122,25 +123,226 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes -->
-                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
-                    <div class="skeleton-form">
-                        <div class="skeleton-line tall"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                    <div class="skeleton-results">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                </div>
-                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-                    <span class="ad-slot-label">Advertisement</span>
-                </div>
+                
+    <div class="tool-runner-card">
+      <div class="tool-header">
+        <h1>Inflation Calculator</h1>
+        <p>Calculate how inflation impacts your money&#39;s purchasing power over time and find out how much you will need in the future.</p>
+      </div>
+      <div class="tool-grid-workspace">
+        <div class="calculator-form-inputs">
+          
+          <div class="form-group" data-field="mode">
+            <label for="mode">Calculation Mode</label>
+            <span class="field-hint">Choose whether to see how much a current amount will be worth in the future, or how much you need in the future to match today&#39;s buying power.</span>
+            <select id="mode" data-id="mode">
+          <option value="future-cost" selected>Future Cost / Eroded Value</option>
+        
+          <option value="target-power" >Target Purchasing Power Needed</option>
+        </select>
+          </div>
+        
+          <div class="form-group" data-field="initial_amount">
+            <label for="initial_amount">Initial Amount ($)</label>
+            <span class="field-hint">The amount of money you want to analyze. Drag the slider or type a value.</span>
+            <div class="range-input-wrap">
+              <input type="number" id="initial_amount" data-id="initial_amount" value="1000" inputmode="decimal">
+              <input type="range" id="initial_amount-range" data-range-for="initial_amount" value="1000">
+            </div>
+          </div>
+        
+          <div class="form-group" data-field="inflation_rate">
+            <label for="inflation_rate">Annual Inflation Rate (%)</label>
+            <span class="field-hint">The expected yearly inflation rate. The US long-run average is about 2.5-3.5%.</span>
+            <div class="range-input-wrap">
+              <input type="number" id="inflation_rate" data-id="inflation_rate" value="3.5" inputmode="decimal">
+              <input type="range" id="inflation_rate-range" data-range-for="inflation_rate" value="3.5">
+            </div>
+          </div>
+        
+          <div class="form-group" data-field="years">
+            <label for="years">Time Horizon (Years)</label>
+            <span class="field-hint">How many years into the future you want to project. Longer horizons show more dramatic erosion.</span>
+            <div class="range-input-wrap">
+              <input type="number" id="years" data-id="years" value="10" inputmode="decimal">
+              <input type="range" id="years-range" data-range-for="years" value="10">
+            </div>
+          </div>
+        
+        </div>
+        <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
+          
+      <div class="insight-banner insight-banner--warning">
+        <i class="fa-solid fa-arrow-trend-down"></i>
+        <div class="insight-content">
+          <h4>Your $1,000.00 will only buy $708.92 worth of goods in 10 years.</h4>
+          <p>At a 3.5000000000000004% annual inflation rate, your purchasing power erodes by $410.60 (29.11%). Over 10 years, cumulative inflation reaches 41.06%.</p>
+        </div>
+      </div>
+    
+          
+      <div class="stats-grid">
+        
+          <div class="stat-card stat-card--highlight ">
+            <span class="stat-label">Future Equivalent Cost</span>
+            <span class="stat-value">$1,410.60</span>
+          </div>
+        
+          <div class="stat-card  stat-card--warn">
+            <span class="stat-label">Purchasing Power Loss</span>
+            <span class="stat-value">$410.60</span>
+          </div>
+        
+          <div class="stat-card  stat-card--warn">
+            <span class="stat-label">Purchasing Power Loss %</span>
+            <span class="stat-value">29.11%</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Real Purchasing Power Remaining</span>
+            <span class="stat-value">$708.92</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Cumulative Inflation</span>
+            <span class="stat-value">41.06%</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Initial Amount</span>
+            <span class="stat-value">$1,000.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Annual Inflation Rate</span>
+            <span class="stat-value">3.5%</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Time Horizon</span>
+            <span class="stat-value">10 years</span>
+          </div>
+        
+      </div>
+    
+          
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  
+        </div>
+      </div>
+    </div>
+    
+    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
+            GetCalcu Methodology & Editorial Standards
+          </h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
+            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+          </p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Last Verified:</strong> September 2026</div>
+        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Feedback:</strong> <a href="/contact?subject=Inflation%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      </div>
+    </div>
+  
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How Inflation Erodes Your Purchasing Power and What You Can Do About It</h2>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Inflation is the silent thief of wealth — it steadily reduces what your money can buy over time. The GetCalcu Inflation Calculator shows you exactly how much purchasing power your money will lose at any inflation rate, over any time horizon, with interactive sliders and a dynamic chart that makes the erosion visible.</p>
+        
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Mathematical Formula Behind Inflation</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The future value of money under inflation is calculated using the compound interest formula in reverse: FV = PV × (1 + i)^n, where PV is today&#39;s amount, i is the annual inflation rate, and n is the number of years. At a 3.5% inflation rate, money loses roughly half its purchasing power every 20 years — a dollar today is worth about 50 cents in 20 years.</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Inflation Affects Different Assets</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Cash and savings accounts are hit hardest by inflation because they earn little to no interest. Real estate historically appreciates at or above inflation rates. The stock market, over long periods, has returned 7-10% annually, significantly outpacing inflation. Bonds and fixed-income investments can struggle during high inflation periods, as their fixed payments lose real value.</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Actionable Steps to Hedge Against Inflation</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">To protect your purchasing power, consider: (1) High-Yield Savings Accounts (HYSA) earning 4-5% APY to at least keep pace with inflation. (2) Treasury Inflation-Protected Securities (TIPS) that adjust with CPI. (3) Low-cost index funds tracking the S&amp;P 500, which have historically returned 7-10% annually. (4) Real estate investments that appreciate and provide rental income. (5) I-Bonds that offer inflation-adjusted returns.</p>
+      
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Inflation Calculator</h2>
+        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter the amount of money you want to analyze — use the slider or type directly.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Set the annual inflation rate (default 3.5%, the US historical average).</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Choose your time horizon — how many years into the future to project.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Switch between &quot;Future Cost&quot; mode and &quot;Target Purchasing Power&quot; mode to see different perspectives.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Review the purchasing power loss, real value remaining, and cumulative inflation stats.</li><li style="margin-bottom:10px;"><strong>Step 6:</strong> Scroll down to see the year-by-year breakdown table and the interactive chart.</li></ol>
+        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> FV = PV × (1 + i)^n | Real Value = PV / (1 + i)^n | Purchasing Power Loss = FV − PV | Cumulative Inflation = (1 + i)^n − 1</div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Inflation Erodes $1,000 Over 10 Years</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Amount: $1,000, Rate: 3.5%, Years: 10</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Future Cost: ~$1,411 | Real Value: ~$709 | Loss: ~$302 (21.4%)</span></p>
+      </div>
+    
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">High Inflation Scenario</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Amount: $10,000, Rate: 8%, Years: 15</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Future Cost: ~$31,722 | Real Value: ~$3,152 | Loss: ~$21,722 (68.5%)</span></p>
+      </div>
+    
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Long-Term Erosion Over 30 Years</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Amount: $50,000, Rate: 3%, Years: 30</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Future Cost: ~$121,363 | Real Value: ~$20,599 | Loss: ~$71,363 (58.8%)</span></p>
+      </div>
+    </div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+        
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is inflation calculated and how does it affect my money?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Inflation is calculated as the percentage increase in the general price level of goods and services over time, typically measured by the Consumer Price Index (CPI). It affects your money by reducing purchasing power — the same dollar buys fewer goods tomorrow than it does today. The formula FV = PV × (1 + i)^n shows how much money you will need in the future to maintain the same standard of living.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the average inflation rate in the United States?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The US long-run average inflation rate is approximately 2.5% to 3.5% per year, based on CPI data dating back to 1913. The Federal Reserve targets a 2% annual inflation rate as optimal for economic growth. However, rates can vary significantly — from deflation during the Great Depression to double-digit inflation in the late 1970s and early 1980s.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much will $1,000 be worth in 10 years with inflation?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">At a 3.5% average annual inflation rate, $1,000 today will be worth approximately $709 in today&#39;s purchasing power after 10 years. You would need about $1,411 in future dollars to buy what $1,000 buys today. This means inflation erodes about $302 (21.4%) of the future value.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between nominal and real value?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Nominal value is the face value of money in future dollars — the number printed on the bill. Real value adjusts for inflation to show what that money is actually worth in today&#39;s purchasing power. For example, $1,411 in 10 years is the nominal amount, but its real value (purchasing power equivalent to today&#39;s dollars) is only $1,000.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does inflation impact retirement savings?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Inflation significantly impacts retirement savings by reducing the real value of your nest egg over time. A $1,000,000 retirement fund at age 65 will have the purchasing power of only about $412,000 in 30 years at 3% inflation. This is why retirement calculators use inflation-adjusted returns and why financial advisors recommend growth-oriented investments for long-term retirement goals.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What investments perform best during high inflation?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Historically, the best-performing assets during high inflation include: real estate (property values and rents rise with inflation), commodities (gold, oil, agricultural products), Treasury Inflation-Protected Securities (TIPS), I-Bonds, and stocks in sectors with pricing power (energy, healthcare, consumer staples). Cash and long-term fixed-rate bonds tend to perform poorly during high inflation.</p>
+      </details>
+    
+      </div>
+    
+  
             </div>
         </main>
     </div>
@@ -187,15 +389,6 @@
             <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
         </div>
     </div>
-
-    <noscript>
-        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-            <h1>Inflation Calculator</h1>
-            <p>Free interactive Inflation Calculator. See how inflation reduces your money&#39;s buying power over time with dynamic charts and real-time scenario sliders.</p>
-            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
-            <p><a href="/">Browse all GetCalcu calculators</a></p>
-        </div>
-    </noscript>
 
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>

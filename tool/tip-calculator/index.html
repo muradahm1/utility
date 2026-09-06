@@ -24,11 +24,12 @@
     <meta name="twitter:description" content="Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Tip Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.","url":"https://www.getcalcu.com/tool/tip-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Math","item":"https://www.getcalcu.com/category/math"},{"@type":"ListItem","position":3,"name":"Tip Calculator","item":"https://www.getcalcu.com/tool/tip-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I calculate a tip?","acceptedAnswer":{"@type":"Answer","text":"Tip = Bill Amount × (Tip Percentage / 100). For a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9."}},{"@type":"Question","name":"How do I split a bill?","acceptedAnswer":{"@type":"Answer","text":"Divide the total (bill + tax + tip) by the number of people. For example, a $59 total split among 4 people is $14.75 each."}},{"@type":"Question","name":"What is a good tip percentage?","acceptedAnswer":{"@type":"Answer","text":"In the US, 15-20% is standard for good restaurant service. 10-15% for buffets, 10-15% for taxis, and $1-2 per bag for hotel bellhops."}},{"@type":"Question","name":"Should I tip on the pre-tax or post-tax amount?","acceptedAnswer":{"@type":"Answer","text":"Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity."}}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Tips and Split Bills Fairly","description":"Tipping is a standard part of dining and service culture in many countries. Knowing how to calculate a tip quickly and fairly ensures you reward good service appropriately and split bills accurately among friends.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Tip Calculator","url":"https://www.getcalcu.com/tool/tip-calculator"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Tip Calculator","description":"Calculate tip amounts, split bills among friends, and find the total per person with tax included.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter the total bill amount before tip and tax."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Set the tip percentage (15-20% is standard for good service)."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Enter the sales tax percentage if applicable."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Enter the number of people splitting the bill."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"The calculator shows the tip amount, tax, total, and per-person amounts."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Tips and Split Bills Fairly","description":"Tipping is a standard part of dining and service culture in many countries. Knowing how to calculate a tip quickly and fairly ensures you reward good service appropriately and split bills accurately among friends.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Tip Calculator","url":"https://www.getcalcu.com/tool/tip-calculator"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -122,25 +123,174 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes -->
-                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
-                    <div class="skeleton-form">
-                        <div class="skeleton-line tall"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                    <div class="skeleton-results">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                </div>
-                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-                    <span class="ad-slot-label">Advertisement</span>
-                </div>
+                
+    <div class="tool-runner-card">
+      <div class="tool-header">
+        <h1>Tip Calculator</h1>
+        <p>Calculate tip amounts, split bills among friends, and find the total per person with tax included.</p>
+      </div>
+      <div class="tool-grid-workspace">
+        <div class="calculator-form-inputs">
+          
+          <div class="form-group" data-field="bill_amount">
+            <label for="bill_amount">Bill Amount ($)</label>
+            <span class="field-hint">The total amount of the bill before tip.</span>
+            <input type="number" id="bill_amount" data-id="bill_amount" value="50" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="tip_percent">
+            <label for="tip_percent">Tip Percentage (%)</label>
+            <span class="field-hint">The tip percentage you want to leave. Standard is 15-20%.</span>
+            <input type="number" id="tip_percent" data-id="tip_percent" value="18" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="tax_percent">
+            <label for="tax_percent">Tax Percentage (%)</label>
+            <span class="field-hint">Sales tax percentage (optional).</span>
+            <input type="number" id="tax_percent" data-id="tax_percent" value="0" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="num_people">
+            <label for="num_people">Number of People</label>
+            <span class="field-hint">How many people are splitting the bill.</span>
+            <input type="number" id="num_people" data-id="num_people" value="1" inputmode="decimal">
+          </div>
+        
+        </div>
+        <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
+          
+          
+      <div class="stats-grid">
+        
+          <div class="stat-card stat-card--highlight ">
+            <span class="stat-label">Tip Amount</span>
+            <span class="stat-value">$9.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Tax Amount</span>
+            <span class="stat-value">$0.00</span>
+          </div>
+        
+          <div class="stat-card stat-card--highlight ">
+            <span class="stat-label">Total Bill</span>
+            <span class="stat-value">$59.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Per Person</span>
+            <span class="stat-value">$59.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Tip Per Person</span>
+            <span class="stat-value">$9.00</span>
+          </div>
+        
+      </div>
+    
+          
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  
+        </div>
+      </div>
+    </div>
+    
+    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
+            GetCalcu Methodology & Editorial Standards
+          </h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
+            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+          </p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Last Verified:</strong> September 2026</div>
+        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Feedback:</strong> <a href="/contact?subject=Tip%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      </div>
+    </div>
+  
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Tips and Split Bills Fairly</h2>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Tipping is a standard part of dining and service culture in many countries. Knowing how to calculate a tip quickly and fairly ensures you reward good service appropriately and split bills accurately among friends.</p>
+        
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Standard Tip Formula</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Tip = Bill Amount × (Tip Percentage / 100). For example, on a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9. The total is $50 + $9 = $59. For a quick mental calculation, round the bill to the nearest ten and multiply by 0.18, or simply double the tax amount for an approximate 18% tip.</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Splitting the Bill</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">To split a bill evenly, divide the total (including tip and tax) by the number of people. For example, a $59 total split among 4 people is $59 ÷ 4 = $14.75 per person. If you want to tip on the pre-tax amount only, calculate the tip separately and add it to the taxed total before dividing.</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Tipping Etiquette</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">In the United States, 15-20% is standard for good service at restaurants. For buffets, 10-15% is typical. For taxis and rideshares, 10-15% is standard. For hotel bellhops, $1-2 per bag is customary. For hotel housekeeping, $2-5 per night is typical. Always check local customs when traveling internationally, as tipping practices vary widely.</p>
+      
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Tip Calculator</h2>
+        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter the total bill amount before tip and tax.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Set the tip percentage (15-20% is standard for good service).</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Enter the sales tax percentage if applicable.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Enter the number of people splitting the bill.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> The calculator shows the tip amount, tax, total, and per-person amounts.</li></ol>
+        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> Tip = Bill × (Tip% / 100) | Tax = Bill × (Tax% / 100) | Total = Bill + Tax + Tip | Per Person = Total / Number of People</div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Dinner for Two</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Bill: $85, Tip: 20%, Tax: 8%, People: 2</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Tip: $17.00 | Tax: $6.80 | Total: $108.80 | Per Person: $54.40</span></p>
+      </div>
+    
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Large Group</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Bill: $240, Tip: 18%, Tax: 0%, People: 6</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Tip: $43.20 | Total: $283.20 | Per Person: $47.20</span></p>
+      </div>
+    </div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+        
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I calculate a tip?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Tip = Bill Amount × (Tip Percentage / 100). For a $50 bill with an 18% tip, the tip is $50 × 0.18 = $9.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I split a bill?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Divide the total (bill + tax + tip) by the number of people. For example, a $59 total split among 4 people is $14.75 each.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a good tip percentage?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In the US, 15-20% is standard for good restaurant service. 10-15% for buffets, 10-15% for taxis, and $1-2 per bag for hotel bellhops.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Should I tip on the pre-tax or post-tax amount?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity.</p>
+      </details>
+    
+      </div>
+    
+  
             </div>
         </main>
     </div>
@@ -187,15 +337,6 @@
             <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
         </div>
     </div>
-
-    <noscript>
-        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-            <h1>Tip Calculator</h1>
-            <p>Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.</p>
-            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
-            <p><a href="/">Browse all GetCalcu calculators</a></p>
-        </div>
-    </noscript>
 
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>

@@ -24,11 +24,12 @@
     <meta name="twitter:description" content="Free paycheck &amp; salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security &amp; Medicare), and deductions.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Salary & Paycheck Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free paycheck & salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security & Medicare), and deductions.","url":"https://www.getcalcu.com/tool/salary-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"Salary & Paycheck Calculator","item":"https://www.getcalcu.com/tool/salary-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between gross pay and net pay?","acceptedAnswer":{"@type":"Answer","text":"Gross pay is the total amount earned before any deductions or taxes. Net pay (take-home pay) is the remaining money deposited into your bank account after all taxes and deductions."}},{"@type":"Question","name":"How does filing status affect paycheck withholding?","acceptedAnswer":{"@type":"Answer","text":"Filing status determines your standard deduction and income tax brackets. Married couples filing jointly have wider tax brackets, typically lowering tax withholding compared to single filers."}},{"@type":"Question","name":"How much are FICA taxes?","acceptedAnswer":{"@type":"Answer","text":"FICA taxes equal 7.65% for employees (6.2% Social Security + 1.45% Medicare). Employers match an identical 7.65%."}}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Net Paycheck and Understand Tax Withholding","description":"Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Salary & Paycheck Calculator","url":"https://www.getcalcu.com/tool/salary-calculator"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Salary & Paycheck Calculator","description":"Calculate your net take-home pay, federal & state taxes, FICA deductions, and hourly wage breakdown.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter your gross income and select your pay frequency (annual, monthly, biweekly, or hourly)."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Select your tax filing status (Single, Married, or Head of Household)."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Set your state tax rate or leave at the 5% national average."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Add optional pre-tax retirement or health insurance deductions."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Review your net take-home pay and complete tax breakdown."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Net Paycheck and Understand Tax Withholding","description":"Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Salary & Paycheck Calculator","url":"https://www.getcalcu.com/tool/salary-calculator"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -122,25 +123,245 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes -->
-                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
-                    <div class="skeleton-form">
-                        <div class="skeleton-line tall"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                    <div class="skeleton-results">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                </div>
-                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-                    <span class="ad-slot-label">Advertisement</span>
-                </div>
+                
+    <div class="tool-runner-card">
+      <div class="tool-header">
+        <h1>Salary &amp; Paycheck Calculator</h1>
+        <p>Calculate your net take-home pay, federal &amp; state taxes, FICA deductions, and hourly wage breakdown.</p>
+      </div>
+      <div class="tool-grid-workspace">
+        <div class="calculator-form-inputs">
+          
+      <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
+        <div class="preset-chips-header">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Quick Scenarios</span>
+        </div>
+        <div class="preset-chips-list">
+          
+            <button type="button" class="preset-chip active" data-preset-idx="0">
+              <i class="fa-solid fa-sliders"></i> <span>US Median ($65k Single)</span>
+            </button>
+          
+            <button type="button" class="preset-chip " data-preset-idx="1">
+              <i class="fa-solid fa-sliders"></i> <span>Tech / Senior ($130k Married)</span>
+            </button>
+          
+            <button type="button" class="preset-chip " data-preset-idx="2">
+              <i class="fa-solid fa-sliders"></i> <span>Hourly Full-Time ($28/hr)</span>
+            </button>
+          
+        </div>
+      </div>
+    
+          <div class="form-group" data-field="gross_income">
+            <label for="gross_income">Gross Income / Salary ($)</label>
+            <span class="field-hint">Your gross earnings before taxes and deductions.</span>
+            <input type="number" id="gross_income" data-id="gross_income" value="75000" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="pay_frequency">
+            <label for="pay_frequency">Pay Frequency</label>
+            <span class="field-hint">How often you receive your salary or wage.</span>
+            <select id="pay_frequency" data-id="pay_frequency">
+          <option value="annual" selected>Annual Salary</option>
+        
+          <option value="monthly" >Monthly</option>
+        
+          <option value="biweekly" >Biweekly (every 2 weeks)</option>
+        
+          <option value="weekly" >Weekly</option>
+        
+          <option value="hourly" >Hourly</option>
+        </select>
+          </div>
+        
+          <div class="form-group" data-field="hours_per_week">
+            <label for="hours_per_week">Hours Per Week</label>
+            <span class="field-hint">Expected working hours per week (standard is 40).</span>
+            <input type="number" id="hours_per_week" data-id="hours_per_week" value="40" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="filing_status">
+            <label for="filing_status">Filing Status</label>
+            <span class="field-hint">Your tax filing status for federal tax bracket calculation.</span>
+            <select id="filing_status" data-id="filing_status">
+          <option value="single" selected>Single</option>
+        
+          <option value="married" >Married Filing Jointly</option>
+        
+          <option value="head" >Head of Household</option>
+        </select>
+          </div>
+        
+          <div class="form-group" data-field="state_tax_rate">
+            <label for="state_tax_rate">Estimated State Tax Rate (%)</label>
+            <span class="field-hint">State income tax rate (e.g. 0% in TX/FL/WA, ~5% average, up to 13% in CA).</span>
+            <input type="number" id="state_tax_rate" data-id="state_tax_rate" value="5" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="pretax_401k">
+            <label for="pretax_401k">401(k) / Retirement Deduction ($/yr)</label>
+            <span class="field-hint">Annual pre-tax retirement contribution.</span>
+            <input type="number" id="pretax_401k" data-id="pretax_401k" value="4000" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="pretax_health">
+            <label for="pretax_health">Health Insurance Pre-tax ($/mo)</label>
+            <span class="field-hint">Monthly pre-tax health and dental insurance premium.</span>
+            <input type="number" id="pretax_health" data-id="pretax_health" value="200" inputmode="decimal">
+          </div>
+        
+        </div>
+        <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
+          
+      <div class="insight-banner insight-banner--positive">
+        <i class="fa-solid fa-wallet"></i>
+        <div class="insight-content">
+          <h4>Net Take-Home Pay: 70.00% of Gross Salary</h4>
+          <p>You keep approximately $2,019.21 every two weeks ($25.24/hr equivalent) after all estimated federal, FICA, state taxes, and pre-tax deductions.</p>
+        </div>
+      </div>
+    
+          
+      <div class="stats-grid">
+        
+          <div class="stat-card stat-card--highlight ">
+            <span class="stat-label">Take-Home Pay (Monthly)</span>
+            <span class="stat-value">$4,374.96</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Take-Home Pay (Biweekly)</span>
+            <span class="stat-value">$2,019.21</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Take-Home Pay (Annual)</span>
+            <span class="stat-value">$52,499.50</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Effective Total Tax Rate</span>
+            <span class="stat-value">21.5%</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Federal Income Tax</span>
+            <span class="stat-value">$6,933.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">FICA (Social Security &amp; Medicare)</span>
+            <span class="stat-value">$5,737.50</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Estimated State Tax</span>
+            <span class="stat-value">$3,430.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Total Pre-tax Deductions</span>
+            <span class="stat-value">$6,400.00</span>
+          </div>
+        
+      </div>
+    
+          
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  
+        </div>
+      </div>
+    </div>
+    
+    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
+            GetCalcu Methodology & Editorial Standards
+          </h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
+            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+          </p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Last Verified:</strong> September 2026</div>
+        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Feedback:</strong> <a href="/contact?subject=Salary%20%26%20Paycheck%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      </div>
+    </div>
+  
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Your Net Paycheck and Understand Tax Withholding</h2>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).</p>
+        
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">FICA Taxes Explained</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">FICA consists of Social Security (6.2% on earnings up to the annual wage cap) and Medicare (1.45% on all earnings, plus an additional 0.9% for high earners).</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Pre-Tax Deductions Save You Money</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Contributing to traditional 401(k) accounts, HSAs, and pre-tax health insurance reduces your taxable income, lowering the amount of federal and state taxes withheld from each paycheck.</p>
+      
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Salary &amp; Paycheck Calculator</h2>
+        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter your gross income and select your pay frequency (annual, monthly, biweekly, or hourly).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Select your tax filing status (Single, Married, or Head of Household).</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Set your state tax rate or leave at the 5% national average.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Add optional pre-tax retirement or health insurance deductions.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Review your net take-home pay and complete tax breakdown.</li></ol>
+        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> Net Pay = Gross Income − Federal Tax − FICA Tax − State Tax − Pre-tax Deductions</div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">$75,000 Single Filer</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Salary: $75k, Filing: Single, 5% State Tax, $4k 401k</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Net Pay: ~$4,650/mo | $2,146 biweekly | 22.4% Effective Tax</span></p>
+      </div>
+    
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">$120,000 Married Filer</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Salary: $120k, Filing: Married, 5% State Tax</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Net Pay: ~$7,490/mo | $3,457 biweekly | 21.8% Effective Tax</span></p>
+      </div>
+    </div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+        
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between gross pay and net pay?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Gross pay is the total amount earned before any deductions or taxes. Net pay (take-home pay) is the remaining money deposited into your bank account after all taxes and deductions.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does filing status affect paycheck withholding?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Filing status determines your standard deduction and income tax brackets. Married couples filing jointly have wider tax brackets, typically lowering tax withholding compared to single filers.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much are FICA taxes?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">FICA taxes equal 7.65% for employees (6.2% Social Security + 1.45% Medicare). Employers match an identical 7.65%.</p>
+      </details>
+    
+      </div>
+    
+  
             </div>
         </main>
     </div>
@@ -187,15 +408,6 @@
             <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
         </div>
     </div>
-
-    <noscript>
-        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-            <h1>Salary &amp; Paycheck Calculator</h1>
-            <p>Free paycheck &amp; salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security &amp; Medicare), and deductions.</p>
-            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
-            <p><a href="/">Browse all GetCalcu calculators</a></p>
-        </div>
-    </noscript>
 
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>

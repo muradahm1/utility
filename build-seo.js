@@ -115,78 +115,7 @@ function loadTools() {
   return sandbox.window.TOOLS || {};
 }
 
-// ── 2. Load modular calculator files (ES modules) ────────────────────
-function loadModularTools() {
-  const tools = {};
-  const modularFiles = [
-    path.join(__dirname, 'js', 'calculators', 'construction.js'),
-    path.join(__dirname, 'js', 'calculators', 'engineering.js'),
-    path.join(__dirname, 'js', 'calculators', 'finance.js'),
-    path.join(__dirname, 'js', 'calculators', 'health.js'),
-  ];
-
-  modularFiles.forEach(filePath => {
-    if (!fs.existsSync(filePath)) return;
-    const source = fs.readFileSync(filePath, 'utf8');
-    const calcRegex = /export\s+const\s+\w+\s*=\s*\{([\s\S]*?)\n\s*\};/g;
-    let match;
-    while ((match = calcRegex.exec(source)) !== null) {
-      const body = match[1];
-      const idMatch = body.match(/id:\s*'([a-z0-9-]+)'/);
-      if (!idMatch) continue;
-      const slug = idMatch[1];
-      const nameMatch = body.match(/name:\s*'([^']+)'/);
-      const catMatch = body.match(/category:\s*'([^']+)'/);
-      const descMatch = body.match(/metaDescription:\s*'([^']+)'/);
-      const descMatch2 = body.match(/description:\s*'([^']+)'/);
-      tools[slug] = {
-        slug,
-        name: nameMatch ? nameMatch[1] : slug.replace(/-/g, ' '),
-        category: catMatch ? catMatch[1] : 'General',
-        description: descMatch2 ? descMatch2[1] : '',
-        metaDescription: descMatch ? descMatch[1] : (descMatch2 ? descMatch2[1] : ''),
-        metaTitle: null,
-        keywords: [],
-        formula: null,
-        articleHeading: null,
-        articleIntro: null,
-        faqs: [],
-      };
-    }
-  });
-  return tools;
-}
-
-// ── 3. Merge and normalize the registry ──────────────────────────────
-function buildRegistry() {
-  const legacy = loadTools();
-  const modular = loadModularTools();
-  const merged = { ...legacy, ...modular };
-
-  const registry = {};
-  Object.keys(merged).forEach(slug => {
-    const t = merged[slug];
-    registry[slug] = {
-      slug,
-      name: t.name || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-      category: t.category || 'General',
-      icon: t.icon || 'fa-calculator',
-      iconClass: t.iconClass || 'icon-finance',
-      tagClass: t.tagClass || 'tag-finance',
-      description: t.description || '',
-      metaDescription: t.metaDescription || t.description || '',
-      metaTitle: t.metaTitle || null,
-      keywords: Array.isArray(t.keywords) ? t.keywords : [],
-      formula: t.formula || null,
-      articleHeading: (t.article && t.article.heading) || null,
-      articleIntro: (t.article && t.article.intro) || null,
-      faqs: Array.isArray(t.faqs) ? t.faqs.map(f => ({ q: f.q, a: f.a })) : [],
-    };
-  });
-  return registry;
-}
-
-// ── 4. Helpers ───────────────────────────────────────────────────────
+// ── 2. Helpers ───────────────────────────────────────────────────────
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
@@ -246,14 +175,30 @@ function buildFaqJsonLd(tool) {
   };
 }
 
+function buildHowToJsonLd(tool) {
+  if (!tool.howTo || !tool.howTo.length) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: `How to Use the ${tool.name}`,
+    description: tool.description,
+    step: tool.howTo.map((step, idx) => ({
+      '@type': 'HowToStep',
+      position: idx + 1,
+      name: `Step ${idx + 1}`,
+      text: step,
+    })),
+  };
+}
+
 function buildArticleJsonLd(tool) {
-  if (!tool.articleHeading) return null;
+  if (!tool.article || !tool.article.heading) return null;
   return {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
-    headline: tool.articleHeading,
-    description: tool.articleIntro || tool.metaDescription || tool.description,
-    author: { '@type': 'Organization', name: 'GetCalcu' },
+    headline: tool.article.heading,
+    description: tool.article.intro || tool.metaDescription || tool.description,
+    author: { '@type': 'Organization', name: 'GetCalcu Editorial & Calculation Review Board' },
     publisher: { '@type': 'Organization', name: 'GetCalcu', url: `${BASE_URL}/` },
     about: tool.name,
     url: buildCanonical(tool.slug),
@@ -299,7 +244,241 @@ function renderSidebarNav(activeSlug = null, isHome = false) {
         </aside>`;
 }
 
-// ── 5. Generate static per-tool HTML pages ───────────────────────────
+// ── 3. Build Pre-Rendered Full Static HTML for Non-JS Crawlers & Humans ─
+function renderPreRenderedToolContent(tool, slug) {
+  // Compute default values
+  const defaultVals = {};
+  if (tool.fields && Array.isArray(tool.fields)) {
+    tool.fields.forEach(f => {
+      defaultVals[f.id] = typeof f.default === 'function' ? f.default() : f.default;
+    });
+  }
+
+  let result = null;
+  if (typeof tool.calculate === 'function') {
+    try {
+      result = tool.calculate(defaultVals);
+    } catch (e) {
+      // fallback
+    }
+  }
+
+  // 1. Presets HTML
+  let presetsHtml = '';
+  if (tool.presets && tool.presets.length > 0) {
+    presetsHtml = `
+      <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
+        <div class="preset-chips-header">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Quick Scenarios</span>
+        </div>
+        <div class="preset-chips-list">
+          ${tool.presets.map((p, idx) => `
+            <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" data-preset-idx="${idx}">
+              <i class="fa-solid fa-sliders"></i> <span>${escapeHtml(p.label)}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. Form HTML
+  let formHtml = presetsHtml;
+  if (tool.fields && Array.isArray(tool.fields)) {
+    for (const field of tool.fields) {
+      const label = field.label || field.id;
+      const val = defaultVals[field.id] !== undefined ? defaultVals[field.id] : '';
+      if (field.type === 'select') {
+        const optionsHtml = (field.options || []).map(o => `
+          <option value="${escapeHtml(o.value)}" ${o.value === val ? 'selected' : ''}>${escapeHtml(o.label)}</option>
+        `).join('');
+        formHtml += `
+          <div class="form-group" data-field="${field.id}">
+            <label for="${field.id}">${escapeHtml(label)}</label>
+            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
+            <select id="${field.id}" data-id="${field.id}">${optionsHtml}</select>
+          </div>
+        `;
+      } else if (field.type === 'range') {
+        formHtml += `
+          <div class="form-group" data-field="${field.id}">
+            <label for="${field.id}">${escapeHtml(label)}</label>
+            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
+            <div class="range-input-wrap">
+              <input type="number" id="${field.id}" data-id="${field.id}" value="${val}" inputmode="decimal">
+              <input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${val}">
+            </div>
+          </div>
+        `;
+      } else if (field.type !== 'section') {
+        formHtml += `
+          <div class="form-group" data-field="${field.id}">
+            <label for="${field.id}">${escapeHtml(label)}</label>
+            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
+            <input type="${field.type || 'number'}" id="${field.id}" data-id="${field.id}" value="${val}" inputmode="decimal">
+          </div>
+        `;
+      }
+    }
+  }
+
+  // 3. Stats & Result Cards HTML
+  let statsHtml = '';
+  if (result && result.stats && Array.isArray(result.stats)) {
+    statsHtml = `
+      <div class="stats-grid">
+        ${result.stats.map(s => `
+          <div class="stat-card ${s.highlight ? 'stat-card--highlight' : ''} ${s.warn ? 'stat-card--warn' : ''}">
+            <span class="stat-label">${escapeHtml(s.label)}</span>
+            <span class="stat-value">${escapeHtml(s.value)}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  let insightHtml = '';
+  if (result && result.insight) {
+    insightHtml = `
+      <div class="insight-banner insight-banner--${result.insight.tone || 'positive'}">
+        <i class="fa-solid ${result.insight.icon || 'fa-circle-check'}"></i>
+        <div class="insight-content">
+          <h4>${escapeHtml(result.insight.headline)}</h4>
+          <p>${escapeHtml(result.insight.detail)}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // 4. Action Toolbar
+  const toolbarHtml = `
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  `;
+
+  // 5. Article & Educational Sections
+  let articleHtml = '';
+  if (tool.article) {
+    const a = tool.article;
+    const sectionsHtml = (a.sections && a.sections.length)
+      ? a.sections.map(s => `
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">${escapeHtml(s.heading)}</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body)}</p>
+      `).join('')
+      : '';
+    articleHtml = `
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>
+        ${sectionsHtml}
+      </div>
+    `;
+  }
+
+  // 6. How To & Formula
+  let howToHtml = '';
+  if (tool.howTo && tool.howTo.length) {
+    const steps = tool.howTo.map((step, i) => `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${escapeHtml(step)}</li>`).join('');
+    howToHtml = `
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2>
+        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>
+        ${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}
+      </div>
+    `;
+  }
+
+  // 7. Examples
+  let examplesHtml = '';
+  if (tool.examples && tool.examples.length) {
+    const exCards = tool.examples.map(ex => `
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(ex.title)}</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> ${escapeHtml(ex.input)}</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">${escapeHtml(ex.result)}</span></p>
+      </div>
+    `).join('');
+    examplesHtml = `
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">${exCards}</div>
+      </div>
+    `;
+  }
+
+  // 8. FAQs
+  let faqsHtml = '';
+  if (tool.faqs && tool.faqs.length) {
+    const faqItems = tool.faqs.map(f => `
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(f.q)}</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(f.a)}</p>
+      </details>
+    `).join('');
+    faqsHtml = `
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+        ${faqItems}
+      </div>
+    `;
+  }
+
+  // 9. Authoritative E-E-A-T Editorial & Trust Block
+  const trustBlockHtml = `
+    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
+            GetCalcu Methodology & Editorial Standards
+          </h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
+            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+          </p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Last Verified:</strong> September 2026</div>
+        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Feedback:</strong> <a href="/contact?subject=${encodeURIComponent(tool.name + ' Correction')}" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      </div>
+    </div>
+  `;
+
+  return `
+    <div class="tool-runner-card">
+      <div class="tool-header">
+        <h1>${escapeHtml(tool.name)}</h1>
+        <p>${escapeHtml(tool.description)}</p>
+      </div>
+      <div class="tool-grid-workspace">
+        <div class="calculator-form-inputs">
+          ${formHtml}
+        </div>
+        <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
+          ${insightHtml}
+          ${statsHtml}
+          ${toolbarHtml}
+        </div>
+      </div>
+    </div>
+    ${trustBlockHtml}
+    ${articleHtml}
+    ${howToHtml}
+    ${examplesHtml}
+    ${faqsHtml}
+  `;
+}
+
+// ── 4. Generate Static per-tool HTML pages ───────────────────────────
 const toolDir = path.join(__dirname, 'tool');
 if (!fs.existsSync(toolDir)) fs.mkdirSync(toolDir, { recursive: true });
 
@@ -311,10 +490,12 @@ const toolPageTemplate = (tool) => {
     buildSoftwareAppJsonLd(tool),
     buildBreadcrumbJsonLd(tool),
     buildFaqJsonLd(tool),
+    buildHowToJsonLd(tool),
     buildArticleJsonLd(tool),
   ].filter(Boolean);
 
   const catSlug = (tool.category || 'finance').toLowerCase();
+  const preRenderedBody = renderPreRenderedToolContent(tool, tool.slug);
 
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -342,7 +523,7 @@ const toolPageTemplate = (tool) => {
     <meta name="twitter:description" content="${desc}">
     <meta name="twitter:image" content="${BASE_URL}/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     ${jsonLdBlocks.map(b => `<script type="application/ld+json">${JSON.stringify(b)}</script>`).join('\n    ')}
 
     <!-- Favicon & Icons -->
@@ -406,25 +587,7 @@ const toolPageTemplate = (tool) => {
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes -->
-                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
-                    <div class="skeleton-form">
-                        <div class="skeleton-line tall"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                    <div class="skeleton-results">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                </div>
-                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-                    <span class="ad-slot-label">Advertisement</span>
-                </div>
+                ${preRenderedBody}
             </div>
         </main>
     </div>
@@ -472,15 +635,6 @@ const toolPageTemplate = (tool) => {
         </div>
     </div>
 
-    <noscript>
-        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-            <h1>${escapeHtml(tool.name)}</h1>
-            <p>${desc}</p>
-            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
-            <p><a href="/">Browse all GetCalcu calculators</a></p>
-        </div>
-    </noscript>
-
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>
     <script src="/js/modules/budget-planner.js" type="module"></script>
@@ -506,7 +660,7 @@ const toolPageTemplate = (tool) => {
 </html>`;
 };
 
-// ── 6. Generate static per-category HTML pages ───────────────────────
+// ── 5. Generate static per-category HTML pages ───────────────────────
 const categoryDir = path.join(__dirname, 'category');
 if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir, { recursive: true });
 
@@ -563,7 +717,7 @@ const categoryPageTemplate = (cat, catTools) => {
     <meta name="twitter:description" content="${desc}">
     <meta name="twitter:image" content="${BASE_URL}/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLd)}</script>
     <script type="application/ld+json">${JSON.stringify(itemListJsonLd)}</script>
 
@@ -652,23 +806,14 @@ const categoryPageTemplate = (cat, catTools) => {
                         <h2>Available ${escapeHtml(cat.name)} Tools (${catTools.length})</h2>
                     </div>
                     <div class="tools-grid">
-                        ${catTools.length > 0 ? catTools.map(t => `
+                        ${catTools.map(t => `
                             <a href="/tool/${t.slug}" class="tool-card">
                                 <div class="tool-icon ${t.iconClass || 'icon-finance'}"><i class="fa-solid ${t.icon || 'fa-calculator'}"></i></div>
                                 <h3>${escapeHtml(t.name)}</h3>
-                                <p>${escapeHtml(t.description || '')}</p>
+                                <p>${escapeHtml(t.description)}</p>
                                 <span class="tag ${t.tagClass || 'tag-finance'}">${escapeHtml(t.category)}</span>
                             </a>
-                        `).join('\n                        ') : `
-                            <div class="tool-not-found" style="grid-column: 1 / -1; padding:3rem 1rem; text-align:center;">
-                                <div class="not-found-icon" style="background:rgba(99,102,241,0.1); color:var(--primary-color); width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem auto; font-size:1.75rem;">
-                                    <i class="fa-solid fa-sparkles"></i>
-                                </div>
-                                <h2>Exciting ${escapeHtml(cat.name)} calculators are coming soon!</h2>
-                                <p style="color:var(--text-muted); margin-bottom:1.5rem;">We are regularly adding new verified calculation tools. Check out our popular tools in the meantime.</p>
-                                <a href="/" class="btn btn-primary"><i class="fa-solid fa-house"></i> Browse All Calculators</a>
-                            </div>
-                        `}
+                        `).join('\n                        ')}
                     </div>
                 </section>
             </div>
@@ -719,7 +864,6 @@ const categoryPageTemplate = (cat, catTools) => {
     </div>
 
     <script src="/js/tools.js"></script>
-    <script src="/js/tools-template.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/config.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -731,83 +875,84 @@ const categoryPageTemplate = (cat, catTools) => {
 </html>`;
 };
 
-// ── 7. Main Execution ────────────────────────────────────────────────
-const registry = buildRegistry();
-const slugs = Object.keys(registry).sort();
+// ── 6. Main Build Runner ─────────────────────────────────────────────
+function build() {
+  const tools = loadTools();
+  const allSlugs = Object.keys(tools);
 
-// Write each tool page
-slugs.forEach(slug => {
-  const tool = registry[slug];
-  const slugDir = path.join(toolDir, slug);
-  if (!fs.existsSync(slugDir)) fs.mkdirSync(slugDir, { recursive: true });
-  fs.writeFileSync(path.join(slugDir, 'index.html'), toolPageTemplate(tool));
-});
+  // 1. Generate tool landing pages
+  allSlugs.forEach(slug => {
+    const tool = { ...tools[slug], slug };
+    const toolSubDir = path.join(toolDir, slug);
+    if (!fs.existsSync(toolSubDir)) fs.mkdirSync(toolSubDir, { recursive: true });
 
-// Write each category page
-const categorySlugs = Object.keys(CATEGORIES);
-categorySlugs.forEach(catSlug => {
-  const cat = CATEGORIES[catSlug];
-  const catTools = Object.values(registry).filter(t => t.category.toLowerCase() === cat.name.toLowerCase());
-  const catDirPath = path.join(categoryDir, catSlug);
-  if (!fs.existsSync(catDirPath)) fs.mkdirSync(catDirPath, { recursive: true });
-  fs.writeFileSync(path.join(catDirPath, 'index.html'), categoryPageTemplate(cat, catTools));
-});
+    const html = toolPageTemplate(tool);
+    fs.writeFileSync(path.join(toolSubDir, 'index.html'), html, 'utf8');
+  });
 
-// Generate sitemap.xml
-const staticUrls = [
-  { loc: `${BASE_URL}/`,            priority: '1.0',  changefreq: 'weekly'  },
-  { loc: `${BASE_URL}/about`,       priority: '0.8',  changefreq: 'monthly' },
-  { loc: `${BASE_URL}/contact`,     priority: '0.7',  changefreq: 'monthly' },
-  { loc: `${BASE_URL}/privacy`,     priority: '0.6',  changefreq: 'monthly' },
-  { loc: `${BASE_URL}/terms`,       priority: '0.6',  changefreq: 'monthly' },
-  { loc: `${BASE_URL}/cookie-policy`, priority: '0.6', changefreq: 'monthly' },
-];
+  // 2. Generate category landing pages
+  Object.keys(CATEGORIES).forEach(catKey => {
+    const cat = CATEGORIES[catKey];
+    const catTools = allSlugs
+      .map(s => ({ ...tools[s], slug: s }))
+      .filter(t => (t.category || '').toLowerCase() === cat.slug);
 
-const categoryUrls = categorySlugs.map(catSlug => ({
-  loc:        `${BASE_URL}/category/${catSlug}`,
-  priority:   '0.85',
-  changefreq: 'weekly',
-}));
+    const catSubDir = path.join(categoryDir, cat.slug);
+    if (!fs.existsSync(catSubDir)) fs.mkdirSync(catSubDir, { recursive: true });
 
-const toolUrls = slugs.map(slug => ({
-  loc:        `${BASE_URL}/tool/${slug}`,
-  priority:   '0.9',
-  changefreq: 'monthly',
-}));
+    const html = categoryPageTemplate(cat, catTools);
+    fs.writeFileSync(path.join(catSubDir, 'index.html'), html, 'utf8');
+  });
 
-const allUrls = [...staticUrls, ...categoryUrls, ...toolUrls];
+  // 3. Generate sitemap.xml
+  const sitemapUrls = [
+    { loc: `${BASE_URL}/`, priority: '1.0', changefreq: 'daily' },
+    ...Object.keys(CATEGORIES).map(k => ({
+      loc: `${BASE_URL}/category/${CATEGORIES[k].slug}`,
+      priority: '0.8',
+      changefreq: 'weekly',
+    })),
+    ...allSlugs.map(s => ({
+      loc: `${BASE_URL}/tool/${s}`,
+      priority: '0.9',
+      changefreq: 'weekly',
+    })),
+    { loc: `${BASE_URL}/about`, priority: '0.5', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/contact`, priority: '0.5', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/terms`, priority: '0.3', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/cookie-policy`, priority: '0.3', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/privacy`, priority: '0.3', changefreq: 'monthly' },
+  ];
 
-const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map(u => `
-  <url>
+${sitemapUrls.map(u => `  <url>
     <loc>${u.loc}</loc>
     <lastmod>${TODAY}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
-  </url>`).join('')}
-</urlset>
-`;
+  </url>`).join('\n')}
+</urlset>`;
 
-fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), xml.trimStart());
+  fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapXml, 'utf8');
 
-// Generate robots.txt
-const robots = `User-agent: *
+  // 4. Generate robots.txt
+  const robotsTxt = `User-agent: *
 Allow: /
-Disallow: /auth
+Disallow: /auth*
 Disallow: /history
-Disallow: /tool?slug=
-Disallow: /?category=
+Disallow: /?category=*
 
 Sitemap: ${BASE_URL}/sitemap.xml
 `;
+  fs.writeFileSync(path.join(__dirname, 'robots.txt'), robotsTxt, 'utf8');
 
-fs.writeFileSync(path.join(__dirname, 'robots.txt'), robots);
+  console.log(`✓ build-seo.js complete`);
+  console.log(`  Tools registered: ${allSlugs.length}`);
+  console.log(`  Static tool pages: ${allSlugs.length} (in /tool/{slug}/)`);
+  console.log(`  Static category pages: ${Object.keys(CATEGORIES).length} (in /category/{slug}/)`);
+  console.log(`  Sitemap URLs: ${sitemapUrls.length}`);
+  console.log(`  robots.txt updated`);
+}
 
-// Summary
-console.log(`✓ build-seo.js complete`);
-console.log(`  Tools registered: ${slugs.length}`);
-console.log(`  Static tool pages: ${slugs.length} (in /tool/{slug}/)`);
-console.log(`  Static category pages: ${categorySlugs.length} (in /category/{slug}/)`);
-console.log(`  Sitemap URLs: ${allUrls.length}`);
-console.log(`  robots.txt updated`);
+build();

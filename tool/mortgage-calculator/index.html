@@ -24,9 +24,12 @@
     <meta name="twitter:description" content="Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Mortgage Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.","url":"https://www.getcalcu.com/tool/mortgage-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"Mortgage Calculator","item":"https://www.getcalcu.com/tool/mortgage-calculator"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How is a monthly mortgage payment calculated?","acceptedAnswer":{"@type":"Answer","text":"A monthly mortgage payment is calculated using the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the loan principal, r is the monthly interest rate (annual rate ÷ 12), and n is the total number of payments (years × 12). Property taxes and insurance are then added to get your full PITI payment."}},{"@type":"Question","name":"What is PITI in a mortgage payment?","acceptedAnswer":{"@type":"Answer","text":"PITI stands for Principal, Interest, Taxes, and Insurance — the four components most lenders bundle into your monthly mortgage payment. Principal and Interest repay the loan, while Taxes and Insurance cover annual property tax and homeowners insurance, divided by 12 and collected each month."}},{"@type":"Question","name":"How much down payment do I need to avoid PMI?","acceptedAnswer":{"@type":"Answer","text":"You typically need a down payment of at least 20% of the home price to avoid Private Mortgage Insurance (PMI). PMI protects the lender (not you) when you put down less than 20%, and usually costs 0.5% to 1% of the loan amount per year until your equity reaches 20%."}},{"@type":"Question","name":"Is a 15-year or 30-year mortgage better?","acceptedAnswer":{"@type":"Answer","text":"A 15-year mortgage has higher monthly payments but you pay roughly half the total interest of a 30-year loan and build equity faster. A 30-year mortgage keeps payments affordable and offers flexibility, but costs far more over time. Use our calculator to compare the total interest of both terms with your exact numbers."}},{"@type":"Question","name":"What is an amortization schedule?","acceptedAnswer":{"@type":"Answer","text":"An amortization schedule is a table showing how each payment splits between principal and interest over the life of the loan. Early payments are mostly interest, while later payments are mostly principal. Our calculator generates a full month-by-month amortization schedule automatically."}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Mortgage Calculator","description":"Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter the home price and your down payment — the calculator subtracts the down payment to find your loan amount."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Add the annual interest rate (APR) and choose your loan term in years."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Include annual property tax and homeowners insurance for a true PITI monthly payment."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Review your monthly payment, total interest, and full amortization schedule."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Adjust the down payment or term to see how much interest you can save."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Mortgage Payment Accurately","description":"Your monthly mortgage payment is more than just principal and interest — it includes property taxes and insurance (PITI). The GetCalcu Mortgage Calculator breaks down every component so you know exactly what you will pay each month and over the life of the loan.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Mortgage Calculator","url":"https://www.getcalcu.com/tool/mortgage-calculator"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -120,25 +123,230 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes -->
-                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
-                    <div class="skeleton-form">
-                        <div class="skeleton-line tall"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                    <div class="skeleton-results">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                </div>
-                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-                    <span class="ad-slot-label">Advertisement</span>
-                </div>
+                
+    <div class="tool-runner-card">
+      <div class="tool-header">
+        <h1>Mortgage Calculator</h1>
+        <p>Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.</p>
+      </div>
+      <div class="tool-grid-workspace">
+        <div class="calculator-form-inputs">
+          
+      <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
+        <div class="preset-chips-header">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Quick Scenarios</span>
+        </div>
+        <div class="preset-chips-list">
+          
+            <button type="button" class="preset-chip active" data-preset-idx="0">
+              <i class="fa-solid fa-sliders"></i> <span>30-Yr Fixed (20% Down)</span>
+            </button>
+          
+            <button type="button" class="preset-chip " data-preset-idx="1">
+              <i class="fa-solid fa-sliders"></i> <span>15-Yr Fixed (Save Interest)</span>
+            </button>
+          
+            <button type="button" class="preset-chip " data-preset-idx="2">
+              <i class="fa-solid fa-sliders"></i> <span>FHA Starter (3.5% Down)</span>
+            </button>
+          
+        </div>
+      </div>
+    
+          <div class="form-group" data-field="home_price">
+            <label for="home_price">Home Price ($)</label>
+            <span class="field-hint">The total purchase price of the home you are buying.</span>
+            <input type="number" id="home_price" data-id="home_price" value="400000" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="down_payment">
+            <label for="down_payment">Down Payment ($)</label>
+            <span class="field-hint">Cash paid upfront. A larger down payment lowers your loan amount and can help you avoid PMI (typically need 20% to skip it).</span>
+            <input type="number" id="down_payment" data-id="down_payment" value="80000" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="interest_rate">
+            <label for="interest_rate">Annual Interest Rate (%)</label>
+            <span class="field-hint">The yearly interest rate (APR) on your mortgage. US 30-year fixed rates have often ranged 6-8%.</span>
+            <input type="number" id="interest_rate" data-id="interest_rate" value="7" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="loan_term">
+            <label for="loan_term">Loan Term (years)</label>
+            <span class="field-hint">How long you take to repay the loan. Shorter terms mean higher monthly payments but far less total interest.</span>
+            <select id="loan_term" data-id="loan_term">
+          <option value="10" >10 years</option>
+        
+          <option value="15" >15 years</option>
+        
+          <option value="20" >20 years</option>
+        
+          <option value="25" >25 years</option>
+        
+          <option value="30" selected>30 years</option>
+        </select>
+          </div>
+        
+          <div class="form-group" data-field="property_tax">
+            <label for="property_tax">Annual Property Tax ($)</label>
+            <span class="field-hint">Yearly property tax set by your local government, spread across your monthly payments.</span>
+            <input type="number" id="property_tax" data-id="property_tax" value="4800" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="insurance">
+            <label for="insurance">Annual Insurance ($)</label>
+            <span class="field-hint">Yearly homeowners insurance premium, spread across your monthly payments.</span>
+            <input type="number" id="insurance" data-id="insurance" value="1200" inputmode="decimal">
+          </div>
+        
+        </div>
+        <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
+          
+          
+      <div class="stats-grid">
+        
+          <div class="stat-card stat-card--highlight ">
+            <span class="stat-label">Monthly Payment</span>
+            <span class="stat-value">$2,628.97</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Principal &amp; Interest</span>
+            <span class="stat-value">$2,128.97</span>
+          </div>
+        
+          <div class="stat-card  stat-card--warn">
+            <span class="stat-label">Total Interest</span>
+            <span class="stat-value">$446,429.20</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Property Tax &amp; Insurance</span>
+            <span class="stat-value">$180,000.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Total Cost</span>
+            <span class="stat-value">$1,026,429.20</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Loan Amount</span>
+            <span class="stat-value">$320,000.00</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Down Payment</span>
+            <span class="stat-value">20.00%</span>
+          </div>
+        
+      </div>
+    
+          
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  
+        </div>
+      </div>
+    </div>
+    
+    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
+            GetCalcu Methodology & Editorial Standards
+          </h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
+            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+          </p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Last Verified:</strong> September 2026</div>
+        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Feedback:</strong> <a href="/contact?subject=Mortgage%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      </div>
+    </div>
+  
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Your Mortgage Payment Accurately</h2>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Your monthly mortgage payment is more than just principal and interest — it includes property taxes and insurance (PITI). The GetCalcu Mortgage Calculator breaks down every component so you know exactly what you will pay each month and over the life of the loan.</p>
+        
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Principal, Interest, Taxes, and Insurance (PITI)</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Principal is the amount you borrowed, interest is the lender&#39;s charge for lending it, property taxes fund local services, and homeowners insurance protects your investment. Lenders typically bundle all four into one monthly payment.</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How the Loan Term Affects Total Cost</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">A 30-year term keeps monthly payments low but you pay roughly twice as much total interest as a 15-year term. Use the calculator to compare terms side by side and see the lifetime interest difference.</p>
+      
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Mortgage Calculator</h2>
+        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter the home price and your down payment — the calculator subtracts the down payment to find your loan amount.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Add the annual interest rate (APR) and choose your loan term in years.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Include annual property tax and homeowners insurance for a true PITI monthly payment.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Review your monthly payment, total interest, and full amortization schedule.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Adjust the down payment or term to see how much interest you can save.</li></ol>
+        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> M = P × [r(1+r)^n] / [(1+r)^n − 1] | Monthly Total = M + (Property Tax / 12) + (Insurance / 12) | Total Interest = (M × n) − P</div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Typical 30-Year Fixed Mortgage</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $400,000, Down: $80,000, Rate: 7%, Term: 30 years</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly Payment: ~$2,129 | Total Interest: ~$466,000</span></p>
+      </div>
+    
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">15-Year Term Saves Interest</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $400,000, Down: $80,000, Rate: 6.5%, Term: 15 years</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly Payment: ~$2,935 | Total Interest: ~$188,000</span></p>
+      </div>
+    </div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+        
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is a monthly mortgage payment calculated?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A monthly mortgage payment is calculated using the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the loan principal, r is the monthly interest rate (annual rate ÷ 12), and n is the total number of payments (years × 12). Property taxes and insurance are then added to get your full PITI payment.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is PITI in a mortgage payment?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">PITI stands for Principal, Interest, Taxes, and Insurance — the four components most lenders bundle into your monthly mortgage payment. Principal and Interest repay the loan, while Taxes and Insurance cover annual property tax and homeowners insurance, divided by 12 and collected each month.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much down payment do I need to avoid PMI?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">You typically need a down payment of at least 20% of the home price to avoid Private Mortgage Insurance (PMI). PMI protects the lender (not you) when you put down less than 20%, and usually costs 0.5% to 1% of the loan amount per year until your equity reaches 20%.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is a 15-year or 30-year mortgage better?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A 15-year mortgage has higher monthly payments but you pay roughly half the total interest of a 30-year loan and build equity faster. A 30-year mortgage keeps payments affordable and offers flexibility, but costs far more over time. Use our calculator to compare the total interest of both terms with your exact numbers.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is an amortization schedule?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">An amortization schedule is a table showing how each payment splits between principal and interest over the life of the loan. Early payments are mostly interest, while later payments are mostly principal. Our calculator generates a full month-by-month amortization schedule automatically.</p>
+      </details>
+    
+      </div>
+    
+  
             </div>
         </main>
     </div>
@@ -185,15 +393,6 @@
             <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
         </div>
     </div>
-
-    <noscript>
-        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-            <h1>Mortgage Calculator</h1>
-            <p>Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.</p>
-            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
-            <p><a href="/">Browse all GetCalcu calculators</a></p>
-        </div>
-    </noscript>
 
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>

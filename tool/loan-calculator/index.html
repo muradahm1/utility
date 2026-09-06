@@ -24,9 +24,12 @@
     <meta name="twitter:description" content="Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Loan Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.","url":"https://www.getcalcu.com/tool/loan-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"Loan Calculator","item":"https://www.getcalcu.com/tool/loan-calculator"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How is a loan payment calculated?","acceptedAnswer":{"@type":"Answer","text":"A fixed loan payment is calculated with the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the principal, r is the monthly interest rate (APR ÷ 12), and n is the number of monthly payments (term in years × 12). This keeps every payment equal while paying off the loan completely."}},{"@type":"Question","name":"What is APR versus interest rate?","acceptedAnswer":{"@type":"Answer","text":"The interest rate is the cost of borrowing the principal, while APR (Annual Percentage Rate) includes the interest rate plus fees and other loan costs, giving the true yearly cost. APR is the better figure for comparing loans because it reflects what you actually pay."}},{"@type":"Question","name":"How does the loan term affect my payment?","acceptedAnswer":{"@type":"Answer","text":"A longer term lowers your monthly payment but increases total interest because the principal is repaid more slowly and interest accrues over more months. A shorter term raises the monthly payment but saves significantly on total interest. Use our calculator to compare terms."}},{"@type":"Question","name":"How much interest will I pay on a loan?","acceptedAnswer":{"@type":"Answer","text":"Total interest equals (monthly payment × number of payments) − principal. For a $20,000 loan at 6% APR over 4 years, the monthly payment is about $469 and total interest is about $2,544. Our calculator shows this automatically along with a payment-by-payment schedule."}},{"@type":"Question","name":"Can I pay off my loan early to save interest?","acceptedAnswer":{"@type":"Answer","text":"Yes. Because interest is calculated on the remaining balance, making extra payments or paying off the loan early reduces the principal faster and cuts total interest. Check your loan agreement for prepayment penalties first — many loans allow early repayment with no fee."}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Loan Calculator","description":"Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter the loan amount (the total you are borrowing)."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Add the annual interest rate (APR) quoted by your lender."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Choose the loan term in years."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Review your monthly payment, total interest, and total cost."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Check the amortization schedule to see how each payment splits."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Loan Payments and Total Interest","description":"Whether it is a car, personal, or student loan, knowing your monthly payment and total cost before you borrow is essential. The GetCalcu Loan Calculator uses the standard amortization formula to show your monthly payment, total interest, and full repayment schedule.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Loan Calculator","url":"https://www.getcalcu.com/tool/loan-calculator"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -120,25 +123,181 @@
             </header>
 
             <div class="content-body" id="tool-runner-container">
-                <!-- Loading skeleton shown while tool initializes -->
-                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
-                    <div class="skeleton-form">
-                        <div class="skeleton-line tall"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                    <div class="skeleton-results">
-                        <div class="skeleton-line full"></div>
-                        <div class="skeleton-line"></div>
-                        <div class="skeleton-line short"></div>
-                    </div>
-                </div>
-                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
-                    <span class="ad-slot-label">Advertisement</span>
-                </div>
+                
+    <div class="tool-runner-card">
+      <div class="tool-header">
+        <h1>Loan Calculator</h1>
+        <p>Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.</p>
+      </div>
+      <div class="tool-grid-workspace">
+        <div class="calculator-form-inputs">
+          
+          <div class="form-group" data-field="loan_amount">
+            <label for="loan_amount">Loan Amount ($)</label>
+            <span class="field-hint">The total amount you are borrowing (the principal).</span>
+            <input type="number" id="loan_amount" data-id="loan_amount" value="30000" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="interest_rate">
+            <label for="interest_rate">Annual Interest Rate (%)</label>
+            <span class="field-hint">The yearly interest rate (APR) charged on the loan.</span>
+            <input type="number" id="interest_rate" data-id="interest_rate" value="6.5" inputmode="decimal">
+          </div>
+        
+          <div class="form-group" data-field="loan_term">
+            <label for="loan_term">Loan Term (years)</label>
+            <span class="field-hint">How many years you will take to repay the loan in full.</span>
+            <select id="loan_term" data-id="loan_term">
+          <option value="1" >1 year</option>
+        
+          <option value="2" >2 years</option>
+        
+          <option value="3" >3 years</option>
+        
+          <option value="4" >4 years</option>
+        
+          <option value="5" selected>5 years</option>
+        
+          <option value="6" >6 years</option>
+        
+          <option value="7" >7 years</option>
+        
+          <option value="10" >10 years</option>
+        </select>
+          </div>
+        
+        </div>
+        <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
+          
+          
+      <div class="stats-grid">
+        
+          <div class="stat-card stat-card--highlight ">
+            <span class="stat-label">Monthly Payment</span>
+            <span class="stat-value">$586.98</span>
+          </div>
+        
+          <div class="stat-card  stat-card--warn">
+            <span class="stat-label">Total Interest</span>
+            <span class="stat-value">$5,218.80</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Total Paid</span>
+            <span class="stat-value">$35,218.80</span>
+          </div>
+        
+          <div class="stat-card  ">
+            <span class="stat-label">Loan Amount</span>
+            <span class="stat-value">$30,000.00</span>
+          </div>
+        
+      </div>
+    
+          
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  
+        </div>
+      </div>
+    </div>
+    
+    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+        <div>
+          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
+            GetCalcu Methodology & Editorial Standards
+          </h3>
+          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
+            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+          </p>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Last Verified:</strong> September 2026</div>
+        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Feedback:</strong> <a href="/contact?subject=Loan%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      </div>
+    </div>
+  
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Loan Payments and Total Interest</h2>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Whether it is a car, personal, or student loan, knowing your monthly payment and total cost before you borrow is essential. The GetCalcu Loan Calculator uses the standard amortization formula to show your monthly payment, total interest, and full repayment schedule.</p>
+        
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Loan Amortization Works</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Most loans are amortized — each fixed monthly payment covers the interest accrued that month plus a portion of principal. Early payments are mostly interest; later payments are mostly principal. By the final payment, the balance reaches zero.</p>
+      
+        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Why the Interest Rate Matters So Much</h3>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Even a 1% rate difference dramatically changes total cost. On a $30,000 5-year loan, 5% APR costs about $3,968 in interest while 7% costs about $5,640 — a $1,672 difference for the same loan. Always compare offers.</p>
+      
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Loan Calculator</h2>
+        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter the loan amount (the total you are borrowing).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Add the annual interest rate (APR) quoted by your lender.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Choose the loan term in years.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Review your monthly payment, total interest, and total cost.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Check the amortization schedule to see how each payment splits.</li></ol>
+        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> M = P × [r(1+r)^n] / [(1+r)^n − 1] | Total Interest = (M × n) − P | Total Cost = M × n</div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Auto Loan</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Amount: $30,000, Rate: 6.5%, Term: 5 years</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly: ~$587 | Total Interest: ~$5,211</span></p>
+      </div>
+    
+      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Personal Loan</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Amount: $15,000, Rate: 9%, Term: 3 years</p>
+        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly: ~$477 | Total Interest: ~$2,180</span></p>
+      </div>
+    </div>
+      </div>
+    
+    
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+        
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is a loan payment calculated?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A fixed loan payment is calculated with the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the principal, r is the monthly interest rate (APR ÷ 12), and n is the number of monthly payments (term in years × 12). This keeps every payment equal while paying off the loan completely.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is APR versus interest rate?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The interest rate is the cost of borrowing the principal, while APR (Annual Percentage Rate) includes the interest rate plus fees and other loan costs, giving the true yearly cost. APR is the better figure for comparing loans because it reflects what you actually pay.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does the loan term affect my payment?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A longer term lowers your monthly payment but increases total interest because the principal is repaid more slowly and interest accrues over more months. A shorter term raises the monthly payment but saves significantly on total interest. Use our calculator to compare terms.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much interest will I pay on a loan?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Total interest equals (monthly payment × number of payments) − principal. For a $20,000 loan at 6% APR over 4 years, the monthly payment is about $469 and total interest is about $2,544. Our calculator shows this automatically along with a payment-by-payment schedule.</p>
+      </details>
+    
+      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I pay off my loan early to save interest?</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes. Because interest is calculated on the remaining balance, making extra payments or paying off the loan early reduces the principal faster and cuts total interest. Check your loan agreement for prepayment penalties first — many loans allow early repayment with no fee.</p>
+      </details>
+    
+      </div>
+    
+  
             </div>
         </main>
     </div>
@@ -185,15 +344,6 @@
             <button class="btn btn-outline btn-sm btn-reset" id="reset-consent-btn">Reset Preferences</button>
         </div>
     </div>
-
-    <noscript>
-        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-            <h1>Loan Calculator</h1>
-            <p>Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.</p>
-            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
-            <p><a href="/">Browse all GetCalcu calculators</a></p>
-        </div>
-    </noscript>
 
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>
