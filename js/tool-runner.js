@@ -214,6 +214,11 @@ function initLegacyRunner(tool, slug, container) {
         values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
     });
 
+    let isCompareMode = false;
+    let activeScenario = 'A';
+    let valuesA = { ...values };
+    let valuesB = JSON.parse(JSON.stringify(values));
+
     // ── Phase 5.3: Debounce recalculation (~200ms) ─────────────
     let debounceTimer = null;
     function debouncedUpdate() {
@@ -244,6 +249,8 @@ function initLegacyRunner(tool, slug, container) {
                     }
                 }
             });
+            valuesA = { ...values };
+            valuesB = JSON.parse(JSON.stringify(values));
         } catch (e) {
             console.warn('Failed to parse input URL params:', e);
         }
@@ -251,10 +258,11 @@ function initLegacyRunner(tool, slug, container) {
 
     // ── Phase 5.9: Shareable result URLs (#input=...) ──────────
     function updateShareUrl() {
+        const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
         const params = new URLSearchParams();
         tool.fields.forEach(f => {
             if (f.type === 'number' || f.type === 'range' || f.type === 'select') {
-                params.set(f.id, values[f.id]);
+                params.set(f.id, currentVals[f.id]);
             }
         });
         const hash = params.toString();
@@ -264,13 +272,47 @@ function initLegacyRunner(tool, slug, container) {
         }
     }
 
+    function buildPresetsHtml() {
+        if (!tool.presets || !tool.presets.length) return '';
+        return `
+            <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
+                <div class="preset-chips-header">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Quick Scenarios</span>
+                </div>
+                <div class="preset-chips-list">
+                    ${tool.presets.map((p, idx) => `
+                        <button type="button" class="preset-chip" data-preset-idx="${idx}">
+                            <i class="fa-solid fa-sliders"></i> <span>${escapeHtml(p.label)}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function buildScenarioTabsHtml() {
+        if (!isCompareMode) return '';
+        return `
+            <div class="scenario-tabs" role="tablist">
+                <button type="button" class="scenario-tab ${activeScenario === 'A' ? 'active' : ''}" data-scenario="A">
+                    <i class="fa-solid fa-layer-group"></i> <span>Scenario A ${activeScenario === 'A' ? '(Editing)' : ''}</span>
+                </button>
+                <button type="button" class="scenario-tab ${activeScenario === 'B' ? 'active' : ''}" data-scenario="B">
+                    <i class="fa-solid fa-code-compare"></i> <span>Scenario B ${activeScenario === 'B' ? '(Editing)' : ''}</span>
+                </button>
+            </div>
+        `;
+    }
+
     function buildFormHtml() {
-        let html = '';
+        const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+        let html = buildScenarioTabsHtml() + buildPresetsHtml();
         let inCollapsible = false;
         for (const field of tool.fields) {
-            const labels = tool.fieldLabels ? tool.fieldLabels(values) : {};
+            const labels = tool.fieldLabels ? tool.fieldLabels(currentVals) : {};
             const label = labels[field.id] || field.label;
-            const hidden = field.condition && !field.condition(values);
+            const hidden = field.condition && !field.condition(currentVals);
             const attrs = [
                 field.min !== undefined ? `min="${field.min}"` : '',
                 field.max !== undefined ? `max="${field.max}"` : '',
@@ -288,26 +330,108 @@ function initLegacyRunner(tool, slug, container) {
                 continue;
             }
             if (field.type === 'select') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${values[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${currentVals[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
                 continue;
             }
             if (field.type === 'range') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${values[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${currentVals[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
                 continue;
             }
             const inputModeAttr = (field.type === 'number' || field.type === 'currency' || field.type === 'percentage') ? 'inputmode="decimal"' : '';
-            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
+            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
         }
         if (inCollapsible) html += '</div></details>';
         return html;
     }
 
+    function buildComparisonCardHtml(resA, resB) {
+        if (!resA || !resB || resA.error || resB.error) {
+            return `<div class="comparison-card"><p style="color:#EF4444;">Could not calculate comparison. Please check input parameters in both scenarios.</p></div>`;
+        }
+
+        const statsA = resA.stats || [];
+        const statsB = resB.stats || [];
+
+        const deltaBoxes = statsA.map((sA, idx) => {
+            const sB = statsB[idx] || { label: sA.label, value: '—' };
+            const parseVal = (str) => {
+                if (typeof str !== 'string') return NaN;
+                const clean = str.replace(/[$,% ]/g, '');
+                return parseFloat(clean);
+            };
+
+            const numA = parseVal(sA.value);
+            const numB = parseVal(sB.value);
+            let diffHtml = '';
+
+            if (!isNaN(numA) && !isNaN(numB) && numA !== numB) {
+                const diff = numB - numA;
+                const diffFormatted = Math.abs(diff) < 0.01 ? '' : (diff > 0 ? '+' : '-') + Math.abs(diff).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+                const isLowerBetter = sA.label.toLowerCase().includes('interest') || sA.label.toLowerCase().includes('cost') || sA.label.toLowerCase().includes('payment') || sA.label.toLowerCase().includes('tax') || sA.label.toLowerCase().includes('fee');
+                const isBetter = isLowerBetter ? diff < 0 : diff > 0;
+                diffHtml = `<span class="delta-diff ${isBetter ? 'better' : 'worse'}">${diffFormatted}</span>`;
+            } else {
+                diffHtml = `<span class="delta-diff neutral">No change</span>`;
+            }
+
+            return `
+                <div class="comparison-delta-box">
+                    <span class="delta-label">${escapeHtml(sA.label)}</span>
+                    <div class="delta-values">
+                        <span>A: <strong>${escapeHtml(sA.value)}</strong></span>
+                        <span>B: <strong>${escapeHtml(sB.value)}</strong></span>
+                    </div>
+                    <div>${diffHtml}</div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="comparison-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="font-size:16px; font-weight:700; color:var(--text-primary);">
+                        <i class="fa-solid fa-code-compare" style="color:var(--primary-color);"></i> Side-by-Side Scenario Comparison
+                    </h3>
+                    <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">Scenario A vs Scenario B</span>
+                </div>
+                <div class="comparison-delta-grid">
+                    ${deltaBoxes}
+                </div>
+            </div>
+        `;
+    }
+
     function updateResults() {
-        let result;
-        try { result = tool.calculate(values); } 
-        catch (err) { console.error('Calculation error:', err); return; }
         const card = document.querySelector('.calculator-results-card');
         if (!card) return;
+
+        if (isCompareMode) {
+            let resA, resB;
+            try {
+                resA = tool.calculate(valuesA);
+                resB = tool.calculate(valuesB);
+            } catch (err) {
+                console.error('Calculation error during comparison:', err);
+                return;
+            }
+
+            card.innerHTML =
+                buildComparisonCardHtml(resA, resB) +
+                buildStatsHtml(activeScenario === 'A' ? resA.stats : resB.stats) +
+                (resA.bars ? buildBarsHtml(activeScenario === 'A' ? resA.bars : resB.bars) : '') +
+                buildChartsHtml(activeScenario === 'A' ? resA : resB) +
+                buildBreakdownTablesHtml(activeScenario === 'A' ? resA : resB) +
+                buildResultsToolbarHtml(activeScenario === 'A' ? resA : resB);
+
+            if (resA.chart && activeScenario === 'A') renderChart(resA.chart);
+            if (resB.chart && activeScenario === 'B') renderChart(resB.chart);
+            bindResultsToolbar(activeScenario === 'A' ? resA : resB);
+            return;
+        }
+
+        let result;
+        try { result = tool.calculate(valuesA); } 
+        catch (err) { console.error('Calculation error:', err); return; }
 
         card.innerHTML =
             (result.error ? '' : buildInsightHtml(result.insight)) +
@@ -339,19 +463,20 @@ function initLegacyRunner(tool, slug, container) {
         if (result.chart3) renderChart(result.chart3, 'result-chart-4');
         bindResultsToolbar(result);
 
+        const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
         tool.fields.forEach(field => {
             const group = document.querySelector(`.form-group[data-field="${field.id}"]`);
             if (group) {
-                if (field.condition) group.style.display = field.condition(values) ? '' : 'none';
+                if (field.condition) group.style.display = field.condition(currentVals) ? '' : 'none';
                 if (tool.fieldLabels) {
-                    const lbl = tool.fieldLabels(values)[field.id];
+                    const lbl = tool.fieldLabels(currentVals)[field.id];
                     if (lbl) group.querySelector('label').textContent = lbl;
                 }
                 return;
             }
             if (field.type === 'section') {
                 const section = document.querySelector(`.form-section-header[data-field="${field.id}"]`);
-                if (section && field.condition) section.style.display = field.condition(values) ? '' : 'none';
+                if (section && field.condition) section.style.display = field.condition(currentVals) ? '' : 'none';
             }
         });
     }
@@ -359,6 +484,7 @@ function initLegacyRunner(tool, slug, container) {
     function buildResultsToolbarHtml(result) {
         return `
             <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+                <button class="btn btn-outline btn-sm action-btn ${isCompareMode ? 'active' : ''}" id="action-compare-btn" title="Compare Side-by-Side Scenarios"><i class="fa-solid fa-code-compare"></i> <span>${isCompareMode ? 'Close Compare' : 'Compare A vs B'}</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-share-btn" title="Share calculation with current inputs"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn" title="Download PDF Report"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn" title="Export CSV Data"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
@@ -384,6 +510,21 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function bindResultsToolbar(result) {
+        const compareBtn = document.getElementById('action-compare-btn');
+        if (compareBtn) {
+            compareBtn.addEventListener('click', () => {
+                isCompareMode = !isCompareMode;
+                if (isCompareMode && !valuesB) {
+                    valuesB = JSON.parse(JSON.stringify(valuesA));
+                }
+                const formInputs = document.querySelector('.calculator-form-inputs');
+                if (formInputs) formInputs.innerHTML = buildFormHtml();
+                updateResults();
+                trackEvent('calculator_action', { action_type: isCompareMode ? 'compare_enabled' : 'compare_disabled' });
+                showActionToast(isCompareMode ? 'Comparison Mode activated (Scenario A vs B)' : 'Exited Comparison Mode');
+            });
+        }
+
         const shareBtn = document.getElementById('action-share-btn');
         if (shareBtn) {
             shareBtn.addEventListener('click', async () => {
@@ -418,7 +559,8 @@ function initLegacyRunner(tool, slug, container) {
                 pdfBtn.disabled = true;
                 pdfBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Generating...</span>';
                 try {
-                    await generateResultsPDF(tool, result, values);
+                    const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                    await generateResultsPDF(tool, result, currentVals);
                     showActionToast('PDF report downloaded!');
                     trackEvent('calculator_action', { action_type: 'pdf_download' });
                 } catch (e) {
@@ -498,16 +640,13 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function render() {
-        // Defensive check (ISSUE-106): only invoke customRenderer if it is
-        // actually a function. A boolean `true` (legacy budget-planner) would
-        // throw "TypeError: tool.customRenderer is not a function".
         if (typeof tool.customRenderer === 'function') {
             tool.customRenderer(container);
             return;
         }
 
         let result;
-        try { result = tool.calculate(values); } 
+        try { result = tool.calculate(valuesA); } 
         catch (err) {
             console.error('Initial render calculation error:', err);
             container.innerHTML = `<div class="tool-runner-card"><div class="tool-header"><h1>${escapeHtml(tool.name)}</h1><p>${escapeHtml(tool.description)}</p></div><div class="calculator-results-card"><p style="color:#EF4444;">An error occurred while calculating. Please check your inputs.</p></div></div>`;
@@ -603,7 +742,12 @@ function initLegacyRunner(tool, slug, container) {
             if (err) return;
             value = parseFloat(value);
         }
-        values[id] = value;
+        if (isCompareMode && activeScenario === 'B') {
+            valuesB[id] = value;
+        } else {
+            valuesA[id] = value;
+            values[id] = value;
+        }
         debouncedUpdate();
     }
 
@@ -612,11 +756,44 @@ function initLegacyRunner(tool, slug, container) {
         if (!rangeFor) return;
         const numInput = document.getElementById(rangeFor);
         if (numInput) numInput.value = e.target.value;
-        values[rangeFor] = parseFloat(e.target.value);
+        const numVal = parseFloat(e.target.value);
+        if (isCompareMode && activeScenario === 'B') {
+            valuesB[rangeFor] = numVal;
+        } else {
+            valuesA[rangeFor] = numVal;
+            values[rangeFor] = numVal;
+        }
         debouncedUpdate();
     }
 
-    // ── Phase 5.8: Enter-to-recalculate on number inputs ──────
+    function handleScenarioTabClick(e) {
+        const tab = e.target.closest('.scenario-tab');
+        if (!tab) return;
+        const scenario = tab.dataset.scenario;
+        if (!scenario || scenario === activeScenario) return;
+        activeScenario = scenario;
+        const formInputs = document.querySelector('.calculator-form-inputs');
+        if (formInputs) formInputs.innerHTML = buildFormHtml();
+        updateResults();
+    }
+
+    function handlePresetClick(e) {
+        const chip = e.target.closest('.preset-chip');
+        if (!chip) return;
+        const idx = parseInt(chip.dataset.presetIdx, 10);
+        if (isNaN(idx) || !tool.presets || !tool.presets[idx]) return;
+        const preset = tool.presets[idx];
+        const targetVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+        Object.assign(targetVals, preset.values);
+        if (!isCompareMode || activeScenario === 'A') {
+            Object.assign(values, preset.values);
+        }
+        const formInputs = document.querySelector('.calculator-form-inputs');
+        if (formInputs) formInputs.innerHTML = buildFormHtml();
+        debouncedUpdate();
+        showActionToast(`Preset applied: ${preset.label}`);
+    }
+
     function handleKeyDown(e) {
         if (e.key === 'Enter' && e.target.dataset.id) {
             e.preventDefault();
@@ -628,6 +805,8 @@ function initLegacyRunner(tool, slug, container) {
     container.addEventListener('change', handleInputChange);
     container.addEventListener('input', handleRangeInput);
     container.addEventListener('change', handleRangeInput);
+    container.addEventListener('click', handleScenarioTabClick);
+    container.addEventListener('click', handlePresetClick);
     container.addEventListener('keydown', handleKeyDown);
 
     function initSaveButton() {
@@ -645,8 +824,9 @@ function initLegacyRunner(tool, slug, container) {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
             try {
-                const result = tool.calculate(values);
-                const { error } = await saveCalculation(slug, tool.name, values, { stats: result.stats });
+                const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                const result = tool.calculate(currentVals);
+                const { error } = await saveCalculation(slug, tool.name, currentVals, { stats: result.stats });
                 msg.classList.remove('hidden');
                 msg.textContent = error ? 'Failed to save. Please try again.' : 'Saved to history!';
                 msg.style.color = error ? '#EF4444' : '#10B981';
@@ -662,25 +842,24 @@ function initLegacyRunner(tool, slug, container) {
         });
     }
 
-    // ── Phase 5.8: Reset button — restore defaults ────────────
     function initResetButton() {
         const resetBtn = document.getElementById('reset-btn');
         if (!resetBtn) return;
         resetBtn.addEventListener('click', () => {
             tool.fields.forEach(f => {
-                values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
+                const def = typeof f.default === 'function' ? f.default() : f.default;
+                values[f.id] = def;
+                valuesA[f.id] = def;
+                valuesB[f.id] = def;
             });
-            // Clear any field errors
             tool.fields.forEach(f => {
                 const input = document.getElementById(f.id);
                 const errEl = document.querySelector(`[data-error="${f.id}"]`);
                 if (input) input.classList.remove('input-error');
                 if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
             });
-            // Re-render form with default values
             const formContainer = document.querySelector('.calculator-form-inputs');
             if (formContainer) formContainer.innerHTML = buildFormHtml();
-            // Recalculate and update URL
             updateResults();
             updateShareUrl();
         });
@@ -727,12 +906,10 @@ function initLegacyRunner(tool, slug, container) {
         const canvas = document.getElementById(id);
         if (!canvas) return;
         
-        // Map legacy chart data to ChartManager format
         const type = chartData.type || 'doughnut';
         const isHBar = type === 'horizontalBar';
         const normalizedType = isHBar ? 'bar' : type;
         
-        // Build datasets for ChartManager
         let datasets;
         if (type === 'doughnut' || !type) {
             datasets = [{
@@ -751,7 +928,6 @@ function initLegacyRunner(tool, slug, container) {
             }));
         }
         
-        // Create chart via ChartManager
         ChartManager.create({
             id,
             type: normalizedType,

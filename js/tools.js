@@ -17,6 +17,41 @@
 
 const TOOLS = {
   'mortgage-calculator': {
+    presets: [
+          {
+                "label": "30-Yr Fixed (20% Down)",
+                "values": {
+                      "home_price": 400000,
+                      "down_payment": 80000,
+                      "interest_rate": 6.8,
+                      "loan_term": 30,
+                      "property_tax": 4800,
+                      "insurance": 1200
+                }
+          },
+          {
+                "label": "15-Yr Fixed (Save Interest)",
+                "values": {
+                      "home_price": 400000,
+                      "down_payment": 80000,
+                      "interest_rate": 6,
+                      "loan_term": 15,
+                      "property_tax": 4800,
+                      "insurance": 1200
+                }
+          },
+          {
+                "label": "FHA Starter (3.5% Down)",
+                "values": {
+                      "home_price": 320000,
+                      "down_payment": 11200,
+                      "interest_rate": 6.5,
+                      "loan_term": 30,
+                      "property_tax": 3800,
+                      "insurance": 1100
+                }
+          }
+    ],
     name: 'Mortgage Calculator',
     category: 'Finance',
     icon: 'fa-house',
@@ -563,6 +598,38 @@ const TOOLS = {
 
   // ── Compound Interest Calculator ─────────────────────────────────────
   'compound-interest-calculator': {
+    presets: [
+          {
+                "label": "Index Fund ($500/mo @ 8%)",
+                "values": {
+                      "initial_deposit": 10000,
+                      "monthly_contribution": 500,
+                      "annual_rate": 8,
+                      "investment_term": 20,
+                      "compound_frequency": 12
+                }
+          },
+          {
+                "label": "Aggressive ($1,000/mo @ 10%)",
+                "values": {
+                      "initial_deposit": 25000,
+                      "monthly_contribution": 1000,
+                      "annual_rate": 10,
+                      "investment_term": 25,
+                      "compound_frequency": 12
+                }
+          },
+          {
+                "label": "Conservative HYSA (4.5%)",
+                "values": {
+                      "initial_deposit": 5000,
+                      "monthly_contribution": 250,
+                      "annual_rate": 4.5,
+                      "investment_term": 10,
+                      "compound_frequency": 12
+                }
+          }
+    ],
     name: 'Compound Interest Calculator',
     category: 'Finance',
     icon: 'fa-chart-line',
@@ -1111,6 +1178,38 @@ const TOOLS = {
     ],
   },
   'savings-calculator': {
+    presets: [
+          {
+                "label": "Biweekly Acceleration ($250)",
+                "values": {
+                      "mode": "biweekly-monthly",
+                      "initial_deposit": 5000,
+                      "recurring_deposit": 250,
+                      "deposit_frequency": "biweekly",
+                      "interest_rate": 4.5,
+                      "duration_years": 5
+                }
+          },
+          {
+                "label": "Goal Timeline ($50k Target)",
+                "values": {
+                      "mode": "goal-timeline",
+                      "initial_deposit": 10000,
+                      "recurring_deposit": 500,
+                      "deposit_frequency": "monthly",
+                      "interest_rate": 4.5,
+                      "target_goal": 50000
+                }
+          },
+          {
+                "label": "6-Month Emergency Runway",
+                "values": {
+                      "mode": "emergency-fund",
+                      "initial_deposit": 12000,
+                      "essential_expenses": 3500
+                }
+          }
+    ],
     name: 'Savings & Strategy Calculator',
     category: 'Finance',
     icon: 'fa-piggy-bank',
@@ -1340,6 +1439,38 @@ const TOOLS = {
 
   // ── Credit Card Payoff & Strategy Calculator ───────────────────────────────
   'credit-card-payoff-calculator': {
+    presets: [
+          {
+                "label": "Fixed Payoff ($300/mo)",
+                "values": {
+                      "mode": "min-payment",
+                      "balance": 6000,
+                      "apr": 22.5,
+                      "min_pct": 2.5,
+                      "monthly_payment": 300
+                }
+          },
+          {
+                "label": "24-Month Debt-Free Goal",
+                "values": {
+                      "mode": "target-date",
+                      "balance": 8000,
+                      "apr": 21,
+                      "target_months": 24
+                }
+          },
+          {
+                "label": "0% Balance Transfer (18 Mo)",
+                "values": {
+                      "mode": "balance-transfer",
+                      "balance": 7500,
+                      "apr": 24,
+                      "transfer_fee": 3,
+                      "promo_months": 18,
+                      "monthly_payment": 450
+                }
+          }
+    ],
     name: 'Credit Card Payoff & Strategy Calculator',
     category: 'Finance',
     icon: 'fa-credit-card',
@@ -4678,6 +4809,47 @@ const TOOLS = {
   },
 
   'auto-loan-calculator': {
+    presets: [
+          {
+                "label": "New Vehicle (60 Mo @ 6.5%)",
+                "values": {
+                      "vehicle_price": 38000,
+                      "down_payment": 5000,
+                      "trade_in_value": 0,
+                      "trade_in_owed": 0,
+                      "interest_rate": 6.5,
+                      "loan_term_months": 60,
+                      "sales_tax_rate": 6,
+                      "dealer_fees": 500
+                }
+          },
+          {
+                "label": "Used Vehicle (36 Mo @ 8.0%)",
+                "values": {
+                      "vehicle_price": 22000,
+                      "down_payment": 3000,
+                      "trade_in_value": 0,
+                      "trade_in_owed": 0,
+                      "interest_rate": 8,
+                      "loan_term_months": 36,
+                      "sales_tax_rate": 6,
+                      "dealer_fees": 350
+                }
+          },
+          {
+                "label": "Trade-in Equity (48 Mo @ 5.5%)",
+                "values": {
+                      "vehicle_price": 35000,
+                      "down_payment": 2000,
+                      "trade_in_value": 10000,
+                      "trade_in_owed": 4000,
+                      "interest_rate": 5.5,
+                      "loan_term_months": 48,
+                      "sales_tax_rate": 6,
+                      "dealer_fees": 400
+                }
+          }
+    ],
     name: 'Auto Loan Calculator',
     category: 'Finance',
     icon: 'fa-car',
@@ -4800,6 +4972,42 @@ const TOOLS = {
   },
 
   'salary-calculator': {
+    presets: [
+          {
+                "label": "US Median ($65k Single)",
+                "values": {
+                      "gross_income": 65000,
+                      "pay_frequency": "annual",
+                      "filing_status": "single",
+                      "state_tax_rate": 4.5,
+                      "pretax_401k": 3000,
+                      "pretax_health": 150
+                }
+          },
+          {
+                "label": "Tech / Senior ($130k Married)",
+                "values": {
+                      "gross_income": 130000,
+                      "pay_frequency": "annual",
+                      "filing_status": "married",
+                      "state_tax_rate": 5.5,
+                      "pretax_401k": 12000,
+                      "pretax_health": 350
+                }
+          },
+          {
+                "label": "Hourly Full-Time ($28/hr)",
+                "values": {
+                      "gross_income": 28,
+                      "pay_frequency": "hourly",
+                      "hours_per_week": 40,
+                      "filing_status": "single",
+                      "state_tax_rate": 4,
+                      "pretax_401k": 0,
+                      "pretax_health": 100
+                }
+          }
+    ],
     name: 'Salary & Paycheck Calculator',
     category: 'Finance',
     icon: 'fa-money-bill-transfer',
@@ -4958,6 +5166,44 @@ const TOOLS = {
   },
 
   'tdee-calculator': {
+    presets: [
+          {
+                "label": "Fat Loss Cut (-500 kcal)",
+                "values": {
+                      "unit": "imperial",
+                      "gender": "male",
+                      "age": 30,
+                      "weight": 185,
+                      "height": 70,
+                      "activity_level": "moderate",
+                      "goal": "cut_standard"
+                }
+          },
+          {
+                "label": "Lean Bulk (+300 kcal)",
+                "values": {
+                      "unit": "imperial",
+                      "gender": "male",
+                      "age": 25,
+                      "weight": 165,
+                      "height": 69,
+                      "activity_level": "very_active",
+                      "goal": "bulk_lean"
+                }
+          },
+          {
+                "label": "Maintenance & Tone",
+                "values": {
+                      "unit": "imperial",
+                      "gender": "female",
+                      "age": 28,
+                      "weight": 135,
+                      "height": 65,
+                      "activity_level": "light",
+                      "goal": "maintain"
+                }
+          }
+    ],
     name: 'TDEE & Daily Calorie Calculator',
     category: 'Health',
     icon: 'fa-fire-flame-curved',
