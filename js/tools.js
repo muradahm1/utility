@@ -4676,6 +4676,420 @@ const TOOLS = {
       { q: 'Why do I need a 10% waste factor for tile?', a: 'Tiles must be cut around edges, corners, and plumbing fixtures, creating unusable scraps.' }
     ]
   },
+
+  'auto-loan-calculator': {
+    name: 'Auto Loan Calculator',
+    category: 'Finance',
+    icon: 'fa-car',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate monthly car payments, interest paid, trade-in value, sales tax, and full loan amortization.',
+    metaDescription: 'Free auto loan calculator — calculate monthly car payments, interest, dealer fees, sales tax, and amortization schedule with trade-in equity.',
+    fields: [
+      { id: 'vehicle_price', label: 'Vehicle Price ($)', type: 'number', default: 35000, min: 500, step: 500, hint: 'The negotiated purchase price of the vehicle before taxes and fees.' },
+      { id: 'down_payment', label: 'Down Payment ($)', type: 'number', default: 5000, min: 0, step: 500, hint: 'Cash paid upfront towards the purchase.' },
+      { id: 'trade_in_value', label: 'Trade-in Value ($)', type: 'number', default: 0, min: 0, step: 500, hint: 'The estimated trade-in value of your current car.' },
+      { id: 'trade_in_owed', label: 'Amount Owed on Trade-in ($)', type: 'number', default: 0, min: 0, step: 500, hint: 'Remaining loan balance on your trade-in vehicle (if any).' },
+      { id: 'interest_rate', label: 'Interest Rate APR (%)', type: 'number', default: 6.5, min: 0, max: 40, step: 0.1, hint: 'Annual interest rate for the auto loan.' },
+      { id: 'loan_term_months', label: 'Loan Term (months)', type: 'select', default: 60, options: [24, 36, 48, 60, 72, 84].map(m => ({ value: m, label: `${m} months (${(m/12).toFixed(1).replace('.0','')} years)` })), hint: 'Repayment period. Shorter terms save on total interest.' },
+      { id: 'sales_tax_rate', label: 'Sales Tax Rate (%)', type: 'number', default: 6.0, min: 0, max: 25, step: 0.25, hint: 'State and local vehicle sales tax rate.' },
+      { id: 'dealer_fees', label: 'Doc & Registration Fees ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'Title, registration, and dealership documentation fees.' },
+    ],
+    calculate(v) {
+      const price = safeNum(v.vehicle_price, 0);
+      const down = safeNum(v.down_payment, 0);
+      const tradeValue = safeNum(v.trade_in_value, 0);
+      const tradeOwed = safeNum(v.trade_in_owed, 0);
+      const annualRate = safeNum(v.interest_rate, 0);
+      const months = Math.max(1, Math.round(safeNum(v.loan_term_months, 60)));
+      const taxRate = safeNum(v.sales_tax_rate, 0);
+      const fees = safeNum(v.dealer_fees, 0);
+
+      if (price <= 0) {
+        return errorResult('Vehicle price must be greater than zero.');
+      }
+
+      const netTradeIn = tradeValue - tradeOwed;
+      const tradeTaxCredit = Math.max(0, tradeValue);
+      const taxableAmount = Math.max(0, price - tradeTaxCredit);
+      const salesTax = roundTo(taxableAmount * (taxRate / 100), 2);
+
+      const netDownAndTrade = down + netTradeIn;
+      const principal = roundTo(price + salesTax + fees - netDownAndTrade, 2);
+
+      if (principal <= 0) {
+        return {
+          stats: [
+            { label: 'Monthly Payment', value: '$0.00', highlight: true },
+            { label: 'Loan Amount (Principal)', value: '$0.00' },
+            { label: 'Sales Tax', value: fmt(salesTax) },
+            { label: 'Total Purchase Price', value: fmt(price + salesTax + fees) },
+            { label: 'Down Payment & Trade Equity', value: fmt(netDownAndTrade) },
+          ],
+          insight: {
+            tone: 'positive',
+            icon: 'fa-circle-check',
+            headline: 'Paid in Full — No Financing Needed',
+            detail: 'Your down payment and trade-in equity cover the entire vehicle purchase price, taxes, and fees.'
+          }
+        };
+      }
+
+      const r = annualRate / 100 / 12;
+      const monthlyPayment = r === 0
+        ? roundTo(principal / months, 2)
+        : roundTo(principal * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1), 2);
+
+      const totalPaid = roundTo(monthlyPayment * months, 2);
+      const totalInterest = Math.max(0, roundTo(totalPaid - principal, 2));
+      const totalVehicleCost = roundTo(down + (tradeValue > tradeOwed ? tradeValue - tradeOwed : 0) + totalPaid, 2);
+
+      const schedule = buildAmortization(principal, r, months, monthlyPayment);
+
+      return {
+        stats: [
+          { label: 'Monthly Payment', value: fmt(monthlyPayment), highlight: true },
+          { label: 'Loan Amount (Financed)', value: fmt(principal) },
+          { label: 'Total Interest Paid', value: fmt(totalInterest), warn: totalInterest > principal * 0.3 },
+          { label: 'Sales Tax', value: fmt(salesTax) },
+          { label: 'Total Amount Paid (Loan)', value: fmt(totalPaid) },
+          { label: 'Total All-in Vehicle Cost', value: fmt(totalVehicleCost) },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Principal (Vehicle)', 'Interest Paid', 'Sales Tax & Fees'],
+          data: [Math.max(0, price - down - Math.max(0, netTradeIn)), totalInterest, salesTax + fees],
+          colors: ['#6366F1', '#EF4444', '#10B981']
+        },
+        table: schedule,
+        insight: {
+          tone: months > 60 ? 'warning' : 'neutral',
+          icon: 'fa-car-side',
+          headline: `Loan Term: ${months} months (${(months/12).toFixed(1).replace('.0','')} yrs) at ${annualRate}% APR`,
+          detail: months > 60
+            ? 'Longer loan terms (over 60 months) lower monthly payments but significantly increase lifetime interest and the risk of negative equity (owing more than the car is worth).'
+            : 'A loan term of 60 months or under keeps total financing costs low while building positive equity faster.'
+        }
+      };
+    },
+    article: {
+      heading: 'How to Calculate Your Auto Loan Payment and Total Costs',
+      intro: 'When buying a car, the sticker price is only part of the equation. Interest rates, loan terms, trade-in equity, sales taxes, and dealer documentation fees all impact your true monthly payment and lifetime cost.',
+      sections: [
+        { heading: 'The Impact of Loan Terms on Lifetime Interest', body: 'While a 72- or 84-month auto loan reduces your monthly bill, it dramatically increases the total interest you pay. In many cases, borrowers remain "underwater" (owing more than the vehicle is worth) for the first 3 to 4 years of a 72+ month loan.' },
+        { heading: 'How Trade-in Value and Sales Tax Work', body: 'In most US states and international jurisdictions, your trade-in value reduces the taxable purchase price of the new vehicle. For instance, trading in a $10,000 car on a $35,000 purchase means you only pay sales tax on $25,000, saving hundreds of dollars in taxes.' },
+      ]
+    },
+    howTo: [
+      'Enter the vehicle sticker price and your cash down payment.',
+      'Add trade-in value and any outstanding loan balance on your current vehicle.',
+      'Select your loan term (e.g. 48, 60, or 72 months) and loan APR.',
+      'Review your monthly payment, lifetime interest, and month-by-month amortization schedule.'
+    ],
+    examples: [
+      { title: 'Standard 60-Month Auto Loan', input: '$35,000 Price, $5,000 Down, 6.5% APR, 60 Months', result: '$622/mo | Total Interest: ~$5,340' },
+      { title: '72-Month Term vs 48-Month Comparison', input: '$35,000 Price, $5,000 Down, 6.5% APR', result: '48 Months: $743/mo ($3,660 interest) vs 72 Months: $536/mo ($6,560 interest)' }
+    ],
+    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Financed = Price + Tax + Fees − Down − Net Trade-in',
+    faqs: [
+      { q: 'What is a good auto loan interest rate?', a: 'Auto loan interest rates vary based on credit score, new vs used status, and loan term. Prime borrowers with credit scores over 720 typically secure APRs between 5% and 7% on new vehicles.' },
+      { q: 'Should I choose a 48, 60, or 72-month auto loan?', a: 'Financial experts generally recommend a maximum term of 60 months for new cars and 48 months for used cars to prevent paying excessive interest and falling into negative equity.' },
+      { q: 'How does a trade-in affect vehicle sales tax?', a: 'In most states, the trade-in allowance is subtracted from the purchase price before sales tax is calculated, reducing the total tax you owe.' },
+      { q: 'What fees are included in the auto loan?', a: 'Common fees include dealer documentation fees, state title and registration fees, and local sales tax.' }
+    ]
+  },
+
+  'salary-calculator': {
+    name: 'Salary & Paycheck Calculator',
+    category: 'Finance',
+    icon: 'fa-money-bill-transfer',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate your net take-home pay, federal & state taxes, FICA deductions, and hourly wage breakdown.',
+    metaDescription: 'Free paycheck & salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security & Medicare), and deductions.',
+    fields: [
+      { id: 'gross_income', label: 'Gross Income / Salary ($)', type: 'number', default: 75000, min: 100, step: 1000, hint: 'Your gross earnings before taxes and deductions.' },
+      { id: 'pay_frequency', label: 'Pay Frequency', type: 'select', default: 'annual', options: [
+        { value: 'annual', label: 'Annual Salary' },
+        { value: 'monthly', label: 'Monthly' },
+        { value: 'biweekly', label: 'Biweekly (every 2 weeks)' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'hourly', label: 'Hourly' }
+      ], hint: 'How often you receive your salary or wage.' },
+      { id: 'hours_per_week', label: 'Hours Per Week', type: 'number', default: 40, min: 1, max: 168, step: 1, condition: v => v.pay_frequency === 'hourly', hint: 'Expected working hours per week (standard is 40).' },
+      { id: 'filing_status', label: 'Filing Status', type: 'select', default: 'single', options: [
+        { value: 'single', label: 'Single' },
+        { value: 'married', label: 'Married Filing Jointly' },
+        { value: 'head', label: 'Head of Household' }
+      ], hint: 'Your tax filing status for federal tax bracket calculation.' },
+      { id: 'state_tax_rate', label: 'Estimated State Tax Rate (%)', type: 'number', default: 5.0, min: 0, max: 15, step: 0.1, hint: 'State income tax rate (e.g. 0% in TX/FL/WA, ~5% average, up to 13% in CA).' },
+      { id: 'pretax_401k', label: '401(k) / Retirement Deduction ($/yr)', type: 'number', default: 4000, min: 0, step: 500, hint: 'Annual pre-tax retirement contribution.' },
+      { id: 'pretax_health', label: 'Health Insurance Pre-tax ($/mo)', type: 'number', default: 200, min: 0, step: 25, hint: 'Monthly pre-tax health and dental insurance premium.' },
+    ],
+    calculate(v) {
+      let annualGross = safeNum(v.gross_income, 0);
+      const freq = v.pay_frequency || 'annual';
+
+      if (freq === 'monthly') annualGross *= 12;
+      else if (freq === 'biweekly') annualGross *= 26;
+      else if (freq === 'weekly') annualGross *= 52;
+      else if (freq === 'hourly') {
+        const hrs = Math.max(1, safeNum(v.hours_per_week, 40));
+        annualGross = annualGross * hrs * 52;
+      }
+
+      if (annualGross <= 0) return errorResult('Gross income must be greater than zero.');
+
+      const status = v.filing_status || 'single';
+      const stateRate = safeNum(v.state_tax_rate, 5) / 100;
+      const pretax401k = Math.min(annualGross * 0.9, safeNum(v.pretax_401k, 0));
+      const pretaxHealthAnnual = safeNum(v.pretax_health, 0) * 12;
+      const totalPretax = roundTo(pretax401k + pretaxHealthAnnual, 2);
+
+      const socSecCap = 168600;
+      const socSecTaxable = Math.min(annualGross, socSecCap);
+      const socSecTax = roundTo(socSecTaxable * 0.062, 2);
+
+      const medThreshold = status === 'married' ? 250000 : 200000;
+      let medTax = annualGross * 0.0145;
+      if (annualGross > medThreshold) {
+        medTax += (annualGross - medThreshold) * 0.009;
+      }
+      medTax = roundTo(medTax, 2);
+      const totalFica = roundTo(socSecTax + medTax, 2);
+
+      const stdDeduction = status === 'married' ? 29200 : status === 'head' ? 21900 : 14600;
+      const taxableFedIncome = Math.max(0, annualGross - totalPretax - stdDeduction);
+
+      let fedTax = 0;
+      const brackets = status === 'married'
+        ? [
+            { cap: 23200, rate: 0.10 },
+            { cap: 94300, rate: 0.12 },
+            { cap: 201050, rate: 0.22 },
+            { cap: 383900, rate: 0.24 },
+            { cap: 487450, rate: 0.32 },
+            { cap: 731200, rate: 0.35 },
+            { cap: Infinity, rate: 0.37 },
+          ]
+        : [
+            { cap: 11600, rate: 0.10 },
+            { cap: 47150, rate: 0.12 },
+            { cap: 100525, rate: 0.22 },
+            { cap: 191950, rate: 0.24 },
+            { cap: 243725, rate: 0.32 },
+            { cap: 609350, rate: 0.35 },
+            { cap: Infinity, rate: 0.37 },
+          ];
+
+      let prevCap = 0;
+      for (const b of brackets) {
+        if (taxableFedIncome > prevCap) {
+          const taxableChunk = Math.min(taxableFedIncome, b.cap) - prevCap;
+          fedTax += taxableChunk * b.rate;
+          prevCap = b.cap;
+        } else {
+          break;
+        }
+      }
+      fedTax = roundTo(fedTax, 2);
+
+      const stateTaxable = Math.max(0, annualGross - totalPretax);
+      const stateTax = roundTo(stateTaxable * stateRate, 2);
+
+      const totalTax = roundTo(fedTax + totalFica + stateTax, 2);
+      const netTakeHomeAnnual = roundTo(annualGross - totalTax - totalPretax, 2);
+      const netMonthly = roundTo(netTakeHomeAnnual / 12, 2);
+      const netBiweekly = roundTo(netTakeHomeAnnual / 26, 2);
+      const netWeekly = roundTo(netTakeHomeAnnual / 52, 2);
+      const netHourly = roundTo(netTakeHomeAnnual / 2080, 2);
+      const effectiveTaxRate = roundTo((totalTax / annualGross) * 100, 1);
+
+      return {
+        stats: [
+          { label: 'Take-Home Pay (Monthly)', value: fmt(netMonthly), highlight: true },
+          { label: 'Take-Home Pay (Biweekly)', value: fmt(netBiweekly) },
+          { label: 'Take-Home Pay (Annual)', value: fmt(netTakeHomeAnnual) },
+          { label: 'Effective Total Tax Rate', value: `${effectiveTaxRate}%`, warn: effectiveTaxRate > 30 },
+          { label: 'Federal Income Tax', value: fmt(fedTax) },
+          { label: 'FICA (Social Security & Medicare)', value: fmt(totalFica) },
+          { label: 'Estimated State Tax', value: fmt(stateTax) },
+          { label: 'Total Pre-tax Deductions', value: fmt(totalPretax) },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Net Take-Home Pay', 'Federal Tax', 'FICA Tax', 'State Tax', 'Pre-tax Deductions'],
+          data: [netTakeHomeAnnual, fedTax, totalFica, stateTax, totalPretax],
+          colors: ['#10B981', '#6366F1', '#3B82F6', '#F59E0B', '#8B5CF6']
+        },
+        insight: {
+          tone: 'positive',
+          icon: 'fa-wallet',
+          headline: `Net Take-Home Pay: ${pct(netTakeHomeAnnual / annualGross)} of Gross Salary`,
+          detail: `You keep approximately ${fmt(netBiweekly)} every two weeks (${fmt(netHourly)}/hr equivalent) after all estimated federal, FICA, state taxes, and pre-tax deductions.`
+        }
+      };
+    },
+    article: {
+      heading: 'How to Calculate Your Net Paycheck and Understand Tax Withholding',
+      intro: 'Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).',
+      sections: [
+        { heading: 'FICA Taxes Explained', body: 'FICA consists of Social Security (6.2% on earnings up to the annual wage cap) and Medicare (1.45% on all earnings, plus an additional 0.9% for high earners).' },
+        { heading: 'Pre-Tax Deductions Save You Money', body: 'Contributing to traditional 401(k) accounts, HSAs, and pre-tax health insurance reduces your taxable income, lowering the amount of federal and state taxes withheld from each paycheck.' }
+      ]
+    },
+    howTo: [
+      'Enter your gross income and select your pay frequency (annual, monthly, biweekly, or hourly).',
+      'Select your tax filing status (Single, Married, or Head of Household).',
+      'Set your state tax rate or leave at the 5% national average.',
+      'Add optional pre-tax retirement or health insurance deductions.',
+      'Review your net take-home pay and complete tax breakdown.'
+    ],
+    examples: [
+      { title: '$75,000 Single Filer', input: 'Salary: $75k, Filing: Single, 5% State Tax, $4k 401k', result: 'Net Pay: ~$4,650/mo | $2,146 biweekly | 22.4% Effective Tax' },
+      { title: '$120,000 Married Filer', input: 'Salary: $120k, Filing: Married, 5% State Tax', result: 'Net Pay: ~$7,490/mo | $3,457 biweekly | 21.8% Effective Tax' }
+    ],
+    formula: 'Net Pay = Gross Income − Federal Tax − FICA Tax − State Tax − Pre-tax Deductions',
+    faqs: [
+      { q: 'What is the difference between gross pay and net pay?', a: 'Gross pay is the total amount earned before any deductions or taxes. Net pay (take-home pay) is the remaining money deposited into your bank account after all taxes and deductions.' },
+      { q: 'How does filing status affect paycheck withholding?', a: 'Filing status determines your standard deduction and income tax brackets. Married couples filing jointly have wider tax brackets, typically lowering tax withholding compared to single filers.' },
+      { q: 'How much are FICA taxes?', a: 'FICA taxes equal 7.65% for employees (6.2% Social Security + 1.45% Medicare). Employers match an identical 7.65%.' }
+    ]
+  },
+
+  'tdee-calculator': {
+    name: 'TDEE & Daily Calorie Calculator',
+    category: 'Health',
+    icon: 'fa-fire-flame-curved',
+    iconClass: 'icon-health',
+    tagClass: 'tag-health',
+    description: 'Calculate your Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), and daily macro calorie targets.',
+    metaDescription: 'Free TDEE calculator — calculate your Total Daily Energy Expenditure, BMR, daily calorie targets for weight loss or muscle gain, and macro splits.',
+    fields: [
+      { id: 'unit', label: 'Unit System', type: 'select', default: 'metric', options: [
+        { value: 'metric', label: 'Metric (kg / cm)' },
+        { value: 'imperial', label: 'Imperial (lbs / inches)' }
+      ], hint: 'Choose metric or imperial units.' },
+      { id: 'gender', label: 'Gender', type: 'select', default: 'male', options: [
+        { value: 'male', label: 'Male' },
+        { value: 'female', label: 'Female' }
+      ], hint: 'Biological sex influences baseline metabolic formulas.' },
+      { id: 'age', label: 'Age', type: 'number', default: 28, min: 14, max: 110, step: 1, hint: 'Age in years.' },
+      { id: 'weight', label: 'Weight', type: 'number', default: 75, min: 20, max: 500, step: 0.5, hint: 'Your current body weight.' },
+      { id: 'height', label: 'Height', type: 'number', default: 178, min: 60, max: 260, step: 1, hint: 'Your height.' },
+      { id: 'activity_level', label: 'Activity Level', type: 'select', default: 'moderate', options: [
+        { value: 'sedentary', label: 'Sedentary (desk job, little or no exercise)' },
+        { value: 'light', label: 'Light Exercise (1-2 days/week)' },
+        { value: 'moderate', label: 'Moderate Exercise (3-5 days/week)' },
+        { value: 'heavy', label: 'Heavy Exercise (6-7 days/week)' },
+        { value: 'athlete', label: 'Athlete / Physical Job (2x per day)' }
+      ], hint: 'Your weekly physical activity and exercise routine.' },
+      { id: 'goal', label: 'Fitness Goal', type: 'select', default: 'maintain', options: [
+        { value: 'cut_fast', label: 'Fast Weight Loss (-2 lbs/week [-1000 kcal])' },
+        { value: 'cut_standard', label: 'Moderate Weight Loss (-1 lb/week [-500 kcal])' },
+        { value: 'cut_mild', label: 'Mild Weight Loss (-0.5 lb/week [-250 kcal])' },
+        { value: 'maintain', label: 'Maintain Current Weight' },
+        { value: 'bulk_mild', label: 'Lean Muscle Gain (+0.5 lb/week [+250 kcal])' },
+        { value: 'bulk_standard', label: 'Standard Muscle Gain (+1 lb/week [+500 kcal])' }
+      ], hint: 'Calorie adjustment based on your target body composition goal.' }
+    ],
+    fieldLabels(v) {
+      return {
+        weight: v.unit === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)',
+        height: v.unit === 'imperial' ? 'Height (inches)' : 'Height (cm)',
+      };
+    },
+    calculate(v) {
+      let weightKg = safeNum(v.weight, 0);
+      let heightCm = safeNum(v.height, 0);
+
+      if (v.unit === 'imperial') {
+        weightKg *= 0.453592;
+        heightCm *= 2.54;
+      }
+
+      if (weightKg <= 0 || heightCm <= 0) return errorResult('Please enter valid height and weight values.');
+
+      const age = Math.max(14, safeNum(v.age, 25));
+      const gender = v.gender || 'male';
+
+      let bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
+      bmr += gender === 'male' ? 5 : -161;
+      bmr = Math.round(bmr);
+
+      const mults = {
+        sedentary: 1.2,
+        light: 1.375,
+        moderate: 1.55,
+        heavy: 1.725,
+        athlete: 1.9,
+      };
+      const actMult = mults[v.activity_level] || 1.55;
+      const tdee = Math.round(bmr * actMult);
+
+      const goalOffsets = {
+        cut_fast: -1000,
+        cut_standard: -500,
+        cut_mild: -250,
+        maintain: 0,
+        bulk_mild: 250,
+        bulk_standard: 500,
+      };
+      const targetCalories = Math.max(1000, tdee + (goalOffsets[v.goal] || 0));
+
+      const proteinGrams = Math.round((targetCalories * 0.30) / 4);
+      const carbsGrams = Math.round((targetCalories * 0.40) / 4);
+      const fatGrams = Math.round((targetCalories * 0.30) / 9);
+
+      return {
+        stats: [
+          { label: 'Target Daily Calories', value: `${fmtN(targetCalories)} kcal/day`, highlight: true },
+          { label: 'Maintenance Calories (TDEE)', value: `${fmtN(tdee)} kcal/day` },
+          { label: 'Basal Metabolic Rate (BMR)', value: `${fmtN(bmr)} kcal/day` },
+          { label: 'Daily Protein Target', value: `${proteinGrams}g (30%)` },
+          { label: 'Daily Carbohydrates Target', value: `${carbsGrams}g (40%)` },
+          { label: 'Daily Fats Target', value: `${fatGrams}g (30%)` },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: [`Protein (${proteinGrams}g)`, `Carbohydrates (${carbsGrams}g)`, `Fats (${fatGrams}g)`],
+          data: [proteinGrams * 4, carbsGrams * 4, fatGrams * 9],
+          colors: ['#3B82F6', '#10B981', '#F59E0B']
+        },
+        insight: {
+          tone: 'positive',
+          icon: 'fa-utensils',
+          headline: `Daily Target: ${fmtN(targetCalories)} kcal`,
+          detail: `To meet your fitness goal, consume approximately ${fmtN(targetCalories)} calories per day split across ${proteinGrams}g protein, ${carbsGrams}g carbs, and ${fatGrams}g healthy fats.`
+        }
+      };
+    },
+    article: {
+      heading: 'Understanding TDEE, BMR, and Macro Calorie Targets',
+      intro: 'Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a 24-hour period, encompassing your resting metabolic rate, physical activity, and food digestion.',
+      sections: [
+        { heading: 'BMR vs TDEE', body: 'Basal Metabolic Rate (BMR) represents the energy expended simply to keep your vital organs functioning at complete rest. TDEE multiplies BMR by your activity level to establish your true maintenance calories.' },
+        { heading: 'How to Adjust Calories for Weight Loss or Muscle Gain', body: 'Consuming 500 calories below your TDEE creates a deficit leading to approximately 1 pound of weight loss per week (3,500 kcal deficit = 1 lb fat). Conversely, a 250-500 calorie surplus supports muscle hypertrophy with minimal fat gain.' }
+      ]
+    },
+    howTo: [
+      'Select Metric (kg/cm) or Imperial (lbs/in) units.',
+      'Enter your age, gender, weight, and height.',
+      'Select your weekly activity level and primary fitness goal.',
+      'Read your BMR, TDEE, target daily calories, and suggested macronutrient split.'
+    ],
+    examples: [
+      { title: 'Moderate Active Male (Weight Loss)', input: 'Age: 28, Male, 75kg, 178cm, Moderate Activity, -500 kcal Goal', result: 'TDEE: ~2,580 kcal | Target: 2,080 kcal/day (156g Protein, 208g Carbs, 69g Fat)' },
+      { title: 'Sedentary Female (Maintenance)', input: 'Age: 32, Female, 65kg, 165cm, Sedentary, Maintain Goal', result: 'TDEE: ~1,650 kcal | BMR: ~1,375 kcal' }
+    ],
+    formula: 'BMR (Mifflin-St Jeor) = (10 × kg) + (6.25 × cm) − (5 × age) + (5 or −161) | TDEE = BMR × Activity',
+    faqs: [
+      { q: 'What is TDEE?', a: 'TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn each day through basal metabolism, daily movement, digestion, and exercise.' },
+      { q: 'How accurate is the Mifflin-St Jeor formula?', a: 'The Mifflin-St Jeor formula is widely recognized in clinical dietetics as one of the most reliable equations for estimating BMR in healthy individuals within 5-10% of metabolic chamber tests.' },
+      { q: 'How many calories should I cut to lose 1 pound per week?', a: 'A caloric deficit of 500 calories per day equals 3,500 calories per week, which corresponds to approximately 1 pound of fat loss per week.' }
+    ]
+  },
+
 };
 
 if (typeof window !== 'undefined') {
