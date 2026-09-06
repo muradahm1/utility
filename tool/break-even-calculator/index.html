@@ -4,28 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
-    <title>Business &amp; Commercial Calculators | GetCalcu</title>
-    <meta name="description" content="Free business and commercial calculators for profit planning, currency exchange, and financial management.">
-    <link rel="canonical" href="https://www.getcalcu.com/category/business">
+    <title>Break-Even Calculator | Units, Revenue &amp; Contribution Margin — GetCalcu</title>
+    <meta name="description" content="Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.">
+    <link rel="canonical" href="https://www.getcalcu.com/tool/break-even-calculator">
     <meta name="robots" content="index, follow">
+    <meta name="keywords" content="break even calculator, break even point formula, contribution margin calculator, business break even analysis, fixed vs variable cost calculator">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="GetCalcu">
-    <meta property="og:title" content="Business &amp; Commercial Calculators | GetCalcu">
-    <meta property="og:description" content="Free business and commercial calculators for profit planning, currency exchange, and financial management.">
-    <meta property="og:url" content="https://www.getcalcu.com/category/business">
+    <meta property="og:title" content="Break-Even Calculator | Units, Revenue &amp; Contribution Margin — GetCalcu">
+    <meta property="og:description" content="Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.">
+    <meta property="og:url" content="https://www.getcalcu.com/tool/break-even-calculator">
     <meta property="og:image" content="https://www.getcalcu.com/og-image.png">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Business &amp; Commercial Calculators | GetCalcu">
-    <meta name="twitter:description" content="Free business and commercial calculators for profit planning, currency exchange, and financial management.">
+    <meta name="twitter:title" content="Break-Even Calculator | Units, Revenue &amp; Contribution Margin — GetCalcu">
+    <meta name="twitter:description" content="Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
     <!-- Structured Data -->
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Business Calculators","item":"https://www.getcalcu.com/category/business"}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","name":"Business Calculators & Tools","description":"Free business and commercial calculators for profit planning, currency exchange, and financial management.","numberOfItems":3,"itemListElement":[{"@type":"ListItem","position":1,"name":"Profit Margin Calculator","url":"https://www.getcalcu.com/tool/profit-margin-calculator","description":"Calculate gross profit, gross margin percentage, markup, net profit, and operating margin with full cost breakdown."},{"@type":"ListItem","position":2,"name":"Break-Even Calculator","url":"https://www.getcalcu.com/tool/break-even-calculator","description":"Determine the exact number of units and total sales revenue needed to cover all fixed and variable business costs."},{"@type":"ListItem","position":3,"name":"Customer Lifetime Value (LTV / CAC) Calculator","url":"https://www.getcalcu.com/tool/customer-lifetime-value-calculator","description":"Calculate Customer Lifetime Value (LTV), LTV to CAC ratio, payback period, and unit economics health for growth."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Break-Even Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.","url":"https://www.getcalcu.com/tool/break-even-calculator"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Business","item":"https://www.getcalcu.com/category/business"},{"@type":"ListItem","position":3,"name":"Break-Even Calculator","item":"https://www.getcalcu.com/tool/break-even-calculator"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What happens if fixed costs increase?","acceptedAnswer":{"@type":"Answer","text":"When fixed costs rise, your break-even point increases, meaning you must sell more units or raise prices to avoid operating at a loss."}},{"@type":"Question","name":"How can I lower my break-even point?","acceptedAnswer":{"@type":"Answer","text":"You can lower your break-even point by increasing unit selling price, negotiating lower variable material costs, or reducing fixed overhead."}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Perform a Break-Even Analysis","description":"A break-even analysis identifies the exact volume of unit sales needed so total revenues equal total costs, resulting in zero net profit or loss.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Break-Even Calculator","url":"https://www.getcalcu.com/tool/break-even-calculator"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -118,57 +121,26 @@
                 </div>
             </header>
 
-            <div class="content-body">
-                <!-- Category Hero Banner -->
-                <section class="section-container" style="padding-top:1.5rem; padding-bottom:1rem;">
-                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem; font-size:0.875rem; color:var(--text-muted);">
-                        <a href="/" style="color:var(--text-muted); text-decoration:none;"><i class="fa-solid fa-house"></i> Home</a>
-                        <i class="fa-solid fa-chevron-right" style="font-size:0.7rem;"></i>
-                        <span style="color:var(--text-primary); font-weight:600;">Business</span>
+            <div class="content-body" id="tool-runner-container">
+                <!-- Loading skeleton shown while tool initializes -->
+                <div id="tool-loading-skeleton" class="tool-skeleton" aria-label="Loading calculator">
+                    <div class="skeleton-form">
+                        <div class="skeleton-line tall"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
-                        <div class="icon-wrapper icon-business" style="width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
-                            <i class="fa-solid fa-briefcase"></i>
-                        </div>
-                        <div>
-                            <h1 style="font-size:1.75rem; margin:0 0 0.25rem 0;">Business Calculators &amp; Tools</h1>
-                            <p style="color:var(--text-muted); margin:0; font-size:1rem;">Optimize financial planning, currency conversions, and commercial calculations.</p>
-                        </div>
+                    <div class="skeleton-results">
+                        <div class="skeleton-line full"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line short"></div>
                     </div>
-                </section>
-
-                <!-- Pre-rendered Tools Grid -->
-                <section class="section-container" id="all-tools">
-                    <div class="section-header">
-                        <h2>Available Business Tools (3)</h2>
-                    </div>
-                    <div class="tools-grid">
-                        
-                            <a href="/tool/profit-margin-calculator" class="tool-card">
-                                <div class="tool-icon icon-business"><i class="fa-solid fa-chart-line"></i></div>
-                                <h3>Profit Margin Calculator</h3>
-                                <p>Calculate gross profit, gross margin percentage, markup, net profit, and operating margin with full cost breakdown.</p>
-                                <span class="tag tag-business">Business</span>
-                            </a>
-                        
-                        
-                            <a href="/tool/break-even-calculator" class="tool-card">
-                                <div class="tool-icon icon-business"><i class="fa-solid fa-scale-balanced"></i></div>
-                                <h3>Break-Even Calculator</h3>
-                                <p>Determine the exact number of units and total sales revenue needed to cover all fixed and variable business costs.</p>
-                                <span class="tag tag-business">Business</span>
-                            </a>
-                        
-                        
-                            <a href="/tool/customer-lifetime-value-calculator" class="tool-card">
-                                <div class="tool-icon icon-business"><i class="fa-solid fa-users-gear"></i></div>
-                                <h3>Customer Lifetime Value (LTV / CAC) Calculator</h3>
-                                <p>Calculate Customer Lifetime Value (LTV), LTV to CAC ratio, payback period, and unit economics health for growth.</p>
-                                <span class="tag tag-business">Business</span>
-                            </a>
-                        
-                    </div>
-                </section>
+                </div>
+                <div id="ad-slot-tool" class="ad-slot ad-slot--leaderboard" aria-label="Advertisement">
+                    <span class="ad-slot-label">Advertisement</span>
+                </div>
             </div>
         </main>
     </div>
@@ -216,8 +188,19 @@
         </div>
     </div>
 
+    <noscript>
+        <div style="max-width:800px;margin:40px auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
+            <h1>Break-Even Calculator</h1>
+            <p>Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.</p>
+            <p>This calculator requires JavaScript. Please enable JavaScript in your browser to use it.</p>
+            <p><a href="/">Browse all GetCalcu calculators</a></p>
+        </div>
+    </noscript>
+
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>
+    <script src="/js/modules/budget-planner.js" type="module"></script>
+    <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.js"></script>
     <script src="/js/config.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -225,5 +208,15 @@
     <script src="/js/cookie-consent.js" defer></script>
     <script src="/js/maintenance-banner.js" defer></script>
     <script src="/js/pwa.js" defer></script>
+    <script>
+        // Redirect legacy ?slug= URLs to pretty URLs
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+            if (slug) {
+                window.location.replace('/tool/' + encodeURIComponent(slug));
+            }
+        })();
+    </script>
 </body>
 </html>

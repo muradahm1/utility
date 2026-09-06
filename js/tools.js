@@ -5660,6 +5660,728 @@ const TOOLS = {
   },
 
 
+
+  // ── Business: Profit Margin Calculator ──────────────────────────────────
+  'profit-margin-calculator': {
+    name: 'Profit Margin Calculator',
+    category: 'Business',
+    icon: 'fa-chart-line',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate gross profit, gross margin percentage, markup, net profit, and operating margin with full cost breakdown.',
+    metaTitle: 'Profit Margin Calculator | Gross Margin, Markup & Net Profit — GetCalcu',
+    metaDescription: 'Free online Profit Margin Calculator. Calculate gross margin %, markup %, net profit, and revenue pricing targets with cost breakdown charts.',
+    keywords: [
+      'profit margin calculator',
+      'gross margin calculator',
+      'markup calculator',
+      'net profit calculator',
+      'cost markup margin formula'
+    ],
+    presets: [
+      { label: 'E-Commerce Retail (45% Margin)', values: { calc_mode: 'margin_from_price', cost: 55, revenue: 100, operating_expenses: 15 } },
+      { label: 'SaaS / Digital (80% Margin)', values: { calc_mode: 'margin_from_price', cost: 20, revenue: 100, operating_expenses: 40 } },
+      { label: 'Restaurant / Food (28% Margin)', values: { calc_mode: 'margin_from_price', cost: 18, revenue: 25, operating_expenses: 4 } }
+    ],
+    fields: [
+      { id: 'calc_mode', label: 'Calculation Mode', type: 'select', default: 'margin_from_price', options: [
+        { value: 'margin_from_price', label: 'Calculate Margin from Cost & Sale Price' },
+        { value: 'price_from_margin', label: 'Calculate Selling Price from Cost & Target Margin' }
+      ] },
+      { id: 'cost', label: 'Cost of Goods Sold (COGS) ($)', type: 'number', default: 60, min: 0.01, step: 1, hint: 'Direct cost to manufacture or acquire one unit.' },
+      { id: 'revenue', label: 'Selling Price / Revenue ($)', type: 'number', default: 100, min: 0.01, step: 1, condition: v => v.calc_mode === 'margin_from_price', hint: 'The price charged to the customer.' },
+      { id: 'target_margin', label: 'Target Gross Margin (%)', type: 'number', default: 40, min: 0.01, max: 99.9, step: 0.5, condition: v => v.calc_mode === 'price_from_margin', hint: 'Desired profit margin percentage.' },
+      { id: 'operating_expenses', label: 'Operating Overhead per Unit ($)', type: 'number', default: 15, min: 0, step: 1, hint: 'Indirect costs (marketing, shipping, software, rent).' }
+    ],
+    calculate(v) {
+      const cost = safeNum(v.cost, 0);
+      const opex = safeNum(v.operating_expenses, 0);
+      let revenue = 0;
+      let margin = 0;
+
+      if (cost <= 0) return errorResult('Cost of goods sold must be greater than $0.');
+
+      if (v.calc_mode === 'price_from_margin') {
+        const targetMargin = safeNum(v.target_margin, 40) / 100;
+        if (targetMargin >= 1) return errorResult('Target margin must be less than 100%.');
+        revenue = roundTo(cost / (1 - targetMargin), 2);
+        margin = targetMargin * 100;
+      } else {
+        revenue = safeNum(v.revenue, 0);
+        if (revenue <= 0) return errorResult('Selling price must be greater than $0.');
+        margin = roundTo(((revenue - cost) / revenue) * 100, 2);
+      }
+
+      const grossProfit = roundTo(revenue - cost, 2);
+      const markup = roundTo(((revenue - cost) / cost) * 100, 2);
+      const netProfit = roundTo(grossProfit - opex, 2);
+      const netMargin = roundTo((netProfit / revenue) * 100, 2);
+
+      const stats = [
+        { label: 'Gross Profit', value: fmt(grossProfit), highlight: true },
+        { label: 'Gross Margin', value: pct(margin / 100), highlight: true },
+        { label: 'Markup Percentage', value: pct(markup / 100) },
+        { label: 'Selling Price', value: fmt(revenue) },
+        { label: 'Net Profit (After Overhead)', value: fmt(netProfit), warn: netProfit < 0, highlight: true },
+        { label: 'Net Margin', value: pct(netMargin / 100), warn: netMargin < 0 }
+      ];
+
+      const chart = {
+        type: 'doughnut',
+        labels: ['COGS (Direct Cost)', 'Operating Expenses', 'Net Profit'],
+        data: [cost, opex, Math.max(0, netProfit)],
+        colors: ['#EF4444', '#F59E0B', '#10B981']
+      };
+
+      const table = [
+        { Metric: 'Selling Price (Revenue)', Value: fmt(revenue), Percentage: '100.00%' },
+        { Metric: 'Cost of Goods Sold (COGS)', Value: fmt(cost), Percentage: pct(cost / revenue) },
+        { Metric: 'Gross Profit', Value: fmt(grossProfit), Percentage: pct(grossProfit / revenue) },
+        { Metric: 'Operating Expenses', Value: fmt(opex), Percentage: pct(opex / revenue) },
+        { Metric: 'Net Profit', Value: fmt(netProfit), Percentage: pct(netProfit / revenue) }
+      ];
+
+      return {
+        stats,
+        chart,
+        table,
+        insight: {
+          tone: netProfit > 0 ? 'positive' : 'warning',
+          icon: 'fa-chart-pie',
+          headline: `Gross Margin is ${pct(margin / 100)} with a ${pct(markup / 100)} Markup.`,
+          detail: `For every ${fmt(revenue)} in sales, you keep ${fmt(grossProfit)} in gross profit and ${fmt(netProfit)} in net profit after overhead.`
+        }
+      };
+    },
+    article: {
+      heading: 'Understanding Margin vs Markup in Business Pricing',
+      intro: 'Profit margin and markup are two related ways of measuring the profitability of a product or service, but they describe different ratios.',
+      sections: [
+        { heading: 'Margin vs Markup', body: 'Gross Margin is the percentage of selling price that is profit: (Price - Cost) / Price. Markup is the percentage added to the cost to get the price: (Price - Cost) / Cost. A 50% markup equals a 33.3% margin.' },
+        { heading: 'Gross vs Net Profit', body: 'Gross profit only accounts for direct product costs (COGS). Net profit subtracts all operating overhead including marketing, salaries, rent, and software fees.' }
+      ]
+    },
+    howTo: [
+      'Enter your unit Cost of Goods Sold (COGS).',
+      'Enter your Selling Price (or pick "Calculate Selling Price" with your target margin).',
+      'Add operating overhead to see your bottom-line Net Profit.',
+      'Review the gross margin, markup percentage, and profit breakdown.'
+    ],
+    examples: [
+      { title: 'Standard Retail Markup', input: 'Cost: $50, Price: $100', result: 'Gross Profit: $50 (50% Margin, 100% Markup)' },
+      { title: 'Target 40% Margin Pricing', input: 'Cost: $60, Target Margin: 40%', result: 'Selling Price: $100 (Markup: 66.67%)' }
+    ],
+    formula: 'Gross Margin = ((Revenue - Cost) ÷ Revenue) × 100 | Markup = ((Revenue - Cost) ÷ Cost) × 100 | Net Profit = Gross Profit - Operating Expenses',
+    faqs: [
+      { q: 'What is a good profit margin?', a: 'A healthy gross margin varies by industry: e-commerce averages 35-50%, SaaS and software average 70-85%, while restaurants and grocery stores often operate at 10-25%.' },
+      { q: 'Why is markup always higher than margin?', a: 'Because markup is calculated against the smaller cost base, while margin is calculated against the larger total revenue base.' }
+    ]
+  },
+
+  // ── Business: Break-Even Calculator ─────────────────────────────────────
+  'break-even-calculator': {
+    name: 'Break-Even Calculator',
+    category: 'Business',
+    icon: 'fa-scale-balanced',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Determine the exact number of units and total sales revenue needed to cover all fixed and variable business costs.',
+    metaTitle: 'Break-Even Calculator | Units, Revenue & Contribution Margin — GetCalcu',
+    metaDescription: 'Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.',
+    keywords: [
+      'break even calculator',
+      'break even point formula',
+      'contribution margin calculator',
+      'business break even analysis',
+      'fixed vs variable cost calculator'
+    ],
+    presets: [
+      { label: 'Physical Product ($5k Fixed)', values: { fixed_costs: 5000, sale_price: 50, variable_cost: 20, target_profit: 3000 } },
+      { label: 'SaaS Subscription ($20k Fixed)', values: { fixed_costs: 20000, sale_price: 49, variable_cost: 5, target_profit: 10000 } },
+      { label: 'Consulting / Agency ($12k Fixed)', values: { fixed_costs: 12000, sale_price: 150, variable_cost: 30, target_profit: 8000 } }
+    ],
+    fields: [
+      { id: 'fixed_costs', label: 'Total Fixed Costs ($ / month)', type: 'number', default: 8000, min: 0, step: 100, hint: 'Non-variable expenses: rent, salaries, insurance, software licenses.' },
+      { id: 'sale_price', label: 'Selling Price per Unit ($)', type: 'number', default: 60, min: 0.01, step: 1, hint: 'Average price charged per unit or subscription.' },
+      { id: 'variable_cost', label: 'Variable Cost per Unit ($)', type: 'number', default: 20, min: 0, step: 1, hint: 'Direct per-unit costs: materials, labor, shipping, merchant fees.' },
+      { id: 'target_profit', label: 'Target Monthly Profit ($) (optional)', type: 'number', default: 4000, min: 0, step: 100, hint: 'Desired profit above break-even.' }
+    ],
+    calculate(v) {
+      const fixed = safeNum(v.fixed_costs, 0);
+      const price = safeNum(v.sale_price, 0);
+      const varCost = safeNum(v.variable_cost, 0);
+      const targetProfit = safeNum(v.target_profit, 0);
+
+      if (price <= 0) return errorResult('Selling price must be greater than $0.');
+      if (price <= varCost) return errorResult('Selling price must exceed variable cost to achieve profitability.');
+
+      const cmUnit = roundTo(price - varCost, 2);
+      const cmRatio = roundTo((cmUnit / price) * 100, 2);
+      const breakEvenUnits = Math.ceil(fixed / cmUnit);
+      const breakEvenRevenue = roundTo(breakEvenUnits * price, 2);
+
+      const targetUnits = Math.ceil((fixed + targetProfit) / cmUnit);
+      const targetRevenue = roundTo(targetUnits * price, 2);
+
+      const stats = [
+        { label: 'Break-Even Units', value: fmtN(breakEvenUnits) + ' units', highlight: true },
+        { label: 'Break-Even Sales Revenue', value: fmt(breakEvenRevenue), highlight: true },
+        { label: 'Contribution Margin / Unit', value: fmt(cmUnit) },
+        { label: 'Contribution Margin Ratio', value: pct(cmRatio / 100) },
+        { label: 'Units to Target Profit', value: fmtN(targetUnits) + ' units' },
+        { label: 'Revenue to Target Profit', value: fmt(targetRevenue) }
+      ];
+
+      // Volume milestones for sensitivity table
+      const mults = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+      const table = mults.map(m => {
+        const u = Math.round(breakEvenUnits * m);
+        const rev = roundTo(u * price, 2);
+        const totCost = roundTo(fixed + (u * varCost), 2);
+        const net = roundTo(rev - totCost, 2);
+        return {
+          Volume: (m * 100) + '% (' + fmtN(u) + ' units)',
+          Revenue: fmt(rev),
+          TotalCost: fmt(totCost),
+          NetProfitLoss: fmt(net)
+        };
+      });
+
+      const chartLabels = mults.map(m => (m * 100) + '%');
+      const revData = mults.map(m => roundTo(Math.round(breakEvenUnits * m) * price, 2));
+      const costData = mults.map(m => roundTo(fixed + (Math.round(breakEvenUnits * m) * varCost), 2));
+
+      const chart = {
+        type: 'line',
+        labels: chartLabels,
+        datasets: [
+          { label: 'Total Revenue', data: revData, color: '#10B981' },
+          { label: 'Total Costs', data: costData, color: '#EF4444' }
+        ]
+      };
+
+      return {
+        stats,
+        chart,
+        table,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-scale-balanced',
+          headline: `You need to sell ${fmtN(breakEvenUnits)} units (${fmt(breakEvenRevenue)}) to break even.`,
+          detail: `Each unit sold contributes ${fmt(cmUnit)} (${pct(cmRatio / 100)}) toward fixed expenses. To hit your target profit of ${fmt(targetProfit)}, sell ${fmtN(targetUnits)} units.`
+        }
+      };
+    },
+    article: {
+      heading: 'How to Perform a Break-Even Analysis',
+      intro: 'A break-even analysis identifies the exact volume of unit sales needed so total revenues equal total costs, resulting in zero net profit or loss.',
+      sections: [
+        { heading: 'Fixed vs Variable Costs', body: 'Fixed costs remain constant regardless of sales volume (rent, salaries, subscriptions). Variable costs scale directly with unit volume (raw materials, production, shipping, merchant processing).' },
+        { heading: 'Contribution Margin', body: 'Contribution margin is Selling Price minus Variable Cost. This is the dollar amount from every sale that directly funds fixed overhead and generates net profit.' }
+      ]
+    },
+    howTo: [
+      'Enter total monthly fixed overhead costs.',
+      'Enter the selling price and variable cost per unit.',
+      'Optionally set a target monthly profit goal.',
+      'View break-even volume, revenue, and sensitivity tables.'
+    ],
+    examples: [
+      { title: 'Retail Boutique', input: 'Fixed: $6,000, Price: $50, Variable: $20', result: 'Break-even: 200 units ($10,000 revenue)' },
+      { title: 'SaaS App', input: 'Fixed: $15,000, Price: $30/mo, Variable: $3/mo', result: 'Break-even: 556 subscribers ($16,680/mo revenue)' }
+    ],
+    formula: 'Break-Even Units = Fixed Costs ÷ (Price - Variable Cost) | Break-Even Revenue = Break-Even Units × Price',
+    faqs: [
+      { q: 'What happens if fixed costs increase?', a: 'When fixed costs rise, your break-even point increases, meaning you must sell more units or raise prices to avoid operating at a loss.' },
+      { q: 'How can I lower my break-even point?', a: 'You can lower your break-even point by increasing unit selling price, negotiating lower variable material costs, or reducing fixed overhead.' }
+    ]
+  },
+
+  // ── Business: Customer Lifetime Value Calculator ────────────────────────
+  'customer-lifetime-value-calculator': {
+    name: 'Customer Lifetime Value (LTV / CAC) Calculator',
+    category: 'Business',
+    icon: 'fa-users-gear',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate Customer Lifetime Value (LTV), LTV to CAC ratio, payback period, and unit economics health for growth.',
+    metaTitle: 'Customer Lifetime Value Calculator | LTV:CAC Ratio & Payback — GetCalcu',
+    metaDescription: 'Free Customer Lifetime Value (LTV) Calculator. Analyze LTV to CAC ratio, customer acquisition payback timeline, and growth unit economics.',
+    keywords: [
+      'customer lifetime value calculator',
+      'ltv cac calculator',
+      'cac payback period calculator',
+      'saas ltv formula',
+      'unit economics calculator'
+    ],
+    presets: [
+      { label: 'B2B SaaS ($200/mo, 3 Yr Lifespan)', values: { avg_order_value: 200, purchase_frequency: 12, customer_lifespan: 3, gross_margin: 80, cac: 1500 } },
+      { label: 'E-Commerce DTC ($75 AOV, 2x/yr)', values: { avg_order_value: 75, purchase_frequency: 2.5, customer_lifespan: 2, gross_margin: 50, cac: 45 } },
+      { label: 'Subscription Box ($40/mo, 14 Mo)', values: { avg_order_value: 40, purchase_frequency: 12, customer_lifespan: 1.2, gross_margin: 60, cac: 65 } }
+    ],
+    fields: [
+      { id: 'avg_order_value', label: 'Average Order / Transaction Value ($)', type: 'number', default: 120, min: 0.01, step: 5, hint: 'Average dollar amount spent per purchase or monthly subscription.' },
+      { id: 'purchase_frequency', label: 'Purchase Frequency (orders per year)', type: 'number', default: 4, min: 0.1, step: 0.5, hint: 'How many times a customer buys in one year (use 12 for monthly subscriptions).' },
+      { id: 'customer_lifespan', label: 'Average Customer Lifespan (years)', type: 'number', default: 3, min: 0.1, step: 0.5, hint: 'How many years the average customer stays active.' },
+      { id: 'gross_margin', label: 'Gross Margin (%)', type: 'number', default: 70, min: 1, max: 100, step: 1, hint: 'Gross profit percentage after product fulfillment costs.' },
+      { id: 'cac', label: 'Customer Acquisition Cost (CAC) ($)', type: 'number', default: 250, min: 0.01, step: 10, hint: 'Total sales and marketing cost to acquire one paying customer.' }
+    ],
+    calculate(v) {
+      const aov = safeNum(v.avg_order_value, 0);
+      const freq = safeNum(v.purchase_frequency, 1);
+      const lifespan = safeNum(v.customer_lifespan, 1);
+      const marginPct = safeNum(v.gross_margin, 70) / 100;
+      const cac = safeNum(v.cac, 0);
+
+      if (aov <= 0 || freq <= 0 || lifespan <= 0) return errorResult('Order value, frequency, and lifespan must be greater than zero.');
+
+      const annualRevenue = roundTo(aov * freq, 2);
+      const lifetimeRevenue = roundTo(annualRevenue * lifespan, 2);
+      const ltv = roundTo(lifetimeRevenue * marginPct, 2);
+      const ltvCacRatio = cac > 0 ? roundTo(ltv / cac, 2) : 0;
+      const annualProfit = roundTo(annualRevenue * marginPct, 2);
+      const monthlyProfit = annualProfit / 12;
+      const paybackMonths = monthlyProfit > 0 ? roundTo(cac / monthlyProfit, 1) : 0;
+      const netLifetimeProfit = roundTo(ltv - cac, 2);
+
+      let healthLabel = 'Healthy (3x - 5x)';
+      let healthTone = 'positive';
+      if (ltvCacRatio < 1) { healthLabel = 'Critical / Losing Money (<1.0x)'; healthTone = 'warning'; }
+      else if (ltvCacRatio < 3) { healthLabel = 'Low Margin / Vulnerable (1.0x - 2.9x)'; healthTone = 'warning'; }
+      else if (ltvCacRatio > 5) { healthLabel = 'High Return / Underinvesting in Growth (>5.0x)'; healthTone = 'positive'; }
+
+      const stats = [
+        { label: 'Customer Lifetime Value (LTV)', value: fmt(ltv), highlight: true },
+        { label: 'LTV to CAC Ratio', value: ltvCacRatio + 'x', highlight: true },
+        { label: 'CAC Payback Period', value: paybackMonths + ' months' },
+        { label: 'Net Profit per Customer (LTV - CAC)', value: fmt(netLifetimeProfit) },
+        { label: 'Annual Revenue per Customer', value: fmt(annualRevenue) },
+        { label: 'Gross Lifetime Revenue', value: fmt(lifetimeRevenue) }
+      ];
+
+      const bars = [
+        { label: 'LTV vs Acquisition Cost (CAC)', value: ltv, target: Math.max(ltv, cac * 3), color: '#10B981', caption: 'LTV: ' + fmt(ltv) + ' | CAC: ' + fmt(cac) }
+      ];
+
+      return {
+        stats,
+        bars,
+        insight: {
+          tone: healthTone,
+          icon: 'fa-users',
+          headline: `LTV:CAC Ratio is ${ltvCacRatio}x (${healthLabel}).`,
+          detail: `Each customer generates ${fmt(ltv)} in lifetime gross profit against a ${fmt(cac)} acquisition cost, paying back acquisition in ${paybackMonths} months.`
+        }
+      };
+    },
+    article: {
+      heading: 'Understanding LTV:CAC and SaaS Unit Economics',
+      intro: 'Customer Lifetime Value (LTV) measures the net profit a single customer contributes over their entire relationship with your company.',
+      sections: [
+        { heading: 'The 3:1 Rule for LTV:CAC', body: 'A 3:1 ratio (LTV = 3x CAC) is widely considered the golden benchmark. Below 1:1, you lose money on every customer. Above 5:1, you may be underinvesting in marketing and leaving market share on the table.' },
+        { heading: 'CAC Payback Period', body: 'The payback period tells you how many months of customer revenue are required to recoup the upfront sales and marketing acquisition cost.' }
+      ]
+    },
+    howTo: [
+      'Enter your Average Order Value (AOV) and annual purchase frequency.',
+      'Set expected customer retention lifespan in years.',
+      'Add gross margin percentage and Customer Acquisition Cost (CAC).',
+      'Analyze your LTV:CAC ratio and payback timeline.'
+    ],
+    examples: [
+      { title: 'B2B Software SaaS', input: '$150/mo, 80% Margin, 3 Yr Lifespan, $1,200 CAC', result: 'LTV: $4,320 | Ratio: 3.6x | Payback: 10.0 mo' }
+    ],
+    formula: 'LTV = (AOV × Frequency × Lifespan) × Gross Margin % | LTV:CAC = LTV ÷ CAC | Payback = CAC ÷ Monthly Gross Profit',
+    faqs: [
+      { q: 'What is a good CAC payback period?', a: 'For B2B SaaS, under 12 months is considered excellent. For B2C and e-commerce, payback should ideally occur within the first purchase or within 6 months.' }
+    ]
+  },
+
+  // ── Education: GPA Calculator ───────────────────────────────────────────
+  'gpa-calculator': {
+    name: 'College & High School GPA Calculator',
+    category: 'Education',
+    icon: 'fa-graduation-cap',
+    iconClass: 'icon-education',
+    tagClass: 'tag-education',
+    description: 'Calculate semester and cumulative grade point averages (GPA) on 4.0 and weighted 5.0 scales with target GPA forecasting.',
+    metaTitle: 'GPA Calculator | College 4.0 & Weighted High School Scale — GetCalcu',
+    metaDescription: 'Free online GPA Calculator. Calculate semester and cumulative GPA on 4.0 and 5.0 weighted scales. Project target graduation GPA effortlessly.',
+    keywords: [
+      'gpa calculator',
+      'college gpa calculator 4.0',
+      'weighted gpa calculator',
+      'high school gpa scale',
+      'cumulative gpa calculator'
+    ],
+    presets: [
+      { label: "Dean's List Semester (3.9 GPA)", values: { c1_grade: 'A', c1_credits: 4, c2_grade: 'A', c2_credits: 3, c3_grade: 'A-', c3_credits: 3, c4_grade: 'B+', c4_credits: 3, c5_grade: 'A', c5_credits: 3 } },
+      { label: 'Standard College Term (3.2 GPA)', values: { c1_grade: 'B+', c1_credits: 4, c2_grade: 'B', c2_credits: 3, c3_grade: 'A-', c3_credits: 3, c4_grade: 'B-', c4_credits: 3, c5_grade: 'C+', c5_credits: 3 } },
+      { label: 'Honors / AP Weighted (4.4 GPA)', values: { c1_grade: 'A', c1_credits: 4, c1_scale: 'ap', c2_grade: 'A', c2_credits: 3, c2_scale: 'ap', c3_grade: 'A-', c3_credits: 3, c3_scale: 'honors', c4_grade: 'B+', c4_credits: 3, c4_scale: 'regular' } }
+    ],
+    fields: [
+      { id: 'c1_grade', label: 'Course 1 Grade', type: 'select', default: 'A', options: [
+        { value: 'A+', label: 'A+ (4.0 / 97-100%)' }, { value: 'A', label: 'A (4.0 / 93-96%)' }, { value: 'A-', label: 'A- (3.7 / 90-92%)' },
+        { value: 'B+', label: 'B+ (3.3 / 87-89%)' }, { value: 'B', label: 'B (3.0 / 83-86%)' }, { value: 'B-', label: 'B- (2.7 / 80-82%)' },
+        { value: 'C+', label: 'C+ (2.3 / 77-79%)' }, { value: 'C', label: 'C (2.0 / 73-76%)' }, { value: 'C-', label: 'C- (1.7 / 70-72%)' },
+        { value: 'D', label: 'D (1.0 / 65-69%)' }, { value: 'F', label: 'F (0.0 / <65%)' }
+      ] },
+      { id: 'c1_credits', label: 'Course 1 Credits', type: 'number', default: 4, min: 0.5, max: 10, step: 0.5 },
+      { id: 'c1_scale', label: 'Course 1 Level', type: 'select', default: 'regular', options: [{ value: 'regular', label: 'Regular (4.0 Scale)' }, { value: 'honors', label: 'Honors (+0.5 pt)' }, { value: 'ap', label: 'AP / IB (+1.0 pt)' }] },
+
+      { id: 'c2_grade', label: 'Course 2 Grade', type: 'select', default: 'A-', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c2_credits', label: 'Course 2 Credits', type: 'number', default: 3, min: 0.5, max: 10, step: 0.5 },
+
+      { id: 'c3_grade', label: 'Course 3 Grade', type: 'select', default: 'B+', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c3_credits', label: 'Course 3 Credits', type: 'number', default: 3, min: 0.5, max: 10, step: 0.5 },
+
+      { id: 'c4_grade', label: 'Course 4 Grade', type: 'select', default: 'A', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c4_credits', label: 'Course 4 Credits', type: 'number', default: 3, min: 0.5, max: 10, step: 0.5 },
+
+      { id: 'c5_grade', label: 'Course 5 Grade', type: 'select', default: 'B', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c5_credits', label: 'Course 5 Credits', type: 'number', default: 3, min: 0, max: 10, step: 0.5 },
+
+      { id: 'prior_gpa', label: 'Prior Cumulative GPA (optional)', type: 'number', default: 3.4, min: 0, max: 5.0, step: 0.01, hint: 'Leave at 0 if this is your first semester.' },
+      { id: 'prior_credits', label: 'Prior Completed Credits (optional)', type: 'number', default: 30, min: 0, step: 1 }
+    ],
+    calculate(v) {
+      const gradeMap = {
+        'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+        'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+        'C+': 2.3, 'C': 2.0, 'C-': 1.7,
+        'D': 1.0, 'F': 0.0
+      };
+
+      const weightBonus = { regular: 0, honors: 0.5, ap: 1.0 };
+
+      let totalCredits = 0;
+      let totalQualityPoints = 0;
+      let totalWeightedPoints = 0;
+      const rows = [];
+
+      for (let i = 1; i <= 5; i++) {
+        const gradeKey = v['c' + i + '_grade'] || 'A';
+        const cr = safeNum(v['c' + i + '_credits'], 0);
+        const scale = v['c' + i + '_scale'] || 'regular';
+        if (cr > 0) {
+          const basePts = gradeMap[gradeKey] !== undefined ? gradeMap[gradeKey] : 4.0;
+          const weightedPts = basePts + (weightBonus[scale] || 0);
+          totalCredits += cr;
+          totalQualityPoints += basePts * cr;
+          totalWeightedPoints += weightedPts * cr;
+          rows.push({
+            Course: 'Course ' + i,
+            Grade: gradeKey,
+            Credits: cr,
+            UnweightedPoints: basePts.toFixed(1),
+            WeightedPoints: weightedPts.toFixed(1)
+          });
+        }
+      }
+
+      if (totalCredits === 0) return errorResult('Please enter at least one course with credit hours.');
+
+      const semesterGpa = roundTo(totalQualityPoints / totalCredits, 2);
+      const weightedGpa = roundTo(totalWeightedPoints / totalCredits, 2);
+
+      const priorGpa = safeNum(v.prior_gpa, 0);
+      const priorCr = safeNum(v.prior_credits, 0);
+      let cumulativeGpa = semesterGpa;
+
+      if (priorCr > 0 && priorGpa > 0) {
+        const totalCumPoints = (priorGpa * priorCr) + totalQualityPoints;
+        const totalCumCredits = priorCr + totalCredits;
+        cumulativeGpa = roundTo(totalCumPoints / totalCumCredits, 2);
+      }
+
+      const stats = [
+        { label: 'Semester GPA (4.0 Scale)', value: semesterGpa.toFixed(2), highlight: true },
+        { label: 'Weighted GPA (5.0 Scale)', value: weightedGpa.toFixed(2), highlight: true },
+        { label: 'Cumulative Projected GPA', value: cumulativeGpa.toFixed(2), highlight: true },
+        { label: 'Semester Credits', value: totalCredits + ' hrs' },
+        { label: 'Total Completed Credits', value: (priorCr + totalCredits) + ' hrs' }
+      ];
+
+      return {
+        stats,
+        table: rows,
+        insight: {
+          tone: semesterGpa >= 3.5 ? 'positive' : semesterGpa >= 2.5 ? 'neutral' : 'warning',
+          icon: 'fa-graduation-cap',
+          headline: `Your Semester GPA is ${semesterGpa.toFixed(2)} across ${totalCredits} credit hours.`,
+          detail: priorCr > 0 ? `Including your prior ${priorCr} credits at ${priorGpa.toFixed(2)}, your new cumulative GPA moves to ${cumulativeGpa.toFixed(2)}.` : 'Maintain high performance to qualify for academic honors and scholarships.'
+        }
+      };
+    },
+    article: {
+      heading: 'How Grade Point Average (GPA) Is Calculated',
+      intro: 'GPA represents your average academic performance by weighting your letter grade points by each course credit value.',
+      sections: [
+        { heading: 'Unweighted vs Weighted Scales', body: 'Standard college GPA uses an unweighted 4.0 scale (A=4.0, B=3.0, C=2.0, D=1.0, F=0.0). High schools often apply weighted scales giving an extra 0.5 points for Honors and 1.0 points for Advanced Placement (AP) or International Baccalaureate (IB).' }
+      ]
+    },
+    howTo: [
+      'Select your letter grade and credit hours for each course.',
+      'Select Honors or AP weighting if applicable.',
+      'Optionally enter your prior GPA and completed credits for a cumulative projection.',
+      'Review your calculated semester and cumulative GPA.'
+    ],
+    examples: [
+      { title: '15-Credit College Semester', input: '3 A\'s (9 cr) + 2 B\'s (6 cr)', result: 'GPA: 3.60' }
+    ],
+    formula: 'GPA = Total Quality Points ÷ Total Credit Hours (where Quality Points = Grade Points × Credits)',
+    faqs: [
+      { q: 'What is a 4.0 GPA equivalent in percentage?', a: 'Generally, an unweighted 4.0 GPA corresponds to an average grade percentage of 93-100% (A or A+).' }
+    ]
+  },
+
+  // ── Education: Final Grade Calculator ───────────────────────────────────
+  'final-grade-calculator': {
+    name: 'Final Grade Calculator',
+    category: 'Education',
+    icon: 'fa-clipboard-check',
+    iconClass: 'icon-education',
+    tagClass: 'tag-education',
+    description: 'Calculate the exact score needed on your final exam to earn your desired target course grade.',
+    metaTitle: 'Final Grade Calculator | Required Exam Score — GetCalcu',
+    metaDescription: 'Free Final Grade Calculator. Find out what grade you need on your final exam to pass or achieve your target course grade.',
+    keywords: [
+      'final grade calculator',
+      'what grade do i need on my final exam',
+      'final exam score calculator',
+      'college grade calculator',
+      'passing grade calculator'
+    ],
+    presets: [
+      { label: 'Standard Final (20% Weight for A)', values: { current_grade: 88, target_grade: 90, final_weight: 20 } },
+      { label: 'High-Stakes Final (40% Weight for B)', values: { current_grade: 75, target_grade: 80, final_weight: 40 } },
+      { label: 'Pass the Class (30% Weight for C)', values: { current_grade: 65, target_grade: 70, final_weight: 30 } }
+    ],
+    fields: [
+      { id: 'current_grade', label: 'Current Class Grade (%)', type: 'number', default: 86, min: 0, max: 120, step: 0.5, hint: 'Your existing grade percentage prior to the final exam.' },
+      { id: 'target_grade', label: 'Desired Course Grade (%)', type: 'number', default: 90, min: 0, max: 100, step: 0.5, hint: 'Target minimum overall course score (e.g. 90% for an A, 80% for a B).' },
+      { id: 'final_weight', label: 'Final Exam Weight (%)', type: 'number', default: 25, min: 1, max: 100, step: 1, hint: 'How much the final exam counts toward your total grade.' }
+    ],
+    calculate(v) {
+      const current = safeNum(v.current_grade, 0);
+      const target = safeNum(v.target_grade, 90);
+      const weight = safeNum(v.final_weight, 25) / 100;
+
+      if (weight <= 0 || weight > 1) return errorResult('Final exam weight must be between 1% and 100%.');
+
+      // Required = (Target - Current * (1 - Weight)) / Weight
+      const required = roundTo((target - current * (1 - weight)) / weight, 2);
+
+      let status = 'Achievable';
+      let tone = 'positive';
+      if (required > 100) { status = 'Requires Extra Credit (>100%)'; tone = 'warning'; }
+      else if (required > 90) { status = 'Challenging (90%+ Exam)'; tone = 'neutral'; }
+      else if (required <= 0) { status = 'Guaranteed (0% Needed)'; tone = 'positive'; }
+
+      const stats = [
+        { label: 'Required Final Exam Score', value: required <= 0 ? '0.00% (Already Achieved)' : required.toFixed(2) + '%', highlight: true, warn: required > 100 },
+        { label: 'Goal Difficulty', value: status, highlight: true },
+        { label: 'Current Grade', value: current.toFixed(2) + '%' },
+        { label: 'Target Overall Grade', value: target.toFixed(2) + '%' },
+        { label: 'Final Weight', value: (weight * 100).toFixed(0) + '%' }
+      ];
+
+      // Benchmark targets table
+      const letterGoals = [
+        { grade: 'A (90%)', target: 90 },
+        { grade: 'B (80%)', target: 80 },
+        { grade: 'C (70%)', target: 70 },
+        { grade: 'D (60%)', target: 60 }
+      ];
+
+      const table = letterGoals.map(g => {
+        const req = roundTo((g.target - current * (1 - weight)) / weight, 1);
+        return {
+          Goal: g.grade,
+          RequiredOnFinal: req <= 0 ? 'Guaranteed (0%)' : req > 100 ? req + '% (Extra Credit)' : req + '%'
+        };
+      });
+
+      return {
+        stats,
+        table,
+        insight: {
+          tone,
+          icon: 'fa-clipboard-check',
+          headline: required <= 0
+            ? `You already have your target grade of ${target}% secured!`
+            : required > 100
+            ? `You need ${required.toFixed(1)}% on the final to reach ${target}%. Consider asking for extra credit.`
+            : `Score at least ${required.toFixed(1)}% on your final exam to secure an overall grade of ${target}%.`,
+          detail: `Your current ${current}% grade makes up ${((1 - weight) * 100).toFixed(0)}% of your class average.`
+        }
+      };
+    },
+    article: {
+      heading: 'How to Calculate Your Required Final Exam Grade',
+      intro: 'Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.',
+      sections: [
+        { heading: 'Weighted Grading Formula', body: 'Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight.' }
+      ]
+    },
+    howTo: [
+      'Enter your current class grade percentage.',
+      'Enter the target letter grade or percentage you want to achieve.',
+      'Enter the weight percentage of the final exam.',
+      'See the exact test score required and check grade cutoff benchmarks.'
+    ],
+    examples: [
+      { title: '85% Current, Aiming for 90% A (20% Final)', input: 'Current: 85%, Target: 90%, Weight: 20%', result: 'Required on Final: 110% (Needs Extra Credit)' }
+    ],
+    formula: 'Final Exam Score = (Target - (Current × (1 - Weight))) ÷ Weight',
+    faqs: [
+      { q: 'What if I need over 100% on the final?', a: 'If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.' }
+    ]
+  },
+
+  // ── Education: Student Loan Calculator ──────────────────────────────────
+  'student-loan-calculator': {
+    name: 'Student Loan Calculator',
+    category: 'Education',
+    icon: 'fa-book-bookmark',
+    iconClass: 'icon-education',
+    tagClass: 'tag-education',
+    description: 'Calculate monthly student loan payments, compare standard vs accelerated payoff timelines, and see interest saved with extra monthly deposits.',
+    metaTitle: 'Student Loan Calculator | Monthly Payments & Payoff Payback — GetCalcu',
+    metaDescription: 'Free online Student Loan Calculator. Estimate monthly payments, total lifetime interest, and interest saved by paying extra toward principal.',
+    keywords: [
+      'student loan calculator',
+      'college loan repayment calculator',
+      'student debt payoff calculator',
+      'student loan interest savings',
+      'federal student loan payment'
+    ],
+    presets: [
+      { label: 'Federal Undergrad ($35k @ 5.5%)', values: { loan_balance: 35000, interest_rate: 5.5, loan_term: 10, extra_payment: 0 } },
+      { label: 'Graduate School ($75k @ 7.0%)', values: { loan_balance: 75000, interest_rate: 7.0, loan_term: 10, extra_payment: 100 } },
+      { label: 'Accelerated Payoff ($45k + $250/mo)', values: { loan_balance: 45000, interest_rate: 6.0, loan_term: 10, extra_payment: 250 } }
+    ],
+    fields: [
+      { id: 'loan_balance', label: 'Total Student Loan Balance ($)', type: 'number', default: 35000, min: 100, step: 500, hint: 'Total outstanding balance across all student loans.' },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.8, min: 0.01, max: 25, step: 0.05, hint: 'Average interest rate (Federal Direct loans are commonly 5-7%).' },
+      { id: 'loan_term', label: 'Repayment Term (Years)', type: 'select', default: 10, options: [
+        { value: 5, label: '5 Years' }, { value: 10, label: '10 Years (Standard)' }, { value: 15, label: '15 Years' }, { value: 20, label: '20 Years' }, { value: 25, label: '25 Years' }
+      ] },
+      { id: 'extra_payment', label: 'Extra Monthly Payment ($)', type: 'number', default: 50, min: 0, step: 25, hint: 'Additional amount paid directly toward principal each month.' }
+    ],
+    calculate(v) {
+      const P = safeNum(v.loan_balance, 0);
+      const rate = safeNum(v.interest_rate, 0);
+      const r = rate / 100 / 12;
+      const termYears = safeNum(v.loan_term, 10);
+      const n = termYears * 12;
+      const extra = safeNum(v.extra_payment, 0);
+
+      if (P <= 0) return errorResult('Loan balance must be greater than $0.');
+
+      const standardMonthly = r === 0 ? P / n : (P * (r * Math.pow(1 + r, n))) / (Math.pow(1 + r, n) - 1);
+      const stdPayment = roundTo(standardMonthly, 2);
+      const stdTotalInterest = roundTo(stdPayment * n - P, 2);
+
+      // Simulation with extra payment
+      let bal = P;
+      let m = 0;
+      let accInterest = 0;
+      const schedule = [];
+
+      while (bal > 0.01 && m < 600) {
+        m++;
+        const interestCharge = roundTo(bal * r, 2);
+        let principalPaid = roundTo((stdPayment + extra) - interestCharge, 2);
+        if (principalPaid > bal) principalPaid = bal;
+        bal = roundTo(bal - principalPaid, 2);
+        accInterest += interestCharge;
+        if (m <= 120) {
+          schedule.push({
+            month: m,
+            payment: roundTo(principalPaid + interestCharge, 2),
+            principal: principalPaid,
+            interest: interestCharge,
+            balance: bal
+          });
+        }
+      }
+
+      const totalInterestWithExtra = roundTo(accInterest, 2);
+      const interestSaved = roundTo(Math.max(0, stdTotalInterest - totalInterestWithExtra), 2);
+      const monthsSaved = Math.max(0, n - m);
+      const yearsSaved = (monthsSaved / 12).toFixed(1);
+
+      const stats = [
+        { label: 'Standard Monthly Payment', value: fmt(stdPayment), highlight: true },
+        { label: 'Total Payment (incl. Extra)', value: fmt(stdPayment + extra), highlight: true },
+        { label: 'Total Interest Paid', value: fmt(totalInterestWithExtra), warn: true },
+        { label: 'Interest Saved by Extra Payments', value: fmt(interestSaved), highlight: true },
+        { label: 'Time Saved Off Loan', value: monthsSaved > 0 ? yearsSaved + ' years (' + monthsSaved + ' mos)' : '0 months' },
+        { label: 'Total Amount Repaid', value: fmt(roundTo(P + totalInterestWithExtra, 2)) }
+      ];
+
+      const chart = {
+        principal: P,
+        totalInterest: totalInterestWithExtra
+      };
+
+      return {
+        stats,
+        chart,
+        table: schedule,
+        insight: {
+          tone: extra > 0 ? 'positive' : 'neutral',
+          icon: 'fa-piggy-bank',
+          headline: extra > 0
+            ? `Paying an extra ${fmt(extra)}/mo saves ${fmt(interestSaved)} and ${yearsSaved} years of debt.`
+            : `Your standard monthly payment is ${fmt(stdPayment)} over ${termYears} years.`,
+          detail: `Total lifetime interest on ${fmt(P)} at ${rate}% is ${fmt(totalInterestWithExtra)}.`
+        }
+      };
+    },
+    article: {
+      heading: 'Student Loan Repayment Strategies and Acceleration',
+      intro: 'Student loans amortize monthly based on your interest rate and loan balance. Even small extra monthly payments go 100% to principal, drastically cutting lifetime interest.',
+      sections: [
+        { heading: 'The Power of Extra Principal Payments', body: 'Because student loan interest accrues daily on the remaining principal balance, paying an extra $50 to $100 per month reduces the balance faster and shortens your repayment timeline by years.' }
+      ]
+    },
+    howTo: [
+      'Enter your total student loan balance and interest rate.',
+      'Select your repayment term (standard is 10 years).',
+      'Add an extra monthly payment to see interest and time savings.',
+      'Review your amortization schedule and accelerated payoff date.'
+    ],
+    examples: [
+      { title: 'Standard 10-Year $35k Loan', input: '$35,000 at 5.5%, 10-year term', result: 'Payment: $380/mo | Total Interest: ~$10,600' }
+    ],
+    formula: 'Monthly Payment = P × [r(1+r)^n] ÷ [(1+r)^n - 1]',
+    faqs: [
+      { q: 'How does paying extra reduce my loan term?', a: 'Any extra payment above your required monthly minimum is applied directly to reducing your principal balance, lowering future interest accumulation.' }
+    ]
+  },
+
 };
 
 if (typeof window !== 'undefined') {
