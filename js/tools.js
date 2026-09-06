@@ -5090,6 +5090,330 @@ const TOOLS = {
     ]
   },
 
+  'unit-converter': {
+    name: 'Universal Unit Converter',
+    category: 'Math',
+    icon: 'fa-arrow-right-arrow-left',
+    iconClass: 'icon-math',
+    tagClass: 'tag-math',
+    description: 'Convert between units of length, weight, temperature, volume, speed, digital data, area, and pressure instantly.',
+    metaDescription: 'Free online unit converter — instantly convert units of length, weight, temperature, volume, speed, data, area, and pressure with multi-unit comparison tables.',
+    fields: [
+      { id: 'dimension', label: 'Conversion Type', type: 'select', default: 'length', options: [
+        { value: 'length', label: 'Length & Distance' },
+        { value: 'weight', label: 'Weight & Mass' },
+        { value: 'temperature', label: 'Temperature' },
+        { value: 'volume', label: 'Volume & Capacity' },
+        { value: 'speed', label: 'Speed & Velocity' },
+        { value: 'data', label: 'Digital Data & Storage' },
+        { value: 'area', label: 'Area' },
+        { value: 'pressure', label: 'Pressure' },
+        { value: 'time', label: 'Time' },
+      ], hint: 'Choose the measurement category to convert.' },
+      { id: 'amount', label: 'Value to Convert', type: 'number', default: 10, min: -999999999, step: 0.1, hint: 'The numerical quantity you want to convert.' },
+      { id: 'unit_length_from', label: 'From Unit', type: 'select', default: 'meters', condition: v => (v.dimension || 'length') === 'length', options: [
+        { value: 'meters', label: 'Meters (m)' },
+        { value: 'kilometers', label: 'Kilometers (km)' },
+        { value: 'centimeters', label: 'Centimeters (cm)' },
+        { value: 'millimeters', label: 'Millimeters (mm)' },
+        { value: 'miles', label: 'Miles (mi)' },
+        { value: 'yards', label: 'Yards (yd)' },
+        { value: 'feet', label: 'Feet (ft)' },
+        { value: 'inches', label: 'Inches (in)' },
+        { value: 'nautical_miles', label: 'Nautical Miles (NM)' }
+      ] },
+      { id: 'unit_length_to', label: 'To Unit', type: 'select', default: 'feet', condition: v => (v.dimension || 'length') === 'length', options: [
+        { value: 'meters', label: 'Meters (m)' },
+        { value: 'kilometers', label: 'Kilometers (km)' },
+        { value: 'centimeters', label: 'Centimeters (cm)' },
+        { value: 'millimeters', label: 'Millimeters (mm)' },
+        { value: 'miles', label: 'Miles (mi)' },
+        { value: 'yards', label: 'Yards (yd)' },
+        { value: 'feet', label: 'Feet (ft)' },
+        { value: 'inches', label: 'Inches (in)' },
+        { value: 'nautical_miles', label: 'Nautical Miles (NM)' }
+      ] },
+
+      { id: 'unit_weight_from', label: 'From Unit', type: 'select', default: 'kilograms', condition: v => v.dimension === 'weight', options: [
+        { value: 'kilograms', label: 'Kilograms (kg)' },
+        { value: 'grams', label: 'Grams (g)' },
+        { value: 'milligrams', label: 'Milligrams (mg)' },
+        { value: 'metric_tons', label: 'Metric Tons (t)' },
+        { value: 'pounds', label: 'Pounds (lb)' },
+        { value: 'ounces', label: 'Ounces (oz)' },
+        { value: 'stones', label: 'Stones (st)' }
+      ] },
+      { id: 'unit_weight_to', label: 'To Unit', type: 'select', default: 'pounds', condition: v => v.dimension === 'weight', options: [
+        { value: 'kilograms', label: 'Kilograms (kg)' },
+        { value: 'grams', label: 'Grams (g)' },
+        { value: 'milligrams', label: 'Milligrams (mg)' },
+        { value: 'metric_tons', label: 'Metric Tons (t)' },
+        { value: 'pounds', label: 'Pounds (lb)' },
+        { value: 'ounces', label: 'Ounces (oz)' },
+        { value: 'stones', label: 'Stones (st)' }
+      ] },
+
+      { id: 'unit_temp_from', label: 'From Unit', type: 'select', default: 'celsius', condition: v => v.dimension === 'temperature', options: [
+        { value: 'celsius', label: 'Celsius (°C)' },
+        { value: 'fahrenheit', label: 'Fahrenheit (°F)' },
+        { value: 'kelvin', label: 'Kelvin (K)' }
+      ] },
+      { id: 'unit_temp_to', label: 'To Unit', type: 'select', default: 'fahrenheit', condition: v => v.dimension === 'temperature', options: [
+        { value: 'celsius', label: 'Celsius (°C)' },
+        { value: 'fahrenheit', label: 'Fahrenheit (°F)' },
+        { value: 'kelvin', label: 'Kelvin (K)' }
+      ] },
+
+      { id: 'unit_vol_from', label: 'From Unit', type: 'select', default: 'liters', condition: v => v.dimension === 'volume', options: [
+        { value: 'liters', label: 'Liters (L)' },
+        { value: 'milliliters', label: 'Milliliters (mL)' },
+        { value: 'cubic_meters', label: 'Cubic Meters (m³)' },
+        { value: 'gallons_us', label: 'US Gallons (gal)' },
+        { value: 'quarts_us', label: 'US Quarts (qt)' },
+        { value: 'pints_us', label: 'US Pints (pt)' },
+        { value: 'cups_us', label: 'US Cups' },
+        { value: 'fl_oz_us', label: 'US Fluid Ounces (fl oz)' },
+        { value: 'tablespoons', label: 'Tablespoons (tbsp)' },
+        { value: 'teaspoons', label: 'Teaspoons (tsp)' }
+      ] },
+      { id: 'unit_vol_to', label: 'To Unit', type: 'select', default: 'gallons_us', condition: v => v.dimension === 'volume', options: [
+        { value: 'liters', label: 'Liters (L)' },
+        { value: 'milliliters', label: 'Milliliters (mL)' },
+        { value: 'cubic_meters', label: 'Cubic Meters (m³)' },
+        { value: 'gallons_us', label: 'US Gallons (gal)' },
+        { value: 'quarts_us', label: 'US Quarts (qt)' },
+        { value: 'pints_us', label: 'US Pints (pt)' },
+        { value: 'cups_us', label: 'US Cups' },
+        { value: 'fl_oz_us', label: 'US Fluid Ounces (fl oz)' },
+        { value: 'tablespoons', label: 'Tablespoons (tbsp)' },
+        { value: 'teaspoons', label: 'Teaspoons (tsp)' }
+      ] },
+
+      { id: 'unit_speed_from', label: 'From Unit', type: 'select', default: 'kmh', condition: v => v.dimension === 'speed', options: [
+        { value: 'kmh', label: 'Kilometers per Hour (km/h)' },
+        { value: 'mph', label: 'Miles per Hour (mph)' },
+        { value: 'ms', label: 'Meters per Second (m/s)' },
+        { value: 'knots', label: 'Knots (kn)' },
+        { value: 'fts', label: 'Feet per Second (ft/s)' }
+      ] },
+      { id: 'unit_speed_to', label: 'To Unit', type: 'select', default: 'mph', condition: v => v.dimension === 'speed', options: [
+        { value: 'kmh', label: 'Kilometers per Hour (km/h)' },
+        { value: 'mph', label: 'Miles per Hour (mph)' },
+        { value: 'ms', label: 'Meters per Second (m/s)' },
+        { value: 'knots', label: 'Knots (kn)' },
+        { value: 'fts', label: 'Feet per Second (ft/s)' }
+      ] },
+
+      { id: 'unit_data_from', label: 'From Unit', type: 'select', default: 'gigabytes', condition: v => v.dimension === 'data', options: [
+        { value: 'bytes', label: 'Bytes (B)' },
+        { value: 'kilobytes', label: 'Kilobytes (KB)' },
+        { value: 'megabytes', label: 'Megabytes (MB)' },
+        { value: 'gigabytes', label: 'Gigabytes (GB)' },
+        { value: 'terabytes', label: 'Terabytes (TB)' },
+        { value: 'petabytes', label: 'Petabytes (PB)' }
+      ] },
+      { id: 'unit_data_to', label: 'To Unit', type: 'select', default: 'megabytes', condition: v => v.dimension === 'data', options: [
+        { value: 'bytes', label: 'Bytes (B)' },
+        { value: 'kilobytes', label: 'Kilobytes (KB)' },
+        { value: 'megabytes', label: 'Megabytes (MB)' },
+        { value: 'gigabytes', label: 'Gigabytes (GB)' },
+        { value: 'terabytes', label: 'Terabytes (TB)' },
+        { value: 'petabytes', label: 'Petabytes (PB)' }
+      ] },
+
+      { id: 'unit_area_from', label: 'From Unit', type: 'select', default: 'sq_meters', condition: v => v.dimension === 'area', options: [
+        { value: 'sq_meters', label: 'Square Meters (m²)' },
+        { value: 'sq_kilometers', label: 'Square Kilometers (km²)' },
+        { value: 'sq_feet', label: 'Square Feet (sq ft)' },
+        { value: 'sq_yards', label: 'Square Yards (sq yd)' },
+        { value: 'sq_miles', label: 'Square Miles (sq mi)' },
+        { value: 'acres', label: 'Acres (ac)' },
+        { value: 'hectares', label: 'Hectares (ha)' }
+      ] },
+      { id: 'unit_area_to', label: 'To Unit', type: 'select', default: 'sq_feet', condition: v => v.dimension === 'area', options: [
+        { value: 'sq_meters', label: 'Square Meters (m²)' },
+        { value: 'sq_kilometers', label: 'Square Kilometers (km²)' },
+        { value: 'sq_feet', label: 'Square Feet (sq ft)' },
+        { value: 'sq_yards', label: 'Square Yards (sq yd)' },
+        { value: 'sq_miles', label: 'Square Miles (sq mi)' },
+        { value: 'acres', label: 'Acres (ac)' },
+        { value: 'hectares', label: 'Hectares (ha)' }
+      ] },
+
+      { id: 'unit_pressure_from', label: 'From Unit', type: 'select', default: 'psi', condition: v => v.dimension === 'pressure', options: [
+        { value: 'pascals', label: 'Pascals (Pa)' },
+        { value: 'kilopascals', label: 'Kilopascals (kPa)' },
+        { value: 'bar', label: 'Bar (bar)' },
+        { value: 'psi', label: 'Pounds per Sq Inch (psi)' },
+        { value: 'atm', label: 'Standard Atmospheres (atm)' },
+        { value: 'mmhg', label: 'Millimeters of Mercury (mmHg / Torr)' }
+      ] },
+      { id: 'unit_pressure_to', label: 'To Unit', type: 'select', default: 'bar', condition: v => v.dimension === 'pressure', options: [
+        { value: 'pascals', label: 'Pascals (Pa)' },
+        { value: 'kilopascals', label: 'Kilopascals (kPa)' },
+        { value: 'bar', label: 'Bar (bar)' },
+        { value: 'psi', label: 'Pounds per Sq Inch (psi)' },
+        { value: 'atm', label: 'Standard Atmospheres (atm)' },
+        { value: 'mmhg', label: 'Millimeters of Mercury (mmHg / Torr)' }
+      ] },
+
+      { id: 'unit_time_from', label: 'From Unit', type: 'select', default: 'hours', condition: v => v.dimension === 'time', options: [
+        { value: 'seconds', label: 'Seconds (s)' },
+        { value: 'minutes', label: 'Minutes (min)' },
+        { value: 'hours', label: 'Hours (h)' },
+        { value: 'days', label: 'Days (d)' },
+        { value: 'weeks', label: 'Weeks (wk)' },
+        { value: 'months', label: 'Months (30.44 days)' },
+        { value: 'years', label: 'Years (365.25 days)' }
+      ] },
+      { id: 'unit_time_to', label: 'To Unit', type: 'select', default: 'minutes', condition: v => v.dimension === 'time', options: [
+        { value: 'seconds', label: 'Seconds (s)' },
+        { value: 'minutes', label: 'Minutes (min)' },
+        { value: 'hours', label: 'Hours (h)' },
+        { value: 'days', label: 'Days (d)' },
+        { value: 'weeks', label: 'Weeks (wk)' },
+        { value: 'months', label: 'Months (30.44 days)' },
+        { value: 'years', label: 'Years (365.25 days)' }
+      ] }
+    ],
+    calculate(v) {
+      const dim = v.dimension || 'length';
+      const amt = safeNum(v.amount, 0);
+
+      // Conversion factors to Base Unit
+      const lengthBase = {
+        meters: 1, kilometers: 1000, centimeters: 0.01, millimeters: 0.001,
+        miles: 1609.344, yards: 0.9144, feet: 0.3048, inches: 0.0254, nautical_miles: 1852
+      };
+      const weightBase = {
+        kilograms: 1, grams: 0.001, milligrams: 0.000001, metric_tons: 1000,
+        pounds: 0.45359237, ounces: 0.028349523125, stones: 6.35029318
+      };
+      const volumeBase = {
+        liters: 1, milliliters: 0.001, cubic_meters: 1000,
+        gallons_us: 3.785411784, quarts_us: 0.946352946, pints_us: 0.473176473,
+        cups_us: 0.2365882365, fl_oz_us: 0.0295735295625, tablespoons: 0.01478676478125, teaspoons: 0.00492892159375
+      };
+      const speedBase = {
+        ms: 1, kmh: 1 / 3.6, mph: 0.44704, knots: 0.514444, fts: 0.3048
+      };
+      const dataBase = {
+        bytes: 1, kilobytes: 1024, megabytes: 1024 * 1024, gigabytes: 1024 * 1024 * 1024,
+        terabytes: 1024 * 1024 * 1024 * 1024, petabytes: 1024 * 1024 * 1024 * 1024 * 1024
+      };
+      const areaBase = {
+        sq_meters: 1, sq_kilometers: 1000000, sq_feet: 0.09290304,
+        sq_yards: 0.83612736, sq_miles: 2589988.110336, acres: 4046.8564224, hectares: 10000
+      };
+      const pressureBase = {
+        pascals: 1, kilopascals: 1000, bar: 100000, psi: 6894.757293168,
+        atm: 101325, mmhg: 133.322387415
+      };
+      const timeBase = {
+        seconds: 1, minutes: 60, hours: 3600, days: 86400,
+        weeks: 604800, months: 2629800, years: 31557600
+      };
+
+      let resultValue = 0;
+      let fromKey = 'meters';
+      let toKey = 'feet';
+      let tableRows = [];
+
+      if (dim === 'temperature') {
+        fromKey = v.unit_temp_from || 'celsius';
+        toKey = v.unit_temp_to || 'fahrenheit';
+
+        // Convert to Celsius base
+        let inCelsius = amt;
+        if (fromKey === 'fahrenheit') inCelsius = (amt - 32) * (5 / 9);
+        else if (fromKey === 'kelvin') inCelsius = amt - 273.15;
+
+        // Convert from Celsius to Target
+        if (toKey === 'celsius') resultValue = inCelsius;
+        else if (toKey === 'fahrenheit') resultValue = inCelsius * (9 / 5) + 32;
+        else if (toKey === 'kelvin') resultValue = inCelsius + 273.15;
+
+        tableRows = [
+          { Unit: 'Celsius (°C)', Value: roundTo(inCelsius, 4) + ' °C' },
+          { Unit: 'Fahrenheit (°F)', Value: roundTo(inCelsius * (9 / 5) + 32, 4) + ' °F' },
+          { Unit: 'Kelvin (K)', Value: roundTo(inCelsius + 273.15, 4) + ' K' },
+        ];
+      } else {
+        const factorMap = {
+          length: { factors: lengthBase, from: v.unit_length_from || 'meters', to: v.unit_length_to || 'feet' },
+          weight: { factors: weightBase, from: v.unit_weight_from || 'kilograms', to: v.unit_weight_to || 'pounds' },
+          volume: { factors: volumeBase, from: v.unit_vol_from || 'liters', to: v.unit_vol_to || 'gallons_us' },
+          speed: { factors: speedBase, from: v.unit_speed_from || 'kmh', to: v.unit_speed_to || 'mph' },
+          data: { factors: dataBase, from: v.unit_data_from || 'gigabytes', to: v.unit_data_to || 'megabytes' },
+          area: { factors: areaBase, from: v.unit_area_from || 'sq_meters', to: v.unit_area_to || 'sq_feet' },
+          pressure: { factors: pressureBase, from: v.unit_pressure_from || 'psi', to: v.unit_pressure_to || 'bar' },
+          time: { factors: timeBase, from: v.unit_time_from || 'hours', to: v.unit_time_to || 'minutes' },
+        }[dim] || { factors: lengthBase, from: 'meters', to: 'feet' };
+
+        fromKey = factorMap.from;
+        toKey = factorMap.to;
+        const fromFactor = factorMap.factors[fromKey] || 1;
+        const toFactor = factorMap.factors[toKey] || 1;
+
+        const inBase = amt * fromFactor;
+        resultValue = inBase / toFactor;
+
+        tableRows = Object.keys(factorMap.factors).map(k => {
+          const val = inBase / factorMap.factors[k];
+          const displayVal = Math.abs(val) < 0.00001 && val !== 0 ? val.toExponential(4) : Number(roundTo(val, 6)).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 });
+          return { Unit: k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), Value: displayVal };
+        });
+      }
+
+      const formatDisplay = (n) => {
+        const num = safeNum(n, 0);
+        if (Math.abs(num) < 0.00001 && num !== 0) return num.toExponential(4);
+        return Number(roundTo(num, 6)).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 });
+      };
+
+      return {
+        stats: [
+          { label: `Converted Value (${toKey.replace(/_/g, ' ')})`, value: formatDisplay(resultValue), highlight: true },
+          { label: 'Initial Amount', value: `${formatDisplay(amt)} ${fromKey.replace(/_/g, ' ')}` },
+          { label: 'Conversion Factor', value: `1 ${fromKey.replace(/_/g, ' ')} = ${formatDisplay(resultValue / (amt || 1))} ${toKey.replace(/_/g, ' ')}` },
+        ],
+        table: tableRows,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-arrow-right-arrow-left',
+          headline: `${amt} ${fromKey.replace(/_/g, ' ')} = ${formatDisplay(resultValue)} ${toKey.replace(/_/g, ' ')}`,
+          detail: 'See the full multi-unit conversion table below for equivalent values across all standard measurement systems.'
+        }
+      };
+    },
+    article: {
+      heading: 'How to Convert Measurement Units Accurately',
+      intro: 'Unit conversion translates quantities expressed in one measurement scale (such as metric) into equivalent values in another (such as imperial or US customary).',
+      sections: [
+        { heading: 'Metric vs Imperial Systems', body: 'The International System of Units (SI / Metric) is based on decimal multiples of ten (meters, kilograms, liters). Imperial and US customary units rely on historical fractions (inches, feet, pounds, gallons).' },
+        { heading: 'Temperature Conversion Nuances', body: 'Unlike linear conversions, temperature conversions require offset adjustments because 0°C is 32°F (freezing point of water) and 0 K is absolute zero (-273.15°C).' }
+      ]
+    },
+    howTo: [
+      'Select the measurement dimension (Length, Weight, Temp, Volume, Speed, Data, Area, Pressure, or Time).',
+      'Enter the numerical value to convert.',
+      'Pick the "From" and "To" units.',
+      'View the converted result and reference table.'
+    ],
+    examples: [
+      { title: 'Length Conversion', input: '10 Meters to Feet', result: '32.8084 Feet' },
+      { title: 'Weight Conversion', input: '70 Kilograms to Pounds', result: '154.3236 Pounds' },
+      { title: 'Temperature Conversion', input: '100° Celsius to Fahrenheit', result: '212° Fahrenheit' }
+    ],
+    formula: 'Result = Value × (From Unit Base Factor ÷ To Unit Base Factor)',
+    faqs: [
+      { q: 'How many inches are in a meter?', a: 'There are exactly 39.3701 inches in 1 meter (1 inch = 2.54 cm).' },
+      { q: 'How do you convert Celsius to Fahrenheit?', a: 'Multiply the Celsius temperature by 9/5 (or 1.8) and add 32: °F = (°C × 1.8) + 32.' },
+      { q: 'How many pounds in a kilogram?', a: 'There are approximately 2.20462 pounds in 1 kilogram.' }
+    ]
+  },
+
+
 };
 
 if (typeof window !== 'undefined') {
