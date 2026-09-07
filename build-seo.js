@@ -782,32 +782,39 @@ const categoryPageTemplate = (cat, catTools) => {
             </header>
 
             <div class="content-body">
-                <!-- Modern Breadcrumb Navigation -->
-                <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-                    <a href="/" class="breadcrumb-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
-                    <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
-                    <span class="breadcrumb-current">${escapeHtml(cat.name)}</span>
-                </nav>
-
-                <!-- Modern Category Hero Card -->
-                <section class="category-hero-card theme-${cat.slug}">
-                    <div class="category-hero-main">
-                        <div class="category-hero-icon">
-                            <i class="fa-solid ${cat.icon}"></i>
-                        </div>
-                        <div class="category-hero-body">
-                            <h1>${escapeHtml(cat.heading)}</h1>
-                            <p>${escapeHtml(cat.subheading)}</p>
-                            <div class="category-hero-badges">
-                                <span class="category-badge-pill"><i class="fa-solid fa-calculator"></i> <span id="category-filtered-count">${catTools.length}</span> Tools</span>
-                                <span class="category-badge-pill"><i class="fa-solid fa-bolt"></i> Instant &amp; Free</span>
-                                <span class="category-badge-pill"><i class="fa-solid fa-shield-halved"></i> 100% Private</span>
+                <!-- World-Class Category Hero Banner -->
+                <section class="category-hero-banner theme-${cat.slug}">
+                    <div class="category-hero-content">
+                        <div class="category-hero-header-row">
+                            <div class="category-hero-icon-wrap">
+                                <i class="fa-solid ${cat.icon}"></i>
+                            </div>
+                            <div class="category-hero-title-group">
+                                <div class="category-hero-badge-row">
+                                    <span class="category-badge-chip"><i class="fa-solid fa-sparkles"></i> ${escapeHtml(cat.name)} Suite</span>
+                                    <span class="category-badge-chip"><i class="fa-solid fa-shield-halved"></i> 100% Free &amp; Private</span>
+                                </div>
+                                <h1 class="category-hero-heading">${escapeHtml(cat.heading)}</h1>
+                                <p class="category-hero-slogan">${escapeHtml(cat.subheading)}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="category-filter-bar">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" class="category-filter-input" id="category-filter-input" placeholder="Filter ${escapeHtml(cat.name).toLowerCase()} calculators..." aria-label="Filter ${escapeHtml(cat.name)} calculators">
+
+                        <div class="category-search-container">
+                            <div class="category-search-box">
+                                <i class="fa-solid fa-magnifying-glass category-search-icon"></i>
+                                <input type="text" class="category-search-field" id="category-filter-input" placeholder="Search ${catTools.length} ${escapeHtml(cat.name).toLowerCase()} calculators &amp; tools..." aria-label="Search ${escapeHtml(cat.name)} calculators">
+                                <button type="button" class="category-search-clear hidden" id="category-search-clear" aria-label="Clear search">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <button type="button" class="category-search-btn" id="category-search-btn">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <span>Search</span>
+                                </button>
+                            </div>
+                            <div class="category-search-stats">
+                                <span>Showing <strong id="category-filtered-count">${catTools.length}</strong> of <strong>${catTools.length}</strong> calculators</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 

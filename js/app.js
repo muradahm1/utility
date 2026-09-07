@@ -17,7 +17,7 @@ function initFooterYear() {
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 }
 
-// Real-time filter for category pages
+// Real-time filter and search for category pages
 function initCategoryFilter() {
     const filterInput = document.getElementById('category-filter-input');
     if (!filterInput) return;
@@ -25,15 +25,18 @@ function initCategoryFilter() {
     const cards = document.querySelectorAll('.tools-grid .tool-card');
     const emptyMsg = document.getElementById('category-empty-filter');
     const countEl = document.getElementById('category-filtered-count');
+    const searchBtn = document.getElementById('category-search-btn');
+    const clearBtn = document.getElementById('category-search-clear');
 
-    filterInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
+    function performFilter() {
+        const query = filterInput.value.toLowerCase().trim();
         let visibleCount = 0;
 
         cards.forEach(card => {
             const title = (card.querySelector('h3')?.textContent || '').toLowerCase();
             const desc = (card.querySelector('p')?.textContent || '').toLowerCase();
-            const matches = !query || title.includes(query) || desc.includes(query);
+            const tag = (card.querySelector('.tag')?.textContent || '').toLowerCase();
+            const matches = !query || title.includes(query) || desc.includes(query) || tag.includes(query);
             card.style.display = matches ? '' : 'none';
             if (matches) visibleCount++;
         });
@@ -44,7 +47,35 @@ function initCategoryFilter() {
         if (countEl) {
             countEl.textContent = visibleCount;
         }
+        if (clearBtn) {
+            clearBtn.classList.toggle('hidden', !query);
+        }
+    }
+
+    filterInput.addEventListener('input', performFilter);
+    filterInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performFilter();
+        }
     });
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            performFilter();
+            filterInput.focus();
+        });
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterInput.value = '';
+            performFilter();
+            filterInput.focus();
+        });
+    }
 }
 
 // Floating back-to-top button
