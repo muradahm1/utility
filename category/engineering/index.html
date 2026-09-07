@@ -119,54 +119,91 @@
             </header>
 
             <div class="content-body">
-                <!-- Category Hero Banner -->
-                <section class="section-container" style="padding-top:1.5rem; padding-bottom:1rem;">
-                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem; font-size:0.875rem; color:var(--text-muted);">
-                        <a href="/" style="color:var(--text-muted); text-decoration:none;"><i class="fa-solid fa-house"></i> Home</a>
-                        <i class="fa-solid fa-chevron-right" style="font-size:0.7rem;"></i>
-                        <span style="color:var(--text-primary); font-weight:600;">Engineering</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
-                        <div class="icon-wrapper icon-engineering" style="width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
+                <!-- Modern Breadcrumb Navigation -->
+                <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                    <a href="/" class="breadcrumb-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+                    <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+                    <span class="breadcrumb-current">Engineering</span>
+                </nav>
+
+                <!-- Modern Category Hero Card -->
+                <section class="category-hero-card theme-engineering">
+                    <div class="category-hero-main">
+                        <div class="category-hero-icon">
                             <i class="fa-solid fa-gears"></i>
                         </div>
-                        <div>
-                            <h1 style="font-size:1.75rem; margin:0 0 0.25rem 0;">Engineering &amp; Physics Calculators</h1>
-                            <p style="color:var(--text-muted); margin:0; font-size:1rem;">Calculate electrical parameters, structural beam deflections, and pressure values with precision.</p>
+                        <div class="category-hero-body">
+                            <h1>Engineering &amp; Physics Calculators</h1>
+                            <p>Calculate electrical parameters, structural beam deflections, and pressure values with precision.</p>
+                            <div class="category-hero-badges">
+                                <span class="category-badge-pill"><i class="fa-solid fa-calculator"></i> <span id="category-filtered-count">3</span> Tools</span>
+                                <span class="category-badge-pill"><i class="fa-solid fa-bolt"></i> Instant &amp; Free</span>
+                                <span class="category-badge-pill"><i class="fa-solid fa-shield-halved"></i> 100% Private</span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="category-filter-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="category-filter-input" id="category-filter-input" placeholder="Filter engineering calculators..." aria-label="Filter Engineering calculators">
                     </div>
                 </section>
 
                 <!-- Pre-rendered Tools Grid -->
                 <section class="section-container" id="all-tools">
                     <div class="section-header">
-                        <h2>Available Engineering Tools (3)</h2>
+                        <h2>Available Engineering Tools</h2>
                     </div>
                     <div class="tools-grid">
                         
                             <a href="/tool/beam-deflection-calculator" class="tool-card">
-                                <div class="tool-icon icon-engineering"><i class="fa-solid fa-ruler-combined"></i></div>
-                                <h3>Beam Deflection Calculator</h3>
-                                <p>Calculate maximum deflection for simply supported and cantilever beams under point load.</p>
-                                <span class="tag tag-engineering">Engineering</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-engineering"><i class="fa-solid fa-ruler-combined"></i></div>
+                                    </div>
+                                    <h3>Beam Deflection Calculator</h3>
+                                    <p>Calculate maximum deflection for simply supported and cantilever beams under point load.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-engineering">Engineering</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/ohms-law-calculator" class="tool-card">
-                                <div class="tool-icon icon-engineering"><i class="fa-solid fa-bolt"></i></div>
-                                <h3>Ohm&#39;s Law Calculator</h3>
-                                <p>Calculate voltage, current, resistance, and power using Ohm&#39;s Law relationships.</p>
-                                <span class="tag tag-engineering">Engineering</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-engineering"><i class="fa-solid fa-bolt"></i></div>
+                                    </div>
+                                    <h3>Ohm&#39;s Law Calculator</h3>
+                                    <p>Calculate voltage, current, resistance, and power using Ohm&#39;s Law relationships.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-engineering">Engineering</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/pressure-calculator" class="tool-card">
-                                <div class="tool-icon icon-engineering"><i class="fa-solid fa-gauge-high"></i></div>
-                                <h3>Pressure Calculator</h3>
-                                <p>Convert between PSI, Bar, Pascal, Atmosphere, and calculate pressure from force and surface area.</p>
-                                <span class="tag tag-engineering">Engineering</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-engineering"><i class="fa-solid fa-gauge-high"></i></div>
+                                    </div>
+                                    <h3>Pressure Calculator</h3>
+                                    <p>Convert between PSI, Bar, Pascal, Atmosphere, and calculate pressure from force and surface area.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-engineering">Engineering</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
+                    </div>
+                    <div id="category-empty-filter" class="tool-not-found" style="display:none; padding:40px 20px;">
+                        <div class="not-found-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <h2>No matching calculators found</h2>
+                        <p>Try adjusting your search terms or browse all tools.</p>
                     </div>
                 </section>
             </div>

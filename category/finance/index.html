@@ -119,174 +119,316 @@
             </header>
 
             <div class="content-body">
-                <!-- Category Hero Banner -->
-                <section class="section-container" style="padding-top:1.5rem; padding-bottom:1rem;">
-                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem; font-size:0.875rem; color:var(--text-muted);">
-                        <a href="/" style="color:var(--text-muted); text-decoration:none;"><i class="fa-solid fa-house"></i> Home</a>
-                        <i class="fa-solid fa-chevron-right" style="font-size:0.7rem;"></i>
-                        <span style="color:var(--text-primary); font-weight:600;">Finance</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
-                        <div class="icon-wrapper icon-finance" style="width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
+                <!-- Modern Breadcrumb Navigation -->
+                <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                    <a href="/" class="breadcrumb-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+                    <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+                    <span class="breadcrumb-current">Finance</span>
+                </nav>
+
+                <!-- Modern Category Hero Card -->
+                <section class="category-hero-card theme-finance">
+                    <div class="category-hero-main">
+                        <div class="category-hero-icon">
                             <i class="fa-solid fa-calculator"></i>
                         </div>
-                        <div>
-                            <h1 style="font-size:1.75rem; margin:0 0 0.25rem 0;">Finance Calculators &amp; Tools</h1>
-                            <p style="color:var(--text-muted); margin:0; font-size:1rem;">Plan your budget, project investment growth, calculate mortgage payments, and master your financial future with our free financial calculators.</p>
+                        <div class="category-hero-body">
+                            <h1>Finance Calculators &amp; Tools</h1>
+                            <p>Plan your budget, project investment growth, calculate mortgage payments, and master your financial future with our free financial calculators.</p>
+                            <div class="category-hero-badges">
+                                <span class="category-badge-pill"><i class="fa-solid fa-calculator"></i> <span id="category-filtered-count">18</span> Tools</span>
+                                <span class="category-badge-pill"><i class="fa-solid fa-bolt"></i> Instant &amp; Free</span>
+                                <span class="category-badge-pill"><i class="fa-solid fa-shield-halved"></i> 100% Private</span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="category-filter-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="category-filter-input" id="category-filter-input" placeholder="Filter finance calculators..." aria-label="Filter Finance calculators">
                     </div>
                 </section>
 
                 <!-- Pre-rendered Tools Grid -->
                 <section class="section-container" id="all-tools">
                     <div class="section-header">
-                        <h2>Available Finance Tools (18)</h2>
+                        <h2>Available Finance Tools</h2>
                     </div>
                     <div class="tools-grid">
                         
                             <a href="/tool/mortgage-calculator" class="tool-card">
-                                <div class="tool-icon icon-home"><i class="fa-solid fa-house"></i></div>
-                                <h3>Mortgage Calculator</h3>
-                                <p>Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-home"><i class="fa-solid fa-house"></i></div>
+                                    </div>
+                                    <h3>Mortgage Calculator</h3>
+                                    <p>Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/loan-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-sack-dollar"></i></div>
-                                <h3>Loan Calculator</h3>
-                                <p>Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-sack-dollar"></i></div>
+                                    </div>
+                                    <h3>Loan Calculator</h3>
+                                    <p>Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/loan-interest-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-percent"></i></div>
-                                <h3>Loan Interest Calculator</h3>
-                                <p>Calculate total interest paid on any loan with detailed amortization by payment frequency.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-percent"></i></div>
+                                    </div>
+                                    <h3>Loan Interest Calculator</h3>
+                                    <p>Calculate total interest paid on any loan with detailed amortization by payment frequency.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/compound-interest-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
-                                <h3>Compound Interest Calculator</h3>
-                                <p>Project how your savings and investments grow over time with compound interest and recurring monthly contributions.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
+                                    </div>
+                                    <h3>Compound Interest Calculator</h3>
+                                    <p>Project how your savings and investments grow over time with compound interest and recurring monthly contributions.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/investment-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
-                                <h3>Investment Calculator</h3>
-                                <p>Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
+                                    </div>
+                                    <h3>Investment Calculator</h3>
+                                    <p>Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/budget-planner" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
-                                <h3>Budget Planner &amp; Expense Tracker</h3>
-                                <p>Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+                                    </div>
+                                    <h3>Budget Planner &amp; Expense Tracker</h3>
+                                    <p>Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/retirement-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
-                                <h3>Retirement Calculator</h3>
-                                <p>Determine how much money you need to retire comfortably, estimate your future nest egg balance, and calculate required monthly savings based on inflation and life expectancy.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
+                                    </div>
+                                    <h3>Retirement Calculator</h3>
+                                    <p>Determine how much money you need to retire comfortably, estimate your future nest egg balance, and calculate required monthly savings based on inflation and life expectancy.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/savings-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-piggy-bank"></i></div>
-                                <h3>Savings &amp; Strategy Calculator</h3>
-                                <p>Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-piggy-bank"></i></div>
+                                    </div>
+                                    <h3>Savings &amp; Strategy Calculator</h3>
+                                    <p>Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/credit-card-payoff-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-credit-card"></i></div>
-                                <h3>Credit Card Payoff &amp; Strategy Calculator</h3>
-                                <p>Calculate credit card debt payoff dates, expose minimum payment interest traps, analyze 0% APR balance transfer fees, and compare Avalanche vs Snowball payoff strategies.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-credit-card"></i></div>
+                                    </div>
+                                    <h3>Credit Card Payoff &amp; Strategy Calculator</h3>
+                                    <p>Calculate credit card debt payoff dates, expose minimum payment interest traps, analyze 0% APR balance transfer fees, and compare Avalanche vs Snowball payoff strategies.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/rent-vs-buy-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
-                                <h3>Rent vs. Buy Calculator</h3>
-                                <p>Comprehensive financial comparison of renting versus buying a home. Calculate net costs, equity buildup, break-even points, opportunity costs, and net worth over time with intelligent recommendations.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
+                                    </div>
+                                    <h3>Rent vs. Buy Calculator</h3>
+                                    <p>Comprehensive financial comparison of renting versus buying a home. Calculate net costs, equity buildup, break-even points, opportunity costs, and net worth over time with intelligent recommendations.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/house-affordability-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
-                                <h3>House Affordability Calculator</h3>
-                                <p>Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
+                                    </div>
+                                    <h3>House Affordability Calculator</h3>
+                                    <p>Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/inflation-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-arrow-trend-up"></i></div>
-                                <h3>Inflation Calculator</h3>
-                                <p>Calculate how inflation impacts your money&#39;s purchasing power over time and find out how much you will need in the future.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                                    </div>
+                                    <h3>Inflation Calculator</h3>
+                                    <p>Calculate how inflation impacts your money&#39;s purchasing power over time and find out how much you will need in the future.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/net-worth-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-scale-balanced"></i></div>
-                                <h3>Net Worth Calculator</h3>
-                                <p>Calculate your total net worth by tracking all assets and liabilities. See your asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-scale-balanced"></i></div>
+                                    </div>
+                                    <h3>Net Worth Calculator</h3>
+                                    <p>Calculate your total net worth by tracking all assets and liabilities. See your asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/fire-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-fire"></i></div>
-                                <h3>FIRE Calculator</h3>
-                                <p>Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-fire"></i></div>
+                                    </div>
+                                    <h3>FIRE Calculator</h3>
+                                    <p>Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/amortization-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-simple"></i></div>
-                                <h3>Amortization Calculator</h3>
-                                <p>Calculate loan payments, generate a complete amortization schedule, visualize principal and interest over time, and analyze the impact of extra payments.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-simple"></i></div>
+                                    </div>
+                                    <h3>Amortization Calculator</h3>
+                                    <p>Calculate loan payments, generate a complete amortization schedule, visualize principal and interest over time, and analyze the impact of extra payments.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/currency-converter" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-money-bill-transfer"></i></div>
-                                <h3>Currency Converter</h3>
-                                <p>Convert between 16+ global currencies with real-time exchange rates, inverse rates, and multi-currency comparison table.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                                    </div>
+                                    <h3>Currency Converter</h3>
+                                    <p>Convert between 16+ global currencies with real-time exchange rates, inverse rates, and multi-currency comparison table.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/auto-loan-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-car"></i></div>
-                                <h3>Auto Loan Calculator</h3>
-                                <p>Calculate monthly car payments, interest paid, trade-in value, sales tax, and full loan amortization.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-car"></i></div>
+                                    </div>
+                                    <h3>Auto Loan Calculator</h3>
+                                    <p>Calculate monthly car payments, interest paid, trade-in value, sales tax, and full loan amortization.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
                         
                             <a href="/tool/salary-calculator" class="tool-card">
-                                <div class="tool-icon icon-finance"><i class="fa-solid fa-money-bill-transfer"></i></div>
-                                <h3>Salary &amp; Paycheck Calculator</h3>
-                                <p>Calculate your net take-home pay, federal &amp; state taxes, FICA deductions, and hourly wage breakdown.</p>
-                                <span class="tag tag-finance">Finance</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-finance"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                                    </div>
+                                    <h3>Salary &amp; Paycheck Calculator</h3>
+                                    <p>Calculate your net take-home pay, federal &amp; state taxes, FICA deductions, and hourly wage breakdown.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-finance">Finance</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         
+                    </div>
+                    <div id="category-empty-filter" class="tool-not-found" style="display:none; padding:40px 20px;">
+                        <div class="not-found-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <h2>No matching calculators found</h2>
+                        <p>Try adjusting your search terms or browse all tools.</p>
                     </div>
                 </section>
             </div>

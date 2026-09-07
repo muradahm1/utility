@@ -5,6 +5,7 @@
     --border-color: #E2E8F0;
     --text-primary: #0F172A;
     --text-secondary: #64748B;
+    --text-muted: #64748B;
     --primary-color: #6366F1;
     --primary-hover: #4F46E5;
     --primary-light: #EEF2FF;
@@ -32,6 +33,7 @@
     --border-color: #334155;
     --text-primary: #F8FAFC;
     --text-secondary: #94A3B8;
+    --text-muted: #94A3B8;
     --primary-color: #6366F1;
     --primary-hover: #818CF8;
     --primary-light: #1E1B4B;
@@ -719,66 +721,318 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .icon-wrapper {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    transition: transform 0.2s ease;
+    font-size: 20px;
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
 }
 .category-card:hover .icon-wrapper {
     transform: scale(1.1);
 }
 .cat-finance { background: rgba(16,185,129,0.12); color: #10B981; }
 .cat-health { background: rgba(236,72,153,0.12); color: #EC4899; }
-.cat-business { background: rgba(139,92,246,0.12); color: #8B5CF6; }
+.cat-business { background: rgba(99,102,241,0.12); color: #6366F1; }
 .cat-education { background: rgba(59,130,246,0.12); color: #3B82F6; }
 .cat-construction { background: rgba(249,115,22,0.12); color: #F97316; }
-.cat-engineering { background: rgba(100,116,139,0.12); color: #64748B; }
+.cat-engineering { background: rgba(6,182,212,0.12); color: #06B6D4; }
+.cat-math { background: rgba(139,92,246,0.12); color: #8B5CF6; }
 
-.cat-details h3 { font-size: 14px; color: var(--text-primary); }
-.cat-details p { font-size: 12px; color: var(--text-secondary); }
+.cat-details h3 { font-size: 14px; color: var(--text-primary); font-weight: 700; }
+.cat-details p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
-.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+/* ── Modern Breadcrumb Navigation ─────────────────────────── */
+.breadcrumb-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.breadcrumb-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color var(--transition-fast);
+    font-weight: 500;
+}
+.breadcrumb-link:hover {
+    color: var(--primary-color);
+}
+.breadcrumb-sep {
+    font-size: 10px;
+    color: var(--border-color);
+    display: inline-flex;
+    align-items: center;
+}
+.breadcrumb-current {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* ── Modern Category Hero Card ────────────────────────────── */
+.category-hero-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.category-hero-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--cat-accent, var(--primary-color));
+}
+.category-hero-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+.category-hero-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-md);
+}
+.category-hero-body h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.25;
+    margin-bottom: 6px;
+}
+.category-hero-body p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+.category-hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.category-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+.category-badge-pill i {
+    color: var(--cat-accent, var(--primary-color));
+}
+
+/* Category Filter Input */
+.category-filter-bar {
+    display: flex;
+    align-items: center;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    padding: 8px 16px;
+    gap: 10px;
+    max-width: 440px;
+    transition: all var(--transition-base);
+}
+.category-filter-bar:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-focus);
+    background: var(--bg-card);
+}
+.category-filter-bar i {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+.category-filter-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    width: 100%;
+}
+
+/* ── Enhanced Tools Grid & Cards ──────────────────────────── */
+.tools-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+    gap: 20px; 
+}
+
 .tool-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding: 20px;
+    padding: 22px;
     text-decoration: none;
     display: flex;
     flex-direction: column;
-    transition: all 0.2s;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+    position: relative;
+    box-shadow: var(--shadow-sm);
 }
-.tool-card:hover { border-color: var(--primary-color); transform: translateY(-2px); }
+.tool-card:hover { 
+    border-color: var(--primary-color); 
+    transform: translateY(-4px); 
+    box-shadow: var(--shadow-lg); 
+}
+
+.tool-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
 .tool-icon {
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12px;
-    transition: transform 0.2s ease;
+    font-size: 18px;
+    transition: transform 0.25s ease;
 }
 .tool-card:hover .tool-icon {
-    transform: scale(1.1);
+    transform: scale(1.12);
 }
-.icon-home { background: rgba(79,70,229,0.12); color: #4F46E5; }
-.icon-health { background: rgba(236,72,153,0.12); color: #EC4899; }
-.icon-math { background: rgba(139,92,246,0.12); color: #8B5CF6; }
-.icon-finance { background: rgba(16,185,129,0.12); color: #10B981; }
-.icon-chart { background: rgba(249,115,22,0.12); color: #F97316; }
 
-.tool-card h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 6px; }
-.tool-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 16px; flex: 1; }
+/* Category-specific icon themes */
+.icon-home, .icon-finance { background: rgba(16,185,129,0.14); color: #10B981; }
+.icon-health { background: rgba(236,72,153,0.14); color: #EC4899; }
+.icon-math { background: rgba(139,92,246,0.14); color: #8B5CF6; }
+.icon-business { background: rgba(99,102,241,0.14); color: #6366F1; }
+.icon-education { background: rgba(59,130,246,0.14); color: #3B82F6; }
+.icon-construction { background: rgba(249,115,22,0.14); color: #F97316; }
+.icon-engineering { background: rgba(6,182,212,0.14); color: #06B6D4; }
+.icon-chart { background: rgba(249,115,22,0.14); color: #F97316; }
 
-.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; width: fit-content; }
+.tool-card h3 { 
+    font-size: 16px; 
+    font-weight: 700;
+    color: var(--text-primary); 
+    margin-bottom: 8px; 
+    line-height: 1.35;
+}
+.tool-card p { 
+    font-size: 13px; 
+    color: var(--text-secondary); 
+    line-height: 1.5; 
+    margin-bottom: 18px; 
+    flex: 1; 
+}
+
+.tool-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.tool-card-cta {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap var(--transition-fast);
+}
+.tool-card:hover .tool-card-cta {
+    gap: 8px;
+}
+
+/* Category-specific tag badges */
+.tag { 
+    display: inline-block; 
+    font-size: 11px; 
+    font-weight: 700; 
+    padding: 3px 9px; 
+    border-radius: 6px; 
+    width: fit-content; 
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
 .tag-finance { background: rgba(16,185,129,0.12); color: #10B981; }
 .tag-health { background: rgba(236,72,153,0.12); color: #EC4899; }
 .tag-math { background: rgba(139,92,246,0.12); color: #8B5CF6; }
+.tag-business { background: rgba(99,102,241,0.12); color: #6366F1; }
+.tag-education { background: rgba(59,130,246,0.12); color: #3B82F6; }
+.tag-construction { background: rgba(249,115,22,0.12); color: #F97316; }
+.tag-engineering { background: rgba(6,182,212,0.12); color: #06B6D4; }
+
+/* Category-specific Hero Themes */
+.theme-finance { --cat-accent: #10B981; }
+.theme-finance .category-hero-icon { background: rgba(16,185,129,0.15); color: #10B981; }
+
+.theme-health { --cat-accent: #EC4899; }
+.theme-health .category-hero-icon { background: rgba(236,72,153,0.15); color: #EC4899; }
+
+.theme-math { --cat-accent: #8B5CF6; }
+.theme-math .category-hero-icon { background: rgba(139,92,246,0.15); color: #8B5CF6; }
+
+.theme-business { --cat-accent: #6366F1; }
+.theme-business .category-hero-icon { background: rgba(99,102,241,0.15); color: #6366F1; }
+
+.theme-education { --cat-accent: #3B82F6; }
+.theme-education .category-hero-icon { background: rgba(59,130,246,0.15); color: #3B82F6; }
+
+.theme-construction { --cat-accent: #F97316; }
+.theme-construction .category-hero-icon { background: rgba(249,115,22,0.15); color: #F97316; }
+
+.theme-engineering { --cat-accent: #06B6D4; }
+.theme-engineering .category-hero-icon { background: rgba(6,182,212,0.15); color: #06B6D4; }
+
+@media (max-width: 768px) {
+    .category-hero-card {
+        padding: 20px 18px;
+    }
+    .category-hero-main {
+        flex-direction: column;
+        gap: 14px;
+    }
+    .category-hero-body h1 {
+        font-size: 22px;
+    }
+    .category-filter-bar {
+        max-width: 100%;
+    }
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* Why Us */
 .why-us-banner {

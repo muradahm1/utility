@@ -782,38 +782,61 @@ const categoryPageTemplate = (cat, catTools) => {
             </header>
 
             <div class="content-body">
-                <!-- Category Hero Banner -->
-                <section class="section-container" style="padding-top:1.5rem; padding-bottom:1rem;">
-                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem; font-size:0.875rem; color:var(--text-muted);">
-                        <a href="/" style="color:var(--text-muted); text-decoration:none;"><i class="fa-solid fa-house"></i> Home</a>
-                        <i class="fa-solid fa-chevron-right" style="font-size:0.7rem;"></i>
-                        <span style="color:var(--text-primary); font-weight:600;">${escapeHtml(cat.name)}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:1rem; margin-top:1rem;">
-                        <div class="icon-wrapper ${cat.iconClass}" style="width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem;">
+                <!-- Modern Breadcrumb Navigation -->
+                <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                    <a href="/" class="breadcrumb-link"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+                    <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+                    <span class="breadcrumb-current">${escapeHtml(cat.name)}</span>
+                </nav>
+
+                <!-- Modern Category Hero Card -->
+                <section class="category-hero-card theme-${cat.slug}">
+                    <div class="category-hero-main">
+                        <div class="category-hero-icon">
                             <i class="fa-solid ${cat.icon}"></i>
                         </div>
-                        <div>
-                            <h1 style="font-size:1.75rem; margin:0 0 0.25rem 0;">${escapeHtml(cat.heading)}</h1>
-                            <p style="color:var(--text-muted); margin:0; font-size:1rem;">${escapeHtml(cat.subheading)}</p>
+                        <div class="category-hero-body">
+                            <h1>${escapeHtml(cat.heading)}</h1>
+                            <p>${escapeHtml(cat.subheading)}</p>
+                            <div class="category-hero-badges">
+                                <span class="category-badge-pill"><i class="fa-solid fa-calculator"></i> <span id="category-filtered-count">${catTools.length}</span> Tools</span>
+                                <span class="category-badge-pill"><i class="fa-solid fa-bolt"></i> Instant &amp; Free</span>
+                                <span class="category-badge-pill"><i class="fa-solid fa-shield-halved"></i> 100% Private</span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="category-filter-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="category-filter-input" id="category-filter-input" placeholder="Filter ${escapeHtml(cat.name).toLowerCase()} calculators..." aria-label="Filter ${escapeHtml(cat.name)} calculators">
                     </div>
                 </section>
 
                 <!-- Pre-rendered Tools Grid -->
                 <section class="section-container" id="all-tools">
                     <div class="section-header">
-                        <h2>Available ${escapeHtml(cat.name)} Tools (${catTools.length})</h2>
+                        <h2>Available ${escapeHtml(cat.name)} Tools</h2>
                     </div>
                     <div class="tools-grid">
                         ${catTools.map(t => `
                             <a href="/tool/${t.slug}" class="tool-card">
-                                <div class="tool-icon ${t.iconClass || 'icon-finance'}"><i class="fa-solid ${t.icon || 'fa-calculator'}"></i></div>
-                                <h3>${escapeHtml(t.name)}</h3>
-                                <p>${escapeHtml(t.description)}</p>
-                                <span class="tag ${t.tagClass || 'tag-finance'}">${escapeHtml(t.category)}</span>
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon ${t.iconClass || ('icon-' + cat.slug)}"><i class="fa-solid ${t.icon || 'fa-calculator'}"></i></div>
+                                    </div>
+                                    <h3>${escapeHtml(t.name)}</h3>
+                                    <p>${escapeHtml(t.description)}</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag ${t.tagClass || ('tag-' + cat.slug)}">${escapeHtml(t.category)}</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
                             </a>
                         `).join('\n                        ')}
+                    </div>
+                    <div id="category-empty-filter" class="tool-not-found" style="display:none; padding:40px 20px;">
+                        <div class="not-found-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <h2>No matching calculators found</h2>
+                        <p>Try adjusting your search terms or browse all tools.</p>
                     </div>
                 </section>
             </div>

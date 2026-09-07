@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initAuthUI();
     initFooterYear();
-    initQuickNav();
+    initCategoryFilter();
     initBackToTop();
 });
 
@@ -17,33 +17,34 @@ function initFooterYear() {
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 }
 
-// Quick navigation: home shortcut for non-home pages
-function initQuickNav() {
-    const header = document.querySelector('.top-header');
-    if (!header) return;
+// Real-time filter for category pages
+function initCategoryFilter() {
+    const filterInput = document.getElementById('category-filter-input');
+    if (!filterInput) return;
 
-    const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
-    if (isHomePage) return;
+    const cards = document.querySelectorAll('.tools-grid .tool-card');
+    const emptyMsg = document.getElementById('category-empty-filter');
+    const countEl = document.getElementById('category-filtered-count');
 
-    let btn = document.getElementById('home-nav-btn');
-    if (!btn) {
-        btn = document.createElement('button');
-        btn.id = 'home-nav-btn';
-        btn.className = 'home-nav-btn';
-        btn.type = 'button';
-        btn.setAttribute('aria-label', 'Go to home');
-        btn.innerHTML = '<i class="fa-solid fa-house"></i><span>Home</span>';
-        btn.addEventListener('click', () => {
-            window.location.href = '/';
+    filterInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = (card.querySelector('h3')?.textContent || '').toLowerCase();
+            const desc = (card.querySelector('p')?.textContent || '').toLowerCase();
+            const matches = !query || title.includes(query) || desc.includes(query);
+            card.style.display = matches ? '' : 'none';
+            if (matches) visibleCount++;
         });
 
-        const hamburger = header.querySelector('.hamburger-btn');
-        if (hamburger) {
-            header.insertBefore(btn, hamburger);
-        } else {
-            header.prepend(btn);
+        if (emptyMsg) {
+            emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
         }
-    }
+        if (countEl) {
+            countEl.textContent = visibleCount;
+        }
+    });
 }
 
 // Floating back-to-top button
