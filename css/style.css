@@ -3610,5 +3610,38 @@ body.has-maintenance-banner {
     color: var(--text-secondary);
 }
 
+/* ── B2B Embed Mode & Table Performance ──────────────────────── */
+body.is-embedded .sidebar,
+body.is-embedded .top-header,
+body.is-embedded .site-footer,
+body.is-embedded .cookie-consent-banner,
+body.is-embedded .skip-link {
+    display: none !important;
+}
+body.is-embedded .app-container {
+    display: block !important;
+}
+body.is-embedded .main-wrapper {
+    margin-left: 0 !important;
+    padding: 8px !important;
+    min-height: auto !important;
+}
+body.is-embedded .content-body {
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+body.is-embedded .tool-runner-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 16px !important;
+    background: transparent !important;
+}
 
-
+/* Responsive Table Performance */
+.table-wrapper {
+    max-height: 480px;
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}

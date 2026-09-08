@@ -233,30 +233,34 @@ function initLegacyRunner(tool, slug, container) {
     const skeleton = document.getElementById('tool-loading-skeleton');
     if (skeleton) skeleton.style.display = 'none';
 
-    // ── Phase 5.9: Load values from shareable URL (?input=...) ─
-    const urlInput = new URLSearchParams(window.location.search).get('input');
-    if (urlInput) {
-        try {
-            const inputParams = new URLSearchParams(decodeURIComponent(urlInput));
-            tool.fields.forEach(f => {
-                if (inputParams.has(f.id)) {
-                    const raw = inputParams.get(f.id);
-                    if (f.type === 'number' || f.type === 'range') {
-                        const n = parseFloat(raw);
-                        if (!isNaN(n)) values[f.id] = n;
-                    } else if (f.type === 'select') {
-                        values[f.id] = raw;
-                    }
-                }
-            });
-            valuesA = { ...values };
-            valuesB = JSON.parse(JSON.stringify(values));
-        } catch (e) {
-            console.warn('Failed to parse input URL params:', e);
-        }
+    // ── Phase 5.9: Load values from shareable URL (?input=... or direct ?field=...) ─
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('embed') === '1' || searchParams.get('embed') === 'true') {
+        document.body.classList.add('is-embedded');
     }
 
-    // ── Phase 5.9: Shareable result URLs (#input=...) ──────────
+    const urlInput = searchParams.get('input');
+    const inputParams = urlInput ? new URLSearchParams(decodeURIComponent(urlInput)) : searchParams;
+
+    let hasUrlParams = false;
+    tool.fields.forEach(f => {
+        if (inputParams.has(f.id)) {
+            const raw = inputParams.get(f.id);
+            if (f.type === 'number' || f.type === 'range') {
+                const n = parseFloat(raw);
+                if (!isNaN(n)) { values[f.id] = n; hasUrlParams = true; }
+            } else if (f.type === 'select') {
+                values[f.id] = raw;
+                hasUrlParams = true;
+            }
+        }
+    });
+    if (hasUrlParams) {
+        valuesA = { ...values };
+        valuesB = JSON.parse(JSON.stringify(values));
+    }
+
+    // ── Phase 5.9: Shareable result URLs (?input=...) ──────────
     function updateShareUrl() {
         const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
         const params = new URLSearchParams();
@@ -267,7 +271,7 @@ function initLegacyRunner(tool, slug, container) {
         });
         const hash = params.toString();
         const url = window.location.pathname + (hash ? '?input=' + encodeURIComponent(hash) : '');
-        if (window.location.search !== url) {
+        if (window.location.search !== url && !searchParams.get('embed')) {
             history.replaceState(null, '', url);
         }
     }

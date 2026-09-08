@@ -1029,14 +1029,15 @@ const TOOLS = {
       // dollars, producing an apples-to-oranges comparison (ISSUE-004).
       const targetNestEgg   = roundTo(desiredIncomeToday * 25, 2);
 
-      // ── Monthly and annual retirement income (4% rule)
+      // ── Monthly and annual retirement income (4% rule in TODAY's purchasing power)
       const monthlyRetireIncome = roundTo(totalNestEgg * 0.04 / 12, 2);
       const annualRetireIncome  = roundTo(totalNestEgg * 0.04, 2);
 
-      // ── Inflation-adjusted monthly income (today's dollars)
-      // PV = FV / (1 + inflation)^years
-      const inflationAdjMonthly = roundTo(
-        monthlyRetireIncome / Math.pow(1 + inflationRate, yearsToRetire), 2
+      // ── Nominal future monthly income (future inflated dollars at retirement age)
+      // Since totalNestEgg is already in constant today's dollars (Fisher real return),
+      // nominal future income scales by inflation factor rather than double-discounting.
+      const futureNominalMonthly = roundTo(
+        monthlyRetireIncome * Math.pow(1 + inflationRate, yearsToRetire), 2
       );
 
       // ── Achieved replacement rate
@@ -1089,15 +1090,15 @@ const TOOLS = {
 
       return {
         stats: [
-          { label: 'Projected Nest Egg',             value: fmt(totalNestEgg),          highlight: true },
-          { label: 'Target Nest Egg (4% Rule)',       value: fmt(targetNestEgg)                         },
-          { label: 'Status',                          value: status,                     warn: totalNestEgg < targetNestEgg },
-          { label: 'Monthly Retirement Income',       value: fmt(monthlyRetireIncome)                   },
-          { label: 'Annual Retirement Income',        value: fmt(annualRetireIncome)                    },
-          { label: 'Total Contributions',             value: fmt(totalContribs)                         },
-          { label: 'Investment Growth',               value: fmt(totalGrowth)                           },
-          { label: 'Inflation-Adj. Monthly Income',   value: fmt(inflationAdjMonthly)                   },
-          { label: 'Income Replacement Rate',         value: pct(achievedReplaceRate / 100)             },
+          { label: "Projected Nest Egg (Today's $)",    value: fmt(totalNestEgg),          highlight: true },
+          { label: "Target Nest Egg (4% Rule)",         value: fmt(targetNestEgg)                         },
+          { label: 'Status',                            value: status,                     warn: totalNestEgg < targetNestEgg },
+          { label: "Monthly Income (Today's $)",        value: fmt(monthlyRetireIncome)                   },
+          { label: "Annual Income (Today's $)",         value: fmt(annualRetireIncome)                    },
+          { label: 'Total Contributions',               value: fmt(totalContribs)                         },
+          { label: 'Investment Growth',                 value: fmt(totalGrowth)                           },
+          { label: 'Future Monthly (At Retirement $)',  value: fmt(futureNominalMonthly)                  },
+          { label: 'Income Replacement Rate',           value: pct(achievedReplaceRate / 100)             },
           { label: 'Additional Monthly Savings Needed', value: fmt(additionalMonthlyNeeded), warn: additionalMonthlyNeeded > 0 },
         ],
         chart: { principal: totalContribs, totalInterest: totalGrowth },
@@ -1327,11 +1328,6 @@ const TOOLS = {
         const tUse = Math.max(t, 1);
         const fvNom = fv(P0, M, rNom/k, k*tUse);
         const fvPost = fv(P0, M, rNet/k, k*tUse);
-        // Real future value (today's dollars): compound each period's balance and
-        // contributions at the real post-tax rate (Fisher equation). Previously the
-        // whole post-tax FV was divided by a single inflation factor, which
-        // over-discounted contributions made in future years and understated the
-        // real buying power (ISSUE-005).
         const fvReal = roundTo(fv(P0, M, rReal/k, k*tUse), 2);
         const rowsS = []; let run = P0;
         for (let y = 1; y <= tUse; y++) {
@@ -1342,10 +1338,10 @@ const TOOLS = {
           run = nE;
         }
         return { stats: [
-          { label: 'Real Return (Post-Tax, Post-Inflation)', value: pct(rReal/100), highlight: true },
+          { label: 'Real Return (Post-Tax, Post-Inflation)', value: pct(rReal), highlight: true },
           { label: 'Advertised APY', value: pct(rNom) },
-          { label: 'Post-Tax Nominal Return', value: pct(rNet/100) },
-          { label: 'Inflation Drag', value: pct(roundTo(rNet - rReal, 4)/100), warn: true },
+          { label: 'Post-Tax Nominal Return', value: pct(rNet) },
+          { label: 'Inflation Drag', value: pct(roundTo(rNet - rReal, 4)), warn: true },
           { label: "Real Future Value (Today's $)", value: fmt(fvReal) },
           { label: 'Post-Tax Future Value (Nominal $)', value: fmt(fvPost) },
           { label: 'Nominal Future Value (Pre-Tax $)', value: fmt(fvNom) },
@@ -1355,8 +1351,8 @@ const TOOLS = {
           { key: 'deposits', label: 'Deposits', format: 'currency' }, { key: 'nominalEnd', label: 'Nominal End', format: 'currency' },
           { key: 'postTaxEnd', label: 'Post-Tax End', format: 'currency' }, { key: 'realEndTodayDollars', label: "Real (Today's $)", format: 'currency', emphasis: true } ], rows: rowsS },
         insight: { tone: 'warning', icon: 'fa-percent',
-          headline: 'Your bank advertises ' + pct(rNom) + ' APY, but your real return is only ' + pct(rRealD/100) + '.',
-          detail: 'After ' + pct(tau) + ' tax and ' + pct(pi) + ' inflation, your purchasing-power yield collapses to ' + pct(rRealD/100) + '. Over ' + tUse + ' years, ' + fmt(P0) + ' plus ' + fmt(M) + '/month grows to ' + fmt(fvReal) + " in today's dollars." } };
+          headline: 'Your bank advertises ' + pct(rNom) + ' APY, but your real return is only ' + pct(rReal) + '.',
+          detail: 'After ' + pct(tau) + ' tax and ' + pct(pi) + ' inflation, your purchasing-power yield collapses to ' + pct(rReal) + '. Over ' + tUse + ' years, ' + fmt(P0) + ' plus ' + fmt(M) + '/month grows to ' + fmt(fvReal) + " in today's dollars." } };
       }
 
       if (v.mode === 'goal-timeline') {
@@ -6382,6 +6378,260 @@ const TOOLS = {
     ]
   },
 
+  'emergency-fund-calculator': {
+    id: 'emergency-fund-calculator',
+    name: 'Emergency Fund Calculator',
+    category: 'Finance',
+    icon: 'fa-shield-halved',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate how much you need in an emergency fund based on your essential expenses, target runway, and savings timeline.',
+    metaTitle: 'Emergency Fund Calculator — How Much Savings Do You Need? | GetCalcu',
+    metaDescription: 'Free emergency fund calculator. Calculate your 3, 6, or 9-month emergency savings target based on essential expenses and track your funding runway.',
+    keywords: ['emergency fund calculator', 'how much emergency fund', 'safety net savings', 'emergency savings target', '3 month emergency fund', '6 month emergency fund'],
+    fields: [
+      { id: 'housing_rent', label: 'Monthly Housing / Rent / Mortgage ($)', type: 'number', default: 1500, hint: 'Rent, mortgage P&I, property taxes, home insurance' },
+      { id: 'food_groceries', label: 'Monthly Groceries & Essentials ($)', type: 'number', default: 600, hint: 'Groceries, household supplies (excluding dining out)' },
+      { id: 'utilities_bills', label: 'Utilities, Phone & Internet ($)', type: 'number', default: 300, hint: 'Electric, gas, water, cell phone, internet' },
+      { id: 'transportation', label: 'Transportation & Gas ($)', type: 'number', default: 400, hint: 'Auto loan, fuel, insurance, transit passes' },
+      { id: 'healthcare_insurance', label: 'Healthcare & Insurance Premiums ($)', type: 'number', default: 250, hint: 'Health, dental, vision, life insurance out-of-pocket' },
+      { id: 'debt_minimums', label: 'Minimum Required Debt Payments ($)', type: 'number', default: 250, hint: 'Credit card minimums, student loans, personal loans' },
+      { id: 'current_savings', label: 'Current Emergency Savings Balance ($)', type: 'number', default: 4000, hint: 'Cash in checking or high-yield savings accounts' },
+      { id: 'monthly_contribution', label: 'Monthly Amount You Can Save ($)', type: 'number', default: 500, hint: 'Planned monthly contribution toward your emergency fund' },
+      { id: 'target_runway', label: 'Target Runway (Months of Expenses)', type: 'select', default: '6', options: [
+        { value: '3', label: '3 Months (Dual-income, stable jobs)' },
+        { value: '6', label: '6 Months (Recommended standard safety net)' },
+        { value: '9', label: '9 Months (Single-earner or volatile industry)' },
+        { value: '12', label: '12 Months (Freelancer, self-employed, commission)' },
+      ]},
+      { id: 'hysa_rate', label: 'High-Yield Savings Annual APY (%)', type: 'number', default: 4.5, hint: 'Annual percentage yield earned while funds are parked' },
+    ],
+    presets: [
+      { label: 'Starter 3-Month Fund', values: { housing_rent: 1200, food_groceries: 450, utilities_bills: 200, transportation: 250, healthcare_insurance: 150, debt_minimums: 150, current_savings: 1500, monthly_contribution: 400, target_runway: '3', hysa_rate: 4.5 } },
+      { label: 'Family 6-Month Safety', values: { housing_rent: 2000, food_groceries: 800, utilities_bills: 350, transportation: 500, healthcare_insurance: 350, debt_minimums: 300, current_savings: 6000, monthly_contribution: 650, target_runway: '6', hysa_rate: 4.5 } },
+      { label: 'Freelancer 12-Month Cushion', values: { housing_rent: 1800, food_groceries: 600, utilities_bills: 250, transportation: 300, healthcare_insurance: 400, debt_minimums: 200, current_savings: 8000, monthly_contribution: 800, target_runway: '12', hysa_rate: 4.5 } },
+    ],
+    calculate(v) {
+      const housing = safeNum(v.housing_rent, 1500);
+      const food = safeNum(v.food_groceries, 600);
+      const utilities = safeNum(v.utilities_bills, 300);
+      const transport = safeNum(v.transportation, 400);
+      const healthcare = safeNum(v.healthcare_insurance, 250);
+      const debt = safeNum(v.debt_minimums, 250);
+      const savings = safeNum(v.current_savings, 4000);
+      const contrib = safeNum(v.monthly_contribution, 500);
+      const runwayMonths = safeNum(v.target_runway, 6);
+      const apy = safeNum(v.hysa_rate, 4.5) / 100;
+
+      const monthlyExpenses = roundTo(housing + food + utilities + transport + healthcare + debt, 2);
+      const targetFund = roundTo(monthlyExpenses * runwayMonths, 2);
+      const currentRunway = monthlyExpenses > 0 ? roundTo(savings / monthlyExpenses, 1) : 0;
+      const fundedPct = targetFund > 0 ? roundTo(Math.min(100, (savings / targetFund) * 100), 1) : 100;
+      const shortfall = roundTo(Math.max(0, targetFund - savings), 2);
+      const surplus = roundTo(Math.max(0, savings - targetFund), 2);
+      const monthsNeeded = (shortfall > 0 && contrib > 0) ? Math.ceil(shortfall / contrib) : 0;
+      const annualHYSAInterest = roundTo(targetFund * apy, 2);
+
+      let status = 'Needs Attention';
+      if (savings >= targetFund) {
+        status = 'Fully Funded ✓';
+      } else if (savings >= targetFund * 0.5) {
+        status = 'Halfway Funded';
+      }
+
+      // Milestones schedule
+      const schedule = [];
+      let balance = savings;
+      const monthlyRate = apy / 12;
+      for (let m = 1; m <= Math.min(60, Math.max(12, monthsNeeded)); m++) {
+        const interest = roundTo(balance * monthlyRate, 2);
+        balance = roundTo(balance + contrib + interest, 2);
+        schedule.push({
+          month: `Month ${m}`,
+          payment: contrib,
+          interest: interest,
+          principal: contrib,
+          balance: balance,
+        });
+        if (balance >= targetFund && m >= monthsNeeded) break;
+      }
+
+      return {
+        stats: [
+          { label: 'Target Emergency Fund', value: fmt(targetFund), highlight: true },
+          { label: 'Monthly Essential Expenses', value: fmt(monthlyExpenses) },
+          { label: 'Current Savings Balance', value: fmt(savings) },
+          { label: 'Funded Progress', value: `${fundedPct}%`, warn: fundedPct < 100 },
+          { label: 'Current Runway', value: `${currentRunway} months` },
+          { label: shortfall > 0 ? 'Funding Shortfall' : 'Funding Surplus', value: fmt(shortfall > 0 ? shortfall : surplus), warn: shortfall > 0 },
+          { label: 'Months to Reach Goal', value: monthsNeeded > 0 ? `${monthsNeeded} months` : 'Target Achieved' },
+          { label: 'Annual Interest in HYSA', value: fmt(annualHYSAInterest) },
+        ],
+        chart: {
+          principal: savings,
+          totalInterest: shortfall,
+        },
+        table: schedule,
+        insight: {
+          tone: shortfall === 0 ? 'positive' : 'neutral',
+          icon: shortfall === 0 ? 'fa-circle-check' : 'fa-shield-halved',
+          headline: shortfall === 0
+            ? `Congratulations! Your emergency fund covers ${currentRunway} months of essential expenses.`
+            : `You need ${fmt(shortfall)} more to reach your ${runwayMonths}-month safety net target.`,
+          detail: shortfall > 0 && contrib > 0
+            ? `At ${fmt(contrib)}/month, you will reach your full ${fmt(targetFund)} target in approximately ${monthsNeeded} months (saving in a ${pct(apy)} HYSA adds ${fmt(annualHYSAInterest)}/yr in passive interest).`
+            : `Once fully funded at ${fmt(targetFund)}, park the money in a High-Yield Savings Account to earn ${fmt(annualHYSAInterest)} in annual interest while remaining completely liquid.`
+        }
+      };
+    },
+    article: {
+      heading: 'How Much Should You Have in an Emergency Fund?',
+      intro: 'An emergency fund is liquid cash set aside to cover unexpected life events—such as sudden job loss, urgent medical emergencies, home repairs, or major auto breakdowns—without resorting to high-interest credit cards or pulling from long-term retirement investments.',
+      sections: [
+        { heading: 'The 3 to 6 Month Rule of Thumb', body: 'Financial advisors generally recommend keeping 3 to 6 months worth of essential living expenses in a dedicated, FDIC-insured High-Yield Savings Account (HYSA). If you have stable dual household incomes, 3 months may suffice. If you are a freelancer, single-income earner, or work in a cyclical industry, 6 to 12 months provides crucial peace of mind.' },
+        { heading: 'What Counts as an "Essential Expense"?', body: 'Only include non-negotiable survival expenses: rent or mortgage, basic groceries, utilities, transportation, health insurance, and minimum debt payments. Exclude discretionary dining out, entertainment, vacations, and luxury subscriptions.' }
+      ]
+    },
+    howTo: [
+      'Tally your monthly essential obligations (rent/mortgage, utilities, food, transport, insurance, minimum debt).',
+      'Select your target safety runway (standard recommendation is 3 to 6 months; freelancers should aim for 9 to 12 months).',
+      'Input your current cash savings and how much you can comfortably contribute each month.',
+      'Review your target emergency fund goal, current months of runway, and the timeline to become fully funded.'
+    ],
+    examples: [
+      { title: 'Standard 6-Month Fund', input: '$3,300/mo expenses, 6 months runway, $4,000 saved', result: 'Target: $19,800 | Shortfall: $15,800 | 32 months at $500/mo' }
+    ],
+    formula: 'Target Fund = Total Monthly Essential Expenses × Desired Runway Months',
+    faqs: [
+      { q: 'Where should I keep my emergency fund?', a: 'Keep your emergency fund in a dedicated High-Yield Savings Account (HYSA) or Money Market Account (MMA) that is FDIC-insured. Avoid investing emergency reserves in volatile stocks or locking them into long-term CDs with early withdrawal penalties.' },
+      { q: 'Should I pay off debt before building an emergency fund?', a: 'Most financial planners recommend building a "starter emergency fund" of $1,000 to 1 month of expenses first, then aggressively paying down high-interest credit cards, and finally expanding the fund to 3-6 months.' }
+    ]
+  },
+
+  '401k-calculator': {
+    id: '401k-calculator',
+    name: '401(k) Retirement Growth Calculator',
+    category: 'Finance',
+    icon: 'fa-landmark',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Project your 401(k) retirement balance, company match growth, and tax-advantaged compound interest.',
+    metaTitle: '401(k) Calculator — Employer Match & Retirement Growth | GetCalcu',
+    metaDescription: 'Calculate your 401(k) balance at retirement. Account for employee contributions, employer company match, annual salary growth, and compound interest.',
+    keywords: ['401k calculator', '401k retirement calculator', 'company match calculator', '401k growth', 'retirement savings projection'],
+    fields: [
+      { id: 'current_age', label: 'Current Age', type: 'number', default: 30, hint: 'Your current age in years' },
+      { id: 'retire_age', label: 'Planned Retirement Age', type: 'number', default: 65, hint: 'Target age when you plan to stop working' },
+      { id: 'annual_salary', label: 'Current Gross Annual Salary ($)', type: 'number', default: 75000, hint: 'Pre-tax gross salary' },
+      { id: 'current_balance', label: 'Current 401(k) Balance ($)', type: 'number', default: 25000, hint: 'Total existing balance across all 401(k) accounts' },
+      { id: 'employee_contrib_pct', label: 'Employee Contribution (% of Salary)', type: 'number', default: 8, hint: 'Percentage of salary deducted into your 401(k)' },
+      { id: 'employer_match_pct', label: 'Employer Match Rate (%)', type: 'number', default: 50, hint: 'e.g., 50% match (company puts in $0.50 for every $1.00 you contribute)' },
+      { id: 'employer_match_limit_pct', label: 'Employer Match Limit (% of Salary)', type: 'number', default: 6, hint: 'e.g., up to 6% of your salary' },
+      { id: 'annual_salary_growth', label: 'Expected Annual Salary Growth (%)', type: 'number', default: 2.5, hint: 'Average annual merit or cost-of-living raise' },
+      { id: 'annual_return', label: 'Expected Annual Investment Return (%)', type: 'number', default: 7.5, hint: 'Historical S&P 500 average is ~7-10% before inflation' },
+    ],
+    presets: [
+      { label: 'Average Contributor', values: { current_age: 30, retire_age: 65, annual_salary: 75000, current_balance: 25000, employee_contrib_pct: 8, employer_match_pct: 50, employer_match_limit_pct: 6, annual_salary_growth: 2.5, annual_return: 7.5 } },
+      { label: 'Aggressive Saver (Max Match)', values: { current_age: 26, retire_age: 65, annual_salary: 65000, current_balance: 12000, employee_contrib_pct: 12, employer_match_pct: 100, employer_match_limit_pct: 5, annual_salary_growth: 3.0, annual_return: 8.0 } },
+      { label: 'Mid-Career Booster', values: { current_age: 42, retire_age: 65, annual_salary: 110000, current_balance: 140000, employee_contrib_pct: 10, employer_match_pct: 50, employer_match_limit_pct: 6, annual_salary_growth: 2.0, annual_return: 7.0 } },
+    ],
+    calculate(v) {
+      const currentAge = safeNum(v.current_age, 30);
+      const retireAge = safeNum(v.retire_age, 65);
+      let salary = safeNum(v.annual_salary, 75000);
+      let balance = safeNum(v.current_balance, 25000);
+      const empPct = safeNum(v.employee_contrib_pct, 8) / 100;
+      const matchPct = safeNum(v.employer_match_pct, 50) / 100;
+      const matchLimitPct = safeNum(v.employer_match_limit_pct, 6) / 100;
+      const salaryGrowth = safeNum(v.annual_salary_growth, 2.5) / 100;
+      const returnRate = safeNum(v.annual_return, 7.5) / 100;
+
+      if (retireAge <= currentAge) {
+        return errorResult('Planned retirement age must be greater than current age.');
+      }
+
+      const yearsToRetire = retireAge - currentAge;
+      let totalEmpContribs = 0;
+      let totalMatchContribs = 0;
+      const schedule = [];
+
+      for (let y = 1; y <= yearsToRetire; y++) {
+        // Annual employee contribution (capped at $23,500 statutory 2026 baseline limit)
+        const empContrib = Math.min(salary * empPct, 23500);
+        // Company match: matches employee contribution up to employer_match_limit_pct of salary
+        const eligibleSalary = salary * Math.min(empPct, matchLimitPct);
+        const matchContrib = eligibleSalary * matchPct;
+
+        const totalYearContrib = empContrib + matchContrib;
+        const interest = roundTo((balance + totalYearContrib / 2) * returnRate, 2);
+        balance = roundTo(balance + totalYearContrib + interest, 2);
+
+        totalEmpContribs = roundTo(totalEmpContribs + empContrib, 2);
+        totalMatchContribs = roundTo(totalMatchContribs + matchContrib, 2);
+
+        schedule.push({
+          month: `Age ${currentAge + y}`,
+          payment: roundTo(totalYearContrib, 2),
+          principal: roundTo(empContrib, 2),
+          interest: roundTo(matchContrib, 2),
+          balance: balance,
+        });
+
+        salary = roundTo(salary * (1 + salaryGrowth), 2);
+      }
+
+      const totalContribs = roundTo(safeNum(v.current_balance, 25000) + totalEmpContribs + totalMatchContribs, 2);
+      const totalGrowth = roundTo(balance - totalContribs, 2);
+      const monthly4PctIncome = roundTo((balance * 0.04) / 12, 2);
+      const annual4PctIncome = roundTo(balance * 0.04, 2);
+
+      return {
+        stats: [
+          { label: 'Projected 401(k) Balance', value: fmt(balance), highlight: true },
+          { label: 'Total Employee Contributions', value: fmt(totalEmpContribs) },
+          { label: 'Total Employer Match ("Free Money")', value: fmt(totalMatchContribs), highlight: true },
+          { label: 'Investment Compound Growth', value: fmt(totalGrowth) },
+          { label: 'Monthly Retirement Income (4% Rule)', value: fmt(monthly4PctIncome) },
+          { label: 'Annual Retirement Income (4% Rule)', value: fmt(annual4PctIncome) },
+          { label: 'Total Years of Compounding', value: `${yearsToRetire} years` },
+          { label: 'Final Salary at Retirement', value: fmt(salary) },
+        ],
+        chart: {
+          principal: totalEmpContribs,
+          totalInterest: totalMatchContribs + totalGrowth,
+        },
+        table: schedule,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-piggy-bank',
+          headline: `Your 401(k) is projected to reach ${fmt(balance)} by age ${retireAge}.`,
+          detail: `Your employer contributes ${fmt(totalMatchContribs)} in company matching funds—representing instant, risk-free returns. Under the 4% safe withdrawal rule, this nest egg generates ${fmt(monthly4PctIncome)}/month in retirement income.`
+        }
+      };
+    },
+    article: {
+      heading: 'Maximizing Your 401(k) Retirement Plan & Employer Match',
+      intro: 'A 401(k) is an employer-sponsored, tax-advantaged defined-contribution retirement account. Understanding how compounding growth and company matching work is the single most powerful step you can take toward financial independence.',
+      sections: [
+        { heading: 'Never Leave the Employer Match on the Table', body: 'If your employer offers a 50% match up to 6% of your salary, contributing at least 6% gives you an instant, guaranteed 50% return on your money. Always contribute enough to capture the full match before funding other accounts.' },
+        { heading: 'Pre-Tax Compounding Power', body: 'Because traditional 401(k) contributions are deducted pre-tax, your taxable income decreases today while your full dollar amount compounds tax-deferred over decades.' }
+      ]
+    },
+    howTo: [
+      'Enter your current age and planned retirement age.',
+      'Enter your current salary and existing 401(k) balance.',
+      'Input your contribution percentage and your company match terms (e.g. 50% match up to 6%).',
+      'Review your projected total nest egg, captured company match, and monthly retirement income.'
+    ],
+    examples: [
+      { title: '30-Year-Old Starting with $25k', input: '$75,000 salary, 8% contrib, 50% match to 6%, 7.5% return', result: 'Projected Balance: ~$1.9 Million at Age 65' }
+    ],
+    formula: 'Future Balance = PV(1+r)^n + ∑ [Annual Contribs × (1+r)^(n-t)]',
+    faqs: [
+      { q: 'What is the 401(k) contribution limit?', a: 'For 2026, the IRS employee elective deferral limit is $23,500 ($31,000 for workers aged 50 and older utilizing catch-up contributions).' },
+      { q: 'What is the difference between Traditional and Roth 401(k)?', a: 'Traditional 401(k) contributions are made with pre-tax dollars, lowering your taxable income today and taxing withdrawals in retirement. Roth 401(k) contributions are made with post-tax dollars, allowing completely tax-free withdrawals in retirement.' }
+    ]
+  },
 };
 
 if (typeof window !== 'undefined') {

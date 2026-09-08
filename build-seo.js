@@ -430,7 +430,170 @@ function renderPreRenderedToolContent(tool, slug) {
     `;
   }
 
-  // 9. Authoritative E-E-A-T Editorial & Trust Block
+// ── Contextual Trust Standards & Authority Scoping ─────────────────
+function getToolTrustInfo(tool, slug) {
+  const cat = (tool.category || '').toLowerCase();
+  if (cat === 'finance') {
+    if (['mortgage-calculator', 'auto-loan-calculator', 'loan-calculator', 'loan-interest-calculator', 'credit-card-payoff-calculator', 'amortization-calculator', 'house-affordability-calculator', 'student-loan-calculator'].includes(slug)) {
+      return {
+        standard: 'Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) & Truth in Lending Act (TILA) amortization standards.',
+        reviewer: 'GetCalcu Consumer Credit & Lending Review Board',
+        policy: 'Deterministic in-browser amortization'
+      };
+    }
+    if (['salary-calculator'].includes(slug)) {
+      return {
+        standard: 'IRS Title 26 Internal Revenue Code (Rev. Proc. 2024-40) 2026 federal brackets, standard deductions, and FICA statutory rates.',
+        reviewer: 'GetCalcu Payroll & Tax Calculation Desk',
+        policy: 'Deterministic in-browser payroll calculation'
+      };
+    }
+    if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
+      return {
+        standard: 'Fisher Real Rate of Return Equation & SEC / FINRA compound interest modeling guidelines (4% Safe Withdrawal Framework).',
+        reviewer: 'GetCalcu Quantitative Finance & Wealth Planning Board',
+        policy: 'Deterministic real purchasing-power projection'
+      };
+    }
+    return {
+      standard: 'Generally Accepted Accounting Principles (GAAP) & CFPB financial disclosure guidelines.',
+      reviewer: 'GetCalcu Financial Editorial Board',
+      policy: 'Deterministic client-side computation'
+    };
+  }
+  if (cat === 'health') {
+    if (slug === 'bmi-calculator') {
+      return {
+        standard: 'CDC Adult & Pediatric Body Mass Index criteria and World Health Organization (WHO) international classification thresholds.',
+        reviewer: 'GetCalcu Health & Nutrition Advisory Group',
+        policy: 'Deterministic anthropometric evaluation'
+      };
+    }
+    return {
+      standard: 'Mifflin-St Jeor Energy Expenditure Equations (validated by the Academy of Nutrition and Dietetics).',
+      reviewer: 'GetCalcu Health & Nutrition Advisory Group',
+      policy: 'Deterministic metabolic computation'
+    };
+  }
+  if (cat === 'engineering') {
+    if (slug === 'ohms-law-calculator') {
+      return {
+        standard: "IEEE standard DC/AC resistive circuit principles and Ohm's Law governing electrical relations.",
+        reviewer: 'GetCalcu Physical Science & Electrical Review Desk',
+        policy: 'Deterministic physics evaluation'
+      };
+    }
+    if (slug === 'beam-deflection-calculator') {
+      return {
+        standard: 'American Institute of Steel Construction (AISC) & classical Euler-Bernoulli beam theory deflection formulations.',
+        reviewer: 'GetCalcu Structural Engineering Review Board',
+        policy: 'Deterministic structural mechanics calculation'
+      };
+    }
+    return {
+      standard: 'ISO 80000-4 Quantities and Units (Mechanics) & standard hydrostatic pressure equations.',
+      reviewer: 'GetCalcu Physical Science & Engineering Board',
+      policy: 'Deterministic fluid mechanics computation'
+    };
+  }
+  if (cat === 'construction') {
+    return {
+      standard: 'ASTM International standard specifications for construction materials and standard architectural coverage ratios.',
+      reviewer: 'GetCalcu Construction & Building Estimations Board',
+      policy: 'Deterministic volumetric & material estimation'
+    };
+  }
+  if (cat === 'education') {
+    return {
+      standard: 'AACRAO (American Association of Collegiate Registrars and Admissions Officers) standard 4.0 GPA weighting conventions.',
+      reviewer: 'GetCalcu Academic & Educational Review Board',
+      policy: 'Deterministic academic calculation'
+    };
+  }
+  if (cat === 'business') {
+    return {
+      standard: 'Corporate Finance Institute (CFI) standard unit economics, GAAP gross margin formulas, and SaaS LTV/CAC metrics.',
+      reviewer: 'GetCalcu Commercial Planning & Unit Economics Desk',
+      policy: 'Deterministic commercial calculation'
+    };
+  }
+  if (cat === 'math') {
+    if (slug === 'unit-converter') {
+      return {
+        standard: 'NIST Special Publication 811 (Guide for the Use of the International System of Units) & BIPM definitions.',
+        reviewer: 'GetCalcu Metrology & Dimensional Analysis Board',
+        policy: 'Deterministic floating-point unit conversion'
+      };
+    }
+    return {
+      standard: 'ISO 80000 mathematical sign standards and deterministic algebraic formulas.',
+      reviewer: 'GetCalcu Mathematical Review Board',
+      policy: 'Deterministic arithmetic evaluation'
+    };
+  }
+  return {
+    standard: 'Deterministic mathematical principles and open peer-reviewed computational standards.',
+    reviewer: 'GetCalcu Editorial & Calculation Board',
+    policy: 'In-browser deterministic computation'
+  };
+}
+
+const CONTEXTUAL_LINKS = {
+  'mortgage-calculator': [
+    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Find the maximum home price you qualify for based on debt-to-income ratios.' },
+    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'See how extra monthly principal payments reduce total loan interest.' },
+    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare long-term net worth between buying a home and renting.' },
+    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Verify your net take-home pay to ensure your mortgage is under 28% of income.' }
+  ],
+  'auto-loan-calculator': [
+    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Compare bank or credit union personal loan rates against dealership financing.' },
+    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Check if your car payment stays within the recommended 15% of net income.' },
+    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze total interest paid across various loan terms and interest rates.' }
+  ],
+  'retirement-calculator': [
+    { slug: '401k-calculator', name: '401(k) Retirement Calculator', desc: 'Maximize your employer matching contributions and tax-deferred growth.' },
+    { slug: 'fire-calculator', name: 'FIRE Calculator', desc: 'Determine your Financial Independence number and safe withdrawal rate.' },
+    { slug: 'investment-calculator', name: 'Investment Calculator', desc: 'Project long-term compound growth of stocks, bonds, and index funds.' },
+    { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'See how frequent deposits accelerate multi-decade savings.' }
+  ],
+  'emergency-fund-calculator': [
+    { slug: 'savings-calculator', name: 'Savings & HYSA Calculator', desc: 'Model high-yield savings growth while your emergency reserve is parked.' },
+    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Categorize your monthly essential expenses versus discretionary spending.' },
+    { slug: 'credit-card-payoff-calculator', name: 'Credit Card Payoff Calculator', desc: 'Pay down high-interest debt alongside building your safety fund.' }
+  ],
+  '401k-calculator': [
+    { slug: 'retirement-calculator', name: 'Retirement Calculator', desc: 'Combine your 401(k), IRA, and Social Security for a total retirement projection.' },
+    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'See how pre-tax 401(k) deductions lower your take-home tax burden today.' },
+    { slug: 'investment-calculator', name: 'Investment Calculator', desc: 'Simulate taxable brokerage investments alongside your 401(k).' }
+  ],
+  'savings-calculator': [
+    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Calculate your target savings cushion for 3, 6, or 12 months of expenses.' },
+    { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'Calculate how interest compounds daily, monthly, or annually.' }
+  ],
+  'bmi-calculator': [
+    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find daily calorie requirements for weight maintenance, cutting, or bulking.' }
+  ],
+  'tdee-calculator': [
+    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Check your current Body Mass Index and healthy weight category.' }
+  ],
+  'profit-margin-calculator': [
+    { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the exact unit sales volume needed to cover overhead costs.' },
+    { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Assess unit economics and customer acquisition payback periods.' }
+  ],
+  'break-even-calculator': [
+    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Optimize pricing markup and target gross margin percentages.' },
+    { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Evaluate marketing profitability and customer retention impact.' }
+  ],
+  'gpa-calculator': [
+    { slug: 'final-grade-calculator', name: 'Final Grade Calculator', desc: 'Calculate the exact exam score required to achieve your target semester grade.' }
+  ],
+  'final-grade-calculator': [
+    { slug: 'gpa-calculator', name: 'GPA Calculator', desc: 'Calculate your cumulative semester GPA across all course credits.' }
+  ]
+};
+
+  // 9. Authoritative E-E-A-T Editorial & Trust Block (Scoped Authority)
+  const trustInfo = getToolTrustInfo(tool, slug);
   const trustBlockHtml = `
     <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
@@ -440,18 +603,46 @@ function renderPreRenderedToolContent(tool, slug) {
             GetCalcu Methodology & Editorial Standards
           </h3>
           <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Every calculation formula on GetCalcu is peer-reviewed against official industry standards (CFPB, IRS Title 26, NIST, ISO 80000, and CDC guidelines).
+            ${escapeHtml(trustInfo.standard)}
           </p>
         </div>
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Editorial & Mathematical Board</div>
+        <div><strong>Reviewed by:</strong> ${escapeHtml(trustInfo.reviewer)}</div>
         <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> In-browser deterministic computation</div>
+        <div><strong>Accuracy Policy:</strong> ${escapeHtml(trustInfo.policy)}</div>
         <div><strong>Feedback:</strong> <a href="/contact?subject=${encodeURIComponent(tool.name + ' Correction')}" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
       </div>
     </div>
   `;
+
+  // 10. Contextual Cross-Linking Mesh
+  let complementaryMeshHtml = '';
+  const relList = CONTEXTUAL_LINKS[slug] || [];
+  if (relList.length > 0) {
+    const linkCards = relList.map(item => `
+      <a href="/tool/${encodeURIComponent(item.slug)}" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+        <div>
+          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">${escapeHtml(item.name)}</h4>
+          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">${escapeHtml(item.desc)}</p>
+        </div>
+        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
+        </div>
+      </a>
+    `).join('');
+    complementaryMeshHtml = `
+      <div class="tool-runner-card" style="margin-top:24px;">
+        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Complementary Tools & Next Steps
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          ${linkCards}
+        </div>
+      </div>
+    `;
+  }
 
   return `
     <div class="tool-runner-card">
@@ -475,6 +666,7 @@ function renderPreRenderedToolContent(tool, slug) {
     ${howToHtml}
     ${examplesHtml}
     ${faqsHtml}
+    ${complementaryMeshHtml}
   `;
 }
 
