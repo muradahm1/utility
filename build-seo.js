@@ -441,6 +441,27 @@ function getToolTrustInfo(tool, slug) {
         policy: 'Deterministic in-browser amortization'
       };
     }
+    if (['debt-snowball-calculator'].includes(slug)) {
+      return {
+        standard: 'Harvard Business School debt payoff empirical behavioral research & CFPB debt reduction guidelines.',
+        reviewer: 'GetCalcu Consumer Debt & Credit Planning Board',
+        policy: 'Deterministic mathematical payoff simulation'
+      };
+    }
+    if (['refinance-calculator'].includes(slug)) {
+      return {
+        standard: 'Consumer Financial Protection Bureau (CFPB) TILA disclosure standards & break-even mortgage amortization formulas.',
+        reviewer: 'GetCalcu Mortgage & Real Estate Review Desk',
+        policy: 'Deterministic break-even computation'
+      };
+    }
+    if (['self-employment-tax-calculator'].includes(slug)) {
+      return {
+        standard: 'IRS Schedule SE (Form 1040) statutory 92.35% SECA rules & Social Security Administration statutory wage limits.',
+        reviewer: 'GetCalcu Small Business & Tax Planning Board',
+        policy: 'Deterministic progressive tax modeling'
+      };
+    }
     if (['salary-calculator'].includes(slug)) {
       return {
         standard: 'IRS Title 26 Internal Revenue Code (Rev. Proc. 2024-40) 2026 federal brackets, standard deductions, and FICA statutory rates.',
@@ -589,6 +610,29 @@ const CONTEXTUAL_LINKS = {
   ],
   'final-grade-calculator': [
     { slug: 'gpa-calculator', name: 'GPA Calculator', desc: 'Calculate your cumulative semester GPA across all course credits.' }
+  ],
+  'debt-snowball-calculator': [
+    { slug: 'credit-card-payoff-calculator', name: 'Credit Card Payoff Calculator', desc: 'Focus specifically on high-interest revolving credit cards and repayment months.' },
+    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Save your starter emergency fund cushion so you never fall back into debt.' },
+    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Use the 50/30/20 rule to find extra cash to throw into your debt snowball.' },
+    { slug: 'savings-calculator', name: 'High-Yield Savings Calculator', desc: 'Grow your cash cushion while staying completely debt-free.' }
+  ],
+  'refinance-calculator': [
+    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Recalculate your principal and interest payments with new interest rates.' },
+    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View complete year-by-year principal reduction schedules.' },
+    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Check debt-to-income limits and maximum borrowing capacity.' },
+    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare total housing costs and home equity over 5, 10, or 20 years.' }
+  ],
+  'self-employment-tax-calculator': [
+    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare your 1099 freelance net income against equivalent W-2 corporate salaries.' },
+    { slug: 'tax-calculator', name: 'Income Tax Calculator', desc: 'Estimate standard federal tax brackets and taxable income deductions.' },
+    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Freelancers need a 6-month buffer to protect against slow invoice payment months.' },
+    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price your client work with healthy gross margins after accounting for taxes.' }
+  ],
+  'credit-card-payoff-calculator': [
+    { slug: 'debt-snowball-calculator', name: 'Debt Snowball Calculator', desc: 'Roll multiple credit card balances together into an accelerated payoff plan.' },
+    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Build a safety buffer to stop unexpected expenses from adding to your balance.' },
+    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze how much bank interest you save with larger payments.' }
   ]
 };
 
@@ -856,6 +900,232 @@ const toolPageTemplate = (tool) => {
 const categoryDir = path.join(__dirname, 'category');
 if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir, { recursive: true });
 
+
+// ── Category Educational Guides & Plain-English Glossaries ───────────
+const CATEGORY_GUIDES = {
+  finance: {
+    title: 'The Plain-English Money Roadmap',
+    subtitle: 'A practical, jargon-free step-by-step framework to organize your money, destroy debt, and build lasting wealth.',
+    steps: [
+      {
+        step: 'Step 1',
+        title: 'Track Where Your Money Actually Goes (The 50/30/20 Rule)',
+        desc: 'Before investing or making big financial changes, divide your take-home pay into three simple buckets: <strong>50% for Needs</strong> (housing, groceries, utilities, minimum debt payments), <strong>30% for Wants</strong> (dining out, hobbies, shopping), and <strong>20% for Your Future</strong> (savings and debt payoff). You do not need a complicated spreadsheet—just keep your essential needs under half your income.'
+      },
+      {
+        step: 'Step 2',
+        title: 'Build a Starter Emergency Safety Cushion ($1,000 to 3 Months)',
+        desc: 'Before aggressively investing in stocks or paying down low-interest debt, park a small cash reserve in a high-yield savings account. Without this safety net, a single flat tire or emergency doctor visit will force you back onto high-interest credit cards.'
+      },
+      {
+        step: 'Step 3',
+        title: 'Eliminate High-Interest Debt (Snowball vs. Avalanche)',
+        desc: 'Any debt with an interest rate above 7%—especially credit cards with 20% to 29% APR—destroys wealth faster than the stock market creates it. Use our <strong>Debt Snowball Calculator</strong> to pay off smallest balances first for fast emotional wins, or the <strong>Avalanche method</strong> to save maximum math interest.'
+      },
+      {
+        step: 'Step 4',
+        title: 'Capture 100% of Your Employer 401(k) Match',
+        desc: 'If your employer offers a company 401(k) match (such as 50% match up to 6% of your pay), contribute at least enough to get every cent. This is an immediate, guaranteed 50% to 100% return on your money—literally "free money" that compounds tax-deferred.'
+      },
+      {
+        step: 'Step 5',
+        title: 'Let Long-Term Compounding Build Your Financial Freedom',
+        desc: 'Once high-interest debt is gone, invest consistently every month into low-cost, diversified index funds. Thanks to the power of compound interest, investing a modest amount in your 20s or 30s can grow into millions by retirement.'
+      }
+    ],
+    glossary: [
+      { term: 'APR (Annual Percentage Rate)', definition: 'The yearly cost you pay to borrow money, including the interest rate and lender fees. Lower is always better.' },
+      { term: 'APY (Annual Percentage Yield)', definition: 'The total interest you earn on your savings in one year, including compounding. Higher is always better.' },
+      { term: 'Principal', definition: 'The actual loan amount or starting cash, completely separate from accumulated interest.' },
+      { term: 'Amortization', definition: 'The schedule of how each monthly loan payment is split: early payments go mostly toward bank interest, while later payments pay down principal.' },
+      { term: 'SECA Tax (15.3%)', definition: 'The federal Social Security (12.4%) and Medicare (2.9%) tax paid by 1099 freelancers and independent contractors on their net profits.' }
+    ]
+  },
+  health: {
+    title: 'The Everyday Body & Energy Guide',
+    subtitle: 'Understand calories, energy balance, and body mass without complicated medical jargon.',
+    steps: [
+      {
+        step: 'Concept 1',
+        title: 'What BMI Tells You (And What It Does Not)',
+        desc: 'Body Mass Index (BMI) is a quick screening tool comparing your height to your weight. While useful for general health guidelines, it cannot distinguish between dense muscle and body fat. Use it as a helpful directional compass, not an absolute diagnosis.'
+      },
+      {
+        step: 'Concept 2',
+        title: 'TDEE: How Many Calories Your Body Burns Every 24 Hours',
+        desc: 'Your Total Daily Energy Expenditure is the real total of calories your body burns every day: your Basal Metabolic Rate (breathing and staying alive) plus every step, chore, workout, and digestion. Knowing your TDEE is the master key to weight management.'
+      },
+      {
+        step: 'Concept 3',
+        title: 'The 500-Calorie Deficit Rule for Sustainable Fat Loss',
+        desc: 'One pound of stored body fat equals roughly 3,500 calories. By eating 500 fewer calories per day than your TDEE (or burning 500 more through light movement), you create a safe 3,500-calorie weekly deficit—dropping about 1 steady pound per week without starvation.'
+      }
+    ],
+    glossary: [
+      { term: 'BMR (Basal Metabolic Rate)', definition: 'The bare minimum calories your body burns at complete rest just to keep your heart beating, lungs breathing, and organs working.' },
+      { term: 'TDEE', definition: 'Total Daily Energy Expenditure: your BMR multiplied by your daily physical activity level.' },
+      { term: 'Caloric Deficit', definition: 'Consuming fewer calories than your body burns, prompting your body to use stored fat for fuel.' },
+      { term: 'Macronutrients', definition: 'The three essential dietary building blocks: Protein (muscle & tissue repair), Carbohydrates (fast physical energy), and Healthy Fats (hormones & cell structure).' }
+    ]
+  },
+  business: {
+    title: 'The Small Business & Freelancer Playbook',
+    subtitle: 'The essential unit economics and tax rules every founder and freelancer must know.',
+    steps: [
+      {
+        step: 'Rule 1',
+        title: 'Gross Margin vs. Net Profit: Revenue is Vanity, Cash is Reality',
+        desc: 'A business can make $1,000,000 in sales and still go bankrupt if margins are thin. Gross margin measures how much money remains after directly delivering your product or service. Net profit is what is actually left after paying software, rent, marketing, and taxes.'
+      },
+      {
+        step: 'Rule 2',
+        title: 'Calculate Your Break-Even Point Before Spending Money',
+        desc: 'Your break-even sales volume tells you the exact number of units, subscriptions, or consulting hours you must sell each month just to pay the bills and hit zero. Every dollar sold past that number is pure pre-tax profit.'
+      },
+      {
+        step: 'Rule 3',
+        title: 'The Freelancer Golden Rule: Save 25% to 30% Immediately',
+        desc: 'Unlike W-2 workers, 1099 contractors and freelancers do not have taxes withheld automatically. Transfer 25% to 30% of every invoice into a high-yield business savings account the day the client pays to comfortably cover quarterly IRS 1040-ES payments.'
+      }
+    ],
+    glossary: [
+      { term: 'Gross Margin', definition: 'The percentage of revenue left over after subtracting direct costs: (Revenue - COGS) ÷ Revenue × 100.' },
+      { term: 'Break-Even Point', definition: 'The point where total business revenue equals total fixed and variable costs, meaning zero loss and zero profit.' },
+      { term: 'LTV (Customer Lifetime Value)', definition: 'The total estimated gross profit a single customer brings to your business across the entire duration of your relationship.' },
+      { term: 'CAC (Customer Acquisition Cost)', definition: 'Total marketing and sales dollars spent divided by the number of new paying customers gained.' }
+    ]
+  },
+  education: {
+    title: 'The Student Success & Grade Mastery Guide',
+    subtitle: 'Clear, practical tools to calculate GPAs, predict final exam requirements, and plan study loads.',
+    steps: [
+      {
+        step: 'Strategy 1',
+        title: 'How Credit-Weighted GPA Actually Works',
+        desc: 'College and high school GPAs are weighted by credit hours: earning an A in a 4-credit science lecture carries twice the mathematical weight of an A in a 2-credit lab course. Protect your GPA by prioritizing study time on high-credit classes.'
+      },
+      {
+        step: 'Strategy 2',
+        title: 'The Final Exam Math: Know Exactly What Score You Need',
+        desc: 'Before stressing about finals week, calculate the exact minimum score required on the final exam to maintain your desired course grade. Often, a student only needs a 72% or 78% on the final to lock in their "B" or "A".'
+      }
+    ],
+    glossary: [
+      { term: 'Credit Hours', definition: 'The number of classroom hours per week assigned to a course, determining how heavily it influences your GPA.' },
+      { term: 'Unweighted GPA', definition: 'Standard 4.0 scale where every class is graded on the same numerical scale regardless of difficulty.' },
+      { term: 'Weighted GPA', definition: 'A 5.0 scale that awards bonus grade points for Advanced Placement (AP), International Baccalaureate (IB), or Honors courses.' }
+    ]
+  },
+  construction: {
+    title: 'The Practical Job Site & Remodel Estimator Guide',
+    subtitle: 'Essential dimensional rules and ordering guidelines for contractors, landscapers, and DIYers.',
+    steps: [
+      {
+        step: 'Rule 1',
+        title: 'Always Add the 10% Waste Factor',
+        desc: 'Never order the exact square footage of flooring, tile, drywall, or lumber. Cutting around doors, corner angles, and accidental breakage will leave you short. Add 10% for standard layouts and 15% for diagonal tile or complex cuts.'
+      },
+      {
+        step: 'Rule 2',
+        title: 'Square Feet (Area) vs. Cubic Yards (Volume)',
+        desc: 'Surface projects (painting, carpet, hardwood) are measured in square feet (Length × Width). Bulk materials (concrete slabs, gravel, soil, mulch) require volume in cubic yards: multiply square footage by depth in feet, then divide by 27.'
+      }
+    ],
+    glossary: [
+      { term: 'Cubic Yard', definition: 'A standard unit of volume equal to 27 cubic feet. Used universally by ready-mix concrete and bulk gravel suppliers.' },
+      { term: 'Roofing Square', definition: 'A construction measurement equal to 100 square feet of roof area, typically covered by 3 bundles of asphalt shingles.' }
+    ]
+  },
+  engineering: {
+    title: 'Everyday Engineering & Physics Guide',
+    subtitle: 'Practical explanations of Ohm\'s law, structural deflection, and fluid pressure.',
+    steps: [
+      {
+        step: 'Concept 1',
+        title: 'Ohm\'s Law Explained with the Water Hose Analogy',
+        desc: 'Think of electricity like water running through a hose: Voltage (V) is water pressure, Current (I) is the flow rate of water, Resistance (R) is the narrowness of the nozzle, and Electrical Power (Watts = V × I) is the total force of the water spray.'
+      },
+      {
+        step: 'Concept 2',
+        title: 'Beam Deflection and Structural Safety',
+        desc: 'Deflection is the distance a structural beam bends under applied loads. Building codes strictly limit deflection (typically to Span ÷ 360) so floors feel rigid and drywall ceilings do not crack under weight.'
+      }
+    ],
+    glossary: [
+      { term: 'Ohm (Ω)', definition: 'The international unit of electrical resistance. One ohm allows one ampere of current to flow when one volt is applied.' },
+      { term: 'Pascal (Pa) / PSI', definition: 'Units of physical pressure representing force distributed over a specific surface area.' }
+    ]
+  },
+  math: {
+    title: 'Everyday Math Made Simple',
+    subtitle: 'Understand percentages, ratios, and practical mental math tricks for daily life.',
+    steps: [
+      {
+        step: 'Insight 1',
+        title: 'The Hidden Trap of Percentage Asymmetry',
+        desc: 'If an investment drops 50% in value, it does NOT take a 50% gain to get back to even—it takes a 100% gain! A $100 stock dropping 50% becomes $50. A 50% gain on $50 is only $25 (bringing you to $75). Always understand that losses hurt twice as much as equivalent gains.'
+      },
+      {
+        step: 'Insight 2',
+        title: 'Quick Mental Math Shortcuts for Daily Life',
+        desc: 'To calculate a 20% tip in 5 seconds: take your bill, move the decimal one place left to find 10%, and double that number. For example, a $64.50 meal has a 10% value of $6.45. Doubling that gives an instant $12.90 tip.'
+      }
+    ],
+    glossary: [
+      { term: 'Percentage Delta', definition: 'The relative percentage change between an old number and a new number: ((New - Old) ÷ Old) × 100.' },
+      { term: 'Aspect Ratio', definition: 'The proportional relationship between an image or video\'s width and height (e.g. 16:9 for widescreen displays, 1:1 for square photos).' }
+    ]
+  }
+};
+
+function renderCategoryHubGuide(catSlug) {
+  const guide = CATEGORY_GUIDES[catSlug];
+  if (!guide) return '';
+
+  const stepsHtml = guide.steps.map(s => `
+    <div class="tool-runner-card" style="margin-bottom:16px; background:var(--card-bg, #fff); border:1px solid var(--border-color, #e2e8f0); border-radius:12px; padding:20px;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <span style="background:var(--primary-color, #6366F1); color:#fff; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; text-transform:uppercase; letter-spacing:0.5px;">${escapeHtml(s.step)}</span>
+        <h3 style="font-size:16px; font-weight:700; color:var(--text-primary); margin:0;">${escapeHtml(s.title)}</h3>
+      </div>
+      <p style="font-size:14px; color:var(--text-secondary); line-height:1.6; margin:0;">${s.desc}</p>
+    </div>
+  `).join('');
+
+  const glossaryHtml = guide.glossary.map(g => `
+    <div style="padding:12px 16px; background:var(--bg-main, #f8fafc); border-radius:8px; border:1px solid var(--border-color, #e2e8f0);">
+      <div style="font-weight:700; font-size:13px; color:var(--text-primary); margin-bottom:4px;">${escapeHtml(g.term)}</div>
+      <div style="font-size:13px; color:var(--text-secondary); line-height:1.5;">${escapeHtml(g.definition)}</div>
+    </div>
+  `).join('');
+
+  return `
+    <section class="section-container" style="margin-top:40px;">
+      <div class="section-header" style="margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <i class="fa-solid fa-book-open-reader" style="color:var(--primary-color); font-size:18px;"></i>
+          <h2 style="font-size:22px; font-weight:800; color:var(--text-primary); margin:0;">${escapeHtml(guide.title)}</h2>
+        </div>
+        <p style="font-size:14px; color:var(--text-secondary); margin:0;">${escapeHtml(guide.subtitle)}</p>
+      </div>
+
+      <div style="margin-bottom:32px;">
+        ${stepsHtml}
+      </div>
+
+      <div class="tool-runner-card" style="background:var(--card-bg, #fff); border:1px solid var(--border-color, #e2e8f0); border-radius:12px; padding:24px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+          <i class="fa-solid fa-spell-check" style="color:var(--primary-color); font-size:16px;"></i>
+          <h3 style="font-size:17px; font-weight:700; color:var(--text-primary); margin:0;">Plain-English Terms You Need to Know</h3>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px;">
+          ${glossaryHtml}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 const categoryPageTemplate = (cat, catTools) => {
   const canonical = `${BASE_URL}/category/${cat.slug}`;
   const desc = escapeHtml(cat.metaDescription);
@@ -1038,6 +1308,9 @@ const categoryPageTemplate = (cat, catTools) => {
                         <p>Try adjusting your search terms or browse all tools.</p>
                     </div>
                 </section>
+
+                <!-- Authority Hub Educational Guide -->
+                ${renderCategoryHubGuide(cat.slug)}
             </div>
         </main>
     </div>
