@@ -25,7 +25,7 @@
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Health Calculators","item":"https://www.getcalcu.com/category/health"}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","name":"Health Calculators & Tools","description":"Free health and fitness calculators including Body Mass Index (BMI), daily calorie needs (TDEE), and wellness targets. Fast and reliable.","numberOfItems":2,"itemListElement":[{"@type":"ListItem","position":1,"name":"BMI Calculator","url":"https://www.getcalcu.com/tool/bmi-calculator","description":"Calculate your Body Mass Index (BMI) and find out your healthy weight range."},{"@type":"ListItem","position":2,"name":"TDEE & Daily Calorie Calculator","url":"https://www.getcalcu.com/tool/tdee-calculator","description":"Calculate your Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), and daily macro calorie targets."}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","name":"Health Calculators & Tools","description":"Free health and fitness calculators including Body Mass Index (BMI), daily calorie needs (TDEE), and wellness targets. Fast and reliable.","numberOfItems":3,"itemListElement":[{"@type":"ListItem","position":1,"name":"BMI Calculator","url":"https://www.getcalcu.com/tool/bmi-calculator","description":"Calculate your Body Mass Index (BMI) and find out your healthy weight range."},{"@type":"ListItem","position":2,"name":"TDEE & Daily Calorie Calculator","url":"https://www.getcalcu.com/tool/tdee-calculator","description":"Calculate your Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), and daily macro calorie targets."},{"@type":"ListItem","position":3,"name":"Body Fat Percentage Calculator (US Navy Method)","url":"https://www.getcalcu.com/tool/body-fat-percentage-calculator","description":"Estimate your body fat percentage, lean body mass, and fat mass using standard tape-measure circumferences and the validated US Navy fitness formula."}]}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -139,7 +139,7 @@
                         <div class="category-search-container">
                             <div class="category-search-box">
                                 <i class="fa-solid fa-magnifying-glass category-search-icon"></i>
-                                <input type="text" class="category-search-field" id="category-filter-input" placeholder="Search 2 health calculators &amp; tools..." aria-label="Search Health calculators">
+                                <input type="text" class="category-search-field" id="category-filter-input" placeholder="Search 3 health calculators &amp; tools..." aria-label="Search Health calculators">
                                 <button type="button" class="category-search-clear hidden" id="category-search-clear" aria-label="Clear search">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
@@ -149,7 +149,7 @@
                                 </button>
                             </div>
                             <div class="category-search-stats">
-                                <span>Showing <strong id="category-filtered-count">2</strong> of <strong>2</strong> calculators</span>
+                                <span>Showing <strong id="category-filtered-count">3</strong> of <strong>3</strong> calculators</span>
                             </div>
                         </div>
                     </div>
@@ -191,13 +191,62 @@
                                 </div>
                             </a>
                         
+                        
+                            <a href="/tool/body-fat-percentage-calculator" class="tool-card">
+                                <div>
+                                    <div class="tool-card-header">
+                                        <div class="tool-icon icon-health"><i class="fa-solid fa-tape"></i></div>
+                                    </div>
+                                    <h3>Body Fat Percentage Calculator (US Navy Method)</h3>
+                                    <p>Estimate your body fat percentage, lean body mass, and fat mass using standard tape-measure circumferences and the validated US Navy fitness formula.</p>
+                                </div>
+                                <div class="tool-card-footer">
+                                    <span class="tag tag-health">Health</span>
+                                    <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                                </div>
+                            </a>
+                        
                     </div>
                     <div id="category-empty-filter" class="tool-not-found" style="display:none; padding:40px 20px;">
                         <div class="not-found-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
                         <h2>No matching calculators found</h2>
                         <p>Try adjusting your search terms or browse all tools.</p>
                     </div>
+                
+                <!-- Category Topical Authority & Decision Guide -->
+                
+                <section class="section-container" style="margin-top:40px;">
+                    <div class="tool-runner-card" style="padding:32px 28px;">
+                        <h2 style="font-size:20px; font-weight:800; color:var(--text-primary); margin-bottom:12px;">
+                            Understanding Health &amp; Body Composition Metrics
+                        </h2>
+                        <p style="font-size:14px; color:var(--text-secondary); line-height:1.7; margin-bottom:24px;">
+                            Health tracking is most effective when combining multiple baseline measurements rather than relying on a single number.
+                        </p>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+                            
+                                <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px;">
+                                    <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                                        BMI vs. Body Fat Percentage
+                                    </h3>
+                                    <p style="font-size:13px; color:var(--text-secondary); line-height:1.6; margin:0;">
+                                        Body Mass Index (BMI) is a rapid epidemiological screening tool comparing height to total weight. However, because BMI cannot distinguish muscle from adipose tissue, pairing BMI with circumference-based body fat percentage (such as the US Navy Method) provides a much clearer picture of overall fitness.
+                                    </p>
+                                </div>
+                            
+                                <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px;">
+                                    <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                                        The Energy Balance Equation (TDEE)
+                                    </h3>
+                                    <p style="font-size:13px; color:var(--text-secondary); line-height:1.6; margin:0;">
+                                        Total Daily Energy Expenditure (TDEE) accounts for Basal Metabolic Rate (BMR), the thermic effect of food, and physical activity. Creating a moderate 300 to 500 calorie daily deficit supports sustainable fat loss while preserving lean muscle mass.
+                                    </p>
+                                </div>
+                            
+                        </div>
+                    </div>
                 </section>
+                
 
             </div>
         </main>

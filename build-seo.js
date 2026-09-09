@@ -561,15 +561,53 @@ function getToolTrustInfo(tool, slug) {
 
 const CONTEXTUAL_LINKS = {
   'mortgage-calculator': [
+    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payment difference and interest savings.' },
+    { slug: 'fha-loan-calculator', name: 'FHA Loan Calculator', desc: 'Calculate 3.5% down payments and FHA monthly mortgage insurance.' },
     { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Find the maximum home price you qualify for based on debt-to-income ratios.' },
     { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'See how extra monthly principal payments reduce total loan interest.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare long-term net worth between buying a home and renting.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Verify your net take-home pay to ensure your mortgage is under 28% of income.' }
+    { slug: 'refinance-calculator', name: 'Refinance Break-Even Calculator', desc: 'Determine when lower refinance rates pay off closing costs.' }
+  ],
+  '15-year-mortgage-calculator': [
+    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Standard 30-year mortgage calculation with taxes and insurance.' },
+    { slug: 'refinance-calculator', name: 'Refinance Calculator', desc: 'Check if refinancing into a 15-year loan saves money.' },
+    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View full month-by-month principal reduction schedules.' },
+    { slug: 'house-affordability-calculator', name: 'House Affordability', desc: 'Check maximum loan limits based on debt ratios.' }
+  ],
+  'fha-loan-calculator': [
+    { slug: 'mortgage-calculator', name: 'Conventional Mortgage Calculator', desc: 'Compare conventional loans with 20% down to skip mortgage insurance.' },
+    { slug: '15-year-mortgage-calculator', name: '15-Year Mortgage Calculator', desc: 'Evaluate shorter loan terms for faster equity growth.' },
+    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Calculate qualifying income for FHA loan limits.' },
+    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare renting vs purchasing your first home.' }
   ],
   'auto-loan-calculator': [
-    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Compare bank or credit union personal loan rates against dealership financing.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Check if your car payment stays within the recommended 15% of net income.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze total interest paid across various loan terms and interest rates.' }
+    { slug: 'auto-refinance-calculator', name: 'Auto Loan Refinance Calculator', desc: 'Calculate how much you save by refinancing your car loan.' },
+    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Compare bank or credit union loan rates against dealership financing.' },
+    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Check if your car payment stays within 15% of net income.' },
+    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze total interest across various loan terms.' }
+  ],
+  'auto-refinance-calculator': [
+    { slug: 'auto-loan-calculator', name: 'Auto Loan Calculator', desc: 'Calculate new car loan payments and sales tax.' },
+    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Explore personal loan alternatives for debt consolidation.' },
+    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Reallocate auto loan savings into emergency reserves.' },
+    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'See total interest saved across lower interest rates.' }
+  ],
+  'freelance-hourly-rate-calculator': [
+    { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
+    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against equivalent corporate W-2 salaries.' },
+    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price client project proposals with healthy profit margins.' },
+    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Build a 6-month buffer for unpredictable freelance income months.' }
+  ],
+  'body-fat-percentage-calculator': [
+    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Compare your body fat percentage to standard Body Mass Index categories.' },
+    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find your daily calorie target for fat loss while preserving muscle.' }
+  ],
+  'bmi-calculator': [
+    { slug: 'body-fat-percentage-calculator', name: 'Body Fat Calculator (Navy Method)', desc: 'Measure body composition using simple tape measurements at home.' },
+    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find daily calorie requirements for weight maintenance, cutting, or bulking.' }
+  ],
+  'tdee-calculator': [
+    { slug: 'body-fat-percentage-calculator', name: 'Body Fat Calculator', desc: 'Calculate fat mass and lean body mass to fine-tune macros.' },
+    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Check your current Body Mass Index and healthy weight category.' }
   ],
   'retirement-calculator': [
     { slug: '401k-calculator', name: '401(k) Retirement Calculator', desc: 'Maximize your employer matching contributions and tax-deferred growth.' },
@@ -591,13 +629,8 @@ const CONTEXTUAL_LINKS = {
     { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Calculate your target savings cushion for 3, 6, or 12 months of expenses.' },
     { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'Calculate how interest compounds daily, monthly, or annually.' }
   ],
-  'bmi-calculator': [
-    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find daily calorie requirements for weight maintenance, cutting, or bulking.' }
-  ],
-  'tdee-calculator': [
-    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Check your current Body Mass Index and healthy weight category.' }
-  ],
   'profit-margin-calculator': [
+    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Rate Calculator', desc: 'Calculate client billing rates from desired take-home salary.' },
     { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the exact unit sales volume needed to cover overhead costs.' },
     { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Assess unit economics and customer acquisition payback periods.' }
   ],
@@ -618,15 +651,14 @@ const CONTEXTUAL_LINKS = {
     { slug: 'savings-calculator', name: 'High-Yield Savings Calculator', desc: 'Grow your cash cushion while staying completely debt-free.' }
   ],
   'refinance-calculator': [
+    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payments and interest savings.' },
     { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Recalculate your principal and interest payments with new interest rates.' },
     { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View complete year-by-year principal reduction schedules.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Check debt-to-income limits and maximum borrowing capacity.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare total housing costs and home equity over 5, 10, or 20 years.' }
+    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Check debt-to-income limits and maximum borrowing capacity.' }
   ],
   'self-employment-tax-calculator': [
+    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Hourly Rate Calculator', desc: 'Calculate client billing rates to hit your target personal take-home salary.' },
     { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare your 1099 freelance net income against equivalent W-2 corporate salaries.' },
-    { slug: 'tax-calculator', name: 'Income Tax Calculator', desc: 'Estimate standard federal tax brackets and taxable income deductions.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Freelancers need a 6-month buffer to protect against slow invoice payment months.' },
     { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price your client work with healthy gross margins after accounting for taxes.' }
   ],
   'credit-card-payoff-calculator': [
@@ -901,6 +933,107 @@ const categoryDir = path.join(__dirname, 'category');
 if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir, { recursive: true });
 
 
+const CATEGORY_GUIDES = {
+  finance: {
+    heading: 'Navigating Financial Calculations: Key Formulas & Rules of Thumb',
+    intro: 'Whether you are buying your first home, aggressively paying off debt, or planning a multi-decade retirement, sound financial decisions start with clear mathematical principles.',
+    sections: [
+      {
+        title: 'The 28/36 Rule for Home Affordability',
+        text: 'Most mortgage lenders recommend spending no more than 28% of your gross monthly income on housing expenses (PITI: Principal, Interest, Taxes, and Insurance) and no more than 36% on total debt servicing (including student loans, auto payments, and credit cards).'
+      },
+      {
+        title: 'Debt Payoff: Snowball vs. Avalanche',
+        text: 'The Debt Snowball method focuses on psychological momentum by paying off the smallest balances first. The Debt Avalanche method focuses on mathematical efficiency by attacking the highest interest rate first, minimizing lifetime finance charges.'
+      },
+      {
+        title: 'The Rule of 72 for Compound Growth',
+        text: 'To estimate how many years it takes for an investment to double at a constant annual return, divide 72 by the annual interest rate (e.g., at an 8% annual return, your money doubles in approximately 9 years: 72 / 8 = 9).'
+      }
+    ]
+  },
+  health: {
+    heading: 'Understanding Health & Body Composition Metrics',
+    intro: 'Health tracking is most effective when combining multiple baseline measurements rather than relying on a single number.',
+    sections: [
+      {
+        title: 'BMI vs. Body Fat Percentage',
+        text: 'Body Mass Index (BMI) is a rapid epidemiological screening tool comparing height to total weight. However, because BMI cannot distinguish muscle from adipose tissue, pairing BMI with circumference-based body fat percentage (such as the US Navy Method) provides a much clearer picture of overall fitness.'
+      },
+      {
+        title: 'The Energy Balance Equation (TDEE)',
+        text: 'Total Daily Energy Expenditure (TDEE) accounts for Basal Metabolic Rate (BMR), the thermic effect of food, and physical activity. Creating a moderate 300 to 500 calorie daily deficit supports sustainable fat loss while preserving lean muscle mass.'
+      }
+    ]
+  },
+  math: {
+    heading: 'Everyday Mathematical Relationships & Percentages',
+    intro: 'From shopping discounts and sales tax to loan amortization and unit conversions, percentage math forms the foundation of daily problem-solving.',
+    sections: [
+      {
+        title: 'Percentage Increase & Decrease',
+        text: 'To find the percentage change between an old value and a new value, subtract the old value from the new value, divide by the absolute value of the old value, and multiply by 100: Change % = ((New - Old) / Old) * 100.'
+      },
+      {
+        title: 'Dimensional Analysis & Unit Conversions',
+        text: 'Converting between metric and imperial systems requires exact conversion factors (such as 1 inch = 2.54 cm, 1 pound = 0.453592 kg, and 1 gallon = 3.78541 liters) to maintain precision across scientific, culinary, and technical applications.'
+      }
+    ]
+  },
+  business: {
+    heading: 'Core Business Economics: Profitability & Unit Economics',
+    intro: 'Sustainable business growth relies on understanding unit economics, pricing markup vs. gross margin, and customer acquisition payback horizons.',
+    sections: [
+      {
+        title: 'Margin vs. Markup',
+        text: 'Gross Margin is profit as a percentage of selling price ((Price - Cost) / Price), while Markup is profit as a percentage of cost ((Price - Cost) / Cost). For example, buying an item for $50 and selling it for $100 yields a 50% gross margin, but a 100% markup.'
+      },
+      {
+        title: 'The 3:1 LTV to CAC Benchmark',
+        text: 'In recurring revenue and SaaS businesses, a healthy business typically aims for Customer Lifetime Value (LTV) to be at least 3 times Customer Acquisition Cost (CAC), with a payback period under 12 months.'
+      }
+    ]
+  },
+  construction: {
+    heading: 'Practical Material Estimation Standards',
+    intro: 'Accurate job site material calculations prevent expensive mid-project delays and minimize waste disposal costs.',
+    sections: [
+      {
+        title: 'The 10% Waste Factor Rule',
+        text: 'When ordering tiles, flooring, or brickwork, always add 10% to 15% extra material to account for diagonal cuts, edge trimming, and future repairs.'
+      },
+      {
+        title: 'Concrete Volume Calculation',
+        text: 'Concrete is ordered in cubic yards. To calculate cubic yards for a slab: multiply Length (ft) * Width (ft) * Thickness (ft), then divide by 27.'
+      }
+    ]
+  },
+  engineering: {
+    heading: 'Engineering Principles & Physical Formulas',
+    intro: 'Engineering calculations rely on deterministic physical laws governing electrical circuits, structural mechanics, and fluid dynamics.',
+    sections: [
+      {
+        title: "Ohm's Law in DC & AC Circuits",
+        text: 'Voltage (V), Current (I), and Resistance (R) are related by V = I * R. Electrical power dissipated in a resistive load equals P = V * I = I^2 * R.'
+      },
+      {
+        title: 'Beam Deflection Mechanics',
+        text: 'Euler-Bernoulli beam theory dictates that maximum deflection under load is inversely proportional to the modulus of elasticity (E) and area moment of inertia (I).'
+      }
+    ]
+  },
+  education: {
+    heading: 'Academic Grading Standards & Coursework Planning',
+    intro: 'Grade Point Average (GPA) calculations reflect weighted academic performance across credit hours.',
+    sections: [
+      {
+        title: '4.0 Unweighted vs. Weighted 5.0 Scales',
+        text: 'Standard coursework is evaluated on a 4.0 scale (A=4.0, B=3.0, C=2.0). Honors courses typically add +0.5 quality points, while Advanced Placement (AP) and International Baccalaureate (IB) courses add +1.0 quality point to reward academic rigor.'
+      }
+    ]
+  }
+};
+
 const categoryPageTemplate = (cat, catTools) => {
   const canonical = `${BASE_URL}/category/${cat.slug}`;
   const desc = escapeHtml(cat.metaDescription);
@@ -1082,7 +1215,32 @@ const categoryPageTemplate = (cat, catTools) => {
                         <h2>No matching calculators found</h2>
                         <p>Try adjusting your search terms or browse all tools.</p>
                     </div>
+                
+                <!-- Category Topical Authority & Decision Guide -->
+                ${CATEGORY_GUIDES[cat.slug] ? `
+                <section class="section-container" style="margin-top:40px;">
+                    <div class="tool-runner-card" style="padding:32px 28px;">
+                        <h2 style="font-size:20px; font-weight:800; color:var(--text-primary); margin-bottom:12px;">
+                            ${escapeHtml(CATEGORY_GUIDES[cat.slug].heading)}
+                        </h2>
+                        <p style="font-size:14px; color:var(--text-secondary); line-height:1.7; margin-bottom:24px;">
+                            ${escapeHtml(CATEGORY_GUIDES[cat.slug].intro)}
+                        </p>
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+                            ${CATEGORY_GUIDES[cat.slug].sections.map(s => `
+                                <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px;">
+                                    <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">
+                                        ${escapeHtml(s.title)}
+                                    </h3>
+                                    <p style="font-size:13px; color:var(--text-secondary); line-height:1.6; margin:0;">
+                                        ${escapeHtml(s.text)}
+                                    </p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 </section>
+                ` : ''}
 
             </div>
         </main>
