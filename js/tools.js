@@ -5353,7 +5353,7 @@ const TOOLS = {
         { value: 'time', label: 'Time' },
       ], hint: 'Choose the measurement category to convert.' },
       { id: 'amount', label: 'Value to Convert', type: 'number', default: 10, min: -999999999, step: 0.1, hint: 'The numerical quantity you want to convert.' },
-      { id: 'unit_length_from', label: 'From Unit', type: 'select', default: 'meters', condition: v => (v.dimension || 'length') === 'length', options: [
+      { id: 'unit_length_from', label: 'From Unit', type: 'select', hint: 'The starting length unit to convert from.', default: 'meters', condition: v => (v.dimension || 'length') === 'length', options: [
         { value: 'meters', label: 'Meters (m)' },
         { value: 'kilometers', label: 'Kilometers (km)' },
         { value: 'centimeters', label: 'Centimeters (cm)' },
@@ -5364,7 +5364,7 @@ const TOOLS = {
         { value: 'inches', label: 'Inches (in)' },
         { value: 'nautical_miles', label: 'Nautical Miles (NM)' }
       ] },
-      { id: 'unit_length_to', label: 'To Unit', type: 'select', default: 'feet', condition: v => (v.dimension || 'length') === 'length', options: [
+      { id: 'unit_length_to', label: 'To Unit', type: 'select', hint: 'The target length unit to convert into.', default: 'feet', condition: v => (v.dimension || 'length') === 'length', options: [
         { value: 'meters', label: 'Meters (m)' },
         { value: 'kilometers', label: 'Kilometers (km)' },
         { value: 'centimeters', label: 'Centimeters (cm)' },
@@ -5376,7 +5376,7 @@ const TOOLS = {
         { value: 'nautical_miles', label: 'Nautical Miles (NM)' }
       ] },
 
-      { id: 'unit_weight_from', label: 'From Unit', type: 'select', default: 'kilograms', condition: v => v.dimension === 'weight', options: [
+      { id: 'unit_weight_from', label: 'From Unit', type: 'select', hint: 'The starting weight unit to convert from.', default: 'kilograms', condition: v => v.dimension === 'weight', options: [
         { value: 'kilograms', label: 'Kilograms (kg)' },
         { value: 'grams', label: 'Grams (g)' },
         { value: 'milligrams', label: 'Milligrams (mg)' },
@@ -5385,7 +5385,7 @@ const TOOLS = {
         { value: 'ounces', label: 'Ounces (oz)' },
         { value: 'stones', label: 'Stones (st)' }
       ] },
-      { id: 'unit_weight_to', label: 'To Unit', type: 'select', default: 'pounds', condition: v => v.dimension === 'weight', options: [
+      { id: 'unit_weight_to', label: 'To Unit', type: 'select', hint: 'The target weight unit to convert into.', default: 'pounds', condition: v => v.dimension === 'weight', options: [
         { value: 'kilograms', label: 'Kilograms (kg)' },
         { value: 'grams', label: 'Grams (g)' },
         { value: 'milligrams', label: 'Milligrams (mg)' },
@@ -5395,18 +5395,18 @@ const TOOLS = {
         { value: 'stones', label: 'Stones (st)' }
       ] },
 
-      { id: 'unit_temp_from', label: 'From Unit', type: 'select', default: 'celsius', condition: v => v.dimension === 'temperature', options: [
+      { id: 'unit_temp_from', label: 'From Unit', type: 'select', hint: 'The starting temperature scale to convert from.', default: 'celsius', condition: v => v.dimension === 'temperature', options: [
         { value: 'celsius', label: 'Celsius (°C)' },
         { value: 'fahrenheit', label: 'Fahrenheit (°F)' },
         { value: 'kelvin', label: 'Kelvin (K)' }
       ] },
-      { id: 'unit_temp_to', label: 'To Unit', type: 'select', default: 'fahrenheit', condition: v => v.dimension === 'temperature', options: [
+      { id: 'unit_temp_to', label: 'To Unit', type: 'select', hint: 'The target temperature scale to convert into.', default: 'fahrenheit', condition: v => v.dimension === 'temperature', options: [
         { value: 'celsius', label: 'Celsius (°C)' },
         { value: 'fahrenheit', label: 'Fahrenheit (°F)' },
         { value: 'kelvin', label: 'Kelvin (K)' }
       ] },
 
-      { id: 'unit_vol_from', label: 'From Unit', type: 'select', default: 'liters', condition: v => v.dimension === 'volume', options: [
+      { id: 'unit_vol_from', label: 'From Unit', type: 'select', hint: 'The starting volume unit to convert from.', default: 'liters', condition: v => v.dimension === 'volume', options: [
         { value: 'liters', label: 'Liters (L)' },
         { value: 'milliliters', label: 'Milliliters (mL)' },
         { value: 'cubic_meters', label: 'Cubic Meters (m³)' },
@@ -5418,7 +5418,7 @@ const TOOLS = {
         { value: 'tablespoons', label: 'Tablespoons (tbsp)' },
         { value: 'teaspoons', label: 'Teaspoons (tsp)' }
       ] },
-      { id: 'unit_vol_to', label: 'To Unit', type: 'select', default: 'gallons_us', condition: v => v.dimension === 'volume', options: [
+      { id: 'unit_vol_to', label: 'To Unit', type: 'select', hint: 'The target volume unit to convert into.', default: 'gallons_us', condition: v => v.dimension === 'volume', options: [
         { value: 'liters', label: 'Liters (L)' },
         { value: 'milliliters', label: 'Milliliters (mL)' },
         { value: 'cubic_meters', label: 'Cubic Meters (m³)' },
@@ -5431,14 +5431,14 @@ const TOOLS = {
         { value: 'teaspoons', label: 'Teaspoons (tsp)' }
       ] },
 
-      { id: 'unit_speed_from', label: 'From Unit', type: 'select', default: 'kmh', condition: v => v.dimension === 'speed', options: [
+      { id: 'unit_speed_from', label: 'From Unit', type: 'select', hint: 'The starting velocity unit to convert from.', default: 'kmh', condition: v => v.dimension === 'speed', options: [
         { value: 'kmh', label: 'Kilometers per Hour (km/h)' },
         { value: 'mph', label: 'Miles per Hour (mph)' },
         { value: 'ms', label: 'Meters per Second (m/s)' },
         { value: 'knots', label: 'Knots (kn)' },
         { value: 'fts', label: 'Feet per Second (ft/s)' }
       ] },
-      { id: 'unit_speed_to', label: 'To Unit', type: 'select', default: 'mph', condition: v => v.dimension === 'speed', options: [
+      { id: 'unit_speed_to', label: 'To Unit', type: 'select', hint: 'The target velocity unit to convert into.', default: 'mph', condition: v => v.dimension === 'speed', options: [
         { value: 'kmh', label: 'Kilometers per Hour (km/h)' },
         { value: 'mph', label: 'Miles per Hour (mph)' },
         { value: 'ms', label: 'Meters per Second (m/s)' },
@@ -5446,7 +5446,7 @@ const TOOLS = {
         { value: 'fts', label: 'Feet per Second (ft/s)' }
       ] },
 
-      { id: 'unit_data_from', label: 'From Unit', type: 'select', default: 'gigabytes', condition: v => v.dimension === 'data', options: [
+      { id: 'unit_data_from', label: 'From Unit', type: 'select', hint: 'The starting digital storage unit to convert from.', default: 'gigabytes', condition: v => v.dimension === 'data', options: [
         { value: 'bytes', label: 'Bytes (B)' },
         { value: 'kilobytes', label: 'Kilobytes (KB)' },
         { value: 'megabytes', label: 'Megabytes (MB)' },
@@ -5454,7 +5454,7 @@ const TOOLS = {
         { value: 'terabytes', label: 'Terabytes (TB)' },
         { value: 'petabytes', label: 'Petabytes (PB)' }
       ] },
-      { id: 'unit_data_to', label: 'To Unit', type: 'select', default: 'megabytes', condition: v => v.dimension === 'data', options: [
+      { id: 'unit_data_to', label: 'To Unit', type: 'select', hint: 'The target digital storage unit to convert into.', default: 'megabytes', condition: v => v.dimension === 'data', options: [
         { value: 'bytes', label: 'Bytes (B)' },
         { value: 'kilobytes', label: 'Kilobytes (KB)' },
         { value: 'megabytes', label: 'Megabytes (MB)' },
@@ -5463,7 +5463,7 @@ const TOOLS = {
         { value: 'petabytes', label: 'Petabytes (PB)' }
       ] },
 
-      { id: 'unit_area_from', label: 'From Unit', type: 'select', default: 'sq_meters', condition: v => v.dimension === 'area', options: [
+      { id: 'unit_area_from', label: 'From Unit', type: 'select', hint: 'The starting area unit to convert from.', default: 'sq_meters', condition: v => v.dimension === 'area', options: [
         { value: 'sq_meters', label: 'Square Meters (m²)' },
         { value: 'sq_kilometers', label: 'Square Kilometers (km²)' },
         { value: 'sq_feet', label: 'Square Feet (sq ft)' },
@@ -5472,7 +5472,7 @@ const TOOLS = {
         { value: 'acres', label: 'Acres (ac)' },
         { value: 'hectares', label: 'Hectares (ha)' }
       ] },
-      { id: 'unit_area_to', label: 'To Unit', type: 'select', default: 'sq_feet', condition: v => v.dimension === 'area', options: [
+      { id: 'unit_area_to', label: 'To Unit', type: 'select', hint: 'The target area unit to convert into.', default: 'sq_feet', condition: v => v.dimension === 'area', options: [
         { value: 'sq_meters', label: 'Square Meters (m²)' },
         { value: 'sq_kilometers', label: 'Square Kilometers (km²)' },
         { value: 'sq_feet', label: 'Square Feet (sq ft)' },
@@ -5482,7 +5482,7 @@ const TOOLS = {
         { value: 'hectares', label: 'Hectares (ha)' }
       ] },
 
-      { id: 'unit_pressure_from', label: 'From Unit', type: 'select', default: 'psi', condition: v => v.dimension === 'pressure', options: [
+      { id: 'unit_pressure_from', label: 'From Unit', type: 'select', hint: 'The starting pressure unit to convert from.', default: 'psi', condition: v => v.dimension === 'pressure', options: [
         { value: 'pascals', label: 'Pascals (Pa)' },
         { value: 'kilopascals', label: 'Kilopascals (kPa)' },
         { value: 'bar', label: 'Bar (bar)' },
@@ -5490,7 +5490,7 @@ const TOOLS = {
         { value: 'atm', label: 'Standard Atmospheres (atm)' },
         { value: 'mmhg', label: 'Millimeters of Mercury (mmHg / Torr)' }
       ] },
-      { id: 'unit_pressure_to', label: 'To Unit', type: 'select', default: 'bar', condition: v => v.dimension === 'pressure', options: [
+      { id: 'unit_pressure_to', label: 'To Unit', type: 'select', hint: 'The target pressure unit to convert into.', default: 'bar', condition: v => v.dimension === 'pressure', options: [
         { value: 'pascals', label: 'Pascals (Pa)' },
         { value: 'kilopascals', label: 'Kilopascals (kPa)' },
         { value: 'bar', label: 'Bar (bar)' },
@@ -5499,7 +5499,7 @@ const TOOLS = {
         { value: 'mmhg', label: 'Millimeters of Mercury (mmHg / Torr)' }
       ] },
 
-      { id: 'unit_time_from', label: 'From Unit', type: 'select', default: 'hours', condition: v => v.dimension === 'time', options: [
+      { id: 'unit_time_from', label: 'From Unit', type: 'select', hint: 'The starting time unit to convert from.', default: 'hours', condition: v => v.dimension === 'time', options: [
         { value: 'seconds', label: 'Seconds (s)' },
         { value: 'minutes', label: 'Minutes (min)' },
         { value: 'hours', label: 'Hours (h)' },
@@ -5508,7 +5508,7 @@ const TOOLS = {
         { value: 'months', label: 'Months (30.44 days)' },
         { value: 'years', label: 'Years (365.25 days)' }
       ] },
-      { id: 'unit_time_to', label: 'To Unit', type: 'select', default: 'minutes', condition: v => v.dimension === 'time', options: [
+      { id: 'unit_time_to', label: 'To Unit', type: 'select', hint: 'The target time unit to convert into.', default: 'minutes', condition: v => v.dimension === 'time', options: [
         { value: 'seconds', label: 'Seconds (s)' },
         { value: 'minutes', label: 'Minutes (min)' },
         { value: 'hours', label: 'Hours (h)' },
@@ -5680,7 +5680,7 @@ const TOOLS = {
       { label: 'Restaurant / Food (28% Margin)', values: { calc_mode: 'margin_from_price', cost: 18, revenue: 25, operating_expenses: 4 } }
     ],
     fields: [
-      { id: 'calc_mode', label: 'Calculation Mode', type: 'select', default: 'margin_from_price', options: [
+      { id: 'calc_mode', label: 'Calculation Mode', type: 'select', default: 'margin_from_price', hint: 'Choose whether to calculate your profit margin from cost and price, or determine the required selling price for a target margin.', options: [
         { value: 'margin_from_price', label: 'Calculate Margin from Cost & Sale Price' },
         { value: 'price_from_margin', label: 'Calculate Selling Price from Cost & Target Margin' }
       ] },
@@ -6280,7 +6280,7 @@ const TOOLS = {
     fields: [
       { id: 'loan_balance', label: 'Total Student Loan Balance ($)', type: 'number', default: 35000, min: 100, step: 500, hint: 'Total outstanding balance across all student loans.' },
       { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.8, min: 0.01, max: 25, step: 0.05, hint: 'Average interest rate (Federal Direct loans are commonly 5-7%).' },
-      { id: 'loan_term', label: 'Repayment Term (Years)', type: 'select', default: 10, options: [
+      { id: 'loan_term', label: 'Repayment Term (Years)', type: 'select', default: 10, hint: 'Standard federal repayment is 10 years. Extended plans can be 15-25 years.', options: [
         { value: 5, label: '5 Years' }, { value: 10, label: '10 Years (Standard)' }, { value: 15, label: '15 Years' }, { value: 20, label: '20 Years' }, { value: 25, label: '25 Years' }
       ] },
       { id: 'extra_payment', label: 'Extra Monthly Payment ($)', type: 'number', default: 50, min: 0, step: 25, hint: 'Additional amount paid directly toward principal each month.' }
