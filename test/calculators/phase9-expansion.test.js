@@ -57,7 +57,7 @@ describe('Debt Snowball & Payoff Calculator', () => {
             debt3_min: 125,
         });
         expect(resAvalanche.error).toBeFalsy();
-        expect(resAvalanche.insight.headline).toContain('debt-free');
+        expect(resAvalanche.insight.headline.toLowerCase()).toContain('debt-free');
     });
 
     it('returns error when no debts or zero minimum payments provided', () => {

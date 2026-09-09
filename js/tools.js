@@ -6633,34 +6633,93 @@ const TOOLS = {
     ]
   },
   'debt-snowball-calculator': {
-    name: 'Debt Snowball & Payoff Calculator',
-    description: 'Find out which debt to pay off first and how fast you can become completely debt-free using the Snowball or Avalanche method.',
-    metaTitle: 'Debt Snowball Calculator — Which Debt to Pay Off First? | GetCalcu',
-    metaDescription: 'Free Debt Snowball and Avalanche payoff calculator. Find out which debt to pay off first, compare payoff methods, and see how much interest you save.',
+    presets: [
+      {
+        label: 'Standard Consumer Debt ($15k)',
+        values: {
+          extra_payment: 200,
+          strategy: 'snowball',
+          debt1_name: 'Credit Card',
+          debt1_balance: 2500,
+          debt1_rate: 24.99,
+          debt1_min: 75,
+          debt2_name: 'Auto Loan',
+          debt2_balance: 8000,
+          debt2_rate: 6.5,
+          debt2_min: 200,
+          debt3_name: 'Personal Loan',
+          debt3_balance: 4500,
+          debt3_rate: 12.0,
+          debt3_min: 125
+        }
+      },
+      {
+        label: 'High-Interest Revolving Mix ($22k)',
+        values: {
+          extra_payment: 350,
+          strategy: 'avalanche',
+          debt1_name: 'Store Card',
+          debt1_balance: 1800,
+          debt1_rate: 29.99,
+          debt1_min: 60,
+          debt2_name: 'Major Credit Card',
+          debt2_balance: 7500,
+          debt2_rate: 22.49,
+          debt2_min: 220,
+          debt3_name: 'Consolidated Loan',
+          debt3_balance: 12700,
+          debt3_rate: 9.99,
+          debt3_min: 310
+        }
+      },
+      {
+        label: 'Aggressive Debt Elimination ($10k)',
+        values: {
+          extra_payment: 500,
+          strategy: 'snowball',
+          debt1_name: 'Medical Note',
+          debt1_balance: 1200,
+          debt1_rate: 0.0,
+          debt1_min: 50,
+          debt2_name: 'Credit Card',
+          debt2_balance: 3800,
+          debt2_rate: 21.99,
+          debt2_min: 110,
+          debt3_name: 'Student Line',
+          debt3_balance: 5000,
+          debt3_rate: 7.25,
+          debt3_min: 140
+        }
+      }
+    ],
+    name: 'Debt Payoff & Snowball Calculator',
+    description: 'Model Debt Snowball and Debt Avalanche repayment schedules, quantify interest savings, and project your exact debt-free horizon.',
+    metaTitle: 'Debt Payoff Calculator — Snowball vs. Avalanche Strategies | GetCalcu',
+    metaDescription: 'Free debt payoff calculator. Compare Debt Snowball vs. Debt Avalanche strategies, determine optimal repayment order, and calculate total interest saved.',
     category: 'Finance',
     icon: 'fa-snowflake',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    inputs: [
-      { id: 'extra_payment', label: 'Extra Cash You Can Add Monthly ($)', type: 'number', default: 200, min: 0, step: 25, help: 'Extra money you can throw at your debt every month beyond the minimum payments.' },
-      { id: 'strategy', label: 'Payoff Strategy', type: 'select', default: 'snowball', options: [
-        { value: 'snowball', label: 'Snowball Method (Smallest Balance First — Quickest Emotional Wins)' },
-        { value: 'avalanche', label: 'Avalanche Method (Highest Interest Rate First — Saves the Most Money)' }
-      ]},
-      { id: 'debt1_name', label: 'Debt 1 Name', type: 'text', default: 'Credit Card' },
-      { id: 'debt1_balance', label: 'Debt 1 Balance ($)', type: 'number', default: 2500, min: 0, step: 50 },
-      { id: 'debt1_rate', label: 'Debt 1 Interest Rate (APR %)', type: 'number', default: 24.99, min: 0, max: 99, step: 0.1 },
-      { id: 'debt1_min', label: 'Debt 1 Minimum Payment ($)', type: 'number', default: 75, min: 1, step: 5 },
+    fields: [
+      { id: 'extra_payment', label: 'Additional Monthly Contribution ($)', type: 'number', default: 200, min: 0, step: 25, hint: 'Extra cash allocated toward principal reduction each month beyond required minimums.' },
+      { id: 'strategy', label: 'Repayment Strategy', type: 'select', default: 'snowball', options: [
+        { value: 'snowball', label: 'Debt Snowball (Lowest Balance First — Behavioral Momentum)' },
+        { value: 'avalanche', label: 'Debt Avalanche (Highest APR First — Mathematical Optimization)' }
+      ], hint: 'Choose between behavioral momentum (Snowball) or maximum financing interest savings (Avalanche).' },
+      { id: 'debt1_name', label: 'Debt 1 Account Name', type: 'text', default: 'Credit Card', hint: 'Creditor or loan designation.' },
+      { id: 'debt1_balance', label: 'Debt 1 Balance ($)', type: 'number', default: 2500, min: 0, step: 50, hint: 'Current unpaid principal balance.' },
+      { id: 'debt1_rate', label: 'Debt 1 Interest Rate (APR %)', type: 'number', default: 24.99, min: 0, max: 99, step: 0.1, hint: 'Annual percentage rate assessed on revolving balances.' },
+      { id: 'debt1_min', label: 'Debt 1 Minimum Monthly Payment ($)', type: 'number', default: 75, min: 1, step: 5, hint: 'Required scheduled minimum installment.' },
 
-      { id: 'debt2_name', label: 'Debt 2 Name', type: 'text', default: 'Car Loan' },
-      { id: 'debt2_balance', label: 'Debt 2 Balance ($)', type: 'number', default: 8000, min: 0, step: 100 },
-      { id: 'debt2_rate', label: 'Debt 2 Interest Rate (APR %)', type: 'number', default: 6.5, min: 0, max: 99, step: 0.1 },
-      { id: 'debt2_min', label: 'Debt 2 Minimum Payment ($)', type: 'number', default: 200, min: 1, step: 5 },
+      { id: 'debt2_name', label: 'Debt 2 Account Name', type: 'text', default: 'Car Loan', hint: 'Creditor or loan designation.' },
+      { id: 'debt2_balance', label: 'Debt 2 Balance ($)', type: 'number', default: 8000, min: 0, step: 100, hint: 'Current unpaid principal balance.' },
+      { id: 'debt2_rate', label: 'Debt 2 Interest Rate (APR %)', type: 'number', default: 6.5, min: 0, max: 99, step: 0.1, hint: 'Annual percentage rate assessed on revolving balances.' },
+      { id: 'debt2_min', label: 'Debt 2 Minimum Monthly Payment ($)', type: 'number', default: 200, min: 1, step: 5, hint: 'Required scheduled minimum installment.' },
 
-      { id: 'debt3_name', label: 'Debt 3 Name', type: 'text', default: 'Personal Loan' },
-      { id: 'debt3_balance', label: 'Debt 3 Balance ($)', type: 'number', default: 4500, min: 0, step: 50 },
-      { id: 'debt3_rate', label: 'Debt 3 Interest Rate (APR %)', type: 'number', default: 12.0, min: 0, max: 99, step: 0.1 },
-      { id: 'debt3_min', label: 'Debt 3 Minimum Payment ($)', type: 'number', default: 125, min: 1, step: 5 }
+      { id: 'debt3_name', label: 'Debt 3 Account Name', type: 'text', default: 'Personal Loan', hint: 'Creditor or loan designation.' },
+      { id: 'debt3_balance', label: 'Debt 3 Balance ($)', type: 'number', default: 4500, min: 0, step: 50, hint: 'Current unpaid principal balance.' },
+      { id: 'debt3_rate', label: 'Debt 3 Interest Rate (APR %)', type: 'number', default: 12.0, min: 0, max: 99, step: 0.1, hint: 'Annual percentage rate assessed on revolving balances.' },
+      { id: 'debt3_min', label: 'Debt 3 Minimum Monthly Payment ($)', type: 'number', default: 125, min: 1, step: 5, hint: 'Required scheduled minimum installment.' }
     ],
     calculate(v) {
       const extra = Math.max(0, safeNum(v.extra_payment, 0));
@@ -6673,23 +6732,23 @@ const TOOLS = {
       ].filter(d => d.balance > 0);
 
       if (rawDebts.length === 0) {
-        return errorResult('Please enter at least one debt with a balance greater than $0.');
+        return errorResult('Please enter at least one debt with an outstanding balance greater than $0.');
       }
 
       for (const d of rawDebts) {
         if (d.min <= 0) {
-          return errorResult(`Please enter a minimum monthly payment greater than $0 for ${d.name}.`);
+          return errorResult(`Please specify a required minimum monthly payment greater than $0 for ${d.name}.`);
         }
         const monthlyInterest = (d.balance * (d.apr / 100)) / 12;
         if (d.min <= monthlyInterest && extra === 0) {
-          return errorResult(`The minimum payment for ${d.name} (${fmt(d.min)}) does not cover its monthly interest (${fmt(monthlyInterest)}). Increase your payment or add extra cash.`);
+          return errorResult(`The scheduled minimum payment for ${d.name} (${fmt(d.min)}) does not cover monthly accrued interest (${fmt(monthlyInterest)}). Increase the payment or allocate additional funds.`);
         }
       }
 
       const totalInitialDebt = rawDebts.reduce((sum, d) => sum + d.balance, 0);
       const totalInitialMin = rawDebts.reduce((sum, d) => sum + d.min, 0);
 
-      // 1. Simulate Baseline (Only paying minimums, no snowball rollover)
+      // 1. Simulate Baseline (Minimum payments only without rollover)
       let baselineDebts = rawDebts.map(d => ({ ...d }));
       let baselineTotalInterest = 0;
       let baselineMonths = 0;
@@ -6707,7 +6766,7 @@ const TOOLS = {
         }
       }
 
-      // 2. Simulate Active Strategy (Snowball or Avalanche with payment rollover)
+      // 2. Simulate Active Strategy (Snowball or Avalanche with rollover)
       let activeDebts = rawDebts.map(d => ({
         ...d,
         startBalance: d.balance,
@@ -6715,7 +6774,6 @@ const TOOLS = {
         interestPaid: 0
       }));
 
-      // Sort order
       if (strategy === 'snowball') {
         activeDebts.sort((a, b) => a.balance - b.balance);
       } else {
@@ -6730,10 +6788,9 @@ const TOOLS = {
         activeMonths++;
         let availableExtra = extra;
 
-        // Add interest and collect minimum payments
         for (const d of activeDebts) {
           if (d.balance <= 0.01) {
-            availableExtra += d.min; // Roll paid-off minimum forward into the snowball!
+            availableExtra += d.min;
             continue;
           }
           const monthlyRate = (d.apr / 100) / 12;
@@ -6751,7 +6808,6 @@ const TOOLS = {
           }
         }
 
-        // Apply remaining extra cash to the primary target debt in order
         for (const d of activeDebts) {
           if (d.balance <= 0.01) continue;
           const lumpPay = Math.min(d.balance, availableExtra);
@@ -6766,7 +6822,6 @@ const TOOLS = {
         }
       }
 
-      // Format payoff results
       for (const d of activeDebts) {
         if (!d.paidOffMonth) d.paidOffMonth = activeMonths;
       }
@@ -6776,7 +6831,7 @@ const TOOLS = {
       const firstPaidDebt = activeDebts[0];
 
       const schedule = activeDebts.map((d, idx) => ({
-        month: `#${idx + 1} Target: ${d.name}`,
+        month: `Target ${idx + 1}: ${d.name}`,
         payment: roundTo(d.startBalance, 2),
         principal: roundTo(d.interestPaid, 2),
         interest: `${d.apr}%`,
@@ -6795,7 +6850,7 @@ const TOOLS = {
           { label: 'Total Monthly Debt Budget', value: fmt(monthlyPayoffBudget) },
           { label: 'Total Debt Balance Paid', value: fmt(totalInitialDebt) },
           { label: 'Total Interest Paid', value: fmt(activeTotalInterest) },
-          { label: 'Payoff Strategy Chosen', value: strategy === 'snowball' ? 'Snowball (Smallest First)' : 'Avalanche (Highest APR First)' }
+          { label: 'Payoff Strategy Chosen', value: strategy === 'snowball' ? 'Snowball (Lowest Balance First)' : 'Avalanche (Highest APR First)' }
         ],
         chart: {
           principal: totalInitialDebt,
@@ -6804,77 +6859,115 @@ const TOOLS = {
         table: schedule,
         insight: {
           tone: 'positive',
-          icon: 'fa-flag-checkered',
-          headline: `You will be 100% debt-free in ${activeMonths} months!`,
-          detail: `By rolling your freed-up payments into each next debt, you eliminate all ${fmt(totalInitialDebt)} in debt and save ${fmt(interestSaved)} in unnecessary bank interest. Knock out ${firstPaidDebt.name} first for your first quick victory!`
+          icon: 'fa-award',
+          headline: `Debt-free status projected in ${activeMonths} months with ${fmt(interestSaved)} in interest savings.`,
+          detail: `By rolling satisfied installments forward into subsequent obligations, you eliminate ${fmt(totalInitialDebt)} in principal and avoid ${fmt(interestSaved)} in financing charges. Focus accelerated contributions on ${firstPaidDebt.name} to establish initial payoff momentum.`
         }
       };
     },
     article: {
-      heading: 'Snowball vs. Avalanche: Which Debt Should You Pay Off First?',
-      intro: 'When you have multiple debts—like credit cards, auto loans, and medical bills—deciding which balance to attack first can save you thousands of dollars and years of stress.',
+      heading: 'Accelerated Debt Repayment: Snowball vs. Avalanche Frameworks',
+      intro: 'Consumer debt reduction requires balancing mathematical optimization against psychological persistence. Choosing between the Debt Snowball and Debt Avalanche methods dictates your total interest expenditure and repayment velocity.',
       sections: [
         {
-          heading: 'The Debt Snowball: Quick Wins for Huge Momentum',
-          body: 'The Debt Snowball method ranks your balances from smallest dollar amount to largest dollar amount, regardless of interest rates. You pay minimums on everything, but throw all extra cash at the smallest debt. When that smallest card is wiped out, you take its entire monthly payment and roll it like a snowball into the next smallest. Research at Harvard Business School shows that people who use the snowball method are far more likely to become debt-free because early, quick victories keep them motivated.'
+          heading: 'The Debt Snowball: Behavioral Momentum',
+          body: 'The Debt Snowball methodology ranks obligations in ascending order of outstanding principal balance. By maintaining minimum payments across all accounts and channeling surplus capital toward the smallest balance, borrowers experience rapid behavioral milestones. Empirical research from Northwestern University and Harvard Business School confirms that early account elimination increases sustained adherence to multi-year debt elimination plans.'
         },
         {
-          heading: 'The Debt Avalanche: Maximum Math Savings',
-          body: 'The Debt Avalanche method orders your debts by highest annual percentage rate (APR) first. You attack high-interest credit card debt (often 20% to 29%) before low-rate student loans or car payments. Mathematically, this saves the greatest total amount of interest.'
+          heading: 'The Debt Avalanche: Mathematical Optimization',
+          body: 'The Debt Avalanche methodology prioritizes obligations strictly by annual percentage rate (APR). Capital is concentrated against the highest-rate liabilities (such as revolving credit lines carrying 20% to 29% APR) prior to lower-rate installment loans. This approach mathematically minimizes aggregate interest accrual over the lifetime of the portfolio.'
         },
         {
-          heading: 'How to Choose the Right Strategy for You',
-          body: 'If you feel overwhelmed and need immediate hope, choose the Debt Snowball. Paying off your first card in a few months feels incredible. If you are strictly analytical and want to pay the absolute lowest dollar amount in interest, choose the Debt Avalanche.'
+          heading: 'Strategic Decision Framework',
+          body: 'Borrowers experiencing fatigue or requiring immediate positive feedback benefit most from the Snowball framework. Conversely, analytical borrowers seeking minimal lifetime financing costs should implement the Avalanche framework.'
         }
       ]
     },
     howTo: [
-      'Enter any extra cash you can comfortably afford each month above your minimum payments.',
-      'Select your preferred strategy: Snowball (smallest balance first) or Avalanche (highest interest rate first).',
-      'List your current debts with their balances, interest rates (APR), and required minimum monthly payments.',
-      'Review your exact debt-free timeline, your payoff order, and total interest saved.'
+      'Enter the supplemental monthly cash available for accelerated debt reduction.',
+      'Select your preferred methodology (Debt Snowball or Debt Avalanche).',
+      'Input outstanding balances, annual percentage rates (APR), and required minimum payments for each liability.',
+      'Review your consolidated payoff timeline, repayment sequencing, and aggregate interest savings.'
     ],
     examples: [
       {
-        title: '$15,000 Total Debt with $200 Extra Monthly',
-        input: '$2,500 card at 24.99%, $4,500 loan at 12%, $8,000 car at 6.5%, +$200/mo extra',
-        result: 'Debt-free in 28 months, saving $2,400+ in bank interest vs paying minimums'
+        title: '$15,000 Multi-Account Portfolio ($200 Supplemental)',
+        input: '$2,500 credit card (24.99%), $4,500 personal note (12%), $8,000 vehicle loan (6.5%), +$200/mo',
+        result: 'Full payoff achieved in 28 months; eliminates $2,400+ in financing charges'
       }
     ],
-    formula: 'Monthly Interest = Balance × (APR / 12); Extra Budget = Extra Cash + ∑ (Freed-Up Minimums)',
+    formula: 'M_{interest} = B \times \left(\frac{APR}{12}\right); \quad C_{target} = C_{extra} + \sum M_{retired}',
     faqs: [
       {
-        q: 'Which debt payoff method is better: Snowball or Avalanche?',
-        a: 'The Avalanche method saves more money mathematically by targeting high interest rates first. However, the Snowball method has a higher real-world completion rate because quickly eliminating small balances provides fast psychological momentum.'
+        q: 'Which repayment methodology minimizes total interest cost?',
+        a: 'The Debt Avalanche methodology strictly minimizes total financing costs by targeting the highest annual percentage rate (APR) first, preventing expensive revolving compound charges.'
       },
       {
-        q: 'What is the "snowball effect" in debt payoff?',
-        a: 'When you pay off a debt, you do NOT spend that freed-up money. Instead, you roll its entire minimum payment into the next debt on your list. With each debt you wipe out, your monthly payment on the remaining debts gets larger and larger—just like a snowball rolling down a hill.'
+        q: 'How does payment rollover accelerate amortization?',
+        a: 'When an account is satisfied, its minimum required payment is not absorbed into discretionary spending. Instead, the full cash flow is redirected toward the subsequent target balance, creating an expanding repayment allocation over time.'
       },
       {
-        q: 'Should I save an emergency fund while paying off debt?',
-        a: 'Yes. Keep a starter emergency fund of $1,000 to $2,000 in a high-yield savings account before aggressively attacking debt. Without a small safety cushion, a minor car repair or medical bill could force you back onto high-interest credit cards.'
+        q: 'Should an emergency reserve be established prior to accelerated debt reduction?',
+        a: 'Yes. Maintaining a liquid starter emergency reserve ($1,000 to $2,000) prevents unexpected operating expenses from forcing renewed reliance on high-interest revolving credit during debt payoff.'
       }
     ]
   },
 
   'refinance-calculator': {
+    presets: [
+      {
+        label: 'Rate Reduction (1.50% Drop)',
+        values: {
+          current_balance: 320000,
+          current_rate: 6.75,
+          current_years_remaining: 26,
+          new_rate: 5.25,
+          new_term_years: 30,
+          closing_costs: 4500,
+          years_in_home: 7
+        }
+      },
+      {
+        label: 'Term Reduction (30-Yr to 15-Yr)',
+        values: {
+          current_balance: 275000,
+          current_rate: 6.50,
+          current_years_remaining: 24,
+          new_rate: 4.85,
+          new_term_years: 15,
+          closing_costs: 3800,
+          years_in_home: 10
+        }
+      },
+      {
+        label: 'Short-Horizon Evaluation (3 Years Stay)',
+        values: {
+          current_balance: 400000,
+          current_rate: 7.125,
+          current_years_remaining: 28,
+          new_rate: 6.25,
+          new_term_years: 30,
+          closing_costs: 5500,
+          years_in_home: 3
+        }
+      }
+    ],
     name: 'Mortgage Refinance Break-Even Calculator',
-    description: 'Find out if refinancing your mortgage is actually worth it. Calculate your exact break-even month, monthly savings, and net profit.',
-    metaTitle: 'Mortgage Refinance Calculator — Is Refinancing Worth It? | GetCalcu',
-    metaDescription: 'Free mortgage refinance break-even calculator. See how much you save each month, your exact break-even point in months, and your total net profit.',
+    description: 'Evaluate mortgage refinancing viability by calculating payment reductions, upfront closing cost break-even horizons, and net cash savings.',
+    metaTitle: 'Mortgage Refinance Calculator — Break-Even Horizon & Net Savings | GetCalcu',
+    metaDescription: 'Free mortgage refinance calculator. Calculate monthly payment reduction, exact break-even timeline in months, and cumulative net savings after closing costs.',
     category: 'Finance',
     icon: 'fa-house-chimney-window',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    inputs: [
-      { id: 'current_balance', label: 'Current Mortgage Balance ($)', type: 'number', default: 320000, min: 1000, step: 5000, help: 'The remaining principal balance on your current home loan.' },
-      { id: 'current_rate', label: 'Current Interest Rate (%)', type: 'number', default: 6.75, min: 0.1, max: 20, step: 0.125, help: 'The interest rate you are paying today.' },
-      { id: 'current_years_remaining', label: 'Years Left on Current Loan', type: 'number', default: 26, min: 1, max: 40, step: 1, help: 'How many years remain before your current loan is fully paid off.' },
-      { id: 'new_rate', label: 'New Interest Rate (%)', type: 'number', default: 5.25, min: 0.1, max: 20, step: 0.125, help: 'The new lower interest rate offered by the lender.' },
-      { id: 'new_term_years', label: 'New Loan Term (Years)', type: 'number', default: 30, min: 5, max: 40, step: 5, help: 'Length of the new mortgage (typically 15, 20, or 30 years).' },
-      { id: 'closing_costs', label: 'Refinance Closing Costs & Fees ($)', type: 'number', default: 4500, min: 0, step: 250, help: 'All upfront lender fees, appraisal, title, and escrow costs to refinance.' },
-      { id: 'years_in_home', label: 'Years You Plan to Stay in the Home', type: 'number', default: 7, min: 1, max: 40, step: 1, help: 'Crucial: if you move before your break-even month, refinancing costs you money!' }
+    fields: [
+      { id: 'current_balance', label: 'Current Mortgage Balance ($)', type: 'number', default: 320000, min: 1000, step: 5000, hint: 'The remaining unpaid principal balance on your existing mortgage note.' },
+      { id: 'current_rate', label: 'Current Interest Rate (%)', type: 'number', default: 6.75, min: 0.1, max: 20, step: 0.125, hint: 'The annual note rate currently charged on your existing mortgage.' },
+      { id: 'current_years_remaining', label: 'Remaining Amortization Term (Years)', type: 'number', default: 26, min: 1, max: 40, step: 1, hint: 'Number of remaining years until your existing mortgage is fully retired.' },
+      { id: 'new_rate', label: 'Proposed Interest Rate (%)', type: 'number', default: 5.25, min: 0.1, max: 20, step: 0.125, hint: 'The lower interest rate offered by the refinancing lender.' },
+      { id: 'new_term_years', label: 'New Loan Term (Years)', type: 'number', default: 30, min: 5, max: 40, step: 5, hint: 'Standard amortization term for the replacement loan (e.g. 15, 20, or 30 years).' },
+      { id: 'closing_costs', label: 'Estimated Refinance Closing Costs ($)', type: 'number', default: 4500, min: 0, step: 250, hint: 'Total origination, appraisal, title, escrow, and recording fees required at settlement.' },
+      { id: 'years_in_home', label: 'Anticipated Occupancy Horizon (Years)', type: 'number', default: 7, min: 1, max: 40, step: 1, hint: 'Expected duration you plan to retain and occupy the mortgaged property.' }
     ],
     calculate(v) {
       const balance = safeNum(v.current_balance, 0);
@@ -6885,9 +6978,9 @@ const TOOLS = {
       const closingCosts = Math.max(0, safeNum(v.closing_costs, 0));
       const yearsInHome = Math.max(1, safeNum(v.years_in_home, 5));
 
-      if (balance <= 0) return errorResult('Please enter a valid current mortgage balance.');
-      if (currentYears <= 0) return errorResult('Please enter the years remaining on your current mortgage.');
-      if (newTermYears <= 0) return errorResult('Please enter a valid term for the new mortgage.');
+      if (balance <= 0) return errorResult('Please specify an outstanding principal balance greater than $0.');
+      if (currentYears <= 0) return errorResult('Please enter remaining years on your current loan term.');
+      if (newTermYears <= 0) return errorResult('Please select a valid term for the proposed loan.');
 
       const calcMonthlyPI = (P, annualRate, years) => {
         const r = (annualRate / 100) / 12;
@@ -6936,15 +7029,15 @@ const TOOLS = {
 
       if (monthlySavings <= 0) {
         insightTone = 'warning';
-        insightHeadline = 'Refinancing will increase your monthly payment.';
-        insightDetail = `With a new rate of ${newRate}% over ${newTermYears} years, your payment would be ${fmt(Math.abs(monthlySavings))}/month higher than your current payment.`;
+        insightHeadline = 'Proposed terms result in higher monthly financing obligations.';
+        insightDetail = `With a note rate of ${newRate}% over ${newTermYears} years, your required principal and interest payment increases by ${fmt(Math.abs(monthlySavings))}/month relative to your current schedule.`;
       } else if (!isWorthIt) {
         insightTone = 'warning';
-        insightHeadline = `Not recommended if you move within ${yearsInHome} years.`;
-        insightDetail = `You would save ${fmt(monthlySavings)}/month, but it takes ${breakEvenMonths} months to recover your ${fmt(closingCosts)} closing costs. Since you plan to leave in ${totalMonthsInHome} months, refinancing will result in a net loss of ${fmt(Math.abs(netSavingsInHome))}.`;
+        insightHeadline = `Unfavorable horizon: Occupancy of ${yearsInHome} years precedes full fee recovery.`;
+        insightDetail = `While monthly payments decrease by ${fmt(monthlySavings)}, recouping ${fmt(closingCosts)} in settlement fees requires ${breakEvenMonths} months. Vacating in ${totalMonthsInHome} months incurs a net loss of ${fmt(Math.abs(netSavingsInHome))}.`;
       } else {
-        insightHeadline = `Refinancing is worth it! You break even in ${breakEvenMonths} months.`;
-        insightDetail = `You lower your payment by ${fmt(monthlySavings)} every single month. After recovering your ${fmt(closingCosts)} closing costs, you will keep a net profit of ${fmt(netSavingsInHome)} in your pocket while living in the home.`;
+        insightHeadline = `Refinancing is financially advantageous: Break-even attained in ${breakEvenMonths} months.`;
+        insightDetail = `Monthly payment decreases by ${fmt(monthlySavings)}. Over your ${yearsInHome}-year occupancy horizon, you recover ${fmt(closingCosts)} in closing fees and generate ${fmt(netSavingsInHome)} in net cumulative cash savings.`;
       }
 
       return {
@@ -6972,73 +7065,105 @@ const TOOLS = {
       };
     },
     article: {
-      heading: 'Is It Worth Refinancing Your Mortgage? The Break-Even Rule',
-      intro: 'A mortgage refinance replaces your existing home loan with a brand new loan, ideally at a lower interest rate. But because lenders charge thousands in upfront closing costs, refinancing is only worth it if you stay in the home long enough to break even.',
+      heading: 'Mortgage Refinance Break-Even Analysis & Capital Recovery',
+      intro: 'Refinancing replaces an existing residential lien with a new debt instrument under modified rate and term covenants. Evaluating transaction viability requires quantifying the break-even horizon against projected homeownership tenure.',
       sections: [
         {
-          heading: 'How to Calculate Your Break-Even Point in Plain English',
-          body: 'Your break-even point is the exact month where your accumulated monthly savings equal the upfront closing costs you paid. For example, if refinancing costs $4,500 in fees and lowers your mortgage by $300 a month: $4,500 ÷ $300 = 15 months. If you stay in the home longer than 15 months, refinancing puts pure profit into your pocket. If you sell or move in 12 months, you lose money.'
+          heading: 'Quantifying the Break-Even Horizon',
+          body: 'The break-even point defines the exact operational duration required for cumulative monthly payment reductions to offset non-refundable closing expenditures. For example, incurring $4,500 in settlement fees to achieve a $300 monthly savings generates a 15-month break-even horizon. Relocating prior to month 15 produces a negative net present value.'
         },
         {
-          heading: 'Watch Out for Resetting the 30-Year Clock',
-          body: 'If you have already paid 10 years on a 30-year mortgage (with 20 years left), refinancing into a new 30-year loan will lower your monthly payment, but you are stretching your debt over an additional 10 years. Always check the total lifetime interest, or consider refinancing into a 15-year or 20-year term.'
+          heading: 'Amortization Horizon Reset Considerations',
+          body: 'Refinancing a seasoned 30-year note into a new 30-year instrument resets the amortization curve, extending total financing duration and back-loading principal retirement. Borrowers should consider 15-year or 20-year term options to avoid increasing lifetime financing obligations.'
         },
         {
-          heading: 'No-Closing-Cost Refinances: Are They Truly Free?',
-          body: 'Lenders offering "no-closing-cost" refinances do not waive their fees. Instead, they either roll the fees into your total loan balance or charge a slightly higher interest rate. Run this calculator with both scenarios to see which one saves you more.'
+          heading: 'Evaluating Zero-Closing-Cost Loan Structures',
+          body: 'Zero-closing-cost transactions do not eliminate lender overhead. Transaction costs are either absorbed via a higher note coupon (lender credit) or capitalized into the principal balance, increasing long-term carrying costs.'
         }
       ]
     },
     howTo: [
-      'Enter your current loan balance and your current interest rate.',
-      'Enter how many years are left on your existing loan.',
-      'Enter the new interest rate and loan term (e.g. 15 or 30 years) offered by the lender.',
-      'Input the total closing costs and how many years you plan to stay in the home.',
-      'Check your break-even month and your net profit to see if refinancing makes sense.'
+      'Enter current principal balance and existing note coupon rate.',
+      'Specify remaining amortization duration on current obligation.',
+      'Input proposed replacement note rate and loan term.',
+      'Specify total closing fees and anticipated occupancy horizon in years.',
+      'Evaluate monthly payment reduction, break-even timeline, and projected net savings.'
     ],
     examples: [
       {
-        title: '$320,000 Loan Dropping from 6.75% to 5.25%',
-        input: '$320,000 balance, 26 yrs remaining, 5.25% 30-yr new rate, $4,500 fees, 7 yrs in home',
-        result: 'Saves $312/mo, breaks even in 15 months, nets $21,700+ profit over 7 years'
+        title: '$320,000 Note Rate Reduction (6.75% to 5.25%)',
+        input: '$320,000 balance, 26 yrs remaining, 5.25% 30-yr new rate, $4,500 closing fees, 7 yrs stay',
+        result: 'Reduces payment by $312/mo; breaks even at month 15; generates $21,700+ net savings'
       }
     ],
-    formula: 'Break-Even Month = Total Closing Costs ÷ Monthly Payment Savings',
+    formula: 'T_{break\\text{-}even} = \\left\\lceil \\frac{\\text{Closing Costs}}{M_{current} - M_{new}} \\right\\rceil',
     faqs: [
       {
-        q: 'What is a good rule of thumb for refinancing?',
-        a: 'A traditional rule of thumb is that refinancing is worth considering if you can lower your interest rate by at least 0.75% to 1.00%, and plan to remain in the home past your break-even date.'
+        q: 'What rate reduction benchmark typically justifies refinancing?',
+        a: 'Generally, a rate reduction of 0.75% to 1.00% offers sufficient debt service reduction to recover transaction costs within 24 to 36 months, provided the homeowner retains the asset past the break-even date.'
       },
       {
-        q: 'What fees are included in mortgage closing costs?',
-        a: 'Closing costs typically range between 2% and 4% of the loan amount and include origination fees, home appraisal, title insurance, attorney or settlement fees, and state recording taxes.'
+        q: 'What fees constitute closing expenditures in a mortgage refinance?',
+        a: 'Standard closing expenditures include loan origination fees, appraisal fees, lender title insurance, settlement/attorney fees, recording taxes, and prepaid escrow reserves.'
       },
       {
-        q: 'Will refinancing hurt my credit score?',
-        a: 'Applying for a refinance causes a small, temporary dip (typically 5 to 10 points) due to a hard credit inquiry. Once you start making regular on-time payments on the new loan, your score quickly recovers.'
+        q: 'How does refinancing impact credit scoring models?',
+        a: 'Lender pre-approval generates a temporary hard credit inquiry (typically 5 to 10 points). Following regular payment seasoning on the new note, credit scoring models rebound rapidly.'
       }
     ]
   },
 
   'self-employment-tax-calculator': {
+    presets: [
+      {
+        label: 'Solo Professional ($85k)',
+        values: {
+          gross_income: 85000,
+          business_expenses: 12000,
+          filing_status: 'single',
+          state_tax_rate: 4.5,
+          other_w2_income: 0
+        }
+      },
+      {
+        label: 'Consultant / Agency ($160k)',
+        values: {
+          gross_income: 160000,
+          business_expenses: 24000,
+          filing_status: 'married_joint',
+          state_tax_rate: 5.0,
+          other_w2_income: 0
+        }
+      },
+      {
+        label: 'Side-Hustle ($30k with W-2)',
+        values: {
+          gross_income: 30000,
+          business_expenses: 4500,
+          filing_status: 'single',
+          state_tax_rate: 4.0,
+          other_w2_income: 75000
+        }
+      }
+    ],
     name: '1099 Self-Employment Tax Calculator',
-    description: 'Calculate self-employment (SECA) and income taxes for freelancers, 1099 contractors, and gig workers. Know exactly how much to save from every check.',
-    metaTitle: '1099 Tax Calculator — How Much to Save for Self-Employment Taxes | GetCalcu',
-    metaDescription: 'Free 1099 self-employment tax calculator. Calculate your 15.3% SECA tax, federal and state income tax, quarterly 1040-ES payments, and what percentage to save from every check.',
+    description: 'Calculate federal self-employment tax (SECA), effective tax brackets, and quarterly estimated IRS 1040-ES payments for independent contractors and sole proprietors.',
+    metaTitle: '1099 Tax Calculator — Self-Employment Tax & Estimated Quarterly Payments | GetCalcu',
+    metaDescription: 'Free 1099 self-employment tax calculator. Calculate 15.3% SECA tax, progressive federal and state income taxes, Schedule SE deductions, and quarterly 1040-ES payments.',
     category: 'Finance',
     icon: 'fa-receipt',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    inputs: [
-      { id: 'gross_income', label: 'Annual 1099 Gross Income / Total Invoiced ($)', type: 'number', default: 85000, min: 0, step: 1000, help: 'Total revenue or freelance client payments before any expenses or taxes.' },
-      { id: 'business_expenses', label: 'Annual Deductible Business Expenses ($)', type: 'number', default: 12000, min: 0, step: 500, help: 'Allowable write-offs (mileage, software, laptop, home office, subcontractors).' },
+    fields: [
+      { id: 'gross_income', label: 'Annual 1099 Gross Revenue ($)', type: 'number', default: 85000, min: 0, step: 1000, hint: 'Total gross revenue or client receipts prior to business expenses and tax deductions.' },
+      { id: 'business_expenses', label: 'Ordinary & Necessary Business Deductions ($)', type: 'number', default: 12000, min: 0, step: 500, hint: 'Allowable Schedule C business write-offs (mileage, software, hardware, professional services).' },
       { id: 'filing_status', label: 'Tax Filing Status', type: 'select', default: 'single', options: [
-        { value: 'single', label: 'Single' },
+        { value: 'single', label: 'Single Filer' },
         { value: 'married_joint', label: 'Married Filing Jointly' },
         { value: 'head_household', label: 'Head of Household' }
-      ]},
-      { id: 'state_tax_rate', label: 'Estimated State Income Tax Rate (%)', type: 'number', default: 4.5, min: 0, max: 15, step: 0.5, help: 'Your state tax rate (enter 0% if you live in TX, FL, WA, TN, NV, WY, SD, or AK).' },
-      { id: 'other_w2_income', label: 'Other W-2 Job Salary ($)', type: 'number', default: 0, min: 0, step: 1000, help: 'If you also work a regular W-2 day job, enter your salary here to adjust the Social Security cap.' }
+      ], hint: 'IRS tax filing status determining progressive bracket thresholds and standard deductions.' },
+      { id: 'state_tax_rate', label: 'Applicable State Income Tax Rate (%)', type: 'number', default: 4.5, min: 0, max: 15, step: 0.5, hint: 'State income tax rate (0% for states without individual income tax including TX, FL, WA, TN).' },
+      { id: 'other_w2_income', label: 'Concurrent W-2 Compensation ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'W-2 wage earnings subject to mandatory FICA withholding (adjusts Social Security wage cap).' }
     ],
     calculate(v) {
       const gross = Math.max(0, safeNum(v.gross_income, 0));
@@ -7048,7 +7173,7 @@ const TOOLS = {
       const w2Income = Math.max(0, safeNum(v.other_w2_income, 0));
 
       if (gross <= 0 && w2Income <= 0) {
-        return errorResult('Please enter your gross freelance income or W-2 salary.');
+        return errorResult('Please specify gross freelance revenue or employment compensation.');
       }
 
       // 1. Net Schedule C Business Profit
@@ -7057,7 +7182,7 @@ const TOOLS = {
       // 2. Schedule SE Net Earnings (IRS 92.35% statutory rule)
       const seEarnings = netProfit * 0.9235;
 
-      // 3. Social Security Tax (12.4% up to the 2026 cap of $176,100)
+      // 3. Social Security Tax (12.4% up to 2026 cap of $176,100)
       const SS_CAP_2026 = 176100;
       const ssCapRemaining = Math.max(0, SS_CAP_2026 - w2Income);
       const ssTaxableIncome = Math.min(seEarnings, ssCapRemaining);
@@ -7152,7 +7277,7 @@ const TOOLS = {
       // 10. State Income Tax
       const stateTax = roundTo(federalTaxableIncome * seShareOfIncome * (stateRate / 100), 2);
 
-      // 11. Grand Total Tax & Crucial Freelancer Metrics
+      // 11. Grand Total Tax & Allocation Metrics
       const totalAnnualTax = roundTo(totalSETax + federalTaxFor1099 + stateTax, 2);
       const quarterlyPayment = roundTo(totalAnnualTax / 4, 2);
       const recommendedSavePercent = gross > 0 ? roundTo((totalAnnualTax / gross) * 100, 1) : 0;
@@ -7163,7 +7288,7 @@ const TOOLS = {
         { month: 'Medicare Tax (2.9%)', payment: fmt(seEarnings), principal: '2.9%', interest: 'SECA', balance: fmt(medicareTax) },
         { month: 'Estimated Federal Income Tax', payment: fmt(federalTaxableIncome), principal: 'Progressive', interest: 'IRS 1040', balance: fmt(federalTaxFor1099) },
         { month: `State Income Tax (${stateRate}%)`, payment: fmt(federalTaxableIncome), principal: `${stateRate}%`, interest: 'State DOR', balance: fmt(stateTax) },
-        { month: 'Total Estimated Annual Tax', payment: fmt(gross), principal: `${recommendedSavePercent}%`, interest: 'All Taxes', balance: fmt(totalAnnualTax) }
+        { month: 'Total Estimated Annual Tax', payment: fmt(gross), principal: `${recommendedSavePercent}%`, interest: 'Consolidated', balance: fmt(totalAnnualTax) }
       ];
 
       return {
@@ -7175,7 +7300,7 @@ const TOOLS = {
           { label: 'Federal Income Tax', value: fmt(federalTaxFor1099) },
           { label: 'State Income Tax', value: fmt(stateTax) },
           { label: 'Net Take-Home Cash in Pocket', value: fmt(takeHomeCash) },
-          { label: 'Deductible Write-Offs Claimed', value: fmt(expenses) }
+          { label: 'Deductible Business Expenses', value: fmt(expenses) }
         ],
         chart: {
           principal: takeHomeCash,
@@ -7184,61 +7309,57 @@ const TOOLS = {
         table: schedule,
         insight: {
           tone: 'info',
-          icon: 'fa-piggy-bank',
-          headline: `Set aside ${recommendedSavePercent}% of every invoice (${fmt(quarterlyPayment)} per quarter).`,
-          detail: `Because self-employed workers pay both the employee and employer share of Social Security and Medicare (15.3%), tucking away ${recommendedSavePercent}% into a dedicated high-yield tax savings account ensures zero surprises when IRS quarterly deadlines arrive.`
+          icon: 'fa-file-invoice-dollar',
+          headline: `Allocate ${recommendedSavePercent}% (${fmt(quarterlyPayment)} quarterly) for tax liability.`,
+          detail: `Self-employed professionals remit both employer and employee portions of Social Security and Medicare (15.3% SECA). Reserving ${recommendedSavePercent}% of each invoice into an earmarked liquid account ensures full compliance across IRS quarterly deadlines.`
         }
       };
     },
     article: {
-      heading: 'How Much Should Freelancers & 1099 Workers Save for Taxes?',
-      intro: 'When you work as a 1099 contractor, freelancer, or gig worker, taxes are not automatically deducted from your paycheck. Understanding self-employment tax (SECA) and estimated quarterly payments is essential to keeping your business profitable and compliant.',
+      heading: 'Self-Employment Tax (SECA) & Estimated Tax Compliance',
+      intro: 'Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.',
       sections: [
         {
-          heading: 'What is the Self-Employment (SECA) Tax?',
-          body: 'When you work as a W-2 employee, your company pays half of your FICA taxes (7.65%) and deducts the other half from your pay. When you work for yourself, you are both the employee and the employer, so you pay the full 15.3% (12.4% for Social Security up to the annual statutory limit and 2.9% for Medicare). However, the IRS lets you write off 50% of this tax on your 1040 return to lower your taxable income.'
+          heading: 'Structure of the Self-Employment (SECA) Tax',
+          body: 'The Self-Employment Contributions Act imposes a 15.3% tax on net self-employment earnings, comprising 12.4% for Old-Age, Survivors, and Disability Insurance (Social Security) up to the statutory wage threshold and 2.9% for Hospital Insurance (Medicare). Net business earnings are adjusted by 92.35% pursuant to Schedule SE prior to tax computation.'
         },
         {
-          heading: 'The Golden Rule: Set Aside 25% to 30% of Every Check',
-          body: 'As a general rule of thumb, most freelancers should transfer 25% to 30% of every client invoice directly into a separate high-yield tax savings account the day it clears. This covers both your 15.3% self-employment tax plus federal and state income taxes.'
+          heading: 'Above-the-Line FICA Deduction',
+          body: 'Taxpayers receive an above-the-line adjustment to income equal to 50% of total calculated self-employment tax. This deduction reduces Adjusted Gross Income (AGI) prior to standard or itemized deduction calculations.'
         },
         {
-          heading: 'IRS Estimated Quarterly Tax Deadlines',
-          body: 'If you expect to owe more than $1,000 in federal taxes, the IRS requires you to make four quarterly estimated payments using Form 1040-ES: Q1 is due April 15; Q2 is due June 15; Q3 is due September 15; and Q4 is due January 15 of the following year.'
-        },
-        {
-          heading: 'How Business Write-Offs Lower Your Taxes',
-          body: 'You only pay self-employment tax on your net profit (Gross Revenue minus Business Expenses). Every valid business expense you track—such as software subscriptions, business mileage, home office space, and gear—directly reduces the amount you owe.'
+          heading: 'IRS Form 1040-ES Quarterly Deadlines',
+          body: 'Taxpayers anticipating tax liabilities exceeding $1,000 must remit estimated quarterly payments across four statutory deadlines: April 15, June 15, September 15, and January 15. Underpayment penalties can be prevented via statutory Safe Harbor provisions (paying 90% of current year tax or 100% of prior year tax, 110% for high earners).'
         }
       ]
     },
     howTo: [
-      'Enter your total expected 1099 gross revenue or invoiced income for the year.',
-      'Enter your estimated deductible business expenses (supplies, software, mileage, equipment).',
-      'Select your tax filing status (Single, Married Filing Jointly, or Head of Household).',
-      'Input your estimated state income tax rate (or 0% if your state has no income tax).',
-      'Review your recommended savings percentage and exact quarterly payment amounts.'
+      'Enter projected annual gross 1099 revenue and client billings.',
+      'Specify qualified deductible operating expenses to determine Schedule C net profit.',
+      'Select applicable IRS tax filing status and individual state income tax rate.',
+      'Input concurrent W-2 compensation to calibrate Social Security statutory wage base limits.',
+      'Review total tax allocation percentages and exact quarterly installment obligations.'
     ],
     examples: [
       {
-        title: 'Freelancer Earning $85,000 with $12,000 Expenses',
-        input: '$85,000 gross, $12,000 expenses, Single filer, 4.5% state tax',
-        result: 'Save ~27% from each check; quarterly payments of ~$5,700 to IRS and state'
+        title: 'Independent Consultant ($85,000 Revenue, $12,000 Deductions)',
+        input: '$85,000 gross revenue, $12,000 expenses, Single filer, 4.5% state rate',
+        result: 'Allocate ~27.8% of invoice revenue; quarterly installments of ~$5,065 to IRS and state'
       }
     ],
-    formula: 'Net Profit = Gross - Expenses; SE Tax = Net Profit × 92.35% × 15.3%; Quarterly Payment = Total Tax ÷ 4',
+    formula: 'T_{SECA} = (R_{gross} - E_{exp}) \times 0.9235 \times 0.153; \quad P_{quarterly} = \frac{T_{total}}{4}',
     faqs: [
       {
-        q: 'Why is self-employment tax 15.3%?',
-        a: 'Self-employment tax consists of 12.4% for Social Security and 2.9% for Medicare. Regular W-2 employees split this with their boss (7.65% each); freelancers pay both halves because they are both employer and worker.'
+        q: 'Why does self-employment tax apply at a 15.3% rate?',
+        a: 'W-2 employees share FICA liabilities equally with employers (7.65% each). Self-employed individuals represent both enterprise and employee, requiring remittance of both halves under SECA statutory guidelines.'
       },
       {
-        q: 'What happens if I miss a quarterly tax payment?',
-        a: 'If you fail to make required quarterly payments, the IRS may assess an underpayment penalty. You can avoid penalties under the "Safe Harbor" rule by paying at least 90% of your current year tax or 100% of your prior year tax (110% if your income exceeds $150k).'
+        q: 'What criteria govern IRS Safe Harbor underpayment rules?',
+        a: 'To avoid underpayment penalties, taxpayers must remit at least 90% of current year liabilities or 100% of prior year tax (110% if prior year Adjusted Gross Income exceeded $150,000).'
       },
       {
-        q: 'Can I deduct business mileage and home office expenses?',
-        a: 'Yes! Business mileage (using the standard IRS mileage rate) and a qualifying dedicated home office space are two of the largest deductions for self-employed individuals.'
+        q: 'How do ordinary business expenses decrease tax liabilities?',
+        a: 'Self-employment and income taxes apply solely to net profit (gross revenue minus allowable ordinary business expenses). Each legitimate deduction directly reduces the taxable base.'
       }
     ]
   },
