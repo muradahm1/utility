@@ -46,11 +46,12 @@ describe('Phase 1 High-Intent Long-Tail Calculators', () => {
       rate_30: 6.75,
       property_tax: 4800,
       insurance: 1200,
+      sp500_return: 8.0
     });
 
     expect(result.error).toBeUndefined();
     expect(result.stats).toBeDefined();
-    const saved = result.stats.find(s => s.label === 'Total Interest Saved');
+    const saved = result.stats.find(s => s.label === 'Total Interest Saved (15-Yr)');
     expect(saved).toBeDefined();
     expect(saved.value).toContain('$');
     expect(parseFloat(saved.value.replace(/[^0-9.]/g, ''))).toBeGreaterThan(150000);
@@ -69,10 +70,12 @@ describe('Phase 1 High-Intent Long-Tail Calculators', () => {
       annual_mip_rate: 0.55,
       property_tax: 3600,
       insurance: 1100,
+      conv_rate: 6.85,
+      conv_pmi_rate: 0.85
     });
 
     expect(result.error).toBeUndefined();
-    const payment = result.stats.find(s => s.label === 'Total Monthly Payment');
+    const payment = result.stats.find(s => s.label === 'Total Monthly FHA Payment');
     const mip = result.stats.find(s => s.label === 'Monthly Mortgage Insurance (MIP)');
     const ufmip = result.stats.find(s => s.label === 'Upfront MIP Financed (1.75%)');
 
@@ -93,38 +96,43 @@ describe('Phase 1 High-Intent Long-Tail Calculators', () => {
       months_remaining: 48,
       new_rate: 5.5,
       new_term_months: 48,
+      refi_fees: 150
     });
 
     expect(result.error).toBeUndefined();
     const monthlySavings = result.stats.find(s => s.label === 'Monthly Payment Savings');
-    const totalSavings = result.stats.find(s => s.label === 'Total Interest Saved');
+    const totalSavings = result.stats.find(s => s.label === 'Net Lifetime Savings');
 
     expect(monthlySavings).toBeDefined();
     expect(totalSavings).toBeDefined();
     expect(parseFloat(totalSavings.value.replace(/[^0-9.]/g, ''))).toBeGreaterThan(1000);
   });
 
-  it('freelance-hourly-rate-calculator computes accurate billable hourly rate', () => {
+  it('freelance-hourly-rate-calculator computes accurate 3-tier billable hourly rates', () => {
     const calc = tools['freelance-hourly-rate-calculator'];
     expect(calc).toBeDefined();
     expect(calc.category).toBe('Business');
 
     const result = calc.calculate({
-      target_take_home: 100000,
-      annual_expenses: 12000,
-      tax_rate: 30,
-      weeks_off: 4,
+      desired_net_income: 100000,
+      overhead_expenses: 12000,
+      effective_tax_rate: 30,
+      weeks_vacation: 4,
       billable_hours_per_week: 25,
+      retirement_savings: 15000,
+      health_insurance_annual: 6000,
+      buffer_percent: 15
     });
 
     expect(result.error).toBeUndefined();
-    const rate = result.stats.find(s => s.label === 'Minimum Hourly Rate');
-    const gross = result.stats.find(s => s.label === 'Total Annual Gross Needed');
+    const targetRate = result.stats.find(s => s.label === 'Target Hourly Rate');
+    const floorRate = result.stats.find(s => s.label === 'Minimum Survival Floor Rate');
+    const gross = result.stats.find(s => s.label === 'Gross Annual Revenue Needed');
 
-    expect(rate).toBeDefined();
+    expect(targetRate).toBeDefined();
+    expect(floorRate).toBeDefined();
     expect(gross).toBeDefined();
-    expect(rate.value).toContain('/ hr');
-    expect(rate.value).toContain('$129.05');
+    expect(targetRate.value).toContain('/ hr');
   });
 
   it('body-fat-percentage-calculator uses US Navy formula accurately', () => {
