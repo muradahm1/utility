@@ -70,8 +70,12 @@ export default async function handler(req, res) {
   const publicKey  = process.env.EMAILJS_PUBLIC_KEY;
 
   if (!serviceId || !templateId || !publicKey) {
-    console.error('[api/contact] Missing EMAILJS_* environment variables.');
-    return res.status(500).json({ ok: false, error: 'Server is not configured for email. Please contact support@getcalcu.com directly.' });
+    console.warn('[api/contact] Missing EMAILJS_* environment variables on server.');
+    return res.status(500).json({
+      ok: false,
+      error: 'Server email relay is currently being configured. Please click below to send your message directly to support@getcalcu.com.',
+      configured: false
+    });
   }
 
   // ── Send via EmailJS REST API ─────────────────────────────

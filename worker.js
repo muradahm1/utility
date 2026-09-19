@@ -83,8 +83,12 @@ export default {
     const publicKey  = env.EMAILJS_PUBLIC_KEY;
 
     if (!serviceId || !templateId || !publicKey) {
-      console.error('[worker] Missing EMAILJS_* environment variables.');
-      return json({ ok: false, error: 'Server is not configured for email. Please contact support@getcalcu.com directly.' }, 500);
+      console.warn('[worker] Missing EMAILJS_* environment variables.');
+      return json({
+        ok: false,
+        error: 'Server email relay is currently being configured. Please click below to send your message directly to support@getcalcu.com.',
+        configured: false
+      }, 500);
     }
 
     // ── Send via EmailJS REST API ─────────────────────────

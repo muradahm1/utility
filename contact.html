@@ -302,6 +302,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 website:    form['website'] ? form['website'].value.trim() : '',
             };
 
+            // Helper to generate a pre-filled mailto URL so user message is never lost
+            const buildMailto = () => {
+                const subject = encodeURIComponent(`[GetCalcu ${payload.topic || 'Support'}] Message from ${payload.from_name || 'User'}`);
+                const body = encodeURIComponent(`Name: ${payload.from_name}\nEmail: ${payload.from_email}\nTopic: ${payload.topic}\n\nMessage:\n${payload.message}`);
+                return `mailto:support@getcalcu.com?subject=${subject}&body=${body}`;
+            };
+
             try {
                 const res = await fetch('/api/contact', {
                     method: 'POST',
@@ -315,12 +322,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     responseEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Message sent! We\'ll get back to you within 24–48 hours.');
                     form.reset();
                 } else {
+                    const mailtoUrl = buildMailto();
                     responseEl.className = 'auth-banner auth-banner-error';
-                    responseEl.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + (data.error || 'Something went wrong. Please email us directly at <a href="mailto:support@getcalcu.com" style="color:inherit;font-weight:700;">support@getcalcu.com</a>');
+                    responseEl.innerHTML = `
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <div><i class="fa-solid fa-circle-exclamation"></i> ${data.error || 'Unable to send via web relay.'}</div>
+                            <div>
+                                <a href="${mailtoUrl}" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-top:4px;">
+                                    <i class="fa-solid fa-envelope"></i> Send via Email App (Pre-filled)
+                                </a>
+                            </div>
+                        </div>
+                    `;
                 }
             } catch (err) {
+                const mailtoUrl = buildMailto();
                 responseEl.className = 'auth-banner auth-banner-error';
-                responseEl.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Something went wrong. Please email us directly at <a href="mailto:support@getcalcu.com" style="color:inherit;font-weight:700;">support@getcalcu.com</a>';
+                responseEl.innerHTML = `
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div><i class="fa-solid fa-circle-exclamation"></i> Network or server issue sending message.</div>
+                        <div>
+                            <a href="${mailtoUrl}" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;margin-top:4px;">
+                                <i class="fa-solid fa-envelope"></i> Send via Email App (Pre-filled)
+                            </a>
+                        </div>
+                    </div>
+                `;
                 console.error('Contact submit error:', err);
             } finally {
                 submitBtn.disabled = false;
