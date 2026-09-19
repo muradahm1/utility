@@ -5042,11 +5042,17 @@ const TOOLS = {
       ]
     },
     howTo: [
-      { name: '1. Select Jurisdiction & Property Price', text: 'Choose your Country (US or Canada) and State/Province to automatically load verified property tax and compounding rules, then enter the target home purchase price.' },
-      { name: '2. Review Upfront Liquidity Requirements', text: 'Input your down payment percentage, estimated closing costs (default: 3%), and prepaids reserve (default: 1%) to calculate the total liquid cash required to close.' },
-      { name: '3. Calibrate PITIA Monthly Framework', text: 'Review the loaded monthly ownership cost, including Principal, Interest, localized property taxes, homeowners hazard insurance, HOA dues, and the 1% annual maintenance reserve.' },
-      { name: '4. Analyze 5-Yr vs 10-Yr Break-Even Matrix', text: 'Compare your projected net real estate equity against investing the down payment capital in S&P 500 index funds over 5-year, 10-year, and custom horizon timelines.' }
+      'Select your Country (US or Canada) and State/Province to automatically apply statutory compounding rules, local property tax rates, and mortgage insurance rules (PMI or CMHC).',
+      'Input the target home purchase price and your upfront down payment percentage (e.g., 5%, 10%, or 20%).',
+      'Review the Upfront Liquidity breakdown: down payment + closing costs (2-5%) + prepaid escrow reserve to calculate Total Liquid Cash Required to Close.',
+      'Calibrate the Loaded Monthly PITIA framework: Principal & Interest, local property tax, hazard insurance, HOA dues, and the 1% annual maintenance reserve.',
+      'Analyze the 5-Year vs. 10-Year Opportunity Cost Matrix comparing home equity against investing the down payment capital in S&P 500 index funds to pinpoint your break-even year.'
     ],
+    examples: [
+      { title: 'US Starter Home ($400k, 10% Down in Texas)', input: 'Price: $400,000, Down: 10% ($40,000), Rate: 6.8%, Texas (1.68% Tax)', result: 'Cash-to-Close: $56,000 | True Monthly Cost: $3,618/mo | Break-Even: Year 5' },
+      { title: 'Canadian Condo ($650k, 15% Down in Ontario)', input: 'Price: $650,000, Down: 15% ($97,500), Rate: 5.5%, Ontario (0.95% Tax)', result: 'Cash-to-Close: $123,500 | True Monthly Cost: $4,580/mo | Break-Even: Year 4' }
+    ],
+    formula: 'Total Cash to Close = Down Payment + Closing Costs + Escrow Reserves | True Monthly Cost = Monthly P&I + Property Tax + Hazard Insurance + HOA + (1% × Home Value ÷ 12) | Mortgage P&I (US): M = P × [r(1+r)^n] / [(1+r)^n − 1] | Mortgage P&I (CA Semi-Annual): r_eff = (1 + r/2)^(1/6) − 1',
     faqs: [
       {
         q: 'What is the difference between mortgage payment and true cost of ownership?',
@@ -5445,11 +5451,17 @@ const TOOLS = {
       ]
     },
     howTo: [
-      { name: '1. Set Desired Net Take-Home Income', text: 'Enter the exact annual net cash you want in your bank account after all taxes, overhead expenses, and platform fees.' },
-      { name: '2. Track Billable Utilization Rate', text: 'Enter your target annual weeks worked (default: 48) and adjust the utilization rate slider (default: 70%) to factor in non-billable sales and administrative hours.' },
-      { name: '3. Input Tax Reserve & Monthly Overhead', text: 'Specify self-employment tax (15.3%), estimated income tax bracket, and recurring monthly software/hardware/insurance expenses.' },
-      { name: '4. Filter Platform & Payment Gateway Fees', text: 'Select your billing channel (Direct Invoicing 0%, Payment Processor 3%, Upwork 10%, or Fiverr 20%) to determine your mandatory gross client hourly rate.' }
+      'Enter your desired net take-home annual income (the actual post-tax money you want in your personal account).',
+      'Input target annual weeks worked (default: 48) and adjust the billable utilization rate slider (default: 70%) to factor in unbillable admin, marketing, and client pitching hours.',
+      'Specify self-employment tax (15.3% SECA), estimated income tax bracket, and recurring monthly business overhead expenses.',
+      'Select your client billing channel (Direct Invoicing 0%, Payment Processor 3%, Upwork 10%, or Fiverr 20%) to account for platform fee friction.',
+      'Review your Required Gross Hourly Rate, Standard Day Rate, Monthly Retainer Target, and Revenue Waterfall Breakdown.'
     ],
+    examples: [
+      { title: 'Solo Consultant (Direct Invoicing, $90,000 Net Take-Home)', input: 'Net Income: $90,000, 48 wks @ 40 hrs (70% billable), Overhead: $450/mo, Direct 0%', result: 'Target Rate: $118.96/hr | Day Rate: $952/day | Gross Billing: $159,885' },
+      { title: 'Marketplace Freelancer (Upwork 10%, $75,000 Net Take-Home)', input: 'Net Income: $75,000, 48 wks @ 40 hrs (65% billable), Overhead: $350/mo, Upwork 10%', result: 'Target Rate: $115.82/hr | Day Rate: $927/day | Gross Billing: $144,539' }
+    ],
+    formula: 'Gross Revenue Target = [(Desired Net Income / (1 - Effective Income Tax - SECA Tax)) + Annual Overhead] / (1 - Platform Fee Rate) | True Hourly Rate = Gross Revenue Target / (Weeks Worked × Hours/Week × Billable Utilization Rate)',
     faqs: [
       {
         q: 'Why must freelancers charge 2x to 3x their corporate hourly wage?',
@@ -9118,6 +9130,11 @@ const TOOLS = {
       'Account for business software overhead, health insurance, and Solo 401(k) retirement contributions in Advanced Options.',
       'Quote your Target Hourly Rate or Premium Rate on all incoming client proposals.'
     ],
+    examples: [
+      { title: '$100k Take-Home Solo Contractor', input: 'Net Salary: $100,000, 25 billable hrs/wk, 4 wks off, Overhead: $12k/yr', result: 'Target Rate: $138.89/hr | Day Rate: $1,111/day | Gross Revenue: $166,667' },
+      { title: '$75k Starter Freelancer', input: 'Net Salary: $75,000, 20 billable hrs/wk, 3 wks off, Overhead: $6k/yr', result: 'Target Rate: $122.45/hr | Day Rate: $980/day | Gross Revenue: $120,000' }
+    ],
+    formula: 'Gross Revenue Target = [(Target Net Salary + Retirement) / (1 - Effective Tax Rate) + Overhead + Health] / (1 - Buffer) | Target Hourly Rate = Gross Revenue Target / (Working Weeks × Billable Hours/Week)',
     faqs: [
       { q: 'What is the standard rule of thumb for freelance pricing?', a: 'Take the equivalent corporate W-2 salary and divide by 1,000 (rather than 2,000). A $100k full-time job translates to a $100/hour freelance baseline.' },
       { q: 'Should I quote hourly or flat project rates?', a: 'Always calculate your internal quote using hourly rates, but present flat project packages to clients to capture value without trading time for money.' },

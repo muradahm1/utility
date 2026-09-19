@@ -879,7 +879,10 @@ function initLegacyRunner(tool, slug, container) {
             html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2><p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>${sectionsHtml}</div>`;
         }
         if (tool.howTo && tool.howTo.length) {
-            const steps = tool.howTo.map((step, i) => `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${escapeHtml(step)}</li>`).join('');
+            const steps = tool.howTo.map((step, i) => {
+                const text = typeof step === 'string' ? escapeHtml(step) : (step.name ? `<strong>${escapeHtml(step.name)}:</strong> ${escapeHtml(step.text || '')}` : escapeHtml(step.text || ''));
+                return `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${text}</li>`;
+            }).join('');
             html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2><ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}</div>`;
         }
         if (tool.examples && tool.examples.length) {
