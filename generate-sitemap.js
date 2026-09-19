@@ -28,19 +28,27 @@ const modularSlugs = modularFiles.flatMap(filePath => {
 
 const allSlugs = [...new Set([...slugs, ...modularSlugs])];
 
+const categories = ['finance', 'health', 'math', 'business', 'education', 'construction', 'engineering'];
+const categoryUrls = categories.map(cat => ({
+    loc:        `${BASE_URL}/category/${cat}`,
+    priority:   '0.8',
+    changefreq: 'weekly',
+}));
+
 const staticUrls = [
-    { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'weekly'  },
-    { loc: `${BASE_URL}/about`,       priority: '0.8', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/contact`,     priority: '0.7', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/privacy`,     priority: '0.6', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/terms`,       priority: '0.6', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/cookie-policy`, priority: '0.6', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'daily'   },
+    ...categoryUrls,
+    { loc: `${BASE_URL}/about`,       priority: '0.5', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/contact`,     priority: '0.5', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/privacy`,     priority: '0.3', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/terms`,       priority: '0.3', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/cookie-policy`, priority: '0.3', changefreq: 'monthly' },
 ];
 
 const toolUrls = allSlugs.map(slug => ({
-    loc:        `${BASE_URL}/tool?slug=${slug}`,
+    loc:        `${BASE_URL}/tool/${slug}`,
     priority:   '0.9',
-    changefreq: 'monthly',
+    changefreq: 'weekly',
 }));
 
 const allUrls = [...staticUrls, ...toolUrls];
