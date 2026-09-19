@@ -1396,7 +1396,7 @@ export function buildChartsHtml(result) {
  * @param {Object} table - Table data
  * @returns {string} HTML string
  */
-export function buildTableHtml(table) {
+export function buildTableHtml(table, slug) {
     if (!table) return '';
     
     // Custom table mode
@@ -1404,23 +1404,63 @@ export function buildTableHtml(table) {
         return buildTableSpecHtml(table);
     }
     
-    // Standard amortization table
-    const rows = table.map(row => `
-        <tr>
-            <td>${escapeHtml(row.month)}</td>
-            <td>${formatCurrency(row.payment)}</td>
-            <td>${formatCurrency(row.principal)}</td>
-            <td>${formatCurrency(row.interest)}</td>
-            <td>${formatCurrency(row.balance)}</td>
-        </tr>
-    `).join('');
+    if (!Array.isArray(table) || table.length === 0) return '';
+    
+    const firstRow = table[0];
+    if (firstRow && ('month' in firstRow || 'payment' in firstRow || 'principal' in firstRow)) {
+        const isInvestment = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator');
+        const periodLabel = isInvestment ? 'Year' : 'Month';
+        const scheduleTitle = isInvestment ? 'Year-by-Year Growth Schedule' : 'Amortization Schedule';
+        const principalLabel = isInvestment ? 'Total Principal' : 'Principal';
+        const interestLabel = isInvestment ? 'Total Growth / Return' : 'Interest';
+        
+        const rows = table.map(row => {
+            const m = row.month !== undefined ? row.month : (row.year !== undefined ? row.year : '');
+            const p = typeof row.payment === 'number' ? formatCurrency(row.payment) : (row.payment ?? '');
+            const pr = typeof row.principal === 'number' ? formatCurrency(row.principal) : (row.principal ?? '');
+            const i = typeof row.interest === 'number' ? formatCurrency(row.interest) : (row.interest ?? '');
+            const b = typeof row.balance === 'number' ? formatCurrency(row.balance) : (row.balance ?? '');
+            return `
+                <tr>
+                    <td>${escapeHtml(String(m))}</td>
+                    <td>${escapeHtml(String(p))}</td>
+                    <td>${escapeHtml(String(pr))}</td>
+                    <td>${escapeHtml(String(i))}</td>
+                    <td>${escapeHtml(String(b))}</td>
+                </tr>
+            `;
+        }).join('');
+        
+        return `
+            <div class="result-table-container calc-data-table amortization-result-table">
+                <h4>${escapeHtml(scheduleTitle)}</h4>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>${periodLabel}</th><th>Payment</th><th>${principalLabel}</th><th>${interestLabel}</th><th>Balance</th></tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Generic object rows (dynamic key-value table)
+    const keys = Object.keys(firstRow);
+    const headers = keys.map(k => `<th>${escapeHtml(k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()))}</th>`).join('');
+    const rows = table.map(row => {
+        const cells = keys.map(k => {
+            const val = row[k];
+            const strVal = (typeof val === 'number') ? formatNumber(val) : String(val ?? '');
+            return `<td>${escapeHtml(strVal)}</td>`;
+        }).join('');
+        return `<tr>${cells}</tr>`;
+    }).join('');
     
     return `
         <div class="result-table-container calc-data-table">
-            <h4>Amortization Schedule</h4>
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Month</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead>
+                    <thead><tr>${headers}</tr></thead>
                     <tbody>${rows}</tbody>
                 </table>
             </div>

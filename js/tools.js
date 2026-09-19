@@ -2335,7 +2335,7 @@ const TOOLS = {
         };
       });
 
-      const table = {
+      const table = makeTableSpec({
         mode: 'comparison',
         title: `Year-by-Year Comparison (${analysisPeriod} Years)`,
         columns: [
@@ -2354,7 +2354,7 @@ const TOOLS = {
           { key: 'difference', label: 'Difference', format: 'currency' },
         ],
         rows: tableRows,
-      };
+      });
 
       // ── BUILD INSIGHT ──
       const insightTone = winner === 'buy' ? 'positive' : 'neutral';
@@ -4366,10 +4366,21 @@ const TOOLS = {
         const val = roundTo(inUSD * cRate, 2);
         const sym = symbols[code] || '';
         return {
-          Currency: code,
-          Rate: (cRate / fromRate).toFixed(4),
-          Converted: sym + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          code,
+          rate: (cRate / fromRate).toFixed(4),
+          converted: sym + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         };
+      });
+
+      const table = makeTableSpec({
+        mode: 'rates',
+        title: `Popular Currency Conversions for ${fromSymbol}${amount.toLocaleString('en-US')} ${from}`,
+        columns: [
+          { key: 'code', label: 'Currency', emphasis: true },
+          { key: 'rate', label: `Exchange Rate (1 ${from})` },
+          { key: 'converted', label: 'Converted Amount', emphasis: true }
+        ],
+        rows: tableRows
       });
 
       return {
@@ -4379,7 +4390,7 @@ const TOOLS = {
           { label: 'Inverse Rate (1 ' + to + ' → ' + from + ')', value: inverseRate + ' ' + from },
           { label: 'Original Amount', value: fromSymbol + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + from },
         ],
-        table: tableRows,
+        table,
         insight: {
           tone: 'neutral',
           icon: 'fa-money-bill-wave',
@@ -5613,13 +5624,26 @@ const TOOLS = {
         return Number(roundTo(num, 6)).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 });
       };
 
+      const table = makeTableSpec({
+        mode: 'conversions',
+        title: `Multi-Unit Conversion Equivalents for ${formatDisplay(amt)} ${fromKey.replace(/_/g, ' ')}`,
+        columns: [
+          { key: 'unit', label: 'Unit', emphasis: true },
+          { key: 'value', label: 'Converted Value', emphasis: true }
+        ],
+        rows: tableRows.map(r => ({
+          unit: r.Unit,
+          value: r.Value
+        }))
+      });
+
       return {
         stats: [
           { label: `Converted Value (${toKey.replace(/_/g, ' ')})`, value: formatDisplay(resultValue), highlight: true },
           { label: 'Initial Amount', value: `${formatDisplay(amt)} ${fromKey.replace(/_/g, ' ')}` },
           { label: 'Conversion Factor', value: `1 ${fromKey.replace(/_/g, ' ')} = ${formatDisplay(resultValue / (amt || 1))} ${toKey.replace(/_/g, ' ')}` },
         ],
-        table: tableRows,
+        table,
         insight: {
           tone: 'positive',
           icon: 'fa-scale-balanced',
@@ -5729,13 +5753,22 @@ const TOOLS = {
         colors: ['#EF4444', '#F59E0B', '#10B981']
       };
 
-      const table = [
-        { Metric: 'Selling Price (Revenue)', Value: fmt(revenue), Percentage: '100.00%' },
-        { Metric: 'Cost of Goods Sold (COGS)', Value: fmt(cost), Percentage: pct(cost / revenue) },
-        { Metric: 'Gross Profit', Value: fmt(grossProfit), Percentage: pct(grossProfit / revenue) },
-        { Metric: 'Operating Expenses', Value: fmt(opex), Percentage: pct(opex / revenue) },
-        { Metric: 'Net Profit', Value: fmt(netProfit), Percentage: pct(netProfit / revenue) }
-      ];
+      const table = makeTableSpec({
+        mode: 'breakdown',
+        title: 'Profit Margin & Operating Cost Breakdown',
+        columns: [
+          { key: 'metric', label: 'Financial Metric', emphasis: true },
+          { key: 'value', label: 'Amount', format: 'currency' },
+          { key: 'percentage', label: 'Share of Revenue', emphasis: true }
+        ],
+        rows: [
+          { metric: 'Selling Price (Gross Revenue)', value: revenue, percentage: '100.00%' },
+          { metric: 'Cost of Goods Sold (COGS)', value: cost, percentage: pct(cost / revenue) },
+          { metric: 'Gross Profit', value: grossProfit, percentage: pct(grossProfit / revenue) },
+          { metric: 'Operating Overhead (OpEx)', value: opex, percentage: pct(opex / revenue) },
+          { metric: 'Net Bottom-Line Profit', value: netProfit, percentage: pct(netProfit / revenue) }
+        ]
+      });
 
       return {
         stats,
@@ -5830,17 +5863,29 @@ const TOOLS = {
 
       // Volume milestones for sensitivity table
       const mults = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
-      const table = mults.map(m => {
-        const u = Math.round(breakEvenUnits * m);
-        const rev = roundTo(u * price, 2);
-        const totCost = roundTo(fixed + (u * varCost), 2);
-        const net = roundTo(rev - totCost, 2);
-        return {
-          Volume: (m * 100) + '% (' + fmtN(u) + ' units)',
-          Revenue: fmt(rev),
-          TotalCost: fmt(totCost),
-          NetProfitLoss: fmt(net)
-        };
+      const table = makeTableSpec({
+        mode: 'sensitivity',
+        title: 'Break-Even & Production Volume Sensitivity Analysis',
+        columns: [
+          { key: 'volume', label: 'Volume Capacity' },
+          { key: 'units', label: 'Units Sold' },
+          { key: 'revenue', label: 'Gross Revenue', format: 'currency' },
+          { key: 'totalCost', label: 'Total Production Costs', format: 'currency' },
+          { key: 'profit', label: 'Net Profit / Loss', format: 'currency', emphasis: true }
+        ],
+        rows: mults.map(m => {
+          const u = Math.round(breakEvenUnits * m);
+          const rev = roundTo(u * price, 2);
+          const totCost = roundTo(fixed + (u * varCost), 2);
+          const net = roundTo(rev - totCost, 2);
+          return {
+            volume: `${(m * 100).toFixed(0)}% of Break-Even`,
+            units: `${fmtN(u)} units`,
+            revenue: rev,
+            totalCost: totCost,
+            profit: net
+          };
+        })
       });
 
       const chartLabels = mults.map(m => (m * 100) + '%');
@@ -6086,11 +6131,11 @@ const TOOLS = {
           totalQualityPoints += basePts * cr;
           totalWeightedPoints += weightedPts * cr;
           rows.push({
-            Course: 'Course ' + i,
-            Grade: gradeKey,
-            Credits: cr,
-            UnweightedPoints: basePts.toFixed(1),
-            WeightedPoints: weightedPts.toFixed(1)
+            course: 'Course ' + i,
+            grade: gradeKey,
+            credits: cr,
+            unweighted: basePts.toFixed(1),
+            weighted: weightedPts.toFixed(1)
           });
         }
       }
@@ -6118,9 +6163,29 @@ const TOOLS = {
         { label: 'Total Completed Credits', value: (priorCr + totalCredits) + ' hrs' }
       ];
 
+      const table = makeTableSpec({
+        mode: 'breakdown',
+        title: 'Semester Course & Grade Point Breakdown',
+        columns: [
+          { key: 'course', label: 'Course', emphasis: true },
+          { key: 'grade', label: 'Letter Grade' },
+          { key: 'credits', label: 'Credits' },
+          { key: 'unweighted', label: 'Unweighted Grade Points' },
+          { key: 'weighted', label: 'Weighted Grade Points', emphasis: true }
+        ],
+        rows,
+        footer: {
+          course: 'Semester Totals',
+          grade: '—',
+          credits: totalCredits,
+          unweighted: `Unweighted GPA: ${semesterGpa.toFixed(2)}`,
+          weighted: `Weighted GPA: ${weightedGpa.toFixed(2)}`
+        }
+      });
+
       return {
         stats,
-        table: rows,
+        table,
         insight: {
           tone: semesterGpa >= 3.5 ? 'positive' : semesterGpa >= 2.5 ? 'neutral' : 'warning',
           icon: 'fa-graduation-cap',
@@ -6210,12 +6275,22 @@ const TOOLS = {
         { grade: 'D (60%)', target: 60 }
       ];
 
-      const table = letterGoals.map(g => {
-        const req = roundTo((g.target - current * (1 - weight)) / weight, 1);
-        return {
-          Goal: g.grade,
-          RequiredOnFinal: req <= 0 ? 'Guaranteed (0%)' : req > 100 ? req + '% (Extra Credit)' : req + '%'
-        };
+      const table = makeTableSpec({
+        mode: 'targets',
+        title: 'Grade Threshold Targets & Required Final Scores',
+        columns: [
+          { key: 'goal', label: 'Desired Final Letter Grade', emphasis: true },
+          { key: 'minAvg', label: 'Minimum Overall Avg' },
+          { key: 'required', label: 'Required Score on Final Exam', emphasis: true }
+        ],
+        rows: letterGoals.map(g => {
+          const req = roundTo((g.target - current * (1 - weight)) / weight, 1);
+          return {
+            goal: g.grade,
+            minAvg: `${g.target}%`,
+            required: req <= 0 ? 'Guaranteed (0%)' : req > 100 ? `${req}% (Extra Credit Needed)` : `${req}%`
+          };
+        })
       });
 
       return {
@@ -6445,18 +6520,30 @@ const TOOLS = {
       }
 
       // Milestones schedule
-      const schedule = [];
+      const table = makeTableSpec({
+        mode: 'schedule',
+        title: 'Emergency Savings Growth & Runway Timeline',
+        columns: [
+          { key: 'month', label: 'Month / Milestone' },
+          { key: 'deposit', label: 'Monthly Deposit', format: 'currency' },
+          { key: 'interest', label: 'Interest Earned', format: 'currency' },
+          { key: 'balance', label: 'Total Fund Balance', format: 'currency', emphasis: true },
+          { key: 'runway', label: 'Runway Covered', emphasis: true }
+        ],
+        rows: []
+      });
       let balance = savings;
       const monthlyRate = apy / 12;
       for (let m = 1; m <= Math.min(60, Math.max(12, monthsNeeded)); m++) {
         const interest = roundTo(balance * monthlyRate, 2);
         balance = roundTo(balance + contrib + interest, 2);
-        schedule.push({
+        const monthsCovered = monthlyExpenses > 0 ? (balance / monthlyExpenses).toFixed(1) : '—';
+        table.rows.push({
           month: `Month ${m}`,
-          payment: contrib,
+          deposit: contrib,
           interest: interest,
-          principal: contrib,
           balance: balance,
+          runway: `${monthsCovered} mo of expenses`
         });
         if (balance >= targetFund && m >= monthsNeeded) break;
       }
@@ -6481,7 +6568,7 @@ const TOOLS = {
             backgroundColor: ['#10B981', '#F59E0B']
           }]
         },
-        table: schedule,
+        table,
         insight: {
           tone: shortfall === 0 ? 'positive' : 'neutral',
           icon: shortfall === 0 ? 'fa-circle-check' : 'fa-shield-halved',
@@ -6563,7 +6650,18 @@ const TOOLS = {
       const yearsToRetire = retireAge - currentAge;
       let totalEmpContribs = 0;
       let totalMatchContribs = 0;
-      const schedule = [];
+      const table = makeTableSpec({
+        mode: 'growth',
+        title: '401(k) Annual Growth & Employer Match Accumulation Schedule',
+        columns: [
+          { key: 'age', label: 'Age' },
+          { key: 'employeeContrib', label: 'Employee Contribution', format: 'currency' },
+          { key: 'employerMatch', label: 'Employer Match', format: 'currency' },
+          { key: 'growth', label: 'Investment Growth', format: 'currency' },
+          { key: 'balance', label: 'End of Year Balance', format: 'currency', emphasis: true }
+        ],
+        rows: []
+      });
 
       for (let y = 1; y <= yearsToRetire; y++) {
         // Annual employee contribution (capped at $23,500 statutory 2026 baseline limit)
@@ -6579,11 +6677,11 @@ const TOOLS = {
         totalEmpContribs = roundTo(totalEmpContribs + empContrib, 2);
         totalMatchContribs = roundTo(totalMatchContribs + matchContrib, 2);
 
-        schedule.push({
-          month: `Age ${currentAge + y}`,
-          payment: roundTo(totalYearContrib, 2),
-          principal: roundTo(empContrib, 2),
-          interest: roundTo(matchContrib, 2),
+        table.rows.push({
+          age: `Age ${currentAge + y}`,
+          employeeContrib: roundTo(empContrib, 2),
+          employerMatch: roundTo(matchContrib, 2),
+          growth: interest,
           balance: balance,
         });
 
@@ -6615,7 +6713,7 @@ const TOOLS = {
             backgroundColor: ['#6366F1', '#10B981', '#F59E0B']
           }]
         },
-        table: schedule,
+        table,
         insight: {
           tone: 'positive',
           icon: 'fa-piggy-bank',
@@ -6845,13 +6943,31 @@ const TOOLS = {
       const interestSaved = Math.max(0, roundTo(baselineTotalInterest - activeTotalInterest, 2));
       const firstPaidDebt = activeDebts[0];
 
-      const schedule = activeDebts.map((d, idx) => ({
-        month: `Target ${idx + 1}: ${d.name}`,
-        payment: roundTo(d.startBalance, 2),
-        principal: roundTo(d.interestPaid, 2),
-        interest: `${d.apr}%`,
-        balance: `Month ${d.paidOffMonth}`
-      }));
+      const table = makeTableSpec({
+        mode: 'schedule',
+        title: `${strategy === 'snowball' ? 'Debt Snowball' : 'Debt Avalanche'} Payoff Sequencing & Timelines`,
+        columns: [
+          { key: 'target', label: 'Priority / Debt Account', emphasis: true },
+          { key: 'startBalance', label: 'Starting Balance', format: 'currency' },
+          { key: 'apr', label: 'Interest Rate' },
+          { key: 'interestPaid', label: 'Total Interest Paid', format: 'currency' },
+          { key: 'payoffTimeline', label: 'Projected Payoff', emphasis: true }
+        ],
+        rows: activeDebts.map((d, idx) => ({
+          target: `Target #${idx + 1}: ${d.name}`,
+          startBalance: roundTo(d.startBalance, 2),
+          apr: `${d.apr}% APR`,
+          interestPaid: roundTo(d.interestPaid, 2),
+          payoffTimeline: `Month ${d.paidOffMonth} (${(d.paidOffMonth / 12).toFixed(1)} yrs)`
+        })),
+        footer: {
+          target: 'Total Debt Portfolio',
+          startBalance: totalInitialDebt,
+          apr: 'Weighted Avg',
+          interestPaid: activeTotalInterest,
+          payoffTimeline: `Debt-Free in Month ${activeMonths}`
+        }
+      });
 
       const yearsSaved = (monthsSaved / 12).toFixed(1);
       const activeYears = (activeMonths / 12).toFixed(1);
@@ -6877,7 +6993,7 @@ const TOOLS = {
             backgroundColor: ['#6366F1', '#10B981', '#EF4444']
           }]
         },
-        table: schedule,
+        table,
         insight: {
           tone: 'positive',
           icon: 'fa-award',
@@ -7029,18 +7145,29 @@ const TOOLS = {
 
       const isWorthIt = monthlySavings > 0 && breakEvenMonths !== null && breakEvenMonths <= totalMonthsInHome;
 
-      const schedule = [];
+      const table = makeTableSpec({
+        mode: 'comparison',
+        title: 'Year-by-Year Cumulative Refinance Savings & Cost Recovery',
+        columns: [
+          { key: 'period', label: 'Timeline' },
+          { key: 'currentOutflow', label: 'Current Loan Outflow', format: 'currency' },
+          { key: 'newOutflow', label: 'Refinanced Outflow', format: 'currency' },
+          { key: 'grossSavings', label: 'Cumulative Gross Savings', format: 'currency' },
+          { key: 'netSavings', label: 'Net Savings (After Fees)', format: 'currency', emphasis: true }
+        ],
+        rows: []
+      });
       const yearsToProject = Math.min(yearsInHome + 3, 15);
       for (let y = 1; y <= yearsToProject; y++) {
         const months = y * 12;
         const cumulativeGrossSavings = roundTo(monthlySavings * months, 2);
         const netPosition = roundTo(cumulativeGrossSavings - closingCosts, 2);
-        schedule.push({
-          month: `Year ${y} (${months} mo)`,
-          payment: roundTo(currentPI * months, 2),
-          principal: roundTo(newPI * months, 2),
-          interest: fmt(cumulativeGrossSavings),
-          balance: fmt(netPosition)
+        table.rows.push({
+          period: `Year ${y} (${months} mo)`,
+          currentOutflow: roundTo(currentPI * months, 2),
+          newOutflow: roundTo(newPI * months, 2),
+          grossSavings: cumulativeGrossSavings,
+          netSavings: netPosition
         });
       }
 
@@ -7076,7 +7203,7 @@ const TOOLS = {
           principal: balance,
           totalInterest: newTotalInterest
         },
-        table: schedule,
+        table,
         insight: {
           tone: insightTone,
           icon: isWorthIt ? 'fa-circle-check' : 'fa-triangle-exclamation',
@@ -7304,13 +7431,30 @@ const TOOLS = {
       const recommendedSavePercent = gross > 0 ? roundTo((totalAnnualTax / gross) * 100, 1) : 0;
       const takeHomeCash = roundTo(gross - expenses - totalAnnualTax, 2);
 
-      const schedule = [
-        { month: 'Social Security Tax (12.4%)', payment: fmt(ssTaxableIncome), principal: '12.4%', interest: 'SECA', balance: fmt(ssTax) },
-        { month: 'Medicare Tax (2.9%)', payment: fmt(seEarnings), principal: '2.9%', interest: 'SECA', balance: fmt(medicareTax) },
-        { month: 'Estimated Federal Income Tax', payment: fmt(federalTaxableIncome), principal: 'Progressive', interest: 'IRS 1040', balance: fmt(federalTaxFor1099) },
-        { month: `State Income Tax (${stateRate}%)`, payment: fmt(federalTaxableIncome), principal: `${stateRate}%`, interest: 'State DOR', balance: fmt(stateTax) },
-        { month: 'Total Estimated Annual Tax', payment: fmt(gross), principal: `${recommendedSavePercent}%`, interest: 'Consolidated', balance: fmt(totalAnnualTax) }
-      ];
+      const table = makeTableSpec({
+        mode: 'breakdown',
+        title: 'Tax Breakdown & Quarterly Withholding Schedule',
+        columns: [
+          { key: 'component', label: 'Tax Component', emphasis: true },
+          { key: 'taxableBase', label: 'Taxable Base', format: 'currency' },
+          { key: 'rate', label: 'Statutory Rate' },
+          { key: 'authority', label: 'Tax Authority' },
+          { key: 'amount', label: 'Estimated Tax', format: 'currency', emphasis: true }
+        ],
+        rows: [
+          { component: 'Social Security (SECA)', taxableBase: ssTaxableIncome, rate: '12.4%', authority: 'IRS Schedule SE', amount: ssTax },
+          { component: 'Medicare (SECA)', taxableBase: seEarnings, rate: '2.9%', authority: 'IRS Schedule SE', amount: medicareTax },
+          { component: 'Estimated Federal Income Tax', taxableBase: federalTaxableIncome, rate: 'Progressive (10-37%)', authority: 'IRS Form 1040-ES', amount: federalTaxFor1099 },
+          { component: `State Income Tax (${stateRate}%)`, taxableBase: federalTaxableIncome, rate: `${stateRate}%`, authority: 'State Dept of Revenue', amount: stateTax }
+        ],
+        footer: {
+          component: 'Total Annual Tax Obligation',
+          taxableBase: gross,
+          rate: `${recommendedSavePercent}% effective`,
+          authority: 'Consolidated',
+          amount: totalAnnualTax
+        }
+      });
 
       return {
         stats: [
@@ -7332,7 +7476,7 @@ const TOOLS = {
             backgroundColor: ['#10B981', '#EF4444', '#F59E0B', '#6366F1']
           }]
         },
-        table: schedule,
+        table,
         insight: {
           tone: 'info',
           icon: 'fa-file-invoice-dollar',
@@ -8104,6 +8248,9 @@ const TOOLS = {
 if (typeof window !== 'undefined') {
   window.TOOLS = TOOLS;
 }
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { TOOLS, tools: TOOLS };
+}
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
 function safeStr(val) { if (val === null || val === undefined) return ""; return String(val).trim(); }
@@ -8111,6 +8258,15 @@ function fmt(n) { const num = safeNum(n, 0); return "$" + num.toLocaleString("en
 function fmtN(n) { const num = safeNum(n, 0); return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function pct(n) { const num = safeNum(n, 0); return (num * 100).toFixed(2) + "%"; }
 function errorResult(message) { return { error: true, stats: [{ label: "Error", value: message, warn: true }] }; }
+function makeTableSpec(spec) {
+  const arr = Array.isArray(spec.rows) ? [...spec.rows] : [];
+  arr.mode = spec.mode || 'table';
+  arr.title = spec.title || '';
+  arr.columns = spec.columns || [];
+  arr.rows = arr;
+  if (spec.footer) arr.footer = spec.footer;
+  return arr;
+}
 function bmiCategory(bmi) { if (!isFinite(bmi)) return { label: "—", color: "#64748B" }; if (bmi < 18.5) return { label: "Underweight", color: "#3B82F6" }; if (bmi < 25) return { label: "Normal Weight", color: "#10B981" }; if (bmi < 30) return { label: "Overweight", color: "#F59E0B" }; return { label: "Obese", color: "#EF4444" }; }
 function buildAmortization(principal, r, n, payment) {
   const rows = [];

@@ -449,16 +449,19 @@ function initLegacyRunner(tool, slug, container) {
             buildInsightsHtml(result.insights) +
             buildResultsToolbarHtml(result);
 
+        const tableContainer = document.querySelector('.calc-data-table');
         if (result.table) {
-            const tableContainer = document.querySelector('.calc-data-table');
+            const newTableHtml = renderTableHtml(result.table, slug);
             if (tableContainer) {
-                if (result.table.mode) {
-                    tableContainer.outerHTML = buildTableSpecHtml(result.table);
-                } else {
-                    const tbody = tableContainer.querySelector('tbody');
-                    if (tbody) tbody.innerHTML = buildTableRowsHtml(result.table);
+                tableContainer.outerHTML = newTableHtml;
+            } else {
+                const saveBar = document.getElementById('save-result-bar') || document.querySelector('.save-result-bar');
+                if (saveBar && newTableHtml) {
+                    saveBar.insertAdjacentHTML('beforebegin', newTableHtml);
                 }
             }
+        } else if (tableContainer) {
+            tableContainer.remove();
         }
 
         if (result.chart) renderChart(result.chart);
@@ -657,16 +660,7 @@ function initLegacyRunner(tool, slug, container) {
             return;
         }
 
-        const periodLabel = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year' : 'Month';
-        const scheduleTitle = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year-by-Year Schedule' : 'Amortization Schedule';
-        let tableHtml = '';
-        if (result.table) {
-            if (result.table.mode) {
-                tableHtml = buildTableSpecHtml(result.table);
-            } else {
-                tableHtml = `<div class="result-table-container calc-data-table amortization-result-table"><h4>${scheduleTitle}</h4><div class="table-wrapper"><table><thead><tr><th>${periodLabel}</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>${buildTableRowsHtml(result.table)}</tbody></table></div></div>`;
-            }
-        }
+        const tableHtml = renderTableHtml(result.table, slug);
 
         container.innerHTML = `
             <div class="tool-runner-card">
@@ -966,8 +960,67 @@ function initLegacyRunner(tool, slug, container) {
         });
     }
 
+    function renderTableHtml(tableData, currentSlug) {
+        if (!tableData) return '';
+        if (tableData.mode) {
+            return buildTableSpecHtml(tableData);
+        }
+        if (!Array.isArray(tableData) || tableData.length === 0) return '';
+
+        const firstRow = tableData[0];
+        if (firstRow && ('month' in firstRow || 'payment' in firstRow || 'principal' in firstRow)) {
+            const isInvestment = (currentSlug === 'compound-interest-calculator' || currentSlug === 'investment-calculator' || currentSlug === 'retirement-calculator');
+            const periodLabel = isInvestment ? 'Year' : 'Month';
+            const scheduleTitle = isInvestment ? 'Year-by-Year Growth Schedule' : 'Amortization Schedule';
+            const principalLabel = isInvestment ? 'Total Principal' : 'Principal';
+            const interestLabel = isInvestment ? 'Total Growth / Return' : 'Interest';
+
+            return `
+                <div class="result-table-container calc-data-table amortization-result-table">
+                    <h4>${escapeHtml(scheduleTitle)}</h4>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>${periodLabel}</th><th>Payment</th><th>${principalLabel}</th><th>${interestLabel}</th><th>Balance</th></tr></thead>
+                            <tbody>${buildTableRowsHtml(tableData)}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generic object rows (dynamic key-value table)
+        const keys = Object.keys(firstRow);
+        const headers = keys.map(k => `<th>${escapeHtml(k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()))}</th>`).join('');
+        const rows = tableData.map(row => {
+            const cells = keys.map(k => {
+                const val = row[k];
+                const strVal = (typeof val === 'number') ? fmtN(val) : String(val ?? '');
+                return `<td>${escapeHtml(strVal)}</td>`;
+            }).join('');
+            return `<tr>${cells}</tr>`;
+        }).join('');
+
+        return `
+            <div class="result-table-container calc-data-table">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr>${headers}</tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
     function buildTableRowsHtml(table) {
-        return table.map(row => `<tr><td>${escapeHtml(row.month)}</td><td>${escapeHtml(fmt(row.payment))}</td><td>${escapeHtml(fmt(row.principal))}</td><td>${escapeHtml(fmt(row.interest))}</td><td>${escapeHtml(fmt(row.balance))}</td></tr>`).join('');
+        return table.map(row => {
+            const m = row.month !== undefined ? row.month : (row.year !== undefined ? row.year : '');
+            const p = typeof row.payment === 'number' ? fmt(row.payment) : (row.payment ?? '');
+            const pr = typeof row.principal === 'number' ? fmt(row.principal) : (row.principal ?? '');
+            const i = typeof row.interest === 'number' ? fmt(row.interest) : (row.interest ?? '');
+            const b = typeof row.balance === 'number' ? fmt(row.balance) : (row.balance ?? '');
+            return `<tr><td>${escapeHtml(String(m))}</td><td>${escapeHtml(String(p))}</td><td>${escapeHtml(String(pr))}</td><td>${escapeHtml(String(i))}</td><td>${escapeHtml(String(b))}</td></tr>`;
+        }).join('');
     }
 
     function buildTableSpecHtml(tbl) {
