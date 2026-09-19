@@ -11,14 +11,15 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'getcalcu-v5';
-const STATIC_CACHE = 'getcalcu-static-v5';
-const PAGE_CACHE = 'getcalcu-pages-v5';
+const CACHE_NAME = 'getcalcu-v6';
+const STATIC_CACHE = 'getcalcu-static-v6';
+const PAGE_CACHE = 'getcalcu-pages-v6';
 
 // Core shell assets to precache on install (lightweight to prevent bandwidth congestion)
 const PRECACHE_URLS = [
   '/',
   '/index.html',
+  '/tool.html',
   '/css/style.css',
   '/css/icons.css',
   '/css/webfonts/fa-solid-900.woff2',
@@ -78,16 +79,39 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML navigations: network-first, fallback to cache
-  if (request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/') {
+  // HTML navigations & tool routes: network-first with resilient offline fallback
+  if (request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname === '/' || url.pathname.startsWith('/tool/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(PAGE_CACHE).then((cache) => cache.put(request, copy));
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(PAGE_CACHE).then((cache) => cache.put(request, copy));
+          }
           return response;
         })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/index.html')))
+        .catch(async () => {
+          // 1. Try exact or search-ignored match in page cache
+          const cached = await caches.match(request, { ignoreSearch: true });
+          if (cached) return cached;
+
+          // 2. Try tool shell for tool routes
+          if (url.pathname.startsWith('/tool/')) {
+            const toolShell = await caches.match('/tool.html', { ignoreSearch: true });
+            if (toolShell) return toolShell;
+          }
+
+          // 3. Try index.html shell
+          const indexShell = await caches.match('/index.html', { ignoreSearch: true });
+          if (indexShell) return indexShell;
+
+          // 4. Guaranteed valid Response object to prevent TypeError: Failed to convert value to 'Response'
+          return new Response('<!DOCTYPE html><html lang="en"><head><title>Offline — GetCalcu</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="font-family:system-ui,-apple-system,sans-serif;text-align:center;padding:40px 20px;"><h2>You are currently offline</h2><p>Please check your internet connection and try again.</p><a href="/" style="color:#6366F1;text-decoration:none;font-weight:600;">Go to Home</a></body></html>', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: { 'Content-Type': 'text/html; charset=utf-8' }
+          });
+        })
     );
     return;
   }
@@ -95,30 +119,19 @@ self.addEventListener('fetch', (event) => {
   // Static assets: cache-first with network fallback
   if (CACHE_FIRST.test(url.pathname)) {
     event.respondWith(
-      caches.match(request).then((cached) => {
+      caches.match(request, { ignoreSearch: true }).then((cached) => {
         if (cached) return cached;
         return fetch(request).then((response) => {
-          if (response.ok) {
+          if (response && response.ok) {
             const copy = response.clone();
             caches.open(STATIC_CACHE).then((cache) => cache.put(request, copy));
           }
           return response;
+        }).catch(async () => {
+          const fallback = await caches.match(request, { ignoreSearch: true });
+          return fallback || new Response('', { status: 404, statusText: 'Not Found' });
         });
       })
-    );
-    return;
-  }
-
-  // Tool pages: network-first (they're static HTML but may update)
-  if (url.pathname.startsWith('/tool/')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const copy = response.clone();
-          caches.open(PAGE_CACHE).then((cache) => cache.put(request, copy));
-          return response;
-        })
-        .catch(() => caches.match(request).then((cached) => cached || caches.match('/tool.html')))
     );
     return;
   }
@@ -127,12 +140,15 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
-        if (response.ok) {
+        if (response && response.ok) {
           const copy = response.clone();
           caches.open(STATIC_CACHE).then((cache) => cache.put(request, copy));
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(async () => {
+        const cached = await caches.match(request, { ignoreSearch: true });
+        return cached || new Response('', { status: 404, statusText: 'Not Found' });
+      })
   );
 });

@@ -906,38 +906,58 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function renderChart(chartData, canvasId) {
+        if (!chartData) return;
         const id = canvasId || 'result-chart';
         const canvas = document.getElementById(id);
         if (!canvas) return;
         
-        const type = chartData.type || 'doughnut';
-        const isHBar = type === 'horizontalBar';
-        const normalizedType = isHBar ? 'bar' : type;
-        
         let datasets;
-        if (type === 'doughnut' || !type) {
+        if (Array.isArray(chartData.datasets) && chartData.datasets.length > 0) {
+            datasets = chartData.datasets.map(ds => ({
+                label: ds.label || '',
+                data: ds.data || [],
+                color: ds.color || ds.borderColor,
+                colors: ds.colors || (Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined),
+                backgroundColor: ds.backgroundColor,
+                borderColor: ds.borderColor,
+                fill: ds.fill,
+                format: ds.format,
+                stack: ds.stack
+            }));
+        } else if (Array.isArray(chartData.data)) {
             datasets = [{
-                data: chartData.data || [chartData.principal, chartData.totalInterest],
-                colors: chartData.colors || ['#6366F1', '#F59E0B'],
-                backgroundColor: chartData.colors || ['#6366F1', '#F59E0B']
+                data: chartData.data,
+                colors: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
+                backgroundColor: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
+            }];
+        } else if (chartData.principal !== undefined || chartData.totalInterest !== undefined) {
+            datasets = [{
+                data: [safeNum(chartData.principal, 0), safeNum(chartData.totalInterest, 0)],
+                colors: ['#6366F1', '#F59E0B'],
+                backgroundColor: ['#6366F1', '#F59E0B']
             }];
         } else {
-            datasets = (chartData.datasets || []).map(ds => ({
-                label: ds.label,
-                data: ds.data,
-                color: ds.color || '#6366F1',
-                backgroundColor: ds.backgroundColor,
-                fill: ds.fill,
-                format: ds.format
-            }));
+            return;
         }
+
+        let type = chartData.type;
+        if (!type) {
+            if (datasets.length > 1 || (datasets[0] && datasets[0].label)) {
+                type = 'bar';
+            } else {
+                type = 'doughnut';
+            }
+        }
+        
+        const isHBar = type === 'horizontalBar';
+        const normalizedType = isHBar ? 'bar' : type;
         
         ChartManager.create({
             id,
             type: normalizedType,
             container: canvas.parentElement || canvas,
             data: {
-                labels: chartData.labels || [],
+                labels: chartData.labels || ['Principal', 'Interest'],
                 datasets
             },
             format: chartData.format || 'currency',

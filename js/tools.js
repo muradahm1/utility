@@ -6338,8 +6338,13 @@ const TOOLS = {
       ];
 
       const chart = {
-        principal: P,
-        totalInterest: totalInterestWithExtra
+        type: 'doughnut',
+        labels: ['Original Principal', 'Total Interest Paid'],
+        datasets: [{
+          data: [P, totalInterestWithExtra],
+          colors: ['#6366F1', '#F59E0B'],
+          backgroundColor: ['#6366F1', '#F59E0B']
+        }]
       };
 
       return {
@@ -6468,8 +6473,13 @@ const TOOLS = {
           { label: 'Annual Interest in HYSA', value: fmt(annualHYSAInterest) },
         ],
         chart: {
-          principal: savings,
-          totalInterest: shortfall,
+          type: 'doughnut',
+          labels: ['Current Savings', 'Funding Shortfall'],
+          datasets: [{
+            data: [savings, Math.max(0, shortfall)],
+            colors: ['#10B981', '#F59E0B'],
+            backgroundColor: ['#10B981', '#F59E0B']
+          }]
         },
         table: schedule,
         insight: {
@@ -6597,8 +6607,13 @@ const TOOLS = {
           { label: 'Final Salary at Retirement', value: fmt(salary) },
         ],
         chart: {
-          principal: totalEmpContribs,
-          totalInterest: totalMatchContribs + totalGrowth,
+          type: 'doughnut',
+          labels: ['Your Contributions', 'Employer Match', 'Compound Investment Growth'],
+          datasets: [{
+            data: [totalEmpContribs, totalMatchContribs, Math.max(0, totalGrowth)],
+            colors: ['#6366F1', '#10B981', '#F59E0B'],
+            backgroundColor: ['#6366F1', '#10B981', '#F59E0B']
+          }]
         },
         table: schedule,
         insight: {
@@ -6853,8 +6868,14 @@ const TOOLS = {
           { label: 'Payoff Strategy Chosen', value: strategy === 'snowball' ? 'Snowball (Lowest Balance First)' : 'Avalanche (Highest APR First)' }
         ],
         chart: {
-          principal: totalInitialDebt,
-          totalInterest: activeTotalInterest
+          type: 'bar',
+          labels: ['Total Principal Repaid', 'Strategy Total Interest', 'Baseline Min Pay Interest'],
+          datasets: [{
+            label: 'Total Cost ($)',
+            data: [totalInitialDebt, activeTotalInterest, baselineTotalInterest],
+            colors: ['#6366F1', '#10B981', '#EF4444'],
+            backgroundColor: ['#6366F1', '#10B981', '#EF4444']
+          }]
         },
         table: schedule,
         insight: {
@@ -7303,8 +7324,13 @@ const TOOLS = {
           { label: 'Deductible Business Expenses', value: fmt(expenses) }
         ],
         chart: {
-          principal: takeHomeCash,
-          totalInterest: totalAnnualTax
+          type: 'doughnut',
+          labels: ['Net Take-Home Cash', 'Self-Employment Tax (SECA)', 'Federal Income Tax', 'State Income Tax'],
+          datasets: [{
+            data: [takeHomeCash, totalSETax, federalTaxFor1099, stateTax],
+            colors: ['#10B981', '#EF4444', '#F59E0B', '#6366F1'],
+            backgroundColor: ['#10B981', '#EF4444', '#F59E0B', '#6366F1']
+          }]
         },
         table: schedule,
         insight: {
@@ -7476,10 +7502,11 @@ const TOOLS = {
           { label: 'Principal Loan Balance', value: fmt(loan) }
         ],
         chart: {
-          labels: ['15-Year Mortgage Path', '30-Year + Invest Difference'],
+          type: 'bar',
+          labels: ['15-Year Payoff Path', '30-Year + Invest Difference'],
           datasets: [
-            { label: 'Home Equity', data: [roundTo(equity15, 2), roundTo(equity30, 2)], backgroundColor: '#6366F1' },
-            { label: 'Investment Portfolio', data: [0, investmentPortfolio30], backgroundColor: '#10B981' }
+            { label: 'Home Equity', data: [roundTo(equity15, 2), roundTo(equity30, 2)], color: '#6366F1', backgroundColor: '#6366F1', stack: 'wealth' },
+            { label: 'Investment Portfolio', data: [0, investmentPortfolio30], color: '#10B981', backgroundColor: '#10B981', stack: 'wealth' }
           ]
         },
         insight: {
@@ -7617,10 +7644,12 @@ const TOOLS = {
           { label: 'Conventional Payment After PMI', value: fmt(totalConvMonthlyAfterPMI), highlight: true }
         ],
         chart: {
-          labels: ['FHA Monthly Payment', 'Conventional (Initial)', 'Conventional (After PMI Drops)'],
+          type: 'bar',
+          labels: ['FHA Monthly (PITI+MIP)', 'Conventional 3% (Initial)', 'Conventional (After PMI Drops)'],
           datasets: [{
             label: 'Monthly Housing Payment ($)',
             data: [totalFhaMonthly, totalConvMonthlyInitial, totalConvMonthlyAfterPMI],
+            colors: ['#6366F1', '#EC4899', '#10B981'],
             backgroundColor: ['#6366F1', '#EC4899', '#10B981']
           }]
         },
@@ -7736,10 +7765,11 @@ const TOOLS = {
           { label: 'Total Refinanced Cost', value: fmt(newPrincipal + totalNewInterest) }
         ],
         chart: {
+          type: 'bar',
           labels: ['Current Auto Loan', 'Refinanced Auto Loan'],
           datasets: [
-            { label: 'Loan Principal', data: [balance, newPrincipal], backgroundColor: '#6366F1' },
-            { label: 'Total Interest Paid', data: [totalOldInterest, totalNewInterest], backgroundColor: '#F59E0B' }
+            { label: 'Loan Principal', data: [balance, newPrincipal], color: '#6366F1', backgroundColor: '#6366F1', stack: 'cost' },
+            { label: 'Total Interest Paid', data: [totalOldInterest, totalNewInterest], color: '#F59E0B', backgroundColor: '#F59E0B', stack: 'cost' }
           ]
         },
         insight: {
