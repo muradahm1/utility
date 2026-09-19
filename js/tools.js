@@ -4277,7 +4277,7 @@ const TOOLS = {
     id: 'currency-converter',
     name: 'Currency Converter',
     category: 'Finance',
-    icon: 'fa-money-bill-transfer',
+    icon: 'fa-money-bill-wave',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Convert between 16+ global currencies with real-time exchange rates, inverse rates, and multi-currency comparison table.',
@@ -4382,7 +4382,7 @@ const TOOLS = {
         table: tableRows,
         insight: {
           tone: 'neutral',
-          icon: 'fa-money-bill-transfer',
+          icon: 'fa-money-bill-wave',
           headline: fromSymbol + amount + ' ' + from + ' equals approximately ' + toSymbol + converted.toLocaleString('en-US') + ' ' + to + '.',
           detail: 'Based on standard mid-market exchange rates (1 ' + from + ' = ' + exchangeRate + ' ' + to + '). Real bank rates may include 1–3% spread fees.'
         }
@@ -4738,7 +4738,7 @@ const TOOLS = {
     id: 'tile-calculator',
     name: 'Tile Calculator',
     category: 'Construction',
-    icon: 'fa-border-all',
+    icon: 'fa-table-cells-large',
     iconClass: 'icon-construction',
     tagClass: 'tag-construction',
     description: 'Calculate floor or wall tile counts, square footage, boxes needed, and waste factor for home renovations.',
@@ -4848,7 +4848,7 @@ const TOOLS = {
     ],
     name: 'Auto Loan Calculator',
     category: 'Finance',
-    icon: 'fa-car',
+    icon: 'fa-route',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Calculate monthly car payments, interest paid, trade-in value, sales tax, and full loan amortization.',
@@ -5006,7 +5006,7 @@ const TOOLS = {
     ],
     name: 'Salary & Paycheck Calculator',
     category: 'Finance',
-    icon: 'fa-money-bill-transfer',
+    icon: 'fa-wallet',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Calculate your net take-home pay, federal & state taxes, FICA deductions, and hourly wage breakdown.',
@@ -5202,7 +5202,7 @@ const TOOLS = {
     ],
     name: 'TDEE & Daily Calorie Calculator',
     category: 'Health',
-    icon: 'fa-fire-flame-curved',
+    icon: 'fa-fire',
     iconClass: 'icon-health',
     tagClass: 'tag-health',
     description: 'Calculate your Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), and daily macro calorie targets.',
@@ -5335,7 +5335,7 @@ const TOOLS = {
   'unit-converter': {
     name: 'Universal Unit Converter',
     category: 'Math',
-    icon: 'fa-arrow-right-arrow-left',
+    icon: 'fa-scale-balanced',
     iconClass: 'icon-math',
     tagClass: 'tag-math',
     description: 'Convert between units of length, weight, temperature, volume, speed, digital data, area, and pressure instantly.',
@@ -5622,7 +5622,7 @@ const TOOLS = {
         table: tableRows,
         insight: {
           tone: 'positive',
-          icon: 'fa-arrow-right-arrow-left',
+          icon: 'fa-scale-balanced',
           headline: `${amt} ${fromKey.replace(/_/g, ' ')} = ${formatDisplay(resultValue)} ${toKey.replace(/_/g, ' ')}`,
           detail: 'See the full multi-unit conversion table below for equivalent values across all standard measurement systems.'
         }
@@ -5897,7 +5897,7 @@ const TOOLS = {
   'customer-lifetime-value-calculator': {
     name: 'Customer Lifetime Value (LTV / CAC) Calculator',
     category: 'Business',
-    icon: 'fa-users-gear',
+    icon: 'fa-chart-line',
     iconClass: 'icon-business',
     tagClass: 'tag-business',
     description: 'Calculate Customer Lifetime Value (LTV), LTV to CAC ratio, payback period, and unit economics health for growth.',
@@ -6155,7 +6155,7 @@ const TOOLS = {
   'final-grade-calculator': {
     name: 'Final Grade Calculator',
     category: 'Education',
-    icon: 'fa-clipboard-check',
+    icon: 'fa-graduation-cap',
     iconClass: 'icon-education',
     tagClass: 'tag-education',
     description: 'Calculate the exact score needed on your final exam to earn your desired target course grade.',
@@ -6223,7 +6223,7 @@ const TOOLS = {
         table,
         insight: {
           tone,
-          icon: 'fa-clipboard-check',
+          icon: 'fa-graduation-cap',
           headline: required <= 0
             ? `You already have your target grade of ${target}% secured!`
             : required > 100
@@ -6259,7 +6259,7 @@ const TOOLS = {
   'student-loan-calculator': {
     name: 'Student Loan Calculator',
     category: 'Education',
-    icon: 'fa-book-bookmark',
+    icon: 'fa-bookmark',
     iconClass: 'icon-education',
     tagClass: 'tag-education',
     description: 'Calculate monthly student loan payments, compare standard vs accelerated payoff timelines, and see interest saved with extra monthly deposits.',
@@ -6512,7 +6512,7 @@ const TOOLS = {
     id: '401k-calculator',
     name: '401(k) Retirement Growth Calculator',
     category: 'Finance',
-    icon: 'fa-landmark',
+    icon: 'fa-piggy-bank',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Project your 401(k) retirement balance, company match growth, and tax-advantaged compound interest.',
@@ -6697,7 +6697,7 @@ const TOOLS = {
     metaTitle: 'Debt Payoff Calculator — Snowball vs. Avalanche Strategies | GetCalcu',
     metaDescription: 'Free debt payoff calculator. Compare Debt Snowball vs. Debt Avalanche strategies, determine optimal repayment order, and calculate total interest saved.',
     category: 'Finance',
-    icon: 'fa-snowflake',
+    icon: 'fa-arrow-trend-down',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     fields: [
@@ -6957,7 +6957,7 @@ const TOOLS = {
     metaTitle: 'Mortgage Refinance Calculator — Break-Even Horizon & Net Savings | GetCalcu',
     metaDescription: 'Free mortgage refinance calculator. Calculate monthly payment reduction, exact break-even timeline in months, and cumulative net savings after closing costs.',
     category: 'Finance',
-    icon: 'fa-house-chimney-window',
+    icon: 'fa-house-chimney',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     fields: [
@@ -7364,44 +7364,44 @@ const TOOLS = {
     ]
   },
 
-  // ── 15-Year vs 30-Year Mortgage Decision Engine ────────────────────────
+  // ── 15-Year Mortgage Calculator Decision Engine ────────────────────────
   '15-year-mortgage-calculator': {
-    name: '15-Year vs 30-Year Mortgage Calculator',
+    name: '15-Year vs. 30-Year Mortgage Calculator',
     category: 'Finance',
-    icon: 'fa-scale-balanced',
-    iconClass: 'icon-home',
+    icon: 'fa-house-chimney',
+    iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    description: 'Comprehensive financial comparison of a 15-year vs. 30-year fixed mortgage. Compare monthly cashflow, total interest saved, equity buildup speed, and stock market opportunity cost to make the right home financing decision.',
-    metaTitle: '15-Year vs 30-Year Mortgage Calculator | Payment & Opportunity Cost — GetCalcu',
-    metaDescription: 'Free 15-Year vs 30-Year Mortgage Calculator. Compare monthly payments, interest savings, and the opportunity cost of investing the difference in index funds.',
+    description: 'Compare 15-year and 30-year fixed mortgages side-by-side. Calculate exact monthly payment differences, lifetime interest saved, and investment opportunity costs to find the smartest mortgage strategy for your goals.',
+    metaTitle: '15-Year vs 30-Year Mortgage Calculator | Payments & Interest Savings — GetCalcu',
+    metaDescription: 'Free 15-Year vs 30-Year Mortgage Calculator. Compare monthly payments, total interest savings, amortization, and S&P 500 investment opportunity costs side-by-side.',
     keywords: [
       '15 year mortgage calculator',
       '15 vs 30 year mortgage calculator',
       '15 year fixed mortgage payment',
-      'how much interest saved on 15 year mortgage',
-      '15 year mortgage payoff schedule',
-      '15 vs 30 year mortgage investing the difference'
+      '15 year mortgage interest savings',
+      '15 year vs 30 year mortgage comparison',
+      'should i get a 15 or 30 year mortgage'
     ],
     presets: [
-      { label: '$400k Home (20% Down, Standard)', values: { home_price: 400000, down_payment: 80000, rate_15: 5.85, rate_30: 6.75, property_tax: 4800, insurance: 1200, investment_return: 7.0, years_staying: 15 } },
-      { label: '$300k Starter Home (10% Down)', values: { home_price: 300000, down_payment: 30000, rate_15: 5.75, rate_30: 6.60, property_tax: 3600, insurance: 1000, investment_return: 7.0, years_staying: 15 } },
-      { label: '$650k Jumbo (20% Down, 10-Yr Plan)', values: { home_price: 650000, down_payment: 130000, rate_15: 6.00, rate_30: 6.90, property_tax: 7800, insurance: 1800, investment_return: 8.0, years_staying: 10 } }
+      { label: '$400k Home (20% Down, Current Rates)', values: { home_price: 400000, down_payment: 80000, rate_15: 5.85, rate_30: 6.75, property_tax: 4800, insurance: 1200, sp500_return: 8.0, compare_years: 15 } },
+      { label: '$250k Starter Home (10% Down)', values: { home_price: 250000, down_payment: 25000, rate_15: 5.75, rate_30: 6.60, property_tax: 3000, insurance: 900, sp500_return: 8.0, compare_years: 15 } },
+      { label: '$600k Luxury Home (20% Down)', values: { home_price: 600000, down_payment: 120000, rate_15: 5.95, rate_30: 6.85, property_tax: 7200, insurance: 1800, sp500_return: 8.0, compare_years: 15 } }
     ],
     fields: [
       // ── Basic Inputs ──
-      { id: 'basic_section', type: 'section', label: 'Basic Loan Inputs', icon: 'fa-sliders' },
-      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'number', default: 400000, min: 10000, step: 5000, hint: 'Total agreed purchase price for the property.' },
-      { id: 'down_payment', label: 'Down Payment ($)', type: 'number', default: 80000, min: 0, step: 5000, hint: 'Cash paid upfront. 20% down avoids private mortgage insurance (PMI).' },
-      { id: 'rate_15', label: '15-Year Interest Rate (%)', type: 'number', default: 5.85, min: 0.1, max: 20, step: 0.05, hint: 'Current interest rate for a 15-year fixed loan (typically 0.5% to 1.0% lower than 30-year).' },
-      { id: 'rate_30', label: '30-Year Interest Rate (%)', type: 'number', default: 6.75, min: 0.1, max: 20, step: 0.05, hint: 'Current interest rate for a 30-year fixed loan.' },
-      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 4800, min: 0, step: 100, hint: 'Yearly property tax assessed by local government (divided into 12 monthly payments).' },
-      { id: 'insurance', label: 'Annual Homeowners Insurance ($)', type: 'number', default: 1200, min: 0, step: 100, hint: 'Yearly hazard insurance premium (divided into 12 monthly payments).' },
+      { id: 'basic_section', type: 'section', label: 'Basic Inputs', icon: 'fa-sliders' },
+      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'number', default: 400000, min: 10000, step: 5000, hint: 'Total negotiated purchase price of the property.' },
+      { id: 'down_payment', label: 'Down Payment ($)', type: 'number', default: 80000, min: 0, step: 5000, hint: 'Upfront cash down payment (20% down avoids private mortgage insurance).' },
+      { id: 'rate_15', label: '15-Year Fixed Interest Rate (%)', type: 'number', default: 5.85, min: 0.1, max: 20, step: 0.05, hint: 'Current market rate for a 15-year fixed loan (historically 0.5% to 1.0% lower than 30-year).' },
+      { id: 'rate_30', label: '30-Year Fixed Interest Rate (%)', type: 'number', default: 6.75, min: 0.1, max: 20, step: 0.05, hint: 'Current market rate for a 30-year fixed loan.' },
+      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 4800, min: 0, step: 100, hint: 'Local annual property tax divided into 12 escrow payments.' },
+      { id: 'insurance', label: 'Annual Homeowners Insurance ($)', type: 'number', default: 1200, min: 0, step: 100, hint: 'Yearly hazard/homeowners insurance premium.' },
 
-      // ── Advanced Options ──
-      { id: 'advanced_section', type: 'section', label: 'Advanced Opportunity Cost & Wealth Projections', icon: 'fa-gear', collapsible: true },
-      { id: 'investment_return', label: 'Expected Investment Return (%)', type: 'number', default: 7.0, min: 0, max: 15, step: 0.1, hint: 'Expected annual return if you chose the 30-year loan and invested the monthly payment difference in an S&P 500 index fund (historical average: 7-10%).' },
-      { id: 'home_appreciation', label: 'Expected Annual Home Appreciation (%)', type: 'number', default: 3.5, min: -2, max: 15, step: 0.1, hint: 'Average yearly increase in property market value.' },
-      { id: 'years_staying', label: 'Comparison Timeline (Years)', type: 'select', default: 15, options: [{ value: 5, label: '5 Years' }, { value: 10, label: '10 Years' }, { value: 15, label: '15 Years (Full 15-Yr Payoff)' }, { value: 30, label: '30 Years (Full 30-Yr Payoff)' }], hint: 'How many years you plan to keep this mortgage before moving or paying off.' }
+      // ── Advanced Options: Opportunity Cost & Wealth Projections ──
+      { id: 'advanced_section', type: 'section', label: 'Opportunity Cost & Wealth Projections', icon: 'fa-gear', collapsible: true },
+      { id: 'sp500_return', label: 'Expected S&P 500 Investment Return (%)', type: 'number', default: 8.0, min: 0, max: 18, step: 0.5, hint: 'Historical annualized nominal stock market index return (long-term average is ~8-10%).' },
+      { id: 'compare_years', label: 'Comparison Time Horizon (Years)', type: 'select', default: 15, options: [{ value: 5, label: '5 Years' }, { value: 10, label: '10 Years' }, { value: 15, label: '15 Years (15-Yr Payoff)' }, { value: 30, label: '30 Years (Full Term)' }], hint: 'Analyze your net wealth at the 15-year mark when the 15-year loan is fully paid off.' },
+      { id: 'home_appreciation', label: 'Annual Home Appreciation (%)', type: 'number', default: 3.5, min: 0, max: 12, step: 0.1, hint: 'Expected annual increase in property value (national historical average is ~3-4%).' }
     ],
     calculate(v) {
       const price = safeNum(v.home_price, 400000);
@@ -7410,42 +7410,40 @@ const TOOLS = {
       if (loan <= 0) return errorResult('Down payment must be less than home purchase price.');
 
       const r15 = safeNum(v.rate_15, 5.85) / 100 / 12;
-      const r30 = safeNum(v.rate_30, 6.75) / 100 / 12;
       const n15 = 15 * 12;
-      const n30 = 30 * 12;
-      const taxMonthly = safeNum(v.property_tax, 4800) / 12;
-      const insMonthly = safeNum(v.insurance, 1200) / 12;
-      const escrowMonthly = taxMonthly + insMonthly;
-
       const pi15 = r15 === 0 ? loan / n15 : loan * (r15 * Math.pow(1 + r15, n15)) / (Math.pow(1 + r15, n15) - 1);
-      const pi30 = r30 === 0 ? loan / n30 : loan * (r30 * Math.pow(1 + r30, n30)) / (Math.pow(1 + r30, n30) - 1);
-
-      const totalMonthly15 = roundTo(pi15 + escrowMonthly, 2);
-      const totalMonthly30 = roundTo(pi30 + escrowMonthly, 2);
-      const monthlyDiff = roundTo(totalMonthly15 - totalMonthly30, 2); // extra cash required for 15-yr
-
       const totalInterest15 = roundTo(pi15 * n15 - loan, 2);
+
+      const r30 = safeNum(v.rate_30, 6.75) / 100 / 12;
+      const n30 = 30 * 12;
+      const pi30 = r30 === 0 ? loan / n30 : loan * (r30 * Math.pow(1 + r30, n30)) / (Math.pow(1 + r30, n30) - 1);
       const totalInterest30 = roundTo(pi30 * n30 - loan, 2);
+
+      const monthlyTax = safeNum(v.property_tax, 4800) / 12;
+      const monthlyIns = safeNum(v.insurance, 1200) / 12;
+      const totalMonthly15 = roundTo(pi15 + monthlyTax + monthlyIns, 2);
+      const totalMonthly30 = roundTo(pi30 + monthlyTax + monthlyIns, 2);
+
+      const monthlyDiff = roundTo(pi15 - pi30, 2);
       const interestSaved = roundTo(totalInterest30 - totalInterest15, 2);
 
-      // Multi-year comparison & opportunity cost simulation
-      const compareYears = safeNum(v.years_staying, 15);
-      const rInvestMonthly = (safeNum(v.investment_return, 7.0) / 100) / 12;
-      const appreciation = safeNum(v.home_appreciation, 3.5) / 100;
+      // Wealth projection: Compare at specified horizon
+      const compareYears = safeNum(v.compare_years, 15);
+      const appRate = safeNum(v.home_appreciation, 3.5) / 100;
+      const futureHomeValue = roundTo(price * Math.pow(1 + appRate, compareYears), 2);
 
-      // Future home value at comparison year
-      const futureHomeValue = price * Math.pow(1 + appreciation, compareYears);
-
-      // Calculate remaining balance at compareYears for both loans
+      const rInvestMonthly = safeNum(v.sp500_return, 8.0) / 100 / 12;
+      
+      // Amortize 15-year and 30-year to compareYears
       let bal15 = loan;
       let bal30 = loan;
       for (let m = 1; m <= compareYears * 12; m++) {
-        if (m <= n15 && bal15 > 0) {
+        if (bal15 > 0) {
           const int15 = bal15 * r15;
           const prin15 = Math.min(bal15, pi15 - int15);
           bal15 = Math.max(0, bal15 - prin15);
         }
-        if (m <= n30 && bal30 > 0) {
+        if (bal30 > 0) {
           const int30 = bal30 * r30;
           const prin30 = Math.min(bal30, pi30 - int30);
           bal30 = Math.max(0, bal30 - prin30);
@@ -7466,8 +7464,6 @@ const TOOLS = {
       const totalWealth30 = roundTo(equity30 + investmentPortfolio30, 2);
       const wealthDifference = roundTo(totalWealth30 - totalWealth15, 2);
 
-      const wealthWinner = wealthDifference > 0 ? '30-Year Loan + Investing' : '15-Year Loan';
-
       return {
         stats: [
           { label: 'Total Interest Saved (15-Yr)', value: fmt(interestSaved), highlight: true },
@@ -7487,8 +7483,10 @@ const TOOLS = {
           ]
         },
         insight: {
-          title: wealthDifference > 0 ? 'Investing the Difference Wins Wealth' : 'Guaranteed Debt Payoff Wins',
-          text: 'The 15-year mortgage saves ' + fmt(interestSaved) + ' in guaranteed interest. However, if you take the 30-year mortgage and invest the ' + fmt(monthlyDiff) + '/month difference at ' + v.investment_return + '% annual return, your investment portfolio could grow to ' + fmt(investmentPortfolio30) + ' in ' + compareYears + ' years — giving you ' + fmt(Math.abs(wealthDifference)) + ' ' + (wealthDifference > 0 ? 'more' : 'less') + ' total net worth.'
+          tone: wealthDifference > 0 ? 'positive' : 'neutral',
+          icon: 'fa-circle-check',
+          headline: wealthDifference > 0 ? 'Investing the Monthly Difference Yields Greater Net Worth' : 'Guaranteed Debt Payoff Wins',
+          detail: 'The 15-year mortgage saves ' + fmt(interestSaved) + ' in guaranteed interest. However, choosing the 30-year mortgage and consistently investing the ' + fmt(monthlyDiff) + '/month difference at ' + v.sp500_return + '% annual return can build an investment portfolio of ' + fmt(investmentPortfolio30) + ' in ' + compareYears + ' years — producing ' + fmt(Math.abs(wealthDifference)) + ' ' + (wealthDifference > 0 ? 'more' : 'less') + ' overall wealth.'
         }
       };
     },
@@ -7498,22 +7496,25 @@ const TOOLS = {
       sections: [
         {
           heading: 'Guaranteed Return vs. Market Opportunity Cost',
-          content: 'Paying off a 15-year mortgage at 5.85% is equivalent to earning a guaranteed, risk-free 5.85% return on your money. Choosing a 30-year loan and investing the monthly cashflow difference in diversified index funds (averaging 7% to 10% historically) has higher expected long-term wealth, but comes with market volatility.'
+          body: 'Paying off a 15-year mortgage at 5.85% is equivalent to earning a guaranteed, risk-free 5.85% return on your money. Choosing a 30-year loan and investing the monthly cashflow difference in diversified index funds (averaging 7% to 10% historically) has higher expected long-term wealth, but comes with market volatility.'
         },
         {
           heading: 'Cash Flow Flexibility: The Sleep-at-Night Factor',
-          content: 'A 30-year mortgage provides a lower mandatory monthly payment. If you face unexpected job loss or medical expenses, your required commitment is lower. If you have extra cash in good months, you can always prepay principal at your own pace.'
+          body: 'A 30-year mortgage provides a lower mandatory monthly payment. If you face unexpected job loss or medical expenses, your required commitment is lower. If you have extra cash in good months, you can always prepay principal at your own pace.'
         }
       ]
     },
     howTo: [
-      { name: 'Enter Purchase Price & Down Payment', text: 'Input the property purchase price and cash down payment.' },
-      { name: 'Review Rates & Investment Return', text: 'Check current 15-year and 30-year interest rates and your expected index fund return in Advanced Options.' },
-      { name: 'Compare Wealth & Cash Flow', text: 'Review total interest saved, monthly payment differences, and the multi-year investment opportunity cost.' }
+      'Enter the property purchase price and cash down payment (20% down avoids PMI).',
+      'Input the current 15-year and 30-year fixed interest rates quoted by your lender.',
+      'Set your property tax, insurance, and expected index fund return in Advanced Options.',
+      'Compare total interest saved, monthly payment differences, and the multi-year investment opportunity cost.'
     ],
     faqs: [
-      { question: 'Is a 15-year mortgage always better than a 30-year mortgage?', answer: 'No. While a 15-year mortgage saves massive interest, the higher mandatory payment restricts cash flow. If investing the monthly difference in tax-advantaged retirement accounts (401k/IRA), a 30-year mortgage can actually yield a higher overall net worth.' },
-      { question: 'Can I pay off a 30-year mortgage in 15 years?', answer: 'Yes! Standard mortgages in the US have no prepayment penalties. You can take a 30-year loan for safety and make extra principal payments each month to retire the loan in 15 years.' }
+      { q: 'Is a 15-year mortgage always better than a 30-year mortgage?', a: 'No. While a 15-year mortgage saves massive interest, the higher mandatory payment restricts cash flow. If investing the monthly difference in tax-advantaged retirement accounts (401k/IRA), a 30-year mortgage can actually yield a higher overall net worth.' },
+      { q: 'Can I pay off a 30-year mortgage in 15 years?', a: 'Yes! Standard mortgages in the US have no prepayment penalties. You can take a 30-year loan for safety and make extra principal payments each month to retire the loan in 15 years.' },
+      { q: 'How much lower is the interest rate on a 15-year mortgage?', a: 'Typically, 15-year fixed mortgage rates are 0.50% to 1.00% lower than 30-year fixed rates because lenders take on less duration risk.' },
+      { q: 'What happens to my payment when the 15-year loan is paid off?', a: 'Your principal and interest payment drops to $0. You only pay property taxes, hazard insurance, and maintenance costs going forward.' }
     ]
   },
 
@@ -7521,8 +7522,8 @@ const TOOLS = {
   'fha-loan-calculator': {
     name: 'FHA Loan Calculator with Upfront & Monthly MIP',
     category: 'Finance',
-    icon: 'fa-shield-heart',
-    iconClass: 'icon-home',
+    icon: 'fa-shield-halved',
+    iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Calculate your complete monthly FHA mortgage payment including 3.5% down payment, 1.75% Upfront MIP, annual monthly mortgage insurance, property taxes, and homeowners insurance.',
     metaTitle: 'FHA Loan Calculator with MIP & 3.5% Down Payment — GetCalcu',
@@ -7536,9 +7537,9 @@ const TOOLS = {
       'fha vs conventional loan calculator'
     ],
     presets: [
-      { label: '$300k Home (3.5% Down, Standard FHA)', values: { home_price: 300000, down_payment: 10500, interest_rate: 6.5, loan_term: 30, annual_mip_rate: 0.55, property_tax: 3600, insurance: 1100, conv_rate: 6.85, conv_pmi_rate: 0.85 } },
-      { label: '$220k Starter Home (3.5% Down)', values: { home_price: 220000, down_payment: 7700, interest_rate: 6.25, loan_term: 30, annual_mip_rate: 0.55, property_tax: 2600, insurance: 900, conv_rate: 6.60, conv_pmi_rate: 0.85 } },
-      { label: '$450k Move-Up (5% Down)', values: { home_price: 450000, down_payment: 22500, interest_rate: 6.75, loan_term: 30, annual_mip_rate: 0.50, property_tax: 5400, insurance: 1400, conv_rate: 7.00, conv_pmi_rate: 0.75 } }
+      { label: '$300k Home (3.5% Down, Standard FHA)', values: { home_price: 300000, down_payment: 10500, interest_rate: 6.5, loan_term: 30, annual_mip_rate: 0.55, property_tax: 3600, insurance: 1100, conv_rate: 6.85, conv_pmi_rate: 0.85, home_appreciation: 3.5 } },
+      { label: '$220k Starter Home (3.5% Down)', values: { home_price: 220000, down_payment: 7700, interest_rate: 6.25, loan_term: 30, annual_mip_rate: 0.55, property_tax: 2600, insurance: 900, conv_rate: 6.60, conv_pmi_rate: 0.85, home_appreciation: 3.5 } },
+      { label: '$450k Move-Up (5% Down)', values: { home_price: 450000, down_payment: 22500, interest_rate: 6.75, loan_term: 30, annual_mip_rate: 0.50, property_tax: 5400, insurance: 1400, conv_rate: 7.00, conv_pmi_rate: 0.75, home_appreciation: 3.5 } }
     ],
     fields: [
       // ── Basic Inputs ──
@@ -7604,10 +7605,6 @@ const TOOLS = {
       }
       const pmiDropYears = roundTo(pmiDropMonth / 12, 1);
 
-      // 5-Year Cost Comparison
-      const fha5YrCost = roundTo((totalFhaMonthly * 60) + down, 2);
-      const conv5YrCost = roundTo((totalConvMonthlyInitial * Math.min(60, pmiDropMonth)) + (totalConvMonthlyAfterPMI * Math.max(0, 60 - pmiDropMonth)) + down, 2);
-
       return {
         stats: [
           { label: 'Total Monthly FHA Payment', value: fmt(totalFhaMonthly), highlight: true },
@@ -7628,8 +7625,10 @@ const TOOLS = {
           }]
         },
         insight: {
-          title: totalFhaMonthly < totalConvMonthlyInitial ? 'FHA Has Lower Initial Payment' : 'Conventional Saves Long-Term',
-          text: 'FHA starts at ' + fmt(totalFhaMonthly) + '/month, compared to ' + fmt(totalConvMonthlyInitial) + ' for a conventional loan. However, conventional PMI cancels after ~' + pmiDropYears + ' years, dropping your payment to ' + fmt(totalConvMonthlyAfterPMI) + ', whereas FHA monthly MIP stays for the entire 30 years.'
+          tone: totalFhaMonthly < totalConvMonthlyInitial ? 'positive' : 'neutral',
+          icon: 'fa-circle-check',
+          headline: totalFhaMonthly < totalConvMonthlyInitial ? 'FHA Provides Lower Initial Cash Flow' : 'Conventional Loan Saves Long-Term',
+          detail: 'FHA starts at ' + fmt(totalFhaMonthly) + '/month, compared to ' + fmt(totalConvMonthlyInitial) + ' for a conventional loan. However, conventional PMI cancels after ~' + pmiDropYears + ' years, dropping your payment to ' + fmt(totalConvMonthlyAfterPMI) + ', whereas FHA monthly MIP stays for the entire loan life unless you refinance.'
         }
       };
     },
@@ -7639,64 +7638,68 @@ const TOOLS = {
       sections: [
         {
           heading: 'The True Cost of FHA Mortgage Insurance (MIP)',
-          content: 'FHA loans carry two mandatory fees: a 1.75% upfront fee financed directly into your loan balance, plus an annual 0.55% monthly premium. On a $300,000 purchase, upfront MIP adds $5,066 to your balance and $133/month to your payment.'
+          body: 'FHA loans carry two mandatory fees: a 1.75% upfront fee financed directly into your loan balance, plus an annual 0.55% monthly premium. On a $300,000 purchase, upfront MIP adds $5,066 to your balance and $133/month to your payment.'
         },
         {
           heading: 'When to Choose Conventional Over FHA',
-          content: 'If your credit score is 700 or higher, a Conventional 97 (3% down) loan often wins because conventional PMI cancels automatically once your equity hits 20%, saving thousands in your 30s and 40s.'
+          body: 'If your credit score is 700 or higher, a Conventional 97 (3% down) loan often wins because conventional PMI cancels automatically once your equity hits 20%, saving thousands in your 30s and 40s.'
         }
       ]
     },
     howTo: [
-      { name: 'Enter Home Price & Down Payment', text: 'Input your target purchase price and cash down payment.' },
-      { name: 'Review Financed MIP & Monthly Insurance', text: 'The calculator automatically computes the 1.75% upfront fee and 0.55% annual MIP.' },
-      { name: 'Compare FHA vs Conventional Drop Date', text: 'See how many years it takes for conventional PMI to cancel vs keeping FHA MIP.' }
+      'Enter the property purchase price and cash down payment (minimum 3.5% for FHA).',
+      'Input the quoted FHA fixed interest rate and loan term.',
+      'Review your property tax and hazard insurance estimates.',
+      'Check the side-by-side Conventional comparison in Advanced Options to see when PMI cancels.'
     ],
     faqs: [
-      { question: 'Why does FHA monthly MIP not cancel at 20% equity?', answer: 'Under HUD regulations for loans with less than 10% down, FHA MIP remains for the entire 30-year term. To remove it, homeowners must refinance into a conventional mortgage once they build 20% equity.' },
-      { question: 'What credit score do I need for 3.5% down?', answer: 'A minimum FICO score of 580 qualifies for 3.5% down. Scores between 500 and 579 require a 10% down payment.' }
+      { q: 'How is the 1.75% Upfront MIP paid?', a: 'The 1.75% upfront mortgage insurance premium (UFMIP) is automatically financed into your total loan balance at closing, so you do not need to bring extra cash to the table.' },
+      { q: 'Does FHA mortgage insurance ever go away?', a: 'For FHA loans with less than 10% down, monthly MIP remains for the entire 30-year life of the loan. Most homeowners refinance into a conventional loan once their equity exceeds 20% to eliminate MIP.' },
+      { q: 'What is the minimum credit score for an FHA loan?', a: 'A credit score of 580 qualifies for the minimum 3.5% down payment. Borrowers with scores between 500 and 579 are required to put down at least 10%.' },
+      { q: 'Can I use gift funds for the 3.5% FHA down payment?', a: 'Yes! HUD guidelines permit 100% of the FHA down payment and closing costs to come from family gift funds with a standard gift letter.' }
     ]
   },
 
   // ── Auto Refinance Decision Engine ─────────────────────────────────────
   'auto-refinance-calculator': {
-    name: 'Auto Loan Refinance Calculator',
+    name: 'Auto Loan Refinance & Break-Even Calculator',
     category: 'Finance',
-    icon: 'fa-car-side',
+    icon: 'fa-rotate-left',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    description: 'Calculate how much you can save each month and over the life of your car loan by refinancing to a lower interest rate or shorter loan term, with break-even analysis.',
+    description: 'Calculate how much you can save every month and over the life of your car loan by refinancing to a lower interest rate, with instant break-even horizon analysis.',
     metaTitle: 'Auto Loan Refinance Calculator | Monthly & Lifetime Savings — GetCalcu',
-    metaDescription: 'Free Auto Loan Refinance Calculator. See exact monthly payment savings, total lifetime interest saved, and transfer fee break-even timeline.',
+    metaDescription: 'Free Auto Refinance Calculator. Calculate monthly payment savings, total interest reduction, loan-to-value equity, and exact break-even timeline in months.',
     keywords: [
       'auto loan refinance calculator',
-      'car loan refinance savings calculator',
-      'should i refinance my car calculator',
-      'lower car payment refinance calculator',
-      'auto refinancing break even'
+      'car refinance savings calculator',
+      'auto refinance break even calculator',
+      'should i refinance my car loan',
+      'car loan interest reduction calculator',
+      'refinance auto loan monthly payment'
     ],
     presets: [
-      { label: 'Drop Rate by 4% ($25k Balance, 48 Mo Left)', values: { current_balance: 25000, current_rate: 9.5, months_remaining: 48, new_rate: 5.5, new_term_months: 48, refi_fees: 100, vehicle_val: 27000 } },
-      { label: 'Lower Monthly Payment ($18k Balance, 36 to 48 Mo)', values: { current_balance: 18000, current_rate: 8.0, months_remaining: 36, new_rate: 5.9, new_term_months: 48, refi_fees: 100, vehicle_val: 20000 } },
-      { label: 'Shorten Term & Save Big ($30k Balance, 60 to 36 Mo)', values: { current_balance: 30000, current_rate: 10.0, months_remaining: 60, new_rate: 5.0, new_term_months: 36, refi_fees: 150, vehicle_val: 32000 } }
+      { label: '$25k Balance (9.5% to 5.5%, 48 Mos)', values: { current_balance: 25000, current_rate: 9.5, months_remaining: 48, new_rate: 5.5, new_term_months: 48, refi_fees: 150, vehicle_val: 28000 } },
+      { label: '$15k Balance (12% to 6%, 36 Mos)', values: { current_balance: 15000, current_rate: 12.0, months_remaining: 36, new_rate: 6.0, new_term_months: 36, refi_fees: 100, vehicle_val: 17000 } },
+      { label: '$35k SUV (8.0% to 5.0%, 60 Mos)', values: { current_balance: 35000, current_rate: 8.0, months_remaining: 60, new_rate: 5.0, new_term_months: 60, refi_fees: 200, vehicle_val: 36000 } }
     ],
     fields: [
       // ── Basic Inputs ──
       { id: 'basic_section', type: 'section', label: 'Current & New Loan Details', icon: 'fa-sliders' },
-      { id: 'current_balance', label: 'Remaining Car Loan Balance ($)', type: 'number', default: 25000, min: 1000, step: 500, hint: 'The exact payoff balance on your current auto loan.' },
-      { id: 'current_rate', label: 'Current Interest Rate (%)', type: 'number', default: 9.5, min: 0.1, max: 35, step: 0.1, hint: 'The annual interest rate (APR) you are currently paying.' },
-      { id: 'months_remaining', label: 'Months Left on Current Loan', type: 'number', default: 48, min: 6, max: 96, step: 1, hint: 'How many monthly payments remain on your current note.' },
-      { id: 'new_rate', label: 'New Quoted Interest Rate (%)', type: 'number', default: 5.5, min: 0.1, max: 35, step: 0.1, hint: 'The lower interest rate offered by the new lender or credit union.' },
-      { id: 'new_term_months', label: 'New Loan Term (Months)', type: 'select', default: 48, options: [24, 36, 48, 60, 72].map(m => ({ value: m, label: m + ' months (' + (m/12) + ' yrs)' })), hint: 'The length of the new refinance loan.' },
+      { id: 'current_balance', label: 'Current Auto Loan Payoff Balance ($)', type: 'number', default: 25000, min: 1000, step: 500, hint: 'The exact 10-day payoff amount from your current lender.' },
+      { id: 'current_rate', label: 'Current Interest Rate (%)', type: 'number', default: 9.5, min: 0.1, max: 35, step: 0.1, hint: 'Your existing auto loan APR.' },
+      { id: 'months_remaining', label: 'Months Remaining on Current Loan', type: 'number', default: 48, min: 1, max: 96, step: 1, hint: 'Number of monthly payments left on your current auto note.' },
+      { id: 'new_rate', label: 'New Refinance Interest Rate (%)', type: 'number', default: 5.5, min: 0.1, max: 25, step: 0.1, hint: 'The lower APR quoted by a bank, credit union, or online lender.' },
+      { id: 'new_term_months', label: 'New Loan Term (Months)', type: 'select', default: 48, options: [{ value: 24, label: '24 Months' }, { value: 36, label: '36 Months' }, { value: 48, label: '48 Months' }, { value: 60, label: '60 Months' }, { value: 72, label: '72 Months' }], hint: 'Keep the term matching or shorter than remaining months to maximize interest savings.' },
 
-      // ── Advanced Options ──
-      { id: 'advanced_section', type: 'section', label: 'Refinance Fees & Vehicle Equity Check', icon: 'fa-gear', collapsible: true },
-      { id: 'refi_fees', label: 'Refinance & Title Transfer Fees ($)', type: 'number', default: 100, min: 0, step: 25, hint: 'State title transfer and lender documentation fees (typically $50 to $150).' },
-      { id: 'vehicle_val', label: 'Estimated Vehicle Market Value ($)', type: 'number', default: 27000, min: 1000, step: 500, hint: 'Used to check your Loan-to-Value (LTV) ratio. Most lenders require LTV under 125%.' }
+      // ── Advanced Options: Fees & Loan-to-Value ──
+      { id: 'advanced_section', type: 'section', label: 'Refinancing Fees & Vehicle Equity', icon: 'fa-gear', collapsible: true },
+      { id: 'refi_fees', label: 'Refinancing Transfer Fees ($)', type: 'number', default: 150, min: 0, max: 1000, step: 25, hint: 'State title transfer and lien recording fees (typically $50 to $200).' },
+      { id: 'vehicle_val', label: 'Estimated Vehicle Market Value ($)', type: 'number', default: 28000, min: 1000, step: 500, hint: 'Current Kelley Blue Book or Edmunds private party / trade-in market value.' }
     ],
     calculate(v) {
       const balance = safeNum(v.current_balance, 25000);
-      if (balance <= 0) return errorResult('Loan balance must be greater than $0.');
+      if (balance <= 0) return errorResult('Loan balance must be greater than zero.');
 
       const rOld = safeNum(v.current_rate, 9.5) / 100 / 12;
       const nOld = safeNum(v.months_remaining, 48);
@@ -7705,7 +7708,7 @@ const TOOLS = {
 
       const rNew = safeNum(v.new_rate, 5.5) / 100 / 12;
       const nNew = safeNum(v.new_term_months, 48);
-      const refiFees = safeNum(v.refi_fees, 100);
+      const refiFees = safeNum(v.refi_fees, 150);
       const newPrincipal = balance + refiFees;
 
       const newPayment = rNew === 0 ? newPrincipal / nNew : newPrincipal * (rNew * Math.pow(1 + rNew, nNew)) / (Math.pow(1 + rNew, nNew) - 1);
@@ -7740,8 +7743,10 @@ const TOOLS = {
           ]
         },
         insight: {
-          title: lifetimeInterestSavings > 0 ? 'Refinance Strongly Recommended' : 'Check Loan Length',
-          text: lifetimeInterestSavings > 0
+          tone: lifetimeInterestSavings > 0 ? 'positive' : 'warning',
+          icon: lifetimeInterestSavings > 0 ? 'fa-circle-check' : 'fa-triangle-exclamation',
+          headline: lifetimeInterestSavings > 0 ? 'Refinancing Saves Substantial Money' : 'Caution: Term Extension Increases Cost',
+          detail: lifetimeInterestSavings > 0
             ? 'Refinancing reduces your payment by ' + fmt(monthlySavings) + '/mo, covers your ' + fmt(refiFees) + ' fees in ' + (breakEvenMonths || 1) + ' months, and saves a net ' + fmt(lifetimeInterestSavings) + ' overall.'
             : 'Extending your loan term lowers monthly payments, but increases total finance charges by ' + fmt(Math.abs(lifetimeInterestSavings)) + '.'
         }
@@ -7753,22 +7758,25 @@ const TOOLS = {
       sections: [
         {
           heading: 'When Does Car Loan Refinancing Make Sense?',
-          content: 'Refinancing makes the most sense if your credit score has increased by 30+ points since buying the car, or if dealer financing initially locked you into a high APR (8% to 15%).'
+          body: 'Refinancing makes the most sense if your credit score has increased by 30+ points since buying the car, or if dealer financing initially locked you into a high APR (8% to 15%).'
         },
         {
           heading: 'Understanding Loan-to-Value (LTV) Requirements',
-          content: 'Lenders check your vehicle value against your payoff amount. If your car is worth $25,000 and you owe $20,000, your LTV is 80%, qualifying you for prime rates.'
+          body: 'Lenders check your vehicle value against your payoff amount. If your car is worth $25,000 and you owe $20,000, your LTV is 80%, qualifying you for prime rates.'
         }
       ]
     },
     howTo: [
-      { name: 'Check 10-Day Payoff Balance', text: 'Obtain your exact payoff balance and current APR from your current lender.' },
-      { name: 'Input New Interest Rate & Term', text: 'Enter quoted rates from a credit union or online lender.' },
-      { name: 'Verify Break-Even Horizon', text: 'Confirm that monthly payment savings exceed transfer fees in under 6 months.' }
+      'Check your current 10-day payoff balance and APR from your current lender.',
+      'Enter the new interest rate and repayment term from your prospective refinancing lender.',
+      'Include transfer and title fees ($50-$200) to compute the exact break-even timeline.',
+      'Verify that your vehicle Loan-to-Value (LTV) is below 100% for the lowest rates.'
     ],
     faqs: [
-      { question: 'How much does it cost to refinance a car loan?', answer: 'Auto refinancing fees are very low — typically just $50 to $150 for state title re-registration and lien transfer.' },
-      { question: 'Can I refinance a car with negative equity?', answer: 'Some lenders allow refinancing up to 125% LTV, but you will get the best interest rates if your vehicle value exceeds the loan balance.' }
+      { q: 'How much does it cost to refinance a car loan?', a: 'Auto refinancing fees are very low — typically just $50 to $200 for state title re-registration and lien transfer.' },
+      { q: 'Can I refinance a car with negative equity?', a: 'Some lenders allow refinancing up to 125% LTV, but you will get the best interest rates if your vehicle value exceeds the loan balance.' },
+      { q: 'Will refinancing hurt my credit score?', a: 'You will see a small, temporary dip of 2 to 5 points from the hard inquiry, but the lower debt service quickly improves your debt-to-income ratio.' },
+      { q: 'Can I refinance with my existing bank?', a: 'Most banks do not refinance their own auto loans. You will generally apply through a new credit union, regional bank, or online auto refinancing marketplace.' }
     ]
   },
 
@@ -7776,7 +7784,7 @@ const TOOLS = {
   'freelance-hourly-rate-calculator': {
     name: 'Freelance & Consultant Hourly Rate Calculator',
     category: 'Business',
-    icon: 'fa-laptop-code',
+    icon: 'fa-briefcase',
     iconClass: 'icon-business',
     tagClass: 'tag-business',
     description: 'Calculate the exact hourly, daily, and project billing rates you must charge clients to achieve your target take-home salary after accounting for 1099 taxes, health insurance, retirement, and business expenses.',
@@ -7788,12 +7796,12 @@ const TOOLS = {
       'consulting rate calculator taxes expenses',
       'billable hours rate calculator',
       '1099 freelance pricing formula',
-      'convert salary to hourly contractor rate'
+      'contractor daily rate calculator'
     ],
     presets: [
-      { label: '$100k Target Salary (25 Billable Hrs/Wk)', values: { target_take_home: 100000, annual_expenses: 12000, billable_hours_per_week: 25, weeks_off: 4, fed_tax_rate: 22, state_tax_rate: 5, health_insurance_monthly: 450, retirement_annual: 10000, uncollectible_buffer: 5 } },
-      { label: '$70k Starter Freelancer (20 Billable Hrs/Wk)', values: { target_take_home: 70000, annual_expenses: 6000, billable_hours_per_week: 20, weeks_off: 3, fed_tax_rate: 18, state_tax_rate: 4, health_insurance_monthly: 350, retirement_annual: 5000, uncollectible_buffer: 5 } },
-      { label: '$160k Senior Consultant (30 Billable Hrs/Wk)', values: { target_take_home: 160000, annual_expenses: 24000, billable_hours_per_week: 30, weeks_off: 5, fed_tax_rate: 24, state_tax_rate: 6, health_insurance_monthly: 600, retirement_annual: 20000, uncollectible_buffer: 5 } }
+      { label: '$100k Take-Home (25 Billable Hrs/Wk, Solo)', values: { target_take_home: 100000, billable_hours_per_week: 25, weeks_off: 4, annual_expenses: 12000, fed_tax_rate: 22, state_tax_rate: 5, health_insurance_monthly: 450, retirement_annual: 10000, uncollectible_buffer: 5 } },
+      { label: '$75k Starter Freelancer (20 Billable Hrs/Wk)', values: { target_take_home: 75000, billable_hours_per_week: 20, weeks_off: 3, annual_expenses: 6000, fed_tax_rate: 18, state_tax_rate: 4, health_insurance_monthly: 350, retirement_annual: 6000, uncollectible_buffer: 5 } },
+      { label: '$160k Senior Consultant (28 Billable Hrs/Wk)', values: { target_take_home: 160000, billable_hours_per_week: 28, weeks_off: 5, annual_expenses: 24000, fed_tax_rate: 26, state_tax_rate: 6, health_insurance_monthly: 600, retirement_annual: 20000, uncollectible_buffer: 8 } }
     ],
     fields: [
       // ── Basic Inputs ──
@@ -7834,6 +7842,8 @@ const TOOLS = {
       const billableHoursPerWeek = safeNum(v.billable_hours_per_week, 25);
       const totalBillableHours = workingWeeks * billableHoursPerWeek;
 
+      if (totalBillableHours <= 0) return errorResult('Total annual billable hours must be greater than zero.');
+
       // Rate Ladder
       const targetHourlyRate = roundTo(grossRevenueNeeded / totalBillableHours, 2);
       const floorHourlyRate = roundTo((netSalary / (1 - totalEffectiveTaxRate) + overhead) / totalBillableHours, 2);
@@ -7854,15 +7864,17 @@ const TOOLS = {
           { label: 'Annual Billable Hours', value: totalBillableHours + ' hrs (' + workingWeeks + ' wks)' }
         ],
         chart: {
-          labels: ['Net Salary in Pocket', 'Taxes Reserved', 'Benefits & Retirement', 'Business Overhead'],
+          labels: ['Net Take-Home', 'Taxes (SECA + Inc)', 'Benefits & Retirement', 'Business Overhead'],
           datasets: [{
             data: [netSalary, totalTaxes, (healthAnnual + retirementAnnual), overhead],
             backgroundColor: ['#10B981', '#EF4444', '#F59E0B', '#6366F1']
           }]
         },
         insight: {
-          title: 'Your 3-Tier Pricing Blueprint',
-          text: 'To take home ' + fmt(netSalary) + ' clean after taxes (' + fmt(totalTaxes) + '), retirement (' + fmt(retirementAnnual) + '), and health insurance, quote $' + targetHourlyRate + '/hr (or ' + fmt(standardDayRate) + '/day). Never accept project work below your survival floor of $' + floorHourlyRate + '/hr.'
+          tone: 'positive',
+          icon: 'fa-circle-check',
+          headline: 'Your 3-Tier Pricing Blueprint',
+          detail: 'To take home ' + fmt(netSalary) + ' clean after taxes (' + fmt(totalTaxes) + '), retirement (' + fmt(retirementAnnual) + '), and health insurance, quote $' + targetHourlyRate + '/hr (or ' + fmt(standardDayRate) + '/day). Never accept project work below your survival floor of $' + floorHourlyRate + '/hr.'
         }
       };
     },
@@ -7872,22 +7884,25 @@ const TOOLS = {
       sections: [
         {
           heading: 'Why Salary ÷ 2,000 Guarantees Undercharging',
-          content: 'A corporate employee getting $100k works 2,000 hours with employer-paid taxes, healthcare, and 401(k) matches. A freelancer only has 1,000 to 1,300 true billable hours after accounting for client proposals and marketing.'
+          body: 'A corporate employee getting $100k works 2,000 hours with employer-paid taxes, healthcare, and 401(k) matches. A freelancer only has 1,000 to 1,300 true billable hours after accounting for client proposals and marketing.'
         },
         {
           heading: 'Setting Up Your Quarterly Tax Escrow',
-          content: 'Always transfer 28% to 35% of every incoming client payment into a separate high-yield business savings account so you can easily pay IRS Form 1040-ES quarterly vouchers on time.'
+          body: 'Always transfer 28% to 35% of every incoming client payment into a separate high-yield business savings account so you can easily pay IRS Form 1040-ES quarterly vouchers on time.'
         }
       ]
     },
     howTo: [
-      { name: 'Enter Desired Take-Home Pay', text: 'Input what you want to pocket annually for your lifestyle and savings.' },
-      { name: 'Set Realistic Billable Hours', text: 'Budget 20 to 28 hours per week for client work.' },
-      { name: 'Use the 3-Tier Rate Ladder', text: 'Quote your Target or Premium rate on all client project proposals.' }
+      'Input the annual take-home salary you want to pocket into your personal checking account.',
+      'Estimate realistic billable hours per week (typically 20 to 28 hours) and planned weeks off.',
+      'Account for business software overhead, health insurance, and Solo 401(k) retirement contributions in Advanced Options.',
+      'Quote your Target Hourly Rate or Premium Rate on all incoming client proposals.'
     ],
     faqs: [
-      { question: 'What is the standard rule of thumb for freelance pricing?', answer: 'Take the equivalent corporate W-2 salary and divide by 1,000 (rather than 2,000). A $100k full-time job translates to a $100/hour freelance baseline.' },
-      { question: 'Should I quote hourly or flat project rates?', answer: 'Always calculate your internal quote using hourly rates, but present flat project packages to clients to capture value without trading time for money.' }
+      { q: 'What is the standard rule of thumb for freelance pricing?', a: 'Take the equivalent corporate W-2 salary and divide by 1,000 (rather than 2,000). A $100k full-time job translates to a $100/hour freelance baseline.' },
+      { q: 'Should I quote hourly or flat project rates?', a: 'Always calculate your internal quote using hourly rates, but present flat project packages to clients to capture value without trading time for money.' },
+      { q: 'Why do I need a buffer for uncollectible invoices?', a: 'Client payment delays and slow pipeline periods occur regularly in freelance work. A 5% to 10% buffer prevents cashflow crunches.' },
+      { q: 'How do I pay taxes as a 1099 contractor?', a: 'You make four quarterly estimated tax payments per year to the IRS and your state department of revenue using IRS Form 1040-ES.' }
     ]
   },
 
@@ -7895,7 +7910,7 @@ const TOOLS = {
   'body-fat-percentage-calculator': {
     name: 'Body Fat Percentage Calculator (US Navy Method)',
     category: 'Health',
-    icon: 'fa-tape',
+    icon: 'fa-ruler-combined',
     iconClass: 'icon-health',
     tagClass: 'tag-health',
     description: 'Estimate your body fat percentage, lean body mass, fat mass, and target timeline to reach your ideal body composition using standard tape measurements and the validated US Navy fitness formula.',
@@ -7910,9 +7925,9 @@ const TOOLS = {
       'body fat loss timeline calculator'
     ],
     presets: [
-      { label: 'Male Fitness (5ft 10in, 32in Waist)', values: { gender: 'male', unit: 'imperial', height: 70, neck: 15, waist: 32, hip: 38, weight: 175, activity: 'moderate', target_bf: 12 } },
-      { label: 'Female Fit (5ft 5in, 27in Waist)', values: { gender: 'female', unit: 'imperial', height: 65, neck: 13, waist: 27, hip: 36, weight: 135, activity: 'moderate', target_bf: 20 } },
-      { label: 'Male Fat Loss Goal (6ft 0in, 38in Waist)', values: { gender: 'male', unit: 'imperial', height: 72, neck: 16, waist: 38, hip: 42, weight: 215, activity: 'light', target_bf: 15 } }
+      { label: 'Male Fitness (5ft 10in, 32in Waist)', values: { gender: 'male', unit: 'imperial', height: 70, neck: 15, waist: 32, hip: 38, weight: 175, activity: 'moderate', target_bf: 12, weekly_loss_rate: 1.0 } },
+      { label: 'Female Fit (5ft 5in, 27in Waist)', values: { gender: 'female', unit: 'imperial', height: 65, neck: 13, waist: 27, hip: 36, weight: 135, activity: 'moderate', target_bf: 20, weekly_loss_rate: 1.0 } },
+      { label: 'Male Fat Loss Goal (6ft 0in, 38in Waist)', values: { gender: 'male', unit: 'imperial', height: 72, neck: 16, waist: 38, hip: 42, weight: 215, activity: 'light', target_bf: 15, weekly_loss_rate: 1.0 } }
     ],
     fields: [
       // ── Basic Inputs ──
@@ -7927,18 +7942,9 @@ const TOOLS = {
 
       // ── Advanced Options: Goal Planning & Caloric Targets ──
       { id: 'advanced_section', type: 'section', label: 'Target Fat Loss & Calorie Projections', icon: 'fa-gear', collapsible: true },
-      { id: 'activity', label: 'Daily Activity Level', type: 'select', default: 'moderate', options: [
-        { value: 'sedentary', label: 'Sedentary (Desk job, little exercise)' },
-        { value: 'light', label: 'Lightly Active (Exercise 1-3 days/wk)' },
-        { value: 'moderate', label: 'Moderately Active (Exercise 3-5 days/wk)' },
-        { value: 'very', label: 'Very Active (Intense exercise 6-7 days/wk)' }
-      ], hint: 'Used to calculate maintenance energy expenditure (TDEE).' },
-      { id: 'target_bf', label: 'Target Goal Body Fat (%)', type: 'number', default: 12, min: 5, max: 40, step: 1, hint: 'Your target body fat percentage goal (e.g., 10-14% for men, 18-22% for women).' },
-      { id: 'weekly_loss_rate', label: 'Target Fat Loss Speed', type: 'select', default: '1.0', options: [
-        { value: '0.5', label: 'Conservative (0.5 lb / 0.25 kg per week)' },
-        { value: '1.0', label: 'Standard (1.0 lb / 0.5 kg per week)' },
-        { value: '1.5', label: 'Aggressive (1.5 lb / 0.7 kg per week)' }
-      ], hint: 'A steady 1.0 lb/week deficit preserves maximum lean muscle mass.' }
+      { id: 'target_bf', label: 'Target Goal Body Fat (%)', type: 'number', default: 12, min: 4, max: 50, step: 0.5, hint: 'Men: 10-14% (lean/athletic). Women: 18-22% (lean/fit).' },
+      { id: 'weekly_loss_rate', label: 'Target Weekly Fat Loss Rate (lbs or kg/wk)', type: 'select', default: 1.0, options: [{ value: 0.5, label: '0.5 / wk (Conservative, 250 kcal deficit)' }, { value: 1.0, label: '1.0 / wk (Standard, 500 kcal deficit)' }, { value: 1.5, label: '1.5 / wk (Aggressive, 750 kcal deficit)' }], hint: '1.0 lb/week fat loss preserves lean muscle and energy levels.' },
+      { id: 'activity', label: 'Daily Activity Level', type: 'select', default: 'moderate', options: [{ value: 'sedentary', label: 'Sedentary (desk job, little exercise)' }, { value: 'light', label: 'Lightly Active (exercise 1-3 days/wk)' }, { value: 'moderate', label: 'Moderately Active (exercise 3-5 days/wk)' }, { value: 'very', label: 'Very Active (hard exercise 6-7 days/wk)' }], hint: 'Used to calculate maintenance TDEE and cutting calorie roadmap.' }
     ],
     calculate(v) {
       const isMetric = v.unit === 'metric';
@@ -7946,7 +7952,11 @@ const TOOLS = {
       let neck = safeNum(v.neck, isMetric ? 38 : 15);
       let waist = safeNum(v.waist, isMetric ? 81 : 32);
       let hip = safeNum(v.hip, isMetric ? 91 : 36);
-      const wt = safeNum(v.weight, isMetric ? 80 : 175);
+      let wt = safeNum(v.weight, isMetric ? 80 : 175);
+
+      if (h <= 0 || neck <= 0 || waist <= 0 || wt <= 0) {
+        return errorResult('Please enter positive numbers for height, neck, waist, and weight.');
+      }
 
       if (!isMetric) {
         h = h * 2.54;
@@ -7993,8 +8003,9 @@ const TOOLS = {
       const actMultipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, very: 1.725 };
       const tdee = roundTo(bmr * (actMultipliers[v.activity] || 1.55), 0);
 
-      // Target Goal Projections
-      const targetBfPct = safeNum(v.target_bf, v.gender === 'male' ? 12 : 20) / 100;
+      // Target Goal Projections with guard against division by zero
+      const targetBfRaw = safeNum(v.target_bf, v.gender === 'male' ? 12 : 20);
+      const targetBfPct = Math.min(0.60, Math.max(0.04, targetBfRaw / 100));
       // Target weight assuming lean mass is preserved: Lean Mass / (1 - Target BF)
       const targetWeight = roundTo(leanMass / (1 - targetBfPct), 1);
       const fatToLose = roundTo(Math.max(0, wt - targetWeight), 1);
@@ -8011,7 +8022,7 @@ const TOOLS = {
           { label: 'Lean Body Mass', value: leanMass + ' ' + unitLabel, highlight: true },
           { label: 'Fat Mass', value: fatMass + ' ' + unitLabel },
           { label: 'Maintenance Calories (TDEE)', value: tdee + ' kcal / day' },
-          { label: 'Target Goal Weight (at ' + v.target_bf + '% BF)', value: targetWeight + ' ' + unitLabel },
+          { label: 'Target Goal Weight (at ' + targetBfRaw + '% BF)', value: targetWeight + ' ' + unitLabel },
           { label: 'Fat to Lose to Reach Goal', value: fatToLose + ' ' + unitLabel, warn: fatToLose > 0 },
           { label: 'Estimated Timeline to Goal', value: weeksToGoal > 0 ? weeksToGoal + ' Weeks (' + cuttingCalories + ' kcal/day)' : 'Goal Reached!' }
         ],
@@ -8023,8 +8034,10 @@ const TOOLS = {
           }]
         },
         insight: {
-          title: 'Your Body Composition Plan',
-          text: 'You are carrying ' + leanMass + ' ' + unitLabel + ' of lean tissue and ' + fatMass + ' ' + unitLabel + ' of fat (' + category + '). To reach your goal of ' + v.target_bf + '% body fat while preserving lean muscle, aim for ' + cuttingCalories + ' kcal/day (a ' + dailyCalorieDeficit + ' kcal deficit) to reach your goal weight of ' + targetWeight + ' ' + unitLabel + ' in approximately ' + weeksToGoal + ' weeks.'
+          tone: 'positive',
+          icon: 'fa-circle-check',
+          headline: 'Your Personalized Body Composition Roadmap',
+          detail: 'You are carrying ' + leanMass + ' ' + unitLabel + ' of lean tissue and ' + fatMass + ' ' + unitLabel + ' of fat (' + category + '). To reach your goal of ' + targetBfRaw + '% body fat while preserving lean muscle, aim for ' + cuttingCalories + ' kcal/day (a ' + dailyCalorieDeficit + ' kcal deficit) to reach your target weight of ' + targetWeight + ' ' + unitLabel + ' in approximately ' + weeksToGoal + ' weeks.'
         }
       };
     },
@@ -8034,22 +8047,25 @@ const TOOLS = {
       sections: [
         {
           heading: 'Why Lean Mass is the Key to Metabolism',
-          content: 'Basal Metabolic Rate (BMR) is determined almost entirely by your lean body mass (muscle, bone, organs). Preserving lean muscle with sufficient dietary protein (0.8-1.0g per lb of body weight) ensures your metabolism stays high while losing body fat.'
+          body: 'Basal Metabolic Rate (BMR) is determined almost entirely by your lean body mass (muscle, bone, organs). Preserving lean muscle with sufficient dietary protein (0.8-1.0g per lb of body weight) ensures your metabolism stays high while losing body fat.'
         },
         {
           heading: 'Setting a Safe, Sustainable Calorie Deficit',
-          content: 'A moderate 500-calorie daily deficit produces exactly 1.0 lb of pure fat loss per week without triggering muscle loss, hormonal fatigue, or metabolic adaptation.'
+          body: 'A moderate 500-calorie daily deficit produces exactly 1.0 lb of pure fat loss per week without triggering muscle loss, hormonal fatigue, or metabolic adaptation.'
         }
       ]
     },
     howTo: [
-      { name: 'Measure Neck and Natural Waist', text: 'Input measurements taken first thing in the morning before eating.' },
-      { name: 'Set Your Goal Body Fat %', text: 'Open Advanced Options and enter your target body fat percentage.' },
-      { name: 'Follow Your Daily Calorie Roadmap', text: 'Review your personalized maintenance TDEE, fat loss target weight, and daily cutting calories.' }
+      'Measure your standing height, neck, and waist circumference first thing in the morning before eating.',
+      'For women, measure around the widest point of the hips and buttocks.',
+      'Open Advanced Options to set your target goal body fat percentage and weekly deficit rate.',
+      'Follow your personalized maintenance TDEE and cutting calorie targets.'
     ],
     faqs: [
-      { question: 'How accurate is the US Navy formula compared to DEXA?', answer: 'When measured accurately, the US Navy formula typically correlates within 3% to 4% of clinical DEXA and hydrostatic underwater weighing.' },
-      { question: 'What is a realistic body fat percentage for natural athletes?', answer: 'For men, 10% to 15% is athletic and sustainable year-round. For women, 18% to 24% provides a lean, defined physique while supporting healthy endocrine and reproductive function.' }
+      { q: 'How accurate is the US Navy formula compared to DEXA?', a: 'When measured accurately, the US Navy formula typically correlates within 3% to 4% of clinical DEXA scans and hydrostatic underwater weighing.' },
+      { q: 'What is a realistic body fat percentage for natural athletes?', a: 'For men, 10% to 15% is athletic and sustainable year-round. For women, 18% to 24% provides a lean, defined physique while supporting healthy endocrine and reproductive function.' },
+      { q: 'Where should I measure my waist circumference?', a: 'Men should measure horizontally across the navel (belly button). Women should measure at the narrowest natural waistline between the ribs and hips.' },
+      { q: 'How often should I recalculate my body fat percentage?', a: 'Measure once every 2 to 4 weeks under identical conditions (morning, fasted) to track true fat loss and prevent daily water weight fluctuations from misleading you.' }
     ]
   },
 

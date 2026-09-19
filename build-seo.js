@@ -169,8 +169,8 @@ function buildFaqJsonLd(tool) {
     '@type': 'FAQPage',
     mainEntity: tool.faqs.map(f => ({
       '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
+      name: f.q || f.question || '',
+      acceptedAnswer: { '@type': 'Answer', text: f.a || f.answer || '' },
     })),
   };
 }
@@ -186,7 +186,7 @@ function buildHowToJsonLd(tool) {
       '@type': 'HowToStep',
       position: idx + 1,
       name: `Step ${idx + 1}`,
-      text: step,
+      text: typeof step === 'string' ? step : (step.text || step.name || ''),
     })),
   };
 }
@@ -340,12 +340,16 @@ function renderPreRenderedToolContent(tool, slug) {
 
   let insightHtml = '';
   if (result && result.insight) {
+    const icon = result.insight.icon || (result.insight.tone === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check');
+    const headline = result.insight.headline || result.insight.title || '';
+    const detail = result.insight.detail || result.insight.text || '';
+    const tone = result.insight.tone || 'positive';
     insightHtml = `
-      <div class="insight-banner insight-banner--${result.insight.tone || 'positive'}">
-        <i class="fa-solid ${result.insight.icon || 'fa-circle-check'}"></i>
+      <div class="insight-banner insight-banner--${tone}">
+        <i class="fa-solid ${icon}"></i>
         <div class="insight-content">
-          <h4>${escapeHtml(result.insight.headline)}</h4>
-          <p>${escapeHtml(result.insight.detail)}</p>
+          <h4>${escapeHtml(headline)}</h4>
+          <p>${escapeHtml(detail)}</p>
         </div>
       </div>
     `;
@@ -370,7 +374,7 @@ function renderPreRenderedToolContent(tool, slug) {
     const sectionsHtml = (a.sections && a.sections.length)
       ? a.sections.map(s => `
         <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">${escapeHtml(s.heading)}</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body)}</p>
+        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body || s.content || '')}</p>
       `).join('')
       : '';
     articleHtml = `
@@ -385,7 +389,10 @@ function renderPreRenderedToolContent(tool, slug) {
   // 6. How To & Formula
   let howToHtml = '';
   if (tool.howTo && tool.howTo.length) {
-    const steps = tool.howTo.map((step, i) => `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${escapeHtml(step)}</li>`).join('');
+    const steps = tool.howTo.map((step, i) => {
+      const stepText = typeof step === 'string' ? escapeHtml(step) : (step.name ? `<strong>${escapeHtml(step.name)}:</strong> ${escapeHtml(step.text)}` : escapeHtml(step.text || ''));
+      return `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${stepText}</li>`;
+    }).join('');
     howToHtml = `
       <div class="tool-runner-card" style="margin-top:24px;">
         <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2>
@@ -416,12 +423,16 @@ function renderPreRenderedToolContent(tool, slug) {
   // 8. FAQs
   let faqsHtml = '';
   if (tool.faqs && tool.faqs.length) {
-    const faqItems = tool.faqs.map(f => `
+    const faqItems = tool.faqs.map(f => {
+      const q = f.q || f.question || '';
+      const a = f.a || f.answer || '';
+      return `
       <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(f.q)}</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(f.a)}</p>
+        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(q)}</summary>
+        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(a)}</p>
       </details>
-    `).join('');
+    `;
+    }).join('');
     faqsHtml = `
       <div class="tool-runner-card" style="margin-top:24px;">
         <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
