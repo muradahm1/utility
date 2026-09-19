@@ -5067,64 +5067,6 @@ const TOOLS = {
     ]
   },
 
-  'true-home-buying-cost-calculator': {
-    id: 'true-home-buying-cost-calculator',
-    name: 'True Home Buying Cost Calculator',
-    category: 'Finance',
-    icon: 'fa-house-circle-check',
-    iconClass: 'icon-finance',
-    tagClass: 'tag-finance',
-    description: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
-    metaTitle: 'True Cost of Buying a House Calculator (With Closing Costs & Taxes)',
-    metaDescription: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
-    keywords: [
-      'true cost of buying a house calculator',
-      'home buying cost calculator',
-      'cash required to close calculator',
-      'closing costs calculator',
-      'pitia mortgage calculator',
-      'rent vs buy break even calculator'
-    ],
-    related: [
-      'true-home-buying-system',
-      'mortgage-calculator',
-      'rent-vs-buy-calculator',
-      'house-affordability-calculator',
-      'fha-loan-calculator'
-    ],
-    fields: [
-      { id: 'jurisdiction_section', type: 'section', label: 'Jurisdiction & Location Rules', icon: 'fa-globe' },
-      { id: 'country', label: 'Country', type: 'select', default: 'US', options: [{ value: 'US', label: 'United States' }, { value: 'CA', label: 'Canada' }] },
-      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'range', default: 450000, min: 50000, max: 5000000, step: 5000 },
-      { id: 'down_payment_pct', label: 'Down Payment (%)', type: 'range', default: 20, min: 0, max: 100, step: 0.5 },
-      { id: 'closing_costs_pct', label: 'Closing Costs (%)', type: 'range', default: 3.0, min: 0, max: 10, step: 0.1 },
-      { id: 'prepaids_reserve_pct', label: 'Escrow / Prepaids Reserve (%)', type: 'range', default: 1.0, min: 0, max: 5, step: 0.1 },
-      { id: 'interest_rate', label: 'Mortgage Annual Interest Rate (%)', type: 'range', default: 6.8, min: 0.1, max: 20, step: 0.05 },
-      { id: 'loan_term', label: 'Loan Term', type: 'select', default: 30, options: [15, 20, 25, 30].map(v => ({ value: v, label: `${v} Years` })) },
-      { id: 'property_tax_rate', label: 'Property Tax Rate (%/yr)', type: 'range', default: 1.2, min: 0, max: 5, step: 0.05 },
-      { id: 'home_insurance', label: 'Homeowners Insurance Annual Premium ($)', type: 'number', default: 1500, min: 0, max: 50000, step: 100 },
-      { id: 'hoa_fees', label: 'Monthly HOA / Condo Dues ($)', type: 'number', default: 0, min: 0, max: 5000, step: 25 },
-      { id: 'enable_maintenance', label: 'Enable Maintenance Reserve Account', type: 'select', default: 'yes', options: [{ value: 'yes', label: 'Enabled (1% Rule)' }, { value: 'no', label: 'Disabled' }] },
-      { id: 'current_rent', label: 'Current / Alternative Monthly Rent ($)', type: 'number', default: 2200, min: 0, max: 30000, step: 50 },
-      { id: 'home_appreciation_pct', label: 'Estimated Annual Property Appreciation (%)', type: 'range', default: 3.5, min: -5, max: 15, step: 0.1 },
-      { id: 'investment_return_pct', label: 'S&P 500 Alternative Investment Return (%)', type: 'range', default: 7.5, min: 0, max: 20, step: 0.1 },
-      { id: 'ownership_years', label: 'Planned Ownership Horizon (Years)', type: 'range', default: 10, min: 1, max: 30, step: 1 }
-    ],
-    calculate(v) {
-      return TOOLS['true-home-buying-system'].calculate(v);
-    },
-    article: {
-      heading: 'How Much Cash Do You Really Need Upfront to Buy a House?',
-      intro: 'Calculate your total upfront liquidity, loaded PITIA monthly payment, and rent vs buy structural break-even point.',
-      sections: [
-        { heading: 'Cash Required to Close Breakdown', body: 'The total cash required to close is a combination of Down Payment (3.5% to 20%), Closing Costs (2% to 5%), and Prepaids/Escrows (1%).' },
-        { heading: 'The PITIA Monthly Framework', body: 'Factor in Principal & Interest, local property taxes, homeowners hazard insurance, HOA dues, and a 1% annual maintenance reserve.' }
-      ]
-    },
-    howTo: [{ name: 'How to use', text: 'Enter purchase price, down payment, closing costs, interest rate, and property taxes to calculate upfront cash and monthly ownership costs.' }],
-    faqs: [{ q: 'What is included in closing costs?', a: 'Closing costs cover lender origination, appraisal, title insurance, recording fees, and settlement legal fees, typically totaling 2% to 5% of the purchase price.' }]
-  },
-
   'freelance-true-rate-system': {
     id: 'freelance-true-rate-system',
     name: 'Freelance True Rate System',
@@ -5528,58 +5470,6 @@ const TOOLS = {
     ]
   },
 
-  'freelance-true-hourly-rate-calculator': {
-    id: 'freelance-true-hourly-rate-calculator',
-    name: 'Freelance True Hourly Rate Calculator',
-    category: 'Business',
-    icon: 'fa-briefcase',
-    iconClass: 'icon-business',
-    tagClass: 'tag-business',
-    description: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
-    metaTitle: 'True Freelance Hourly Rate Calculator (After Taxes & Expenses)',
-    metaDescription: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
-    keywords: [
-      'freelance true hourly rate calculator',
-      'freelance rate calculator',
-      'hourly rate after taxes and expenses',
-      'freelance billable utilization rate'
-    ],
-    related: [
-      'freelance-true-rate-system',
-      'freelance-hourly-rate-calculator',
-      'self-employment-tax-calculator',
-      'salary-calculator',
-      'break-even-calculator'
-    ],
-    fields: [
-      { id: 'income_section', type: 'section', label: '1. Reverse Income Engine', icon: 'fa-money-bill-trend-up' },
-      { id: 'desired_net_income', label: 'Desired Annual Net Take-Home Income ($)', type: 'range', default: 85000, min: 10000, max: 500000, step: 1000 },
-      { id: 'weeks_worked', label: 'Desired Weeks Worked Per Year', type: 'range', default: 48, min: 20, max: 52, step: 1 },
-      { id: 'hours_per_week', label: 'Target Workweek Hours', type: 'range', default: 40, min: 10, max: 80, step: 1 },
-      { id: 'utilization_rate_pct', label: 'Billable Utilization Rate (%)', type: 'range', default: 70, min: 20, max: 100, step: 1 },
-      { id: 'self_employment_tax_pct', label: 'Self-Employment Tax Reserve (%)', type: 'range', default: 15.3, min: 0, max: 30, step: 0.1 },
-      { id: 'income_tax_pct', label: 'Estimated Income Tax Bracket (%)', type: 'range', default: 22.0, min: 0, max: 50, step: 0.5 },
-      { id: 'monthly_expenses', label: 'Monthly Business Overhead ($)', type: 'number', default: 400, min: 0, max: 20000, step: 25 },
-      { id: 'platform_fee_model', label: 'Platform Fee Model', type: 'select', default: 'none', options: [
-        { value: 'none', label: 'None (0%)' },
-        { value: 'processor', label: 'Payment Processor (3%)' },
-        { value: 'upwork', label: 'Upwork (10%)' },
-        { value: 'fiverr', label: 'Fiverr (20%)' }
-      ]}
-    ],
-    calculate(v) {
-      return TOOLS['freelance-true-rate-system'].calculate(v);
-    },
-    article: {
-      heading: 'What is a True Freelance Hourly Rate?',
-      intro: 'Calculate the required top-line billing rate to reach your target take-home income after taxes, operational expenses, and unbillable administrative hours.',
-      sections: [
-        { heading: 'The Utilization Rate Factor', body: 'Because 25% to 40% of your time is spent on non-billable business development and admin, your billable hours are a fraction of total worked hours.' }
-      ]
-    },
-    howTo: [{ name: 'How to use', text: 'Enter your desired net income, hours, utilization rate, taxes, and expenses to calculate your required client billing rate.' }],
-    faqs: [{ q: 'What is a billable utilization rate?', a: 'Billable utilization is the ratio of billable client hours to total hours worked in your business.' }]
-  },
   'beam-deflection-calculator': {
     id: 'beam-deflection-calculator',
     name: 'Beam Deflection Calculator',

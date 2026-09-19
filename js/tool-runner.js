@@ -64,6 +64,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    const SLUG_ALIASES = {
+        'true-home-buying-cost-calculator': 'true-home-buying-system',
+        'freelance-true-hourly-rate-calculator': 'freelance-true-rate-system'
+    };
+    if (slug && SLUG_ALIASES[slug]) slug = SLUG_ALIASES[slug];
+
     const TOOLS = window.TOOLS || {};
     const tool = TOOLS[slug];
 

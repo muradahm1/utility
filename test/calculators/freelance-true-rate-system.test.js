@@ -12,15 +12,14 @@ const TOOLS = () => window.TOOLS;
 
 describe('Freelance True Rate System & True Hourly Rate Calculator', () => {
     const calc = () => TOOLS()['freelance-true-rate-system'];
-    const aliasCalc = () => TOOLS()['freelance-true-hourly-rate-calculator'];
+    
 
     it('registers both main tool and alias with valid business metadata', () => {
         expect(calc()).toBeDefined();
         expect(calc().name).toBe('Freelance True Rate System');
         expect(calc().category).toBe('Business');
         expect(calc().metaTitle).toContain('True Freelance Hourly Rate Calculator');
-        expect(aliasCalc()).toBeDefined();
-        expect(aliasCalc().name).toBe('Freelance True Hourly Rate Calculator');
+        
     });
 
     it('executes reverse income engine with billable utilization and overhead deductions', () => {

@@ -12,15 +12,14 @@ const TOOLS = () => window.TOOLS;
 
 describe('True Home Buying System & True Cost of Buying a House', () => {
     const calc = () => TOOLS()['true-home-buying-system'];
-    const aliasCalc = () => TOOLS()['true-home-buying-cost-calculator'];
+    
 
     it('registers both main tool and alias with valid metadata', () => {
         expect(calc()).toBeDefined();
         expect(calc().name).toBe('True Home Buying System');
         expect(calc().category).toBe('Finance');
         expect(calc().metaTitle).toContain('True Cost of Buying a House Calculator');
-        expect(aliasCalc()).toBeDefined();
-        expect(aliasCalc().name).toBe('True Home Buying Cost Calculator');
+        
     });
 
     it('calculates total liquid cash required to close correctly (Down Payment + Closing Costs + Escrow/Prepaids)', () => {

@@ -578,22 +578,12 @@ const CONTEXTUAL_LINKS = {
     { slug: 'fha-loan-calculator', name: 'FHA Loan Calculator', desc: 'Calculate 3.5% down payments and FHA monthly mortgage insurance.' },
     { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payment difference and interest savings.' }
   ],
-  'true-home-buying-cost-calculator': [
-    { slug: 'true-home-buying-system', name: 'True Home Buying System', desc: 'Comprehensive home buying decision engine with PITIA and break-even matrix.' },
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Standard 30-year mortgage calculation with taxes and insurance.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Detailed rent vs buy comparisons.' }
-  ],
   'freelance-true-rate-system': [
     { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Hourly Rate Calculator', desc: 'Simple freelance rate estimator.' },
     { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
     { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against equivalent corporate W-2 salaries.' },
     { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price client project proposals with healthy profit margins.' },
     { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the minimum billable revenue required to cover business fixed overhead.' }
-  ],
-  'freelance-true-hourly-rate-calculator': [
-    { slug: 'freelance-true-rate-system', name: 'Freelance True Rate System', desc: 'Comprehensive reverse-income and utilization decision engine.' },
-    { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against corporate paychecks.' }
   ],
   'mortgage-calculator': [
     { slug: 'true-home-buying-system', name: 'True Home Buying System', desc: 'Calculate total cash to close, loaded PITIA, and 5-yr vs 10-yr break-even matrix.' },
