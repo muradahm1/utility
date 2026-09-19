@@ -4273,156 +4273,1312 @@ const TOOLS = {
       { q: 'Should I tip on the pre-tax or post-tax amount?', a: 'Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity.' },
     ],
   },
-  'currency-converter': {
-    id: 'currency-converter',
-    name: 'Currency Converter',
+  'true-home-buying-system': {
+    id: 'true-home-buying-system',
+    name: 'True Home Buying System',
     category: 'Finance',
-    icon: 'fa-money-bill-wave',
+    icon: 'fa-house-circle-check',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    description: 'Convert between 16+ global currencies with real-time exchange rates, inverse rates, and multi-currency comparison table.',
-    metaDescription: 'Free currency converter — instantly calculate foreign exchange rates between USD, EUR, GBP, CAD, AUD, JPY, INR, CHF, AED, SAR, and more.',
-    fields: [
-      { id: 'amount', label: 'Amount to Convert', type: 'number', default: 100, min: 0.01, step: 1, hint: 'The monetary amount you want to convert.' },
-      { id: 'from_currency', label: 'From Currency', type: 'select', default: 'USD',
-        options: [
-          { value: 'USD', label: 'USD — US Dollar ($)' },
-          { value: 'EUR', label: 'EUR — Euro (€)' },
-          { value: 'GBP', label: 'GBP — British Pound (£)' },
-          { value: 'CAD', label: 'CAD — Canadian Dollar (C$)' },
-          { value: 'AUD', label: 'AUD — Australian Dollar (A$)' },
-          { value: 'JPY', label: 'JPY — Japanese Yen (¥)' },
-          { value: 'CHF', label: 'CHF — Swiss Franc (CHF)' },
-          { value: 'CNY', label: 'CNY — Chinese Yuan (¥)' },
-          { value: 'INR', label: 'INR — Indian Rupee (₹)' },
-          { value: 'BRL', label: 'BRL — Brazilian Real (R$)' },
-          { value: 'MXN', label: 'MXN — Mexican Peso (Mex$)' },
-          { value: 'SGD', label: 'SGD — Singapore Dollar (S$)' },
-          { value: 'NZD', label: 'NZD — New Zealand Dollar (NZ$)' },
-          { value: 'AED', label: 'AED — UAE Dirham (AED)' },
-          { value: 'SAR', label: 'SAR — Saudi Riyal (SAR)' },
-          { value: 'ZAR', label: 'ZAR — South African Rand (R)' }
-        ], hint: 'Currency you are converting from.' },
-      { id: 'to_currency', label: 'To Currency', type: 'select', default: 'EUR',
-        options: [
-          { value: 'USD', label: 'USD — US Dollar ($)' },
-          { value: 'EUR', label: 'EUR — Euro (€)' },
-          { value: 'GBP', label: 'GBP — British Pound (£)' },
-          { value: 'CAD', label: 'CAD — Canadian Dollar (C$)' },
-          { value: 'AUD', label: 'AUD — Australian Dollar (A$)' },
-          { value: 'JPY', label: 'JPY — Japanese Yen (¥)' },
-          { value: 'CHF', label: 'CHF — Swiss Franc (CHF)' },
-          { value: 'CNY', label: 'CNY — Chinese Yuan (¥)' },
-          { value: 'INR', label: 'INR — Indian Rupee (₹)' },
-          { value: 'BRL', label: 'BRL — Brazilian Real (R$)' },
-          { value: 'MXN', label: 'MXN — Mexican Peso (Mex$)' },
-          { value: 'SGD', label: 'SGD — Singapore Dollar (S$)' },
-          { value: 'NZD', label: 'NZD — New Zealand Dollar (NZ$)' },
-          { value: 'AED', label: 'AED — UAE Dirham (AED)' },
-          { value: 'SAR', label: 'SAR — Saudi Riyal (SAR)' },
-          { value: 'ZAR', label: 'ZAR — South African Rand (R)' }
-        ], hint: 'Currency you want to convert into.' }
+    description: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
+    metaTitle: 'True Cost of Buying a House Calculator (With Closing Costs & Taxes)',
+    metaDescription: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
+    keywords: [
+      'true cost of buying a house calculator',
+      'home buying cost calculator',
+      'true home buying system',
+      'cash required to close calculator',
+      'closing costs calculator',
+      'total cost of homeownership',
+      'pitia mortgage calculator',
+      'maintenance reserve calculator',
+      'rent vs buy break even calculator',
+      'house buying decision calculator',
+      'mortgage break even matrix',
+      'true monthly cost of ownership',
+      'home equity vs sp500 index funds',
+      'fha mip cmhc mortgage calculator'
     ],
-    calculate(v) {
-      const ratesToUSD = {
-        USD: 1.0,
-        EUR: 0.92,
-        GBP: 0.79,
-        CAD: 1.36,
-        AUD: 1.52,
-        JPY: 154.5,
-        CHF: 0.88,
-        CNY: 7.24,
-        INR: 83.5,
-        BRL: 5.65,
-        MXN: 18.2,
-        SGD: 1.35,
-        NZD: 1.64,
-        AED: 3.67,
-        SAR: 3.75,
-        ZAR: 18.4
-      };
-      const symbols = {
-        USD: '$', EUR: '€', GBP: '£', CAD: 'C$', AUD: 'A$', JPY: '¥', CHF: 'CHF',
-        CNY: '¥', INR: '₹', BRL: 'R$', MXN: 'Mex$', SGD: 'S$', NZD: 'NZ$',
-        AED: 'AED ', SAR: 'SAR ', ZAR: 'R '
-      };
-      const amount = safeNum(v.amount, 0);
-      const from = v.from_currency || 'USD';
-      const to = v.to_currency || 'EUR';
-      if (amount <= 0) return errorResult('Please enter an amount greater than zero.');
-      const fromRate = ratesToUSD[from] || 1.0;
-      const toRate = ratesToUSD[to] || 1.0;
-      const inUSD = amount / fromRate;
-      const converted = roundTo(inUSD * toRate, 2);
-      const exchangeRate = roundTo(toRate / fromRate, 4);
-      const inverseRate = roundTo(fromRate / toRate, 4);
-      const toSymbol = symbols[to] || '';
-      const fromSymbol = symbols[from] || '';
-
-      const popularCurrencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'INR', 'AED', 'SAR'];
-      const tableRows = popularCurrencies.map(code => {
-        const cRate = ratesToUSD[code];
-        const val = roundTo(inUSD * cRate, 2);
-        const sym = symbols[code] || '';
-        return {
-          code,
-          rate: (cRate / fromRate).toFixed(4),
-          converted: sym + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        };
-      });
-
-      const table = makeTableSpec({
-        mode: 'rates',
-        title: `Popular Currency Conversions for ${fromSymbol}${amount.toLocaleString('en-US')} ${from}`,
-        columns: [
-          { key: 'code', label: 'Currency', emphasis: true },
-          { key: 'rate', label: `Exchange Rate (1 ${from})` },
-          { key: 'converted', label: 'Converted Amount', emphasis: true }
+    related: [
+      'mortgage-calculator',
+      'rent-vs-buy-calculator',
+      'house-affordability-calculator',
+      '15-year-mortgage-calculator',
+      'fha-loan-calculator',
+      'amortization-calculator',
+      'refinance-calculator',
+      'budget-planner'
+    ],
+    presets: [
+      {
+        label: 'US Standard (20% Down)',
+        values: {
+          country: 'US',
+          state_province: 'TX',
+          home_price: 450000,
+          down_payment_pct: 20,
+          closing_costs_pct: 3.0,
+          prepaids_reserve_pct: 1.0,
+          interest_rate: 6.8,
+          loan_term: 30,
+          property_tax_rate: 1.68,
+          home_insurance: 1800,
+          hoa_fees: 0,
+          enable_maintenance: 'yes',
+          maintenance_pct: 1.0,
+          current_rent: 2200,
+          rent_increase_pct: 3.0,
+          home_appreciation_pct: 3.5,
+          investment_return_pct: 7.5,
+          ownership_years: 10,
+          selling_cost_pct: 6.0
+        }
+      },
+      {
+        label: 'US FHA Starter (3.5% Down)',
+        values: {
+          country: 'US',
+          state_province: 'FL',
+          home_price: 350000,
+          down_payment_pct: 3.5,
+          closing_costs_pct: 3.5,
+          prepaids_reserve_pct: 1.2,
+          interest_rate: 6.5,
+          loan_term: 30,
+          property_tax_rate: 0.91,
+          home_insurance: 2200,
+          hoa_fees: 50,
+          enable_maintenance: 'yes',
+          maintenance_pct: 1.0,
+          current_rent: 1950,
+          rent_increase_pct: 3.5,
+          home_appreciation_pct: 4.0,
+          investment_return_pct: 7.5,
+          ownership_years: 7,
+          selling_cost_pct: 6.0
+        }
+      },
+      {
+        label: 'Canada Urban Home (CMHC 10% Down)',
+        values: {
+          country: 'CA',
+          state_province: 'ON',
+          home_price: 650000,
+          down_payment_pct: 10,
+          closing_costs_pct: 2.5,
+          prepaids_reserve_pct: 1.0,
+          interest_rate: 5.2,
+          loan_term: 25,
+          property_tax_rate: 1.05,
+          home_insurance: 1400,
+          hoa_fees: 0,
+          enable_maintenance: 'yes',
+          maintenance_pct: 1.0,
+          current_rent: 2600,
+          rent_increase_pct: 3.0,
+          home_appreciation_pct: 3.5,
+          investment_return_pct: 7.5,
+          ownership_years: 10,
+          selling_cost_pct: 5.0
+        }
+      },
+      {
+        label: 'Condo / Townhome with HOA',
+        values: {
+          country: 'US',
+          state_province: 'CA',
+          home_price: 550000,
+          down_payment_pct: 15,
+          closing_costs_pct: 2.8,
+          prepaids_reserve_pct: 1.0,
+          interest_rate: 6.75,
+          loan_term: 30,
+          property_tax_rate: 0.75,
+          home_insurance: 1200,
+          hoa_fees: 350,
+          enable_maintenance: 'yes',
+          maintenance_pct: 0.75,
+          current_rent: 2500,
+          rent_increase_pct: 3.0,
+          home_appreciation_pct: 4.0,
+          investment_return_pct: 7.5,
+          ownership_years: 8,
+          selling_cost_pct: 6.0
+        }
+      }
+    ],
+    fields: [
+      { id: 'jurisdiction_section', type: 'section', label: 'Jurisdiction & Location Rules', icon: 'fa-globe' },
+      {
+        id: 'country',
+        label: 'Country / Regulatory System',
+        type: 'select',
+        default: 'US',
+        options: [
+          { value: 'US', label: 'United States (CFPB / Monthly Compounding / PMI / FHA)' },
+          { value: 'CA', label: 'Canada (Bank Act / Semi-Annual Compounding / CMHC Insurance)' }
         ],
-        rows: tableRows
+        hint: 'Applies official statutory mortgage compounding rules, default insurance tiers, and tax benchmarks.'
+      },
+      {
+        id: 'state_province',
+        label: 'State / Province / Territory',
+        type: 'select',
+        default: 'TX',
+        options: [
+          { value: 'AL', label: 'Alabama (US) — Avg Tax 0.40%' },
+          { value: 'AK', label: 'Alaska (US) — Avg Tax 1.04%' },
+          { value: 'AZ', label: 'Arizona (US) — Avg Tax 0.53%' },
+          { value: 'AR', label: 'Arkansas (US) — Avg Tax 0.54%' },
+          { value: 'CA', label: 'California (US) — Avg Tax 0.75%' },
+          { value: 'CO', label: 'Colorado (US) — Avg Tax 0.52%' },
+          { value: 'CT', label: 'Connecticut (US) — Avg Tax 1.79%' },
+          { value: 'DE', label: 'Delaware (US) — Avg Tax 0.61%' },
+          { value: 'FL', label: 'Florida (US) — Avg Tax 0.91%' },
+          { value: 'GA', label: 'Georgia (US) — Avg Tax 0.81%' },
+          { value: 'HI', label: 'Hawaii (US) — Avg Tax 0.32%' },
+          { value: 'ID', label: 'Idaho (US) — Avg Tax 0.54%' },
+          { value: 'IL', label: 'Illinois (US) — Avg Tax 2.08%' },
+          { value: 'IN', label: 'Indiana (US) — Avg Tax 0.77%' },
+          { value: 'IA', label: 'Iowa (US) — Avg Tax 1.43%' },
+          { value: 'KS', label: 'Kansas (US) — Avg Tax 1.34%' },
+          { value: 'KY', label: 'Kentucky (US) — Avg Tax 0.80%' },
+          { value: 'LA', label: 'Louisiana (US) — Avg Tax 0.56%' },
+          { value: 'ME', label: 'Maine (US) — Avg Tax 1.20%' },
+          { value: 'MD', label: 'Maryland (US) — Avg Tax 1.05%' },
+          { value: 'MA', label: 'Massachusetts (US) — Avg Tax 1.14%' },
+          { value: 'MI', label: 'Michigan (US) — Avg Tax 1.38%' },
+          { value: 'MN', label: 'Minnesota (US) — Avg Tax 1.02%' },
+          { value: 'MS', label: 'Mississippi (US) — Avg Tax 0.67%' },
+          { value: 'MO', label: 'Missouri (US) — Avg Tax 0.93%' },
+          { value: 'MT', label: 'Montana (US) — Avg Tax 0.73%' },
+          { value: 'NE', label: 'Nebraska (US) — Avg Tax 1.54%' },
+          { value: 'NV', label: 'Nevada (US) — Avg Tax 0.59%' },
+          { value: 'NH', label: 'New Hampshire (US) — Avg Tax 1.93%' },
+          { value: 'NJ', label: 'New Jersey (US) — Avg Tax 2.23%' },
+          { value: 'NM', label: 'New Mexico (US) — Avg Tax 0.67%' },
+          { value: 'NY', label: 'New York (US) — Avg Tax 1.40%' },
+          { value: 'NC', label: 'North Carolina (US) — Avg Tax 0.70%' },
+          { value: 'ND', label: 'North Dakota (US) — Avg Tax 0.95%' },
+          { value: 'OH', label: 'Ohio (US) — Avg Tax 1.53%' },
+          { value: 'OK', label: 'Oklahoma (US) — Avg Tax 0.85%' },
+          { value: 'OR', label: 'Oregon (US) — Avg Tax 0.93%' },
+          { value: 'PA', label: 'Pennsylvania (US) — Avg Tax 1.49%' },
+          { value: 'RI', label: 'Rhode Island (US) — Avg Tax 1.40%' },
+          { value: 'SC', label: 'South Carolina (US) — Avg Tax 0.56%' },
+          { value: 'SD', label: 'South Dakota (US) — Avg Tax 1.14%' },
+          { value: 'TN', label: 'Tennessee (US) — Avg Tax 0.64%' },
+          { value: 'TX', label: 'Texas (US) — Avg Tax 1.68%' },
+          { value: 'UT', label: 'Utah (US) — Avg Tax 0.57%' },
+          { value: 'VT', label: 'Vermont (US) — Avg Tax 1.83%' },
+          { value: 'VA', label: 'Virginia (US) — Avg Tax 0.87%' },
+          { value: 'WA', label: 'Washington (US) — Avg Tax 0.88%' },
+          { value: 'WV', label: 'West Virginia (US) — Avg Tax 0.55%' },
+          { value: 'WI', label: 'Wisconsin (US) — Avg Tax 1.61%' },
+          { value: 'WY', label: 'Wyoming (US) — Avg Tax 0.56%' },
+          { value: 'DC', label: 'District of Columbia (US) — Avg Tax 0.62%' },
+          { value: 'ON', label: 'Ontario (CA) — Avg Tax 1.05%' },
+          { value: 'BC', label: 'British Columbia (CA) — Avg Tax 0.45%' },
+          { value: 'AB', label: 'Alberta (CA) — Avg Tax 0.85%' },
+          { value: 'QC', label: 'Quebec (CA) — Avg Tax 1.15%' },
+          { value: 'MB', label: 'Manitoba (CA) — Avg Tax 1.30%' },
+          { value: 'SK', label: 'Saskatchewan (CA) — Avg Tax 1.25%' },
+          { value: 'NS', label: 'Nova Scotia (CA) — Avg Tax 1.35%' },
+          { value: 'NB', label: 'New Brunswick (CA) — Avg Tax 1.50%' },
+          { value: 'NL', label: 'Newfoundland & Labrador (CA) — Avg Tax 1.10%' },
+          { value: 'PE', label: 'Prince Edward Island (CA) — Avg Tax 1.40%' },
+          { value: 'YT', label: 'Yukon (CA) — Avg Tax 0.90%' },
+          { value: 'NT', label: 'Northwest Territories (CA) — Avg Tax 0.95%' },
+          { value: 'NU', label: 'Nunavut (CA) — Avg Tax 0.90%' }
+        ],
+        hint: 'Select your state or province to load official statistical property tax benchmarks.'
+      },
+
+      { id: 'upfront_section', type: 'section', label: '1. Upfront Liquidity Interface', icon: 'fa-money-bill-wave' },
+      {
+        id: 'home_price',
+        label: 'Home Purchase Price ($)',
+        type: 'range',
+        default: 450000,
+        min: 50000,
+        max: 5000000,
+        step: 5000,
+        hint: 'The agreed total purchase price of the property.'
+      },
+      {
+        id: 'down_payment_pct',
+        label: 'Down Payment (%)',
+        type: 'range',
+        default: 20,
+        min: 0,
+        max: 100,
+        step: 0.5,
+        hint: 'Percentage paid upfront in cash. Minimum 3.5% (US FHA) / 5% (Canada CMHC); 20% eliminates mortgage default insurance.'
+      },
+      {
+        id: 'closing_costs_pct',
+        label: 'Closing Costs (%)',
+        type: 'range',
+        default: 3.0,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: 'Transactional fees charged by lenders, title/settlement companies, appraisals, and government recording (typically 2% to 5%).'
+      },
+      {
+        id: 'prepaids_reserve_pct',
+        label: 'Escrow / Prepaids Reserve (%)',
+        type: 'range',
+        default: 1.0,
+        min: 0,
+        max: 5,
+        step: 0.1,
+        hint: 'Upfront liquid deposit required by lenders to fund initial property tax and hazard insurance escrow accounts.'
+      },
+
+      { id: 'monthly_section', type: 'section', label: '2. Loaded Monthly Budget Engine (PITIA Framework)', icon: 'fa-calculator' },
+      {
+        id: 'interest_rate',
+        label: 'Mortgage Annual Interest Rate (%)',
+        type: 'range',
+        default: 6.8,
+        min: 0.1,
+        max: 20,
+        step: 0.05,
+        hint: 'Annual mortgage rate (APR). Canadian mortgages automatically calculate semi-annual compounding per the Bank Act.'
+      },
+      {
+        id: 'loan_term',
+        label: 'Loan Amortization Term',
+        type: 'select',
+        default: 30,
+        options: [
+          { value: 15, label: '15 Years (Faster Equity, Higher Payment)' },
+          { value: 20, label: '20 Years' },
+          { value: 25, label: '25 Years (Standard Canada Max for Insured)' },
+          { value: 30, label: '30 Years (Standard US Benchmark)' }
+        ],
+        hint: 'Repayment period. Insured Canadian mortgages are generally capped at 25 years.'
+      },
+      {
+        id: 'property_tax_rate',
+        label: 'Property Tax Rate (% of Value/yr)',
+        type: 'range',
+        default: 1.2,
+        min: 0,
+        max: 5,
+        step: 0.05,
+        hint: 'Annual local property tax rate. Automatically adjusts based on selected jurisdiction or can be set manually.'
+      },
+      {
+        id: 'home_insurance',
+        label: 'Homeowners Insurance Annual Premium ($)',
+        type: 'number',
+        default: 1500,
+        min: 0,
+        max: 50000,
+        step: 100,
+        hint: 'Yearly hazard and structural homeowners insurance premium.'
+      },
+      {
+        id: 'hoa_fees',
+        label: 'Monthly HOA / Condo Dues ($)',
+        type: 'number',
+        default: 0,
+        min: 0,
+        max: 5000,
+        step: 25,
+        hint: 'Mandatory monthly dues for condominiums, townhomes, or master-planned communities.'
+      },
+      {
+        id: 'enable_maintenance',
+        label: 'Enable Maintenance Reserve Account',
+        type: 'select',
+        default: 'yes',
+        options: [
+          { value: 'yes', label: 'Enabled (Recommended 1% Annual Rule)' },
+          { value: 'no', label: 'Disabled (0% Reserve)' }
+        ],
+        hint: 'Automatically allocates 1% of total home price annually (divided by 12) for long-term structural repairs, roofing, and mechanical updates.'
+      },
+      {
+        id: 'maintenance_pct',
+        label: 'Maintenance Reserve (% of Home Value/yr)',
+        type: 'number',
+        default: 1.0,
+        min: 0,
+        max: 5,
+        step: 0.1,
+        condition: (v) => v.enable_maintenance === 'yes',
+        hint: 'Recommended rule of thumb is 1% to 2% of home purchase price annually in liquid reserves.'
+      },
+
+      { id: 'breakeven_section', type: 'section', label: '3. 5-Year vs 10-Year Break-Even Matrix (Rent vs Buy)', icon: 'fa-chart-line' },
+      {
+        id: 'current_rent',
+        label: 'Current / Alternative Monthly Rent ($)',
+        type: 'number',
+        default: 2200,
+        min: 0,
+        max: 30000,
+        step: 50,
+        hint: 'Monthly rent for an equivalent property in your market.'
+      },
+      {
+        id: 'rent_increase_pct',
+        label: 'Estimated Annual Rent Increase (%)',
+        type: 'range',
+        default: 3.0,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: 'Historical rent growth averages 2% to 4% annually.'
+      },
+      {
+        id: 'home_appreciation_pct',
+        label: 'Estimated Annual Property Appreciation (%)',
+        type: 'range',
+        default: 3.5,
+        min: -5,
+        max: 15,
+        step: 0.1,
+        hint: 'Long-term historical national average home appreciation is approximately 3% to 4% annually.'
+      },
+      {
+        id: 'investment_return_pct',
+        label: 'S&P 500 / Alternative Investment Return (%)',
+        type: 'range',
+        default: 7.5,
+        min: 0,
+        max: 20,
+        step: 0.1,
+        hint: 'Expected long-term annual return if down payment & closing cash were invested in low-cost index funds.'
+      },
+      {
+        id: 'ownership_years',
+        label: 'Planned Ownership Horizon (Years)',
+        type: 'range',
+        default: 10,
+        min: 1,
+        max: 30,
+        step: 1,
+        hint: 'How long you realistically plan to stay before selling or refinancing.'
+      },
+      {
+        id: 'selling_cost_pct',
+        label: 'Selling Transaction Costs (%)',
+        type: 'number',
+        default: 6.0,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: 'Realtor commissions, transfer taxes, and closing legal fees paid upon selling (typically 5% to 6%).'
+      }
+    ],
+    fieldLabels(v) {
+      const isCA = v.country === 'CA';
+      const sym = isCA ? 'C$' : '$';
+      const price = safeNum(v.home_price, 450000);
+      const downPct = safeNum(v.down_payment_pct, 20);
+      const downDollar = roundTo(price * (downPct / 100), 0);
+      return {
+        down_payment_pct: `Down Payment (${downPct}% ≈ ${sym}${downDollar.toLocaleString('en-US')})`
+      };
+    },
+    calculate(v) {
+      const isCA = v.country === 'CA';
+      const sym = isCA ? 'C$' : '$';
+      const homePrice = safeNum(v.home_price, 450000);
+      if (homePrice <= 0) return errorResult('Please enter a valid home purchase price greater than $0.');
+
+      const downPct = safeNum(v.down_payment_pct, 20);
+      const closingPct = safeNum(v.closing_costs_pct, 3.0);
+      const prepaidsPct = safeNum(v.prepaids_reserve_pct, 1.0);
+
+      const downPaymentDollar = roundTo(homePrice * (downPct / 100), 2);
+      const closingCostsDollar = roundTo(homePrice * (closingPct / 100), 2);
+      const prepaidsDollar = roundTo(homePrice * (prepaidsPct / 100), 2);
+      const totalLiquidCashRequired = roundTo(downPaymentDollar + closingCostsDollar + prepaidsDollar, 2);
+
+      const baseLoanAmount = Math.max(0, homePrice - downPaymentDollar);
+      let mortgageInsuranceRate = 0;
+      let isInsuredLoan = false;
+      let cmhcPremiumDollar = 0;
+      let monthlyPMIDollar = 0;
+
+      if (isCA) {
+        // Canadian CMHC Default Insurance Rules (Official Schedule)
+        if (downPct < 20 && baseLoanAmount > 0) {
+          isInsuredLoan = true;
+          if (downPct >= 15) mortgageInsuranceRate = 0.028;
+          else if (downPct >= 10) mortgageInsuranceRate = 0.031;
+          else mortgageInsuranceRate = 0.040;
+          cmhcPremiumDollar = roundTo(baseLoanAmount * mortgageInsuranceRate, 2);
+        }
+      } else {
+        // US Conventional PMI / FHA benchmark
+        if (downPct < 20 && baseLoanAmount > 0) {
+          isInsuredLoan = true;
+          // Typical US annual PMI: ~0.65% of loan amount
+          monthlyPMIDollar = roundTo((baseLoanAmount * 0.0065) / 12, 2);
+        }
+      }
+
+      // Total loan financed
+      const financedLoanAmount = isCA && isInsuredLoan ? (baseLoanAmount + cmhcPremiumDollar) : baseLoanAmount;
+      const annualInterestRate = safeNum(v.interest_rate, 6.8);
+      const loanTermYears = Math.min(30, Math.max(5, Math.round(safeNum(v.loan_term, 30))));
+      const totalMonths = loanTermYears * 12;
+
+      // Compounding calculations: Canada is semi-annual per Bank Act; US is monthly
+      let monthlyRate = 0;
+      if (annualInterestRate > 0) {
+        if (isCA) {
+          monthlyRate = Math.pow(1 + (annualInterestRate / 200), 1 / 6) - 1;
+        } else {
+          monthlyRate = (annualInterestRate / 100) / 12;
+        }
+      }
+
+      let monthlyPI = 0;
+      if (financedLoanAmount > 0 && totalMonths > 0) {
+        if (monthlyRate === 0) {
+          monthlyPI = financedLoanAmount / totalMonths;
+        } else {
+          monthlyPI = financedLoanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+        }
+      }
+      monthlyPI = roundTo(monthlyPI, 2);
+
+      // Property tax calculation
+      const propTaxRate = safeNum(v.property_tax_rate, 1.2);
+      const annualPropertyTax = roundTo(homePrice * (propTaxRate / 100), 2);
+      const monthlyPropertyTax = roundTo(annualPropertyTax / 12, 2);
+
+      // Insurance & HOA
+      const annualInsurance = safeNum(v.home_insurance, 1500);
+      const monthlyInsurance = roundTo(annualInsurance / 12, 2);
+      const monthlyHOA = safeNum(v.hoa_fees, 0);
+
+      // Maintenance Reserve calculation
+      const enableMaintenance = v.enable_maintenance !== 'no';
+      const maintPct = enableMaintenance ? safeNum(v.maintenance_pct, 1.0) : 0;
+      const annualMaintenance = roundTo(homePrice * (maintPct / 100), 2);
+      const monthlyMaintenance = roundTo(annualMaintenance / 12, 2);
+
+      // Loaded PITIA + M Monthly Cost
+      const trueMonthlyCost = roundTo(monthlyPI + monthlyPropertyTax + monthlyInsurance + monthlyHOA + monthlyMaintenance + monthlyPMIDollar, 2);
+
+      // Rent vs Buy Parameters
+      const currentRent = safeNum(v.current_rent, 2200);
+      const rentIncreaseRate = safeNum(v.rent_increase_pct, 3.0) / 100;
+      const appreciationRate = safeNum(v.home_appreciation_pct, 3.5) / 100;
+      const investmentReturnRate = safeNum(v.investment_return_pct, 7.5) / 100;
+      const horizonYears = Math.min(30, Math.max(1, Math.round(safeNum(v.ownership_years, 10))));
+      const sellingCostRate = safeNum(v.selling_cost_pct, 6.0) / 100;
+
+      // Multi-Year Simulation Matrix (Year 1 to 30)
+      let balance = financedLoanAmount;
+      let cumPrincipal = 0;
+      let cumInterest = 0;
+      let cumOwnershipCashPaid = totalLiquidCashRequired;
+      let cumRentPaid = 0;
+      let rentMonthly = currentRent;
+      let investmentPortfolio = totalLiquidCashRequired; // Renter invests down payment + closing costs
+      let breakEvenYear = null;
+
+      const schedule = [];
+      const maxSimYears = Math.max(10, horizonYears);
+
+      for (let yr = 1; yr <= maxSimYears; yr++) {
+        let yrInterest = 0;
+        let yrPrincipal = 0;
+
+        for (let m = 0; m < 12 && balance > 0; m++) {
+          const interestPortion = balance * monthlyRate;
+          let principalPortion = monthlyPI - interestPortion;
+          if (principalPortion > balance) principalPortion = balance;
+          yrInterest += interestPortion;
+          yrPrincipal += principalPortion;
+          balance -= principalPortion;
+        }
+        balance = Math.max(0, balance);
+        cumInterest += yrInterest;
+        cumPrincipal += yrPrincipal;
+
+        const yrTaxes = annualPropertyTax * Math.pow(1.02, yr - 1);
+        const yrIns = annualInsurance * Math.pow(1.03, yr - 1);
+        const yrHOA = monthlyHOA * 12;
+        const yrMaint = annualMaintenance * Math.pow(1.02, yr - 1);
+        const yrPMI = (yr <= 8 && monthlyPMIDollar > 0) ? (monthlyPMIDollar * 12) : 0;
+        const yrOwnOutflow = (yrPrincipal + yrInterest) + yrTaxes + yrIns + yrHOA + yrMaint + yrPMI;
+        cumOwnershipCashPaid += yrOwnOutflow;
+
+        // Property appreciation
+        const homeMarketValue = homePrice * Math.pow(1 + appreciationRate, yr);
+        const accumulatedEquity = Math.max(0, homeMarketValue - balance);
+        const sellingCosts = homeMarketValue * sellingCostRate;
+        const netProceedsAfterSale = accumulatedEquity - sellingCosts;
+
+        // Renting side
+        const yrRent = rentMonthly * 12;
+        cumRentPaid += yrRent;
+        rentMonthly *= (1 + rentIncreaseRate);
+
+        // Alternative S&P 500 investment portfolio
+        // Compounded upfront capital + monthly cash flow differential
+        investmentPortfolio = (investmentPortfolio * (1 + investmentReturnRate));
+        const ownMonthlyAvg = yrOwnOutflow / 12;
+        const rentMonthlyAvg = yrRent / 12;
+        const monthlyDiff = ownMonthlyAvg - rentMonthlyAvg;
+        if (monthlyDiff > 0) {
+          // Owning is more expensive monthly -> Renter invests monthly savings
+          investmentPortfolio += (monthlyDiff * 12 * (1 + (investmentReturnRate / 2)));
+        }
+
+        // Net Wealth Analysis
+        const buyerNetWealth = netProceedsAfterSale;
+        const renterNetWealth = investmentPortfolio;
+        const netWealthAdvantage = roundTo(buyerNetWealth - renterNetWealth, 2);
+
+        if (breakEvenYear === null && netWealthAdvantage > 0) {
+          breakEvenYear = yr;
+        }
+
+        schedule.push({
+          year: yr,
+          yearLabel: `Year ${yr}`,
+          homeValue: roundTo(homeMarketValue, 2),
+          loanBalance: roundTo(balance, 2),
+          equity: roundTo(accumulatedEquity, 2),
+          netProceeds: roundTo(netProceedsAfterSale, 2),
+          cumOwnershipCost: roundTo(cumOwnershipCashPaid, 2),
+          cumRentPaid: roundTo(cumRentPaid, 2),
+          indexFundValue: roundTo(investmentPortfolio, 2),
+          netAdvantage: netWealthAdvantage
+        });
+      }
+
+      const y5 = schedule[4] || schedule[schedule.length - 1];
+      const y10 = schedule[9] || schedule[schedule.length - 1];
+      const yHorizon = schedule[horizonYears - 1] || schedule[schedule.length - 1];
+
+      // Format matrix table for 5-Yr vs 10-Yr vs Horizon
+      const matrixRows = [
+        {
+          metric: 'Home Market Value',
+          y5: sym + y5.homeValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.homeValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.homeValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: `Compounding at ${v.home_appreciation_pct || 3.5}%/yr`
+        },
+        {
+          metric: 'Remaining Mortgage Balance',
+          y5: sym + y5.loanBalance.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.loanBalance.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.loanBalance.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: 'Principal amortized through monthly payments'
+        },
+        {
+          metric: 'Accumulated Home Equity',
+          y5: sym + y5.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: 'Market Value minus Mortgage Balance'
+        },
+        {
+          metric: 'Net Sale Proceeds (After Fees)',
+          y5: sym + y5.netProceeds.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.netProceeds.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.netProceeds.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: `Equity minus ${v.selling_cost_pct || 6.0}% broker & closing costs`
+        },
+        {
+          metric: 'Alternative S&P 500 Index Fund',
+          y5: sym + y5.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: `Down payment & cash savings invested at ${v.investment_return_pct || 7.5}%/yr`
+        },
+        {
+          metric: 'Net Financial Difference (Buy vs Rent)',
+          y5: (y5.netAdvantage >= 0 ? '+' : '-') + sym + Math.abs(y5.netAdvantage).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: (y10.netAdvantage >= 0 ? '+' : '-') + sym + Math.abs(y10.netAdvantage).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: (yHorizon.netAdvantage >= 0 ? '+' : '-') + sym + Math.abs(yHorizon.netAdvantage).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: 'Net Home Proceeds minus Alternative Index Fund Portfolio'
+        }
+      ];
+
+      const matrixTable = makeTableSpec({
+        mode: 'comparison',
+        title: '5-Year vs 10-Year vs Horizon Break-Even Decision Matrix',
+        columns: [
+          { key: 'metric', label: 'Financial Metric', emphasis: true },
+          { key: 'y5', label: '5-Year Horizon', emphasis: true },
+          { key: 'y10', label: '10-Year Horizon', emphasis: true },
+          { key: 'yHorizon', label: `Year ${horizonYears} (Your Plan)`, emphasis: true },
+          { key: 'note', label: 'Underlying Financial Driver' }
+        ],
+        rows: matrixRows
       });
+
+      // Chart 1: True Monthly Cost Breakdown (Doughnut)
+      const chartLabels = ['Principal & Interest', 'Property Taxes', 'Homeowners Insurance', 'Maintenance Reserve'];
+      const chartData = [monthlyPI, monthlyPropertyTax, monthlyInsurance, monthlyMaintenance];
+      const chartColors = ['#6366F1', '#F59E0B', '#3B82F6', '#10B981'];
+
+      if (monthlyHOA > 0) {
+        chartLabels.push('HOA / Condo Dues');
+        chartData.push(monthlyHOA);
+        chartColors.push('#8B5CF6');
+      }
+      if (monthlyPMIDollar > 0) {
+        chartLabels.push('Mortgage Insurance (PMI)');
+        chartData.push(monthlyPMIDollar);
+        chartColors.push('#EF4444');
+      }
+
+      const chart = {
+        type: 'doughnut',
+        labels: chartLabels,
+        datasets: [{
+          label: 'Monthly Allocation',
+          data: chartData,
+          backgroundColor: chartColors
+        }],
+        title: 'Loaded Monthly Ownership Cost Breakdown (PITIA Framework)'
+      };
+
+      // Chart 2: 5-Yr & 10-Yr Wealth Comparison: Home Equity vs S&P 500 Index Fund (Line)
+      const simLabels = schedule.slice(0, 15).map(s => `Year ${s.year}`);
+      const equityLine = schedule.slice(0, 15).map(s => s.equity);
+      const indexLine = schedule.slice(0, 15).map(s => s.indexFundValue);
+      const chart2 = {
+        type: 'line',
+        labels: simLabels,
+        datasets: [
+          { label: 'Real Estate Net Equity', data: equityLine, color: '#10B981', borderColor: '#10B981' },
+          { label: 'S&P 500 Alternative Portfolio', data: indexLine, color: '#6366F1', borderColor: '#6366F1' }
+        ],
+        yLabel: 'Wealth ($)',
+        title: 'Wealth Horizon: Home Equity Growth vs. Index Fund Portfolio'
+      };
+
+      // Chart 3: Amortization & Home Value (Area/Line)
+      const homeValLine = schedule.slice(0, 15).map(s => s.homeValue);
+      const loanBalLine = schedule.slice(0, 15).map(s => s.loanBalance);
+      const chart3 = {
+        type: 'line',
+        labels: simLabels,
+        datasets: [
+          { label: 'Estimated Home Value', data: homeValLine, color: '#10B981', borderColor: '#10B981' },
+          { label: 'Remaining Mortgage Balance', data: loanBalLine, color: '#EF4444', borderColor: '#EF4444' }
+        ],
+        yLabel: 'Value ($)',
+        title: 'Mortgage Amortization & Equity Buildup Over Time'
+      };
+
+      // Summary KPIs
+      const summary = {
+        kpis: [
+          { label: 'Liquid Cash to Close', value: sym + totalLiquidCashRequired.toLocaleString('en-US', { maximumFractionDigits: 0 }), highlight: true, color: '#6366F1' },
+          { label: 'True Monthly Cost', value: sym + trueMonthlyCost.toLocaleString('en-US', { maximumFractionDigits: 0 }) + '/mo', highlight: true, color: '#10B981' },
+          { label: 'Pure Mortgage P&I', value: sym + monthlyPI.toLocaleString('en-US', { maximumFractionDigits: 0 }) + '/mo' },
+          { label: '5-Yr Net Equity', value: sym + y5.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+          { label: '10-Yr Net Equity', value: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+          { label: 'Break-Even Horizon', value: breakEvenYear ? `Year ${breakEvenYear}` : '> 10 Years', highlight: true }
+        ]
+      };
+
+      const stats = [
+        { label: 'Total Liquid Cash Required to Close', value: sym + totalLiquidCashRequired.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), highlight: true },
+        { label: 'Down Payment Required', value: sym + downPaymentDollar.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Estimated Closing Costs', value: sym + closingCostsDollar.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Escrow & Prepaids Reserve', value: sym + prepaidsDollar.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'True Monthly Cost of Ownership', value: sym + trueMonthlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), highlight: true },
+        { label: 'Mortgage Principal & Interest (P&I)', value: sym + monthlyPI.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Property Taxes (Monthly)', value: sym + monthlyPropertyTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Home Insurance (Monthly)', value: sym + monthlyInsurance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Monthly Maintenance Reserve', value: sym + monthlyMaintenance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: '5-Year Equity vs Index Fund', value: sym + y5.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' vs ' + sym + y5.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+        { label: '10-Year Equity vs Index Fund', value: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' vs ' + sym + y10.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }), highlight: true }
+      ];
 
       return {
-        stats: [
-          { label: 'Converted Amount (' + to + ')', value: toSymbol + converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), highlight: true },
-          { label: 'Exchange Rate (1 ' + from + ' → ' + to + ')', value: exchangeRate + ' ' + to },
-          { label: 'Inverse Rate (1 ' + to + ' → ' + from + ')', value: inverseRate + ' ' + from },
-          { label: 'Original Amount', value: fromSymbol + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + from },
-        ],
-        table,
+        summary,
+        stats,
+        table: matrixTable,
+        chart,
+        chart2,
+        chart3,
         insight: {
-          tone: 'neutral',
-          icon: 'fa-money-bill-wave',
-          headline: fromSymbol + amount + ' ' + from + ' equals approximately ' + toSymbol + converted.toLocaleString('en-US') + ' ' + to + '.',
-          detail: 'Based on standard mid-market exchange rates (1 ' + from + ' = ' + exchangeRate + ' ' + to + '). Real bank rates may include 1–3% spread fees.'
+          tone: (breakEvenYear && breakEvenYear <= 6) ? 'positive' : 'neutral',
+          icon: 'fa-house-circle-check',
+          headline: `Total cash required to close is ${sym}${totalLiquidCashRequired.toLocaleString('en-US')}, with a loaded monthly cost of ${sym}${trueMonthlyCost.toLocaleString('en-US')}/mo.`,
+          detail: `Your monthly mortgage P&I of ${sym}${monthlyPI.toLocaleString('en-US')} makes up only ${roundTo((monthlyPI / trueMonthlyCost) * 100, 1)}% of your true housing outlay. Taxes, insurance, and maintenance add ${sym}${(trueMonthlyCost - monthlyPI).toLocaleString('en-US')}/mo. ${breakEvenYear ? `Based on your assumptions, buying achieves a structural net wealth advantage over renting in Year ${breakEvenYear}.` : 'At current rent and return assumptions, renting remains competitive over the initial horizon.'}`
         }
       };
     },
     article: {
-      heading: 'How Foreign Exchange & Currency Conversion Works',
-      intro: 'Currency conversion allows travelers, international businesses, and investors to exchange values between different world currencies based on prevailing foreign exchange (forex) market rates.',
+      heading: 'True Cost of Buying a House: Upfront Cash, PITIA Framework & Break-Even Analysis',
+      intro: 'When evaluating homeownership, relying solely on bank mortgage estimates creates severe financial blind spots. A rigorous decision model combines total upfront liquidity, the full PITIA monthly framework, maintenance reserves, and a multi-year opportunity cost matrix against index fund investing.',
       sections: [
-        { heading: 'Mid-Market Rates vs. Retail Bank Rates', body: 'The mid-market rate (or interbank rate) is the midpoint between global buy and sell prices. Consumer banks and airport kiosks usually add a 1.5% to 4% margin or commission on top of this rate.' },
-        { heading: 'How to Avoid Excessive Foreign Transaction Fees', body: 'When spending abroad or shopping on international websites, always choose to be billed in the local currency of the seller rather than using dynamic currency conversion (DCC), which often charges high markups.' },
+        {
+          heading: 'How Much Cash Do You Really Need Upfront to Buy a House?',
+          body: 'When calculating how much liquid cash you need to purchase a home, relying solely on your down payment figure is a significant risk. The total cash required to close is a combination of three distinct financial obligations:\n\n• The Down Payment: Ranging from 3.5% for FHA loans to 20% for conventional loans to avoid private mortgage insurance (PMI).\n• Closing Costs: Transactional fees charged by lenders, title companies, and local government entities. These typically average between 2% and 5% of the total purchase price.\n• Escrow and Prepaids: Upfront cash deposits required to seed your homeowners insurance and property tax escrow accounts.'
+        },
+        {
+          heading: 'What is the True Monthly Cost of Home Ownership?',
+          body: 'A standard bank mortgage estimate only highlights your Principal and Interest (P&I). To understand the true cash flow impact on your household budget, you must utilize the PITIA framework:\n\n• Principal & Interest (P&I): The baseline cost of borrowing the capital.\n• Taxes: Local property taxes, which can adjust annually based on municipal assessments.\n• Insurance: Homeowners insurance policies and structural hazard protections.\n• Association Fees (HOA): Mandatory monthly dues for condominiums or master-planned communities.\n\nFurthermore, a resilient budget must factor in a non-negotiable line item: the annual home maintenance reserve. As a general rule of thumb, homeowners should allocate 1% to 2% of the property\'s total market value each year into a liquid savings account to cover structural repairs, roofing, and mechanical updates over time.'
+        },
+        {
+          heading: 'Rent vs. Buy: Determining Your Structural Break-Even Point',
+          body: 'Deciding to buy a home based on whether a monthly mortgage payment matches current local rent is a mathematical error. Determining your true break-even point requires analyzing the opportunity cost of capital over specific horizons:\n\n• The 5-Year Window: In the first five years of homeownership, the vast majority of your monthly payments go directly toward mortgage interest rather than building principal equity. Amortization schedules show that if you relocate within 5 years, transaction fees and closing costs frequently outpace any property appreciation, making renting more cost-effective.\n• The 10-Year Horizon: Over longer timelines, compounding real estate appreciation and the compounding value of a locked, fixed-rate housing payment outrun rising rental inflation.\n• The Investment Component: A true rent vs. buy analysis evaluates the return on your down payment if it were alternatively invested in low-cost index funds tracking historical market returns, weighed directly against the leveraged returns generated by real estate equity.'
+        },
+        {
+          heading: 'United States & Canadian Mortgage Architecture Differences',
+          body: 'Mortgage calculations differ significantly across national borders. In the United States, 30-year fixed mortgages compound monthly, and private mortgage insurance (PMI) is automatically cancellable at 78% LTV under the Homeowners Protection Act of 1998. In Canada, under the Bank Act and Interest Act, fixed-rate mortgages are legally required to compound semi-annually, not in advance. High-ratio Canadian mortgages (less than 20% down) require statutory CMHC mortgage loan insurance with premiums ranging from 2.80% to 4.00% added directly to the principal balance.'
+        }
       ]
     },
     howTo: [
-      'Enter the amount of money you wish to convert.',
-      'Select your source currency in the "From Currency" dropdown.',
-      'Select your destination currency in the "To Currency" dropdown.',
-      'Instantly view the converted amount, exchange rate, inverse rate, and multi-currency comparison table.'
+      { name: '1. Select Jurisdiction & Property Price', text: 'Choose your Country (US or Canada) and State/Province to automatically load verified property tax and compounding rules, then enter the target home purchase price.' },
+      { name: '2. Review Upfront Liquidity Requirements', text: 'Input your down payment percentage, estimated closing costs (default: 3%), and prepaids reserve (default: 1%) to calculate the total liquid cash required to close.' },
+      { name: '3. Calibrate PITIA Monthly Framework', text: 'Review the loaded monthly ownership cost, including Principal, Interest, localized property taxes, homeowners hazard insurance, HOA dues, and the 1% annual maintenance reserve.' },
+      { name: '4. Analyze 5-Yr vs 10-Yr Break-Even Matrix', text: 'Compare your projected net real estate equity against investing the down payment capital in S&P 500 index funds over 5-year, 10-year, and custom horizon timelines.' }
     ],
-    examples: [
-      { title: 'Converting USD to EUR', input: '$100 USD to EUR', result: '≈ €92.00 (Rate: 1 USD = 0.9200 EUR)' },
-      { title: 'Converting GBP to USD', input: '£100 GBP to USD', result: '≈ $126.58 (Rate: 1 GBP = 1.2658 USD)' }
-    ],
-    formula: 'Converted Amount = (Amount ÷ From Currency Rate in USD) × To Currency Rate in USD',
     faqs: [
-      { q: 'What is the mid-market exchange rate?', a: 'The mid-market exchange rate is the real midpoint between the supply and demand for a currency in global markets without bank markups.' },
-      { q: 'Why do banks give a different rate than online calculators?', a: 'Commercial banks and exchange booths add a retail markup (spread) to make a profit. Calculators typically display the mid-market reference rate.' },
-      { q: 'What is Dynamic Currency Conversion (DCC)?', a: 'DCC occurs when an overseas ATM or card terminal asks if you want to be charged in your home currency. It usually carries poor exchange rates (3–7% markup). It is usually cheaper to choose the local currency.' }
+      {
+        q: 'What is the difference between mortgage payment and true cost of ownership?',
+        a: 'A standard mortgage payment only covers Principal and Interest (P&I). The true cost of homeownership (PITIA+M) also includes local property taxes, homeowners insurance, HOA/condo dues, mortgage insurance (PMI/CMHC), and ongoing structural maintenance reserves (typically 1% of home value annually).'
+      },
+      {
+        q: 'How much liquid cash do I really need upfront to buy a house?',
+        a: 'In addition to your down payment (3.5% to 20%), buyers must pay 2% to 5% in closing fees (lender origination, title insurance, appraisal, escrow) and 1% in prepaid property tax and hazard insurance escrows. For a $400,000 home with 10% down, total liquid cash required to close is typically around $56,000.'
+      },
+      {
+        q: 'Why is the 5-year break-even point critical for home buyers?',
+        a: 'In the first 3 to 5 years of a standard mortgage, roughly 70% of monthly payments go toward interest rather than principal equity. When factoring in upfront closing costs and 6% broker selling fees, moving within 5 years often costs more than renting.'
+      },
+      {
+        q: 'How does Canadian mortgage compounding differ from the US?',
+        a: 'In the United States, mortgage interest compounds monthly. In Canada, federal law (the Bank Act and Interest Act) mandates that fixed mortgage interest compounds semi-annually, not in advance. This results in a slightly lower effective monthly rate for Canadian mortgages at the same nominal APR.'
+      }
     ]
+  },
+
+  'true-home-buying-cost-calculator': {
+    id: 'true-home-buying-cost-calculator',
+    name: 'True Home Buying Cost Calculator',
+    category: 'Finance',
+    icon: 'fa-house-circle-check',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
+    metaTitle: 'True Cost of Buying a House Calculator (With Closing Costs & Taxes)',
+    metaDescription: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
+    keywords: [
+      'true cost of buying a house calculator',
+      'home buying cost calculator',
+      'cash required to close calculator',
+      'closing costs calculator',
+      'pitia mortgage calculator',
+      'rent vs buy break even calculator'
+    ],
+    related: [
+      'true-home-buying-system',
+      'mortgage-calculator',
+      'rent-vs-buy-calculator',
+      'house-affordability-calculator',
+      'fha-loan-calculator'
+    ],
+    fields: [
+      { id: 'jurisdiction_section', type: 'section', label: 'Jurisdiction & Location Rules', icon: 'fa-globe' },
+      { id: 'country', label: 'Country', type: 'select', default: 'US', options: [{ value: 'US', label: 'United States' }, { value: 'CA', label: 'Canada' }] },
+      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'range', default: 450000, min: 50000, max: 5000000, step: 5000 },
+      { id: 'down_payment_pct', label: 'Down Payment (%)', type: 'range', default: 20, min: 0, max: 100, step: 0.5 },
+      { id: 'closing_costs_pct', label: 'Closing Costs (%)', type: 'range', default: 3.0, min: 0, max: 10, step: 0.1 },
+      { id: 'prepaids_reserve_pct', label: 'Escrow / Prepaids Reserve (%)', type: 'range', default: 1.0, min: 0, max: 5, step: 0.1 },
+      { id: 'interest_rate', label: 'Mortgage Annual Interest Rate (%)', type: 'range', default: 6.8, min: 0.1, max: 20, step: 0.05 },
+      { id: 'loan_term', label: 'Loan Term', type: 'select', default: 30, options: [15, 20, 25, 30].map(v => ({ value: v, label: `${v} Years` })) },
+      { id: 'property_tax_rate', label: 'Property Tax Rate (%/yr)', type: 'range', default: 1.2, min: 0, max: 5, step: 0.05 },
+      { id: 'home_insurance', label: 'Homeowners Insurance Annual Premium ($)', type: 'number', default: 1500, min: 0, max: 50000, step: 100 },
+      { id: 'hoa_fees', label: 'Monthly HOA / Condo Dues ($)', type: 'number', default: 0, min: 0, max: 5000, step: 25 },
+      { id: 'enable_maintenance', label: 'Enable Maintenance Reserve Account', type: 'select', default: 'yes', options: [{ value: 'yes', label: 'Enabled (1% Rule)' }, { value: 'no', label: 'Disabled' }] },
+      { id: 'current_rent', label: 'Current / Alternative Monthly Rent ($)', type: 'number', default: 2200, min: 0, max: 30000, step: 50 },
+      { id: 'home_appreciation_pct', label: 'Estimated Annual Property Appreciation (%)', type: 'range', default: 3.5, min: -5, max: 15, step: 0.1 },
+      { id: 'investment_return_pct', label: 'S&P 500 Alternative Investment Return (%)', type: 'range', default: 7.5, min: 0, max: 20, step: 0.1 },
+      { id: 'ownership_years', label: 'Planned Ownership Horizon (Years)', type: 'range', default: 10, min: 1, max: 30, step: 1 }
+    ],
+    calculate(v) {
+      return TOOLS['true-home-buying-system'].calculate(v);
+    },
+    article: {
+      heading: 'How Much Cash Do You Really Need Upfront to Buy a House?',
+      intro: 'Calculate your total upfront liquidity, loaded PITIA monthly payment, and rent vs buy structural break-even point.',
+      sections: [
+        { heading: 'Cash Required to Close Breakdown', body: 'The total cash required to close is a combination of Down Payment (3.5% to 20%), Closing Costs (2% to 5%), and Prepaids/Escrows (1%).' },
+        { heading: 'The PITIA Monthly Framework', body: 'Factor in Principal & Interest, local property taxes, homeowners hazard insurance, HOA dues, and a 1% annual maintenance reserve.' }
+      ]
+    },
+    howTo: [{ name: 'How to use', text: 'Enter purchase price, down payment, closing costs, interest rate, and property taxes to calculate upfront cash and monthly ownership costs.' }],
+    faqs: [{ q: 'What is included in closing costs?', a: 'Closing costs cover lender origination, appraisal, title insurance, recording fees, and settlement legal fees, typically totaling 2% to 5% of the purchase price.' }]
+  },
+
+  'freelance-true-rate-system': {
+    id: 'freelance-true-rate-system',
+    name: 'Freelance True Rate System',
+    category: 'Business',
+    icon: 'fa-briefcase',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
+    metaTitle: 'True Freelance Hourly Rate Calculator (After Taxes & Expenses)',
+    metaDescription: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
+    keywords: [
+      'freelance true hourly rate calculator',
+      'freelance true rate system',
+      'freelance rate calculator',
+      'hourly rate after taxes and expenses',
+      'freelance billable utilization rate',
+      'reverse income calculator',
+      'freelance gross day rate calculator',
+      'upwork fiverr platform fee calculator',
+      'self employment tax rate calculator',
+      'freelancer pricing calculator'
+    ],
+    related: [
+      'freelance-hourly-rate-calculator',
+      'self-employment-tax-calculator',
+      'salary-calculator',
+      'break-even-calculator',
+      'profit-margin-calculator',
+      'budget-planner'
+    ],
+    presets: [
+      {
+        label: 'Solo Consultant (Direct Clients)',
+        values: {
+          desired_net_income: 90000,
+          weeks_worked: 48,
+          hours_per_week: 40,
+          utilization_rate_pct: 70,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 22.0,
+          monthly_expenses: 450,
+          platform_fee_model: 'processor',
+          custom_platform_fee_pct: 3.0
+        }
+      },
+      {
+        label: 'Marketplace Freelancer (Upwork 10%)',
+        values: {
+          desired_net_income: 75000,
+          weeks_worked: 48,
+          hours_per_week: 40,
+          utilization_rate_pct: 65,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 20.0,
+          monthly_expenses: 350,
+          platform_fee_model: 'upwork',
+          custom_platform_fee_pct: 10.0
+        }
+      },
+      {
+        label: 'Creative Pro (Fiverr 20%)',
+        values: {
+          desired_net_income: 60000,
+          weeks_worked: 46,
+          hours_per_week: 35,
+          utilization_rate_pct: 75,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 18.0,
+          monthly_expenses: 300,
+          platform_fee_model: 'fiverr',
+          custom_platform_fee_pct: 20.0
+        }
+      },
+      {
+        label: 'High-Overhead Agency Solo',
+        values: {
+          desired_net_income: 120000,
+          weeks_worked: 48,
+          hours_per_week: 45,
+          utilization_rate_pct: 60,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 25.0,
+          monthly_expenses: 1200,
+          platform_fee_model: 'processor',
+          custom_platform_fee_pct: 3.0
+        }
+      }
+    ],
+    fields: [
+      { id: 'income_section', type: 'section', label: '1. Reverse Income Engine', icon: 'fa-money-bill-trend-up' },
+      {
+        id: 'desired_net_income',
+        label: 'Desired Annual Net Take-Home Income ($)',
+        type: 'range',
+        default: 85000,
+        min: 10000,
+        max: 500000,
+        step: 1000,
+        hint: 'The target net cash you want in your personal pocket after all taxes, fees, and business operating overhead.'
+      },
+
+      { id: 'utilization_section', type: 'section', label: '2. Billable Hour Utilization Tracker', icon: 'fa-business-time' },
+      {
+        id: 'weeks_worked',
+        label: 'Desired Weeks Worked Per Year',
+        type: 'range',
+        default: 48,
+        min: 20,
+        max: 52,
+        step: 1,
+        hint: 'Standard is 48 weeks (allowing 4 weeks of unpaid vacation, sick leave, and holidays).'
+      },
+      {
+        id: 'hours_per_week',
+        label: 'Target Workweek Hours',
+        type: 'range',
+        default: 40,
+        min: 10,
+        max: 80,
+        step: 1,
+        hint: 'Total working hours committed per week across all billable and non-billable duties.'
+      },
+      {
+        id: 'utilization_rate_pct',
+        label: 'Billable Utilization Rate (%)',
+        type: 'range',
+        default: 70,
+        min: 20,
+        max: 100,
+        step: 1,
+        hint: 'Percentage of working hours spent on paying client deliverables vs non-billable business management (typical: 60%–75%).'
+      },
+
+      { id: 'tax_overhead_section', type: 'section', label: '3. Tax & Operational Expense Deductions', icon: 'fa-receipt' },
+      {
+        id: 'self_employment_tax_pct',
+        label: 'Self-Employment Tax Reserve (%)',
+        type: 'range',
+        default: 15.3,
+        min: 0,
+        max: 30,
+        step: 0.1,
+        hint: 'Covers federal FICA self-employment taxes (15.3% in US for Social Security + Medicare, or CPP in Canada).'
+      },
+      {
+        id: 'income_tax_pct',
+        label: 'Estimated Federal / State Income Tax (%)',
+        type: 'range',
+        default: 22.0,
+        min: 0,
+        max: 50,
+        step: 0.5,
+        hint: 'Estimated effective income tax bracket (federal + state/provincial).'
+      },
+      {
+        id: 'monthly_expenses',
+        label: 'Monthly Business Overhead ($)',
+        type: 'number',
+        default: 400,
+        min: 0,
+        max: 20000,
+        step: 25,
+        hint: 'Software subscriptions, equipment replacement reserves, private health insurance, phone, internet, accounting, and legal.'
+      },
+
+      { id: 'fee_friction_section', type: 'section', label: '4. Platform Fee Friction Filter', icon: 'fa-filter-circle-dollar' },
+      {
+        id: 'platform_fee_model',
+        label: 'Platform Fee Model',
+        type: 'select',
+        default: 'none',
+        options: [
+          { value: 'none', label: 'None / Direct Wire & Invoicing (0%)' },
+          { value: 'processor', label: 'Payment Processing Gateway — Stripe / PayPal (3%)' },
+          { value: 'upwork', label: 'Upwork Marketplace (10%)' },
+          { value: 'fiverr', label: 'Fiverr Marketplace (20%)' },
+          { value: 'custom', label: 'Custom Platform Fee %' }
+        ],
+        hint: 'Select the fee structure subtracted by your client acquisition platform or billing gateway.'
+      },
+      {
+        id: 'custom_platform_fee_pct',
+        label: 'Custom Platform Fee (%)',
+        type: 'number',
+        default: 5.0,
+        min: 0,
+        max: 50,
+        step: 0.1,
+        condition: (v) => v.platform_fee_model === 'custom',
+        hint: 'Custom marketplace commission or client management fee percentage.'
+      }
+    ],
+    calculate(v) {
+      const desiredNetIncome = safeNum(v.desired_net_income, 85000);
+      if (desiredNetIncome <= 0) return errorResult('Please enter a desired annual net income greater than $0.');
+
+      const weeksWorked = Math.max(1, Math.min(52, safeNum(v.weeks_worked, 48)));
+      const hoursPerWeek = Math.max(1, Math.min(100, safeNum(v.hours_per_week, 40)));
+      const utilizationRatePct = Math.max(10, Math.min(100, safeNum(v.utilization_rate_pct, 70)));
+
+      const totalAnnualHours = roundTo(weeksWorked * hoursPerWeek, 0);
+      const billableHours = roundTo(totalAnnualHours * (utilizationRatePct / 100), 1);
+      const nonBillableHours = Math.max(0, roundTo(totalAnnualHours - billableHours, 1));
+
+      // Tax Reserve computation
+      const seTaxPct = safeNum(v.self_employment_tax_pct, 15.3);
+      const incTaxPct = safeNum(v.income_tax_pct, 22.0);
+      const totalTaxReserveRate = Math.min(0.80, (seTaxPct + incTaxPct) / 100);
+
+      // Desired Net = PreTaxProfit * (1 - totalTaxReserveRate)
+      const preTaxProfitNeeded = desiredNetIncome / (1 - totalTaxReserveRate);
+      const annualTaxReserveFund = roundTo(preTaxProfitNeeded - desiredNetIncome, 2);
+
+      // Business Overhead computation
+      const monthlyExpenses = safeNum(v.monthly_expenses, 400);
+      const annualExpenses = roundTo(monthlyExpenses * 12, 2);
+
+      // Net business revenue required after platform friction
+      const netBusinessRevenue = preTaxProfitNeeded + annualExpenses;
+
+      // Platform fee friction
+      let platformFeePct = 0;
+      if (v.platform_fee_model === 'processor') platformFeePct = 3.0;
+      else if (v.platform_fee_model === 'upwork') platformFeePct = 10.0;
+      else if (v.platform_fee_model === 'fiverr') platformFeePct = 20.0;
+      else if (v.platform_fee_model === 'custom') platformFeePct = safeNum(v.custom_platform_fee_pct, 5.0);
+
+      const platformFeeRate = Math.min(0.50, platformFeePct / 100);
+      const grossAnnualBillingTarget = roundTo(netBusinessRevenue / (1 - platformFeeRate), 2);
+      const annualPlatformFees = roundTo(grossAnnualBillingTarget - netBusinessRevenue, 2);
+
+      // Rate targets
+      const requiredHourlyRate = billableHours > 0 ? roundTo(grossAnnualBillingTarget / billableHours, 2) : 0;
+      const grossDayRate = roundTo(requiredHourlyRate * 8, 2);
+      const grossWeeklyBillingTarget = roundTo(grossAnnualBillingTarget / weeksWorked, 2);
+      const grossMonthlyBillingTarget = roundTo(grossAnnualBillingTarget / 12, 2);
+
+      // Rate Breakdown & Real Take-Home Degradation
+      const afterFeeHourlyRate = roundTo(requiredHourlyRate * (1 - platformFeeRate), 2);
+      const afterExpenseHourlyRate = roundTo((netBusinessRevenue - annualExpenses) / billableHours, 2);
+      const afterTaxBillableRate = roundTo(desiredNetIncome / billableHours, 2);
+      const trueEffectiveTakeHomeAllHours = totalAnnualHours > 0 ? roundTo(desiredNetIncome / totalAnnualHours, 2) : 0;
+
+      // Chart 1: Revenue Waterfall (Bar/Stacked Bar)
+      const chart = {
+        type: 'bar',
+        labels: ['Gross Invoiced', 'Platform Fees', 'Business Expenses', 'Tax Reserve', 'Net Take-Home'],
+        datasets: [{
+          label: 'Annual Allocation ($)',
+          data: [
+            grossAnnualBillingTarget,
+            -annualPlatformFees,
+            -annualExpenses,
+            -annualTaxReserveFund,
+            desiredNetIncome
+          ],
+          backgroundColor: ['#3B82F6', '#EF4444', '#F59E0B', '#8B5CF6', '#10B981']
+        }],
+        yLabel: 'Amount ($)',
+        title: 'Annual Revenue Waterfall (Gross Invoicing to Pocketed Take-Home)'
+      };
+
+      // Chart 2: Working Time Allocation (Doughnut)
+      const chart2 = {
+        type: 'doughnut',
+        labels: ['Billable Client Deliverables', 'Unpaid Admin & Bookkeeping', 'Sales, Pitching & Marketing', 'Unpaid Time Off (Vacation/Sick)'],
+        datasets: [{
+          label: 'Annual Hours',
+          data: [
+            billableHours,
+            roundTo(nonBillableHours * 0.55, 0),
+            roundTo(nonBillableHours * 0.45, 0),
+            roundTo((52 - weeksWorked) * hoursPerWeek, 0)
+          ],
+          backgroundColor: ['#10B981', '#6366F1', '#F59E0B', '#94A3B8']
+        }],
+        title: 'Annual Working Time Allocation (Billable vs Non-Billable Overhead)'
+      };
+
+      // Chart 3: Hourly Rate Degradation (Bar)
+      const chart3 = {
+        type: 'bar',
+        labels: ['Quoted Client Rate', 'After Platform Fees', 'After Operating Expenses', 'Take-Home (Billable Hr)', 'True Take-Home (All Worked Hrs)'],
+        datasets: [{
+          label: 'Rate ($/hr)',
+          data: [
+            requiredHourlyRate,
+            afterFeeHourlyRate,
+            afterExpenseHourlyRate,
+            afterTaxBillableRate,
+            trueEffectiveTakeHomeAllHours
+          ],
+          backgroundColor: ['#3B82F6', '#8B5CF6', '#F59E0B', '#10B981', '#14B8A6']
+        }],
+        yLabel: 'Rate ($/hr)',
+        title: 'The Freelancer Rate Decay: What You Quote vs. What You Actually Pocket'
+      };
+
+      // Table 1: Complete Financial Waterfall Table
+      const waterfallRows = [
+        { item: 'Gross Annual Invoiced Billing Target', amount: '$' + grossAnnualBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '100.0%', description: 'Top-line client invoicing needed' },
+        { item: 'Platform & Gateway Processing Fees', amount: '-$' + annualPlatformFees.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '-' + roundTo((annualPlatformFees / grossAnnualBillingTarget) * 100, 1) + '%', description: `${platformFeePct}% marketplace or payment gateway fee` },
+        { item: 'Operating Business Overhead', amount: '-$' + annualExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '-' + roundTo((annualExpenses / grossAnnualBillingTarget) * 100, 1) + '%', description: 'Software, hardware, insurance, phone, internet' },
+        { item: 'Estimated Tax Reserve Fund', amount: '-$' + annualTaxReserveFund.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '-' + roundTo((annualTaxReserveFund / grossAnnualBillingTarget) * 100, 1) + '%', description: `${roundTo(totalTaxReserveRate * 100, 1)}% Self-Employment & Income tax` },
+        { item: 'Net Take-Home Income (In Pocket)', amount: '$' + desiredNetIncome.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: roundTo((desiredNetIncome / grossAnnualBillingTarget) * 100, 1) + '%', description: 'Your net annual living cash' }
+      ];
+
+      const waterfallTable = makeTableSpec({
+        mode: 'financial',
+        title: 'Annual Financial Waterfall & Margin Deduction Breakdown',
+        columns: [
+          { key: 'item', label: 'Financial Category', emphasis: true },
+          { key: 'amount', label: 'Annual Cash Flow', emphasis: true },
+          { key: 'pctGross', label: '% of Gross Billing' },
+          { key: 'description', label: 'Operational Context' }
+        ],
+        rows: waterfallRows
+      });
+
+      const summary = {
+        kpis: [
+          { label: 'Required Client Hourly Rate', value: '$' + requiredHourlyRate.toLocaleString('en-US', { minimumFractionDigits: 2 }) + '/hr', highlight: true, color: '#6366F1' },
+          { label: 'Gross Day Rate (8h)', value: '$' + grossDayRate.toLocaleString('en-US', { minimumFractionDigits: 0 }) + '/day', highlight: true, color: '#10B981' },
+          { label: 'True Take-Home (All Hrs)', value: '$' + trueEffectiveTakeHomeAllHours.toLocaleString('en-US', { minimumFractionDigits: 2 }) + '/hr', highlight: true },
+          { label: 'Annual Gross Billing', value: '$' + grossAnnualBillingTarget.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+          { label: 'Annual Billable Hours', value: billableHours.toLocaleString('en-US') + ' hrs' },
+          { label: 'Total Friction Deductions', value: '$' + roundTo(annualPlatformFees + annualExpenses + annualTaxReserveFund, 0).toLocaleString('en-US') }
+        ]
+      };
+
+      const stats = [
+        { label: 'Required Client Hourly Rate', value: '$' + requiredHourlyRate.toLocaleString('en-US', { minimumFractionDigits: 2 }), highlight: true },
+        { label: 'Gross Day Rate (8h Billable)', value: '$' + grossDayRate.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Weekly Gross Billing Target', value: '$' + grossWeeklyBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Monthly Gross Billing Target', value: '$' + grossMonthlyBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Annual Gross Billing Target', value: '$' + grossAnnualBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }), highlight: true },
+        { label: 'True Effective Hourly Take-Home (Total Hrs)', value: '$' + trueEffectiveTakeHomeAllHours.toLocaleString('en-US', { minimumFractionDigits: 2 }) + '/hr', highlight: true },
+        { label: 'Annual Billable Hours', value: billableHours.toLocaleString('en-US') + ' hrs' },
+        { label: 'Annual Non-Billable Overhead Hours', value: nonBillableHours.toLocaleString('en-US') + ' hrs' },
+        { label: 'Annual Estimated Tax Reserve', value: '$' + annualTaxReserveFund.toLocaleString('en-US', { minimumFractionDigits: 2 }), warn: true },
+        { label: 'Annual Business Expenses', value: '$' + annualExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Annual Platform & Gateway Fees', value: '$' + annualPlatformFees.toLocaleString('en-US', { minimumFractionDigits: 2 }) }
+      ];
+
+      return {
+        summary,
+        stats,
+        table: waterfallTable,
+        chart,
+        chart2,
+        chart3,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-briefcase',
+          headline: `To take home $${desiredNetIncome.toLocaleString('en-US')} net, you must charge clients $${requiredHourlyRate.toFixed(2)}/hr (or $${grossDayRate.toLocaleString('en-US')}/day).`,
+          detail: `Out of your 40-hour workweek, only ${utilizationRatePct}% (${roundTo(hoursPerWeek * (utilizationRatePct / 100), 1)} hours) generates billable revenue. Across taxes, operating overhead, and platform fees, ${roundTo(((grossAnnualBillingTarget - desiredNetIncome) / grossAnnualBillingTarget) * 100, 1)}% of your gross billing is absorbed by structural business costs.`
+        }
+      };
+    },
+    article: {
+      heading: 'What is a True Freelance Hourly Rate? Deductions, Utilization & Reverse Income Engine',
+      intro: 'Many new solo entrepreneurs assume that earning $50 per hour in a corporate job means charging a freelance client $50 per hour preserves their standard of living. This calculation is a critical financial error. Your advertised freelance rate is your top-line business revenue, not your personal take-home income.',
+      sections: [
+        {
+          heading: 'What is a True Freelance Hourly Rate?',
+          body: 'Many new solo entrepreneurs assume that if they earned $50 per hour in a corporate position, charging a client $50 per hour as a freelancer preserves their standard of living. This calculation is incorrect. Your advertised freelance rate is your top-line business revenue, not your personal take-home income.\n\nTo achieve true parity with a traditional salary, a freelancer\'s gross billing rate must account for structural tax obligations, specialized operating software, unbillable administrative overhead, and the absolute absence of corporate benefits.'
+        },
+        {
+          heading: 'Why Your Advertised Hourly Rate Isn\'t Your Real Take-Home Income',
+          body: 'To understand what you actually earn, your gross hourly revenue must be put through a series of mandatory financial deductions:\n\n• The Self-Employment Tax Penalty: In a W-2 environment, employers cover 50% of your payroll taxes. As a freelance business owner, you are legally responsible for both the employer and employee portions, introducing a heavy tax burden before standard income tax brackets apply.\n• Platform Friction and Payment Processing Fees: Digital marketplaces and payment processing gateways routinely subtract 2% to 20% of your gross invoice total before the capital arrives in your bank account.\n• Operational Expense Reductions: Software licensing, professional liability protection, health insurance premiums, and equipment replacement reserves erode your top-line hourly pricing.'
+        },
+        {
+          heading: 'The Impact of Unbillable Hours on Daily Profitability',
+          body: 'The most common mistake made by freelancers is assuming an 8-hour workday translates directly into 8 billable hours. In reality, a self-employed professional operates at a distinct utilization rate. A massive portion of your working week is allocated to non-billable tasks:\n\n• Client acquisition, pitching, and scope-of-work negotiation.\n• Bookkeeping, invoicing, and contract management.\n• Internal administrative upkeep and professional education.\n\nIf you work 40 hours a week but spend 15 of those hours managing your business rather than executing client deliverables, your utilization rate is only 62.5%. If you fail to adjust your baseline hourly rate upward to compensate for these non-billable tracking hours, your actual hourly earnings will fall well below your target income goals.'
+        }
+      ]
+    },
+    howTo: [
+      { name: '1. Set Desired Net Take-Home Income', text: 'Enter the exact annual net cash you want in your bank account after all taxes, overhead expenses, and platform fees.' },
+      { name: '2. Track Billable Utilization Rate', text: 'Enter your target annual weeks worked (default: 48) and adjust the utilization rate slider (default: 70%) to factor in non-billable sales and administrative hours.' },
+      { name: '3. Input Tax Reserve & Monthly Overhead', text: 'Specify self-employment tax (15.3%), estimated income tax bracket, and recurring monthly software/hardware/insurance expenses.' },
+      { name: '4. Filter Platform & Payment Gateway Fees', text: 'Select your billing channel (Direct Invoicing 0%, Payment Processor 3%, Upwork 10%, or Fiverr 20%) to determine your mandatory gross client hourly rate.' }
+    ],
+    faqs: [
+      {
+        q: 'Why must freelancers charge 2x to 3x their corporate hourly wage?',
+        a: 'Freelancers carry complete financial responsibility for employer payroll taxes (FICA SECA 15.3%), private health insurance, software licenses, equipment, and unpaid vacation. Furthermore, because freelancers spend 25% to 40% of their time on unbillable administration and sales, fewer hours are available to generate income.'
+      },
+      {
+        q: 'What is a healthy freelance billable utilization rate?',
+        a: 'A realistic billable utilization rate for full-time solo freelancers ranges between 60% and 75% (24 to 30 billable hours per 40-hour workweek). Utilization rates above 80% often cause burnout and lead to an empty sales pipeline.'
+      },
+      {
+        q: 'How much should a self-employed freelancer set aside for taxes?',
+        a: 'Most solo freelancers in the United States should reserve between 25% and 35% of their net business profit for quarterly estimated tax payments (covering 15.3% Self-Employment Tax plus federal and state income taxes).'
+      },
+      {
+        q: 'How do platform fees impact gross client rates?',
+        a: 'If a freelance platform charges a 10% fee (such as Upwork) or 20% (such as Fiverr), you must price your services significantly higher to achieve the same take-home pay. For example, on a 20% fee marketplace, charging $100/hr leaves you with only $80/hr before taxes and business expenses.'
+      }
+    ]
+  },
+
+  'freelance-true-hourly-rate-calculator': {
+    id: 'freelance-true-hourly-rate-calculator',
+    name: 'Freelance True Hourly Rate Calculator',
+    category: 'Business',
+    icon: 'fa-briefcase',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
+    metaTitle: 'True Freelance Hourly Rate Calculator (After Taxes & Expenses)',
+    metaDescription: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
+    keywords: [
+      'freelance true hourly rate calculator',
+      'freelance rate calculator',
+      'hourly rate after taxes and expenses',
+      'freelance billable utilization rate'
+    ],
+    related: [
+      'freelance-true-rate-system',
+      'freelance-hourly-rate-calculator',
+      'self-employment-tax-calculator',
+      'salary-calculator',
+      'break-even-calculator'
+    ],
+    fields: [
+      { id: 'income_section', type: 'section', label: '1. Reverse Income Engine', icon: 'fa-money-bill-trend-up' },
+      { id: 'desired_net_income', label: 'Desired Annual Net Take-Home Income ($)', type: 'range', default: 85000, min: 10000, max: 500000, step: 1000 },
+      { id: 'weeks_worked', label: 'Desired Weeks Worked Per Year', type: 'range', default: 48, min: 20, max: 52, step: 1 },
+      { id: 'hours_per_week', label: 'Target Workweek Hours', type: 'range', default: 40, min: 10, max: 80, step: 1 },
+      { id: 'utilization_rate_pct', label: 'Billable Utilization Rate (%)', type: 'range', default: 70, min: 20, max: 100, step: 1 },
+      { id: 'self_employment_tax_pct', label: 'Self-Employment Tax Reserve (%)', type: 'range', default: 15.3, min: 0, max: 30, step: 0.1 },
+      { id: 'income_tax_pct', label: 'Estimated Income Tax Bracket (%)', type: 'range', default: 22.0, min: 0, max: 50, step: 0.5 },
+      { id: 'monthly_expenses', label: 'Monthly Business Overhead ($)', type: 'number', default: 400, min: 0, max: 20000, step: 25 },
+      { id: 'platform_fee_model', label: 'Platform Fee Model', type: 'select', default: 'none', options: [
+        { value: 'none', label: 'None (0%)' },
+        { value: 'processor', label: 'Payment Processor (3%)' },
+        { value: 'upwork', label: 'Upwork (10%)' },
+        { value: 'fiverr', label: 'Fiverr (20%)' }
+      ]}
+    ],
+    calculate(v) {
+      return TOOLS['freelance-true-rate-system'].calculate(v);
+    },
+    article: {
+      heading: 'What is a True Freelance Hourly Rate?',
+      intro: 'Calculate the required top-line billing rate to reach your target take-home income after taxes, operational expenses, and unbillable administrative hours.',
+      sections: [
+        { heading: 'The Utilization Rate Factor', body: 'Because 25% to 40% of your time is spent on non-billable business development and admin, your billable hours are a fraction of total worked hours.' }
+      ]
+    },
+    howTo: [{ name: 'How to use', text: 'Enter your desired net income, hours, utilization rate, taxes, and expenses to calculate your required client billing rate.' }],
+    faqs: [{ q: 'What is a billable utilization rate?', a: 'Billable utilization is the ratio of billable client hours to total hours worked in your business.' }]
   },
   'beam-deflection-calculator': {
     id: 'beam-deflection-calculator',

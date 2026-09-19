@@ -197,25 +197,38 @@ describe('Percentage Calculator (regression)', () => {
     });
 });
 
-describe('Currency Converter (Feature)', () => {
-    const calc = () => TOOLS()['currency-converter'];
+describe('True Home Buying System (Finance)', () => {
+    const calc = () => TOOLS()['true-home-buying-system'];
 
     it('exists and has calculate method', () => {
         expect(calc()).toBeDefined();
         expect(typeof calc().calculate).toBe('function');
     });
 
-    it('converts USD to EUR correctly', () => {
-        const r = calc().calculate({ amount: 100, from_currency: 'USD', to_currency: 'EUR' });
+    it('calculates total liquid cash and PITIA monthly ownership costs', () => {
+        const r = calc().calculate({
+            country: 'US',
+            home_price: 450000,
+            down_payment_pct: 20,
+            closing_costs_pct: 3.0,
+            prepaids_reserve_pct: 1.0,
+            interest_rate: 6.8,
+            loan_term: 30,
+            property_tax_rate: 1.2,
+            home_insurance: 1500,
+            hoa_fees: 0,
+            enable_maintenance: 'yes',
+            maintenance_pct: 1.0
+        });
         expect(r.error).toBeFalsy();
         expect(r.stats).toBeDefined();
-        expect(r.stats[0].value).toContain('92.00');
+        expect(r.stats.some(s => s.label === 'Total Liquid Cash Required to Close')).toBe(true);
         expect(r.table).toBeDefined();
-        expect(r.table.length).toBeGreaterThan(0);
+        expect(r.chart).toBeDefined();
     });
 
-    it('handles zero or negative amount with errorResult', () => {
-        const r = calc().calculate({ amount: 0, from_currency: 'USD', to_currency: 'EUR' });
+    it('handles zero or negative home price with errorResult', () => {
+        const r = calc().calculate({ home_price: 0 });
         expect(r.error).toBe(true);
     });
 });
