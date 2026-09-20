@@ -36,19 +36,17 @@ const categoryUrls = categories.map(cat => ({
 }));
 
 const staticUrls = [
-    { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'daily'   },
-    ...categoryUrls,
-    { loc: `${BASE_URL}/about`,       priority: '0.5', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/contact`,     priority: '0.5', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/privacy`,     priority: '0.3', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/terms`,       priority: '0.3', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/cookie-policy`, priority: '0.3', changefreq: 'monthly' },
+    { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'daily',   lastmod: '2026-09-19' },
+    ...categoryUrls.map(c => ({ ...c, lastmod: '2026-09-19' })),
+    { loc: `${BASE_URL}/about`,       priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
+    { loc: `${BASE_URL}/contact`,     priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
 ];
 
 const toolUrls = allSlugs.map(slug => ({
     loc:        `${BASE_URL}/tool/${slug}`,
     priority:   '0.9',
     changefreq: 'weekly',
+    lastmod:    '2026-09-19',
 }));
 
 const allUrls = [...staticUrls, ...toolUrls];
@@ -58,7 +56,7 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
 ${allUrls.map(u => `
   <url>
     <loc>${u.loc}</loc>
-    <lastmod>${TODAY}</lastmod>
+    <lastmod>${u.lastmod}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('')}

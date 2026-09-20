@@ -1355,31 +1355,34 @@ function build() {
     fs.writeFileSync(path.join(catSubDir, 'index.html'), html, 'utf8');
   });
 
-  // 3. Generate sitemap.xml
+  // 3. Generate sitemap.xml (Focus on high-value indexing targets; exclude low-intent legal boilerplate)
   const sitemapUrls = [
-    { loc: `${BASE_URL}/`, priority: '1.0', changefreq: 'daily' },
+    { loc: `${BASE_URL}/`, priority: '1.0', changefreq: 'daily', lastmod: '2026-09-19' },
     ...Object.keys(CATEGORIES).map(k => ({
       loc: `${BASE_URL}/category/${CATEGORIES[k].slug}`,
       priority: '0.8',
       changefreq: 'weekly',
+      lastmod: '2026-09-19',
     })),
-    ...allSlugs.map(s => ({
-      loc: `${BASE_URL}/tool/${s}`,
-      priority: '0.9',
-      changefreq: 'weekly',
-    })),
-    { loc: `${BASE_URL}/about`, priority: '0.5', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/contact`, priority: '0.5', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/terms`, priority: '0.3', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/cookie-policy`, priority: '0.3', changefreq: 'monthly' },
-    { loc: `${BASE_URL}/privacy`, priority: '0.3', changefreq: 'monthly' },
+    ...allSlugs.map(s => {
+      const toolObj = tools[s] || {};
+      const toolLastMod = toolObj.lastmod || '2026-09-19';
+      return {
+        loc: `${BASE_URL}/tool/${s}`,
+        priority: '0.9',
+        changefreq: 'weekly',
+        lastmod: toolLastMod,
+      };
+    }),
+    { loc: `${BASE_URL}/about`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
+    { loc: `${BASE_URL}/contact`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
   ];
 
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapUrls.map(u => `  <url>
     <loc>${u.loc}</loc>
-    <lastmod>${TODAY}</lastmod>
+    <lastmod>${u.lastmod}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}
