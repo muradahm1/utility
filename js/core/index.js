@@ -85,6 +85,15 @@ export function initializeCore() {
     catch (e) { console.error('[core] construction registration failed:', e); }
     try { registerEngineeringCalculators(registerTool, toolExists); }
     catch (e) { console.error('[core] engineering registration failed:', e); }
+
+    // Keep the legacy window.TOOLS registry in sync so decentralized consumers
+    // (homepage search modal, category grid, category counts, active-nav on
+    // tool pages) can resolve modular tools registered via registerTool().
+    if (typeof window !== 'undefined' && window.TOOLS) {
+        Object.keys(coreTOOLS).forEach(slug => {
+            window.TOOLS[slug] = coreTOOLS[slug];
+        });
+    }
     
     return {
         tools: coreTOOLS,

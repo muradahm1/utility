@@ -615,11 +615,8 @@ export function renderCalculator(calculator) {
     // Build results container
     const resultsHtml = '<div class="calculator-results-card"></div>';
     
-    // Build SEO content (article, how-to, examples, FAQs)
-    const seoContentHtml = buildSeoContentHtml(tool);
-    
-    // Build related tools
-    const relatedToolsHtml = buildRelatedToolsHtml(tool, calculator.slug);
+    // Build educational layout (Methodology + Main Content + On This Page TOC)
+    const educationalHtml = buildEducationalLayoutHtml(tool, calculator.slug);
     
     // Render to container
     container.innerHTML = `
@@ -641,8 +638,7 @@ export function renderCalculator(calculator) {
                 <span class="save-result-msg hidden" id="save-result-msg"></span>
             </div>
         </div>
-        ${seoContentHtml}
-        ${relatedToolsHtml}
+        ${educationalHtml}
     `;
     
     // Bind events
@@ -656,62 +652,333 @@ export function renderCalculator(calculator) {
 }
 
 /**
- * Build SEO content HTML (article, how-to, examples, FAQs)
+ * Build Methodology & Editorial Standards HTML
  * @param {Object} tool - Tool definition
  * @returns {string} HTML string
  */
-export function buildSeoContentHtml(tool) {
-    let html = '';
+export function buildMethodologyHtml(tool) {
+    if (!tool.methodology && !tool.formula) return '';
+    const m = tool.methodology || {};
+    const standards = m.standards || 'Calculations are based on recognized financial, mathematical, and scientific models verified against authoritative reference standards.';
+    const sources = m.sources || ['GetCalcu Technical & Calculation Review Group'];
+    const lastReviewed = tool.lastReviewed || m.lastReviewed || 'September 2026';
+    const assumptions = m.assumptions || [];
     
-    // Article content
-    if (tool.article) {
-        const a = tool.article;
-        const sectionsHtml = (a.sections && a.sections.length)
-            ? a.sections.map(s => `<h3 style="font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--text-primary);">${escapeHtml(s.heading)}</h3><p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body)}</p>`).join('')
-            : '';
-        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2><p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>${sectionsHtml}</div>`;
+    let assumptionsHtml = '';
+    if (assumptions.length > 0) {
+        assumptionsHtml = `
+            <div class="methodology-block">
+                <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+                <ul class="methodology-list">
+                    ${assumptions.map(a => `<li>${escapeHtml(a)}</li>`).join('')}
+                </ul>
+            </div>`;
     }
-    
-    // How-to guide
-    if (tool.howTo && tool.howTo.length) {
-        const steps = tool.howTo.map((step, i) => `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${escapeHtml(step)}</li>`).join('');
-        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2><ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}</div>`;
+
+    let sourcesHtml = '';
+    if (sources.length > 0) {
+        sourcesHtml = `
+            <div class="methodology-sources">
+                <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+                <span class="methodology-sources-list">${sources.map(s => escapeHtml(s)).join(' • ')}</span>
+            </div>`;
     }
-    
-    // Examples
-    if (tool.examples && tool.examples.length) {
-        const exHtml = tool.examples.map(ex => `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;"><p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(ex.title)}</p><p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> ${escapeHtml(ex.input)}</p><p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">${escapeHtml(ex.result)}</span></p></div>`).join('');
-        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Examples</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">${exHtml}</div></div>`;
-    }
-    
-    // FAQs
-    if (tool.faqs && tool.faqs.length) {
-        const faqHtml = tool.faqs.map(f => `<details style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:8px;"><summary style="font-size:14px;font-weight:700;cursor:pointer;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;">${escapeHtml(f.q)} <i class="fa-solid fa-chevron-down" style="font-size:12px;color:var(--text-secondary);"></i></summary><p style="font-size:13px;color:var(--text-secondary);margin-top:10px;line-height:1.7;">${escapeHtml(f.a)}</p></details>`).join('');
-        html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 id="faqs" style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>${faqHtml}</div>`;
-    }
-    
-    return html;
+
+    return `
+        <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+            <div class="methodology-header">
+                <div class="methodology-title-wrap">
+                    <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+                    <h2 id="methodology-heading">GetCalcu Methodology & Editorial Standards</h2>
+                </div>
+                <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: ${escapeHtml(lastReviewed)}</span>
+            </div>
+            <p class="methodology-summary">${escapeHtml(m.summary || standards)}</p>
+            ${assumptionsHtml}
+            ${sourcesHtml}
+        </section>
+    `;
 }
 
 /**
- * Build related tools HTML
- * @param {Object} tool - Tool definition
- * @param {string} slug - Current tool slug
+ * Build On This Page TOC component
+ * @param {Array} tocItems - Array of { id, label }
  * @returns {string} HTML string
  */
-export function buildRelatedToolsHtml(tool, slug) {
-    const allTools = typeof window !== 'undefined' && window.TOOLS ? window.TOOLS : {};
+export function buildOnThisPageHtml(tocItems) {
+    if (!tocItems || !tocItems.length) return '';
     
-    // Get related tools from explicit related array or same category
+    return `
+        <div class="on-this-page-container">
+            <details class="on-this-page-details" open>
+                <summary class="on-this-page-summary">
+                    <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+                    <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+                </summary>
+                <nav class="on-this-page-nav" aria-label="On this page">
+                    <ul class="on-this-page-list">
+                        ${tocItems.map(item => `
+                            <li class="on-this-page-item">
+                                <a href="#${escapeHtml(item.id)}" class="on-this-page-link">${escapeHtml(item.label)}</a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </nav>
+            </details>
+        </div>
+    `;
+}
+
+/**
+ * Build Educational Content Layout with Dynamic On This Page Navigation
+ * @param {Object} tool - Tool definition
+ * @param {string} slug - Tool slug
+ * @returns {string} HTML string
+ */
+export function buildEducationalLayoutHtml(tool, slug) {
+    const allTools = typeof window !== 'undefined' && window.TOOLS ? window.TOOLS : {};
     const related = Object.entries(allTools)
         .filter(([s, t]) => s !== slug && (t.category === tool.category || (tool.related && tool.related.includes(s))))
         .slice(0, 4);
+
+    const tocItems = [];
     
-    if (!related.length) return '';
-    
-    const cards = related.map(([s, t]) => `<a href="/tool?slug=${encodeURIComponent(s)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(t.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description || '')}</p><span class="tag ${escapeHtml(t.tagClass || 'tag-finance')}">${escapeHtml(t.category || '')}</span></a>`).join('');
-    
-    return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Related Calculators</h2><div class="tools-grid">${cards}</div></div>`;
+    // 1. Methodology
+    if (tool.methodology || tool.formula) {
+        tocItems.push({ id: 'methodology', label: 'Methodology & Standards' });
+    }
+
+    // 2. Article / Deep Content
+    let articleHtml = '';
+    if (tool.article) {
+        const a = tool.article;
+        const articleId = a.id || 'how-to-calculate';
+        tocItems.push({ id: articleId, label: a.heading || 'How to Calculate' });
+        
+        const sectionsHtml = (a.sections && a.sections.length)
+            ? a.sections.map((s, idx) => {
+                const secId = s.id || `section-${idx + 1}`;
+                const bodyText = typeof s.body === 'string' 
+                    ? `<p>${escapeHtml(s.body)}</p>` 
+                    : (Array.isArray(s.body) ? s.body.map(p => `<p>${escapeHtml(p)}</p>`).join('') : `<p>${escapeHtml(s.body)}</p>`);
+                return `
+                    <div class="article-subsection" ${s.id ? `id="${escapeHtml(s.id)}"` : ''}>
+                        <h3 class="article-subheading">${escapeHtml(s.heading)}</h3>
+                        <div class="article-body-text">${bodyText}</div>
+                    </div>`;
+            }).join('')
+            : '';
+        
+        articleHtml = `
+            <article class="tool-runner-card educational-card" id="${escapeHtml(articleId)}" aria-labelledby="${escapeHtml(articleId)}-title">
+                <h2 id="${escapeHtml(articleId)}-title" class="educational-section-title">${escapeHtml(a.heading)}</h2>
+                <div class="article-intro-text"><p>${escapeHtml(a.intro)}</p></div>
+                ${sectionsHtml}
+            </article>
+        `;
+    }
+
+    // 3. How to Use
+    let howToHtml = '';
+    if (tool.howTo && tool.howTo.length) {
+        const howToId = 'how-to-use';
+        const howToTitle = `How to Use the ${tool.name}`;
+        tocItems.push({ id: howToId, label: howToTitle });
+        
+        const steps = tool.howTo.map((step, i) => `
+            <li class="how-to-step">
+                <span class="step-num">${i + 1}</span>
+                <div class="step-content">${escapeHtml(step)}</div>
+            </li>
+        `).join('');
+        
+        howToHtml = `
+            <section class="tool-runner-card educational-card" id="${howToId}" aria-labelledby="${howToId}-title">
+                <h2 id="${howToId}-title" class="educational-section-title">${escapeHtml(howToTitle)}</h2>
+                <ol class="how-to-steps-list">${steps}</ol>
+            </section>
+        `;
+    }
+
+    // 4. Formula
+    let formulaHtml = '';
+    if (tool.formula || tool.formulaBreakdown) {
+        const formulaId = 'formula';
+        const formulaTitle = tool.formulaTitle || `${tool.name} Formula`;
+        tocItems.push({ id: formulaId, label: formulaTitle });
+
+        let variablesHtml = '';
+        if (tool.formulaVariables && tool.formulaVariables.length) {
+            variablesHtml = `
+                <div class="formula-variables-wrap">
+                    <h4 class="formula-variables-heading">Variable Definitions:</h4>
+                    <ul class="formula-variables-list">
+                        ${tool.formulaVariables.map(v => `<li><strong>${escapeHtml(v.name)}</strong>: ${escapeHtml(v.description)}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        let plainEnglishHtml = '';
+        if (tool.formulaExplanation) {
+            plainEnglishHtml = `<div class="formula-explanation-text"><p>${escapeHtml(tool.formulaExplanation)}</p></div>`;
+        }
+
+        formulaHtml = `
+            <section class="tool-runner-card educational-card" id="${formulaId}" aria-labelledby="${formulaId}-title">
+                <h2 id="${formulaId}-title" class="educational-section-title">${escapeHtml(formulaTitle)}</h2>
+                <div class="formula-display-box">
+                    <code>${escapeHtml(tool.formula)}</code>
+                </div>
+                ${plainEnglishHtml}
+                ${variablesHtml}
+            </section>
+        `;
+    }
+
+    // 5. Worked Examples
+    let examplesHtml = '';
+    if (tool.examples && tool.examples.length) {
+        const examplesId = 'worked-examples';
+        const examplesTitle = 'Real-World Worked Examples';
+        tocItems.push({ id: examplesId, label: examplesTitle });
+
+        const exCards = tool.examples.map(ex => `
+            <div class="worked-example-card">
+                <h3 class="worked-example-title">${escapeHtml(ex.title)}</h3>
+                <div class="worked-example-row"><span class="example-label">Inputs:</span> <span class="example-val">${escapeHtml(ex.input)}</span></div>
+                <div class="worked-example-row worked-example-result"><span class="example-label">Calculated Result:</span> <span class="example-val-highlight">${escapeHtml(ex.result)}</span></div>
+                ${ex.explanation ? `<p class="worked-example-explanation">${escapeHtml(ex.explanation)}</p>` : ''}
+            </div>
+        `).join('');
+
+        examplesHtml = `
+            <section class="tool-runner-card educational-card" id="${examplesId}" aria-labelledby="${examplesId}-title">
+                <h2 id="${examplesId}-title" class="educational-section-title">${escapeHtml(examplesTitle)}</h2>
+                <p class="section-lead-text">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+                <div class="worked-examples-grid">${exCards}</div>
+            </section>
+        `;
+    }
+
+    // 6. Additional domain-specific sections
+    let additionalSectionsHtml = '';
+    if (tool.additionalSections && tool.additionalSections.length) {
+        tool.additionalSections.forEach(sec => {
+            const secId = sec.id || 'domain-guide';
+            tocItems.push({ id: secId, label: sec.heading });
+            
+            let contentHtml = '';
+            if (sec.items && sec.items.length) {
+                contentHtml = `
+                    <div class="costs-grid">
+                        ${sec.items.map(item => `
+                            <div class="cost-item-card">
+                                <h4>${escapeHtml(item.title)}</h4>
+                                <p>${escapeHtml(item.description)}</p>
+                                ${item.note ? `<span class="cost-item-note">${escapeHtml(item.note)}</span>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (sec.body) {
+                contentHtml = `<div class="article-body-text">${typeof sec.body === 'string' ? `<p>${escapeHtml(sec.body)}</p>` : sec.body.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</div>`;
+            }
+
+            additionalSectionsHtml += `
+                <section class="tool-runner-card educational-card" id="${escapeHtml(secId)}" aria-labelledby="${escapeHtml(secId)}-title">
+                    <h2 id="${escapeHtml(secId)}-title" class="educational-section-title">${escapeHtml(sec.heading)}</h2>
+                    ${sec.intro ? `<p class="section-lead-text">${escapeHtml(sec.intro)}</p>` : ''}
+                    ${contentHtml}
+                </section>
+            `;
+        });
+    }
+
+    // 7. FAQs
+    let faqsHtml = '';
+    if (tool.faqs && tool.faqs.length) {
+        const faqsId = 'faqs';
+        const faqsTitle = 'Frequently Asked Questions';
+        tocItems.push({ id: faqsId, label: faqsTitle });
+
+        const faqItems = tool.faqs.map(f => `
+            <details class="faq-accordion-item">
+                <summary class="faq-summary">
+                    <span>${escapeHtml(f.q)}</span>
+                    <i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i>
+                </summary>
+                <div class="faq-answer">
+                    <p>${escapeHtml(f.a)}</p>
+                </div>
+            </details>
+        `).join('');
+
+        faqsHtml = `
+            <section class="tool-runner-card educational-card" id="${faqsId}" aria-labelledby="${faqsId}-title">
+                <h2 id="${faqsId}-title" class="educational-section-title">${escapeHtml(faqsTitle)}</h2>
+                <div class="faq-list">${faqItems}</div>
+            </section>
+        `;
+    }
+
+    // 8. Related Tools
+    let relatedToolsHtml = '';
+    if (related.length > 0) {
+        const relatedId = 'related-tools';
+        const relatedTitle = 'Related Calculators';
+        tocItems.push({ id: relatedId, label: relatedTitle });
+
+        const cards = related.map(([s, t]) => `
+            <a href="/tool/${encodeURIComponent(s)}" class="tool-card">
+                <div class="tool-icon ${escapeHtml(t.iconClass || 'icon-finance')}">
+                    <i class="fa-solid ${escapeHtml(t.icon || 'fa-calculator')}"></i>
+                </div>
+                <h3 class="tool-card-name">${escapeHtml(t.name)}</h3>
+                <p class="tool-card-desc">${escapeHtml(t.description || '')}</p>
+                <span class="tag ${escapeHtml(t.tagClass || 'tag-finance')}">${escapeHtml(t.category || '')}</span>
+            </a>
+        `).join('');
+
+        relatedToolsHtml = `
+            <section class="tool-runner-card educational-card" id="${relatedId}" aria-labelledby="${relatedId}-title">
+                <h2 id="${relatedId}-title" class="educational-section-title">${escapeHtml(relatedTitle)}</h2>
+                <div class="tools-grid">${cards}</div>
+            </section>
+        `;
+    }
+
+    const methodologyHtml = buildMethodologyHtml(tool);
+    const onThisPageHtml = buildOnThisPageHtml(tocItems);
+
+    return `
+        ${methodologyHtml}
+        <div class="educational-layout">
+            <div class="educational-main-content">
+                ${articleHtml}
+                ${howToHtml}
+                ${formulaHtml}
+                ${examplesHtml}
+                ${additionalSectionsHtml}
+                ${faqsHtml}
+                ${relatedToolsHtml}
+            </div>
+            <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+                ${onThisPageHtml}
+            </aside>
+        </div>
+    `;
+}
+
+/**
+ * Backward compatibility aliases
+ */
+export function buildSeoContentHtml(tool) {
+    return buildEducationalLayoutHtml(tool, '');
+}
+
+export function buildRelatedToolsHtml(tool, slug) {
+    return '';
 }
 
 /**

@@ -352,12 +352,229 @@ export const tileCalculator = {
     ],
 };
 
+// ── Stair Calculator ────────────────────────────────────────────
+//
+// Design basis (verified against IRC R311.7 and the "2R + T" rule):
+//   • Risers    = round(Total Rise ÷ Preferred Riser)
+//   • Riser in  = Total Rise ÷ Risers   → even, code-compliant risers
+//   • Treads    = Risers − 1
+//   • Tread in  = 25 − (2 × Riser)      → comfort rule (2R + T ≈ 24–25 in),
+//                or a user-supplied custom tread depth
+//   • Total Run = Treads × Tread
+//   • Stringer length = √(Total Run² + Total Rise²)  (hypotenuse)
+//   • Stringers ≈ ceil(Width ÷ 16 in) spacing        (≥ 2)
+// IRC limits: max riser ≤ 7.75 in, min tread ≥ 10 in, min headroom 80 in.
+
+export const stairCalculator = {
+    id: 'stair-calculator',
+    name: 'Stair Calculator',
+    category: 'Construction',
+    icon: 'fa-route',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Design a staircase with the correct number of risers and treads from your total rise — includes even riser heights, comfortable tread depth, total run, stringer length, and an IRC code-compliance check.',
+    metaDescription: 'Free stair calculator — design a staircase with the right number of risers and treads from your total rise, including even riser heights, comfortable tread depth, total run, stringer length, stringer count, and an IRC code-compliance check.',
+    keywords: ['stair calculator', 'staircase calculator', 'risers and treads calculator', 'stringer calculator'],
+    fields: [
+        // ── Basic Inputs ──
+        { id: 'sec_basic', type: 'section', label: 'Stair Dimensions', icon: 'fa-route' },
+        { id: 'total_height', label: 'Total Rise (in)', type: 'number', default: 108, min: 1, max: 480, step: 1,
+            hint: 'The total vertical height the staircase must climb — normally the floor-to-floor height.' },
+        { id: 'preferred_riser', label: 'Preferred Riser Height (in)', type: 'number', default: 7, min: 3, max: 10, step: 0.25,
+            hint: 'Your target riser height. 7 in is ideal; the calculator keeps every riser identical.' },
+        { id: 'stair_width', label: 'Stair Width (in)', type: 'number', default: 36, min: 12, max: 240, step: 6,
+            hint: 'Inside-to-inside width of the stair opening. Used to estimate stringer count.' },
+
+        // ── Advanced Options (collapsible) ──
+        { id: 'sec_adv', type: 'section', label: 'Advanced Options', icon: 'fa-gear', collapsible: true },
+        { id: 'tread_mode', label: 'Tread Depth Mode', type: 'select', default: 'comfort',
+            options: [
+                { value: 'comfort', label: 'Comfort rule (2R + T = 25 in)' },
+                { value: 'custom',  label: 'Use my own tread depth' },
+            ],
+            hint: 'Comfort mode auto-sizes the tread from the riser height; choose custom to set it exactly.' },
+        { id: 'target_tread', label: 'Custom Tread Depth (in)', type: 'number', default: 10, min: 6, max: 16, step: 0.25,
+            hint: 'Exact tread depth to use when "Custom" tread mode is selected.',
+            condition: (v) => v.tread_mode === 'custom' },
+        { id: 'building_code', label: 'Building Code Target', type: 'select', default: 'irc',
+            options: [
+                { value: 'irc',  label: 'IRC (max riser 7.75 in, min tread 10 in)' },
+                { value: 'none', label: 'No code limits (bare minimum design)' },
+            ],
+            hint: 'IRC (International Residential Code) is the default US residential standard.' },
+        { id: 'landing', label: 'Landing Configuration', type: 'select', default: 'none',
+            options: [
+                { value: 'none',   label: 'None' },
+                { value: 'top',    label: 'Landing at top' },
+                { value: 'bottom', label: 'Landing at bottom' },
+                { value: 'both',   label: 'Landing at top and bottom' },
+            ],
+            hint: 'A level landing adds depth and material; note it in your framing plan.' },
+        { id: 'headroom', label: 'Headroom Clearance (in)', type: 'number', default: 84, min: 60, max: 120, step: 1,
+            hint: 'Vertical clearance above the stair tread nose. IRC requires at least 80 in.' },
+        { id: 'material_waste', label: 'Material Waste (%)', type: 'number', default: 10, min: 0, max: 30, step: 1,
+            hint: 'Extra material for cuts and errors when purchasing lumber and tread stock.' },
+    ],
+    calculate(v) {
+        const totalRise = safeNum(v.total_height, 108);
+        const preferred = safeNum(v.preferred_riser, 7);
+        const width = safeNum(v.stair_width, 36);
+        const treadMode = v.tread_mode || 'comfort';
+        const customTread = safeNum(v.target_tread, 10);
+        const code = v.building_code || 'irc';
+        const landing = v.landing || 'none';
+        const headroom = safeNum(v.headroom, 84);
+        const waste = safeNum(v.material_waste, 10);
+
+        if (totalRise <= 0 || preferred <= 0 || width <= 0) {
+            return errorResult('Enter valid positive dimensions for total rise, riser height, and stair width.');
+        }
+
+        // Number of risers — always an integer so every riser is identical.
+        let numRisers = Math.max(1, Math.round(totalRise / preferred));
+        const riser = roundTo(totalRise / numRisers, 2);
+        const numTreads = numRisers - 1;
+
+        if (numTreads < 1) {
+            return errorResult('Total rise is too small to build a staircase at the given riser height. Increase the rise or lower the preferred riser.');
+        }
+
+        // Tread depth: custom or the comfort rule 2R + T = 25.
+        let tread;
+        if (treadMode === 'custom' && customTread > 0) {
+            tread = roundTo(Math.min(16, Math.max(6, customTread)), 2);
+        } else {
+            tread = roundTo(Math.min(14, Math.max(6, 25 - 2 * riser)), 2);
+        }
+
+        const totalRun = roundTo(numTreads * tread, 2);
+        const stringerLength = roundTo(Math.sqrt(totalRun * totalRun + totalRise * totalRise), 2);
+        const stringers = Math.max(2, Math.ceil(width / 16));
+        const stairAngle = roundTo(Math.atan(totalRise / totalRun) * 180 / Math.PI, 1);
+
+        // Code-compliance check (IRC R311.7).
+        const maxRiser = code === 'irc' ? 7.75 : Infinity;
+        const minTread = code === 'irc' ? 10 : 0;
+        const riserOk = riser <= maxRiser;
+        const treadOk = tread >= minTread;
+        const compliant = riserOk && treadOk;
+        const headroomOk = headroom >= 80;
+
+        // Personalized insights.
+        const insights = [];
+        if (!riserOk) insights.push('Your riser height of ' + riser + ' in exceeds the IRC maximum of 7.75 in. Add another step so each riser is shorter.');
+        if (!treadOk) insights.push('Your tread depth of ' + tread + ' in is shallower than the IRC minimum of 10 in. Use "Custom" tread mode to set a deeper, safer tread.');
+        if (code === 'irc' && compliant) insights.push('Your risers and treads are within IRC limits — a compliant single-family residential stair.');
+        if (landing !== 'none') insights.push('The ' + landing + ' landing adds a level walk-out depth of roughly 36 in and extra framing material beyond the stair run itself.');
+        insights.push('For a ' + width + ' in wide stair, plan on about ' + stringers + ' stringers spaced roughly 16 in apart.');
+        if (!headroomOk) insights.push('Your ' + headroom + ' in headroom is below the 80 in IRC minimum. Open up the stairwell or move the upper-floor opening.');
+
+        // Step-by-step detail table (mirrors an amortization-style breakdown).
+        const tableRows = [];
+        const riserArr = [];
+        const treadArr = [];
+        for (let s = 1; s <= numTreads; s++) {
+            tableRows.push({
+                step: s,
+                riser,
+                tread,
+                cumHeight: roundTo(s * riser, 2),
+                cumRun: roundTo(s * tread, 2),
+            });
+            riserArr.push(riser);
+            treadArr.push(tread);
+        }
+
+        const chartLabels = Array.from({ length: numTreads }, (_, s) => 'Step ' + (s + 1));
+
+        return {
+            stats: [
+                { label: 'Risers Needed', value: numRisers + ' risers' },
+                { label: 'Riser Height', value: riser + ' in', highlight: true },
+                { label: 'Treads Needed', value: numTreads + ' treads' },
+                { label: 'Tread Depth', value: tread + ' in', highlight: true },
+                { label: 'Total Run', value: totalRun + ' in (' + roundTo(totalRun / 12, 2) + ' ft)' },
+                { label: 'Stringer Length', value: stringerLength + ' in' },
+                { label: 'Stringers Needed', value: stringers + ' stringers' },
+                { label: 'Stair Angle', value: stairAngle + '°' },
+            ],
+            insight: {
+                tone: compliant ? 'positive' : 'warning',
+                icon: 'fa-route',
+                headline: 'A ' + numRisers + '-riser staircase with ' + riser + ' in risers and ' + tread + ' in treads.',
+                detail: compliant
+                    ? ('Spans ' + totalRun + ' in across ' + numTreads + ' treads with a ' + stringerLength + ' in stringer. Add ~' + waste + '% material waste when buying lumber.')
+                    : 'Check your riser and tread sizes against your local code before framing — the calculator flags which value is out of range.',
+            },
+            insights,
+            chart: {
+                type: 'bar',
+                labels: chartLabels,
+                datasets: [
+                    { label: 'Riser (in)', data: riserArr, color: '#6366F1' },
+                    { label: 'Tread (in)', data: treadArr, color: '#10B981' },
+                ],
+                legendPosition: 'bottom',
+                format: 'number',
+            },
+            table: {
+                mode: true,
+                title: 'Step-by-Step Stair Detail',
+                columns: [
+                    { key: 'step', label: 'Step' },
+                    { key: 'riser', label: 'Riser (in)', format: 'number' },
+                    { key: 'tread', label: 'Tread (in)', format: 'number' },
+                    { key: 'cumHeight', label: 'Cumulative Height (in)', format: 'number' },
+                    { key: 'cumRun', label: 'Cumulative Run (in)', format: 'number' },
+                ],
+                rows: tableRows,
+                footer: {
+                    step: 'Totals',
+                    riser: roundTo(totalRise, 2),
+                    tread: '—',
+                    cumHeight: roundTo(totalRise, 2),
+                    cumRun: totalRun,
+                },
+            },
+        };
+    },
+article: {
+        heading: 'How to Calculate Stair Risers and Treads',
+        intro: 'Good stairs feel effortless because every riser is identical and every tread is deep enough for a confident step. The GetCalcu Stair Calculator turns a single measurement — your total rise — into a full, code-compliant design: the number of risers, exact riser height, comfortable tread depth, total run, stringer length, and a step-by-step breakdown.',
+        sections: [
+            { heading: 'Start With Your Total Rise', body: 'Total rise is the vertical distance between the two finished floors. Measure it precisely — a quarter-inch error multiplied across eight risers is a two-inch problem at the top step. Once you have the rise, divide by your preferred riser height and round to a whole number of risers, then divide the total rise by that count so every step is exactly the same.' },
+            { heading: 'The Comfort Rule: 2R + T = 25', body: 'Decades of stair design have produced a simple rule of thumb: two riser heights plus one tread depth should land near 25 inches. For a 7-inch riser that gives a 10-to-11-inch tread, which feels natural for an average stride. The GetCalcu Stair Calculator applies this automatically, or you can override it with your own tread depth.' },
+            { heading: 'Meeting Building Code', body: 'The International Residential Code (IRC) caps risers at 7.75 inches and requires treads of at least 10 inches, with 80 inches of headroom measured vertically above the tread nose. Any interior stair (and most exterior ones) must meet these limits to pass inspection, so our calculator compares your design against them and flags violations.' },
+            { heading: 'Framing the Stringers', body: 'Stringers are the inclined boards that carry the treads. Space them roughly every 16 inches across the stair width in addition to the two outer ones, and cut each one from a board at least as long as the diagonal distance between the top and bottom of the stair run.' },
+        ],
+    },
+    howTo: [
+        'Measure the total vertical rise between the two floors and enter it in inches.',
+        'Enter a preferred riser height — 7 in is comfortable — and the stair width.',
+        'Choose "Comfort rule" for an automatic tread depth, or "Custom" to set your own.',
+        'Pick a building code target (IRC is the US default) and any landing/headroom requirements.',
+        'Press Calculate to see the full design plus a step-by-step dimension table.',
+    ],
+    formula: 'Risers = round(Total Rise ÷ Preferred Riser) | Riser = Total Rise ÷ Risers | Treads = Risers − 1 | Tread = 25 − (2 × Riser) [comfort] | Total Run = Treads × Tread | Stringer = √(Run² + Rise²)',
+    examples: [
+        { title: '9 ft Floor-to-Floor', input: 'Total rise 108 in, preferred riser 7 in, width 36 in', result: '15 risers @ 7.2 in, 14 treads @ 10.6 in, run 148.4 in' },
+        { title: 'Basement Stairs', input: 'Total rise 96 in, preferred riser 7 in, width 30 in', result: '14 risers @ 6.86 in, 13 treads @ 11.29 in, run 146.7 in' },
+        { title: 'Deck Steps', input: 'Total rise 36 in, preferred riser 7 in, width 48 in', result: '5 risers @ 7.2 in, 4 treads @ 10.6 in, run 42.4 in' },
+    ],
+    faqs: [
+        { q: 'How many steps do I need for a 9-foot ceiling?', a: 'Measure the total rise between finished floors (usually about 108-110 inches). Divide by a 7-inch riser and round: 108 ÷ 7 = 15.4, so 15 risers at 7.2 inches each. That gives 14 treads running about 148 inches out from the top step.' },
+        { q: 'What is the maximum riser height allowed by code?', a: 'Under the International Residential Code (IRC), a single-family residential stair riser may not exceed 7.75 inches, and all risers in one flight must be within a tiny tolerance of each other. Treads must be at least 10 inches deep.' },
+        { q: 'How do I find the comfortable tread depth?', a: 'Use the 2R + T rule: two riser heights plus the tread depth should equal about 25 inches. So for a 7-inch riser, a 10-to-11-inch tread feels natural. Too-shallow treads cause toe-catching; too-deep ones make the stride awkward.' },
+        { q: 'How long should my stair stringers be?', a: 'A stringer is the hypotenuse of the right triangle formed by the total rise and the total run. For a 15-riser stair that is 108 inches high and 148 inches of run, the stringer is about 183 inches (15 feet 3 inches) on the long edge.' },
+    ],
+};
 // ── Export all construction calculators ─────────────────────────
 
 export const constructionCalculators = [
     concreteCalculator,
     paintCalculator,
     tileCalculator,
+    stairCalculator,
 ];
 
 /**

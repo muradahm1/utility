@@ -126,6 +126,8 @@ function buildRegistry() {
       articleHeading: (t.article && t.article.heading) || null,
       articleIntro: (t.article && t.article.intro) || null,
       faqs: Array.isArray(t.faqs) ? t.faqs.map(f => ({ q: f.q, a: f.a })) : [],
+      revisionDate: t.revisionDate || null,
+      lastReviewed: t.lastReviewed || null,
     };
   });
   return registry;
@@ -201,6 +203,7 @@ function buildArticleJsonLd(tool) {
     publisher: { '@type': 'Organization', name: 'GetCalcu', url: `${BASE_URL}/` },
     about: tool.name,
     url: buildCanonical(tool.slug),
+    dateModified: tool.revisionDate || TODAY,
   };
 }
 
@@ -417,19 +420,23 @@ slugs.forEach(slug => {
 
 // Generate sitemap.xml
 const staticUrls = [
-  { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'weekly'  },
-  { loc: `${BASE_URL}/about`,       priority: '0.8', changefreq: 'monthly' },
-  { loc: `${BASE_URL}/contact`,     priority: '0.7', changefreq: 'monthly' },
-  { loc: `${BASE_URL}/privacy`,     priority: '0.6', changefreq: 'monthly' },
-  { loc: `${BASE_URL}/terms`,       priority: '0.6', changefreq: 'monthly' },
-  { loc: `${BASE_URL}/cookie-policy`, priority: '0.6', changefreq: 'monthly' },
+  { loc: `${BASE_URL}/`,              lastmod: TODAY, priority: '1.0', changefreq: 'weekly'  },
+  { loc: `${BASE_URL}/about`,         lastmod: TODAY, priority: '0.8', changefreq: 'monthly' },
+  { loc: `${BASE_URL}/contact`,       lastmod: TODAY, priority: '0.7', changefreq: 'monthly' },
+  { loc: `${BASE_URL}/privacy`,       lastmod: TODAY, priority: '0.6', changefreq: 'monthly' },
+  { loc: `${BASE_URL}/terms`,         lastmod: TODAY, priority: '0.6', changefreq: 'monthly' },
+  { loc: `${BASE_URL}/cookie-policy`, lastmod: TODAY, priority: '0.6', changefreq: 'monthly' },
 ];
 
-const toolUrls = slugs.map(slug => ({
-  loc:        `${BASE_URL}/tool/${slug}`,
-  priority:   '0.9',
-  changefreq: 'monthly',
-}));
+const toolUrls = slugs.map(slug => {
+  const tool = registry[slug];
+  return {
+    loc:        `${BASE_URL}/tool/${slug}`,
+    lastmod:    tool.revisionDate || TODAY,
+    priority:   '0.9',
+    changefreq: 'monthly',
+  };
+});
 
 const allUrls = [...staticUrls, ...toolUrls];
 
@@ -438,7 +445,7 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
 ${allUrls.map(u => `
   <url>
     <loc>${u.loc}</loc>
-    <lastmod>${TODAY}</lastmod>
+    <lastmod>${u.lastmod}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('')}

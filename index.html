@@ -80,7 +80,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         { "@type": "ListItem", "position": 17, "name": "Ohm's Law Calculator", "url": "https://www.getcalcu.com/tool/ohms-law-calculator" },
         { "@type": "ListItem", "position": 18, "name": "Pressure Calculator", "url": "https://www.getcalcu.com/tool/pressure-calculator" },
         { "@type": "ListItem", "position": 19, "name": "Beam Deflection Calculator", "url": "https://www.getcalcu.com/tool/beam-deflection-calculator" },
-        { "@type": "ListItem", "position": 20, "name": "Tip Calculator", "url": "https://www.getcalcu.com/tool/tip-calculator" }
+        { "@type": "ListItem", "position": 20, "name": "Tip Calculator", "url": "https://www.getcalcu.com/tool/tip-calculator" },
+        { "@type": "ListItem", "position": 21, "name": "Stair Calculator", "url": "https://www.getcalcu.com/tool/stair-calculator" }
       ]
     }
     </script>
@@ -339,6 +340,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <p>Calculate your FIRE number, retirement timeline, investment growth, passive income, and financial independence progress.</p>
                             <span class="tag tag-finance">Finance</span>
                         </a>
+                        <a href="/tool/stair-calculator" class="tool-card">
+                            <div class="tool-icon icon-construction"><i class="fa-solid fa-route"></i></div>
+                            <h3>Stair Calculator</h3>
+                            <p>Design a staircase with the right number of risers and treads — even riser heights, comfortable treads, total run, and stringer length.</p>
+                            <span class="tag tag-construction">Construction</span>
+                        </a>
                     </div>
                 </section>
 
@@ -425,6 +432,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/core/index.js" type="module"></script>
     <script>
         // Fill category counts from TOOLS registry (real numbers)
         const categoryCounts = {};

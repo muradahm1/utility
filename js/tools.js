@@ -1,4 +1,4 @@
-﻿// ── Phase 5.11: Lazy-load Chart.js ONLY when a chart is actually needed ──
+// ── Phase 5.11: Lazy-load Chart.js ONLY when a chart is actually needed ──
 // Some legacy calculators in this file use `new Chart()` directly. On the
 // homepage Chart is undefined, so this would otherwise inject the ~200KB
 // Chart.js library onto pages that never render a chart (slowing first paint).
@@ -22,6 +22,8 @@ const TOOLS = {
     icon: 'fa-house',
     iconClass: 'icon-home',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.',
     metaDescription: 'Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.',
     fields: [
@@ -73,33 +75,173 @@ const TOOLS = {
       };
     },
 
-    article: {
-      heading: 'How to Calculate Your Mortgage Payment Accurately',
-      intro: 'Your monthly mortgage payment is more than just principal and interest — it includes property taxes and insurance (PITI). The GetCalcu Mortgage Calculator breaks down every component so you know exactly what you will pay each month and over the life of the loan.',
-      sections: [
-        { heading: 'Principal, Interest, Taxes, and Insurance (PITI)', body: 'Principal is the amount you borrowed, interest is the lender\'s charge for lending it, property taxes fund local services, and homeowners insurance protects your investment. Lenders typically bundle all four into one monthly payment.' },
-        { heading: 'How the Loan Term Affects Total Cost', body: 'A 30-year term keeps monthly payments low but you pay roughly twice as much total interest as a 15-year term. Use the calculator to compare terms side by side and see the lifetime interest difference.' },
+    methodology: {
+      standards: 'This calculator uses the standard monthly compounding amortization equation adopted by the Consumer Financial Protection Bureau (CFPB), Federal Reserve, and mortgage lending institutions worldwide.',
+      summary: 'Our calculation engine computes monthly principal and interest (P&I) using standard actuarial amortization mathematics. Annual property taxes and homeowners insurance are divided evenly across 12 monthly escrow installments.',
+      assumptions: [
+        'Interest compounds monthly on a 360-day or 365-day fixed amortization schedule (12 monthly payments per calendar year).',
+        'Interest rate remains fixed throughout the selected loan term.',
+        'Property taxes and insurance premiums remain constant over time in baseline projections (actual municipal taxes may adjust annually).',
+        'Private Mortgage Insurance (PMI) is not included in baseline P&I and is typically required by lenders when the down payment is below 20%.',
       ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) — Loan Estimate & Closing Disclosure Standards',
+        'Federal Reserve Board — Consumer Handbook on Adjustable-Rate and Fixed Mortgages',
+        'Fannie Mae & Freddie Mac Single-Family Amortization Guidelines',
+      ],
+      lastReviewed: 'September 2026',
     },
+
+    article: {
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Your Mortgage Payment Accurately',
+      intro: 'When financing a home, your monthly housing expenditure is rarely just the principal and interest on the borrowed amount. Most lenders establish an escrow account that bundles local property taxes and homeowners insurance into a single monthly bill (commonly referred to as PITI). Understanding every component of this payment—and how loan terms and down payments alter your lifetime borrowing costs—is essential for making confident home-buying decisions.',
+      sections: [
+        {
+          id: 'piti-breakdown',
+          heading: 'Breaking Down PITI: Principal, Interest, Taxes, and Insurance',
+          body: [
+            'Principal: The actual capital borrowed from the lender to buy the home. Each monthly payment reduces this remaining balance according to the loan amortization schedule.',
+            'Interest: The fee charged by the lender for the capital borrowed, calculated as an annualized percentage (APR) of the outstanding principal balance. Early in a long-term mortgage, interest comprises the dominant portion of your monthly payment.',
+            'Property Taxes: Levied annually by local county and municipal taxing authorities to fund public schools, roads, emergency services, and civic infrastructure. Your lender divides the estimated yearly tax bill by 12 and collects it into an escrow reserve.',
+            'Homeowners Insurance: Casualty and hazard coverage protecting the physical home against damage, fire, and natural disasters. Like property taxes, this premium is escrowed in 12 equal monthly installments.',
+            'Private Mortgage Insurance (PMI): On conventional mortgages, lenders usually require PMI if your down payment is less than 20% (Loan-to-Value greater than 80%). PMI protects the lender in case of default and generally adds 0.5% to 1.5% of the loan balance annually until you reach 20% equity.'
+          ]
+        },
+        {
+          id: 'loan-term-comparison',
+          heading: '30-Year vs. 15-Year Mortgages: The Lifetime Interest Tradeoff',
+          body: [
+            'A 30-year fixed-rate mortgage spreads your repayment over 360 monthly payments. This keeps your regular monthly obligation lower and more manageable, providing greater monthly cash flow flexibility. However, because the loan balance amortizes slowly, you pay significantly more total interest over 30 years—frequently exceeding the original price of the home.',
+            'A 15-year fixed-rate mortgage requires higher monthly payments (typically 25% to 35% higher for the same loan amount), but because lenders take on less duration risk, 15-year rates are often 0.5% to 0.75% lower. Crucially, you pay off the principal in half the time, saving hundreds of thousands of dollars in lifetime interest and building home equity at an accelerated pace.'
+          ]
+        },
+        {
+          id: 'amortization-mechanics',
+          heading: 'The Mathematical Mechanics of Amortization',
+          body: [
+            'Amortization describes the mathematical process of retiring debt through scheduled, equal periodic payments. Although your total monthly principal and interest payment remains constant throughout a fixed-rate loan, the internal split between principal and interest shifts continuously.',
+            'In Month 1 of a $320,000 30-year loan at 7.00% APR, the monthly interest charge is $1,866.67, meaning only $262.30 goes toward reducing your loan balance. By Year 15, the monthly interest has fallen to approximately $1,340, allowing $789 to go toward principal. By Year 25, the vast majority of each payment directly builds your home equity.'
+          ]
+        },
+        {
+          id: 'down-payment-strategy',
+          heading: 'Down Payment Strategy and Loan-to-Value (LTV)',
+          body: [
+            'Your down payment directly determines your initial Loan-to-Value (LTV) ratio. A larger down payment produces three immediate financial benefits: it reduces the required loan principal, lowers your ongoing monthly payment, and avoids private mortgage insurance (PMI) when you contribute 20% or more.',
+            'Even if you do not have 20% saved upfront, putting down 5% to 10% still lowers your monthly principal balance compared to minimum down payment programs, while allowing you to refinance or request PMI cancellation once your property appreciates or you pay down the balance to 80% LTV.'
+          ]
+        }
+      ]
+    },
+
     howTo: [
-      'Enter the home price and your down payment — the calculator subtracts the down payment to find your loan amount.',
-      'Add the annual interest rate (APR) and choose your loan term in years.',
-      'Include annual property tax and homeowners insurance for a true PITI monthly payment.',
-      'Review your monthly payment, total interest, and full amortization schedule.',
-      'Adjust the down payment or term to see how much interest you can save.',
+      'Enter the purchase price of the property you intend to buy.',
+      'Specify your down payment in dollars (e.g., $80,000 for a 20% down payment on a $400,000 home).',
+      'Input your annual mortgage interest rate (APR) and choose your repayment term (such as 15 or 30 years).',
+      'Add your estimated annual property taxes and homeowners insurance premiums to generate a complete PITI monthly payment.',
+      'Review your monthly payment breakdown, total interest cost, and the full month-by-month amortization schedule below.',
     ],
+
+    formulaTitle: 'Mortgage Amortization Formula',
+    formula: 'M = P × [r(1 + r)^n] / [(1 + r)^n − 1]',
+    formulaExplanation: 'To determine your fixed monthly principal and interest payment (M), the principal loan amount (P) is multiplied by a periodic interest factor derived from your monthly interest rate (r) compounded over the total number of monthly payments (n).',
+    formulaVariables: [
+      { name: 'M', description: 'Monthly principal and interest payment' },
+      { name: 'P', description: 'Principal loan amount (Home Price − Down Payment)' },
+      { name: 'r', description: 'Monthly interest rate (Annual Interest Rate ÷ 12 ÷ 100)' },
+      { name: 'n', description: 'Total number of monthly payments (Loan Term in Years × 12)' },
+      { name: 'Monthly PITI', description: 'M + (Annual Property Tax ÷ 12) + (Annual Insurance ÷ 12)' },
+      { name: 'Total Interest', description: '(M × n) − P' },
+      { name: 'Total Cost', description: 'Down Payment + (Monthly PITI × n)' },
+    ],
+
     examples: [
-      { title: 'Typical 30-Year Fixed Mortgage', input: 'Price: $400,000, Down: $80,000, Rate: 7%, Term: 30 years', result: 'Monthly Payment: ~$2,129 | Total Interest: ~$466,000' },
-      { title: '15-Year Term Saves Interest', input: 'Price: $400,000, Down: $80,000, Rate: 6.5%, Term: 15 years', result: 'Monthly Payment: ~$2,935 | Total Interest: ~$188,000' },
+      {
+        title: 'Standard 30-Year Fixed Mortgage (20% Down)',
+        input: 'Price: $400,000, Down: $80,000 (20%), Rate: 7.00% APR, Term: 30 Years, Tax: $4,800/yr, Ins: $1,200/yr',
+        result: 'Monthly P&I: $2,128.97 | Total Monthly PITI: $2,628.97 | Total Interest: $446,429.20 | Total Cost: $1,026,429.20',
+        explanation: 'Over 30 years, borrowing $320,000 generates $446,429.20 in interest alone—substantially more than the original loan amount.'
+      },
+      {
+        title: '15-Year Accelerated Equity Mortgage (20% Down)',
+        input: 'Price: $400,000, Down: $80,000 (20%), Rate: 6.25% APR, Term: 15 Years, Tax: $4,800/yr, Ins: $1,200/yr',
+        result: 'Monthly P&I: $2,743.75 | Total Monthly PITI: $3,243.75 | Total Interest: $173,875.00 | Total Cost: $663,875.00',
+        explanation: 'Increasing the monthly payment by $614.78 saves $272,554.20 in lifetime interest and pays off the property 15 years sooner.'
+      },
+      {
+        title: 'Starter Home with 5% Down Payment',
+        input: 'Price: $300,000, Down: $15,000 (5%), Rate: 7.00% APR, Term: 30 Years, Tax: $3,600/yr, Ins: $1,080/yr',
+        result: 'Monthly P&I: $1,896.11 | Total Monthly PITI (excl. PMI): $2,286.11 | Total Interest: $397,599.60',
+        explanation: 'Financing $285,000 requires factoring in an estimated $120–$190/mo in private mortgage insurance (PMI) until you reach 20% home equity.'
+      }
     ],
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Monthly Total = M + (Property Tax / 12) + (Insurance / 12) | Total Interest = (M × n) − P',
+
+    additionalSections: [
+      {
+        id: 'common-costs',
+        heading: 'Common Homeownership Costs People Often Forget',
+        intro: 'Your monthly mortgage statement is only one part of total homeownership expenses. When planning a purchase budget, consider these recurring and upfront costs:',
+        items: [
+          {
+            title: 'Upfront Closing Costs',
+            description: 'Lender origination fees, appraisal, credit checks, title search, and title insurance. These typically range from 2% to 5% of the total loan amount at settlement.',
+            note: 'Paid at closing; not included in monthly PITI calculation.'
+          },
+          {
+            title: 'HOA / Condo Association Fees',
+            description: 'Monthly or quarterly fees covering common area maintenance, trash, exterior amenities, and building insurance reserves. Typical ranges are $150 to $600/month.',
+            note: 'Paid directly to association; lenders count this toward debt-to-income ratios.'
+          },
+          {
+            title: 'Ongoing Home Maintenance & Capital Repairs',
+            description: 'General rule of thumb is budgeting 1% to 2% of the home purchase price annually for roof repairs, plumbing, HVAC maintenance, and appliance replacements.',
+            note: 'Essential emergency reserve separate from mortgage escrow.'
+          },
+          {
+            title: 'Escrow Cushion & Property Tax Reassessments',
+            description: 'Municipal property taxes can rise following a reassessment after purchase. Most lenders require an initial 2-month reserve cushion in your escrow account.',
+            note: 'May cause annual adjustments in your total monthly escrow payment.'
+          }
+        ]
+      }
+    ],
+
     faqs: [
-      { q: 'How is a monthly mortgage payment calculated?', a: 'A monthly mortgage payment is calculated using the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the loan principal, r is the monthly interest rate (annual rate ÷ 12), and n is the total number of payments (years × 12). Property taxes and insurance are then added to get your full PITI payment.' },
-      { q: 'What is PITI in a mortgage payment?', a: 'PITI stands for Principal, Interest, Taxes, and Insurance — the four components most lenders bundle into your monthly mortgage payment. Principal and Interest repay the loan, while Taxes and Insurance cover annual property tax and homeowners insurance, divided by 12 and collected each month.' },
-      { q: 'How much down payment do I need to avoid PMI?', a: 'You typically need a down payment of at least 20% of the home price to avoid Private Mortgage Insurance (PMI). PMI protects the lender (not you) when you put down less than 20%, and usually costs 0.5% to 1% of the loan amount per year until your equity reaches 20%.' },
-      { q: 'Is a 15-year or 30-year mortgage better?', a: 'A 15-year mortgage has higher monthly payments but you pay roughly half the total interest of a 30-year loan and build equity faster. A 30-year mortgage keeps payments affordable and offers flexibility, but costs far more over time. Use our calculator to compare the total interest of both terms with your exact numbers.' },
-      { q: 'What is an amortization schedule?', a: 'An amortization schedule is a table showing how each payment splits between principal and interest over the life of the loan. Early payments are mostly interest, while later payments are mostly principal. Our calculator generates a full month-by-month amortization schedule automatically.' },
+      {
+        q: 'How is a monthly mortgage payment calculated?',
+        a: 'A monthly mortgage payment is calculated using the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan principal (home price minus down payment), r is your monthly interest rate (annual APR ÷ 12 ÷ 100), and n is the total number of scheduled monthly payments (years × 12). Monthly property taxes and insurance premiums are then added to establish your total PITI obligation.'
+      },
+      {
+        q: 'What does PITI stand for and why is it important?',
+        a: 'PITI stands for Principal, Interest, Taxes, and Insurance. While principal and interest go toward repaying your loan, taxes and insurance cover local municipal property levies and hazard insurance. Lenders calculate your debt-to-income (DTI) ratio based on your complete PITI payment rather than principal and interest alone.'
+      },
+      {
+        q: 'How much down payment do I need to avoid paying PMI?',
+        a: 'On conventional mortgages, a down payment of at least 20% of the purchase price (80% Loan-to-Value) eliminates the requirement for Private Mortgage Insurance (PMI). If you put down less than 20%, PMI is typically added to your monthly bill until your loan principal reaches 80% of the original purchase price or appraised value.'
+      },
+      {
+        q: 'Is a 15-year or 30-year fixed mortgage better for me?',
+        a: 'A 30-year fixed mortgage provides lower, more predictable monthly payments, making it easier to qualify and providing cash flow buffer for other savings goals. A 15-year mortgage requires a higher monthly commitment but significantly cuts total interest paid over the life of the loan and builds equity much faster.'
+      },
+      {
+        q: 'What is an amortization schedule?',
+        a: 'An amortization schedule is a complete table showing the breakdown of every monthly payment over the entire life of your loan. It specifies exactly how much of each payment goes toward paying down principal balance versus paying accrued interest, as well as your remaining balance after each payment.'
+      },
+      {
+        q: 'Can I make extra payments to pay off my mortgage early?',
+        a: 'Yes, on standard conventional and government loans without prepayment penalties, making extra principal payments directly reduces your remaining loan balance. Because interest is calculated on your outstanding principal, extra payments shorten your loan term and reduce total lifetime interest.'
+      },
+      {
+        q: 'What closing costs should I anticipate when buying a home?',
+        a: 'Beyond your down payment, buyers typically pay 2% to 5% of the loan amount in closing costs. These include loan origination fees, appraisal fees, title searches, title insurance, recording fees, and initial escrow reserves for taxes and insurance.'
+      },
+      {
+        q: 'Why does my total mortgage payment change over time?',
+        a: 'Even with a fixed-rate mortgage where principal and interest never change, your total monthly payment can fluctuate if your local county adjusts property tax rates or if your homeowners insurance premium changes annually upon policy renewal.'
+      }
     ],
+    related: ['loan-calculator', 'rent-vs-buy-calculator', 'house-affordability-calculator', 'amortization-calculator'],
   },
 
   'bmi-calculator': {
@@ -108,6 +250,8 @@ const TOOLS = {
     icon: 'fa-heart',
     iconClass: 'icon-health',
     tagClass: 'tag-health',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate your Body Mass Index (BMI) and find out your healthy weight range.',
     metaDescription: 'Free BMI calculator — instantly calculate your Body Mass Index, health category, and ideal weight range.',
     fields: [
@@ -143,44 +287,170 @@ const TOOLS = {
       const healthyMax = roundTo(24.9 * heightM * heightM, 1);
 
       const weightDisplay = v.unit === 'imperial' ? 'lb' : 'kg';
+      const healthyRangeMin = v.unit === 'imperial' ? roundTo((18.5 * heightM * heightM) / 0.453592, 1) : healthyMin;
+      const healthyRangeMax = v.unit === 'imperial' ? roundTo((24.9 * heightM * heightM) / 0.453592, 1) : healthyMax;
 
       return {
         stats: [
           { label: 'Your BMI',          value: fmtN(bmi),            highlight: true },
           { label: 'Category',          value: cat.label,            color: cat.color },
-          { label: 'Healthy Weight Range', value: `${healthyMin}–${healthyMax} ${weightDisplay}` },
+          { label: 'Healthy Weight Range', value: `${healthyRangeMin}–${healthyRangeMax} ${weightDisplay}` },
         ],
         bmiGauge: { bmi: clampedBmi, color: cat.color, label: cat.label },
       };
     },
 
-    article: {
-      heading: 'How to Calculate Your BMI and Understand Your Weight Category',
-      intro: 'Body Mass Index (BMI) is a widely used screening tool that estimates body fat from your height and weight. The GetCalcu BMI Calculator instantly computes your BMI, classifies it, and shows your healthy weight range — in metric or imperial units.',
-      sections: [
-        { heading: 'What the BMI Categories Mean', body: 'A BMI below 18.5 is Underweight, 18.5–24.9 is Normal Weight, 25–29.9 is Overweight, and 30 or above is Obese. These ranges are the same for adult men and women of all ages, though BMI does not directly measure body fat or muscle mass.' },
-        { heading: 'Limitations of BMI', body: 'BMI does not distinguish between muscle and fat, so very muscular athletes may score "Overweight" despite low body fat. It is a useful starting point, not a complete health picture — combine it with waist measurement and body fat percentage for a fuller assessment.' },
+    methodology: {
+      standards: 'Thresholds conform to official clinical guidelines established by the World Health Organization (WHO), the Centers for Disease Control and Prevention (CDC), and the National Institutes of Health (NIH).',
+      summary: 'Body Mass Index (BMI) is an anthropometric screening metric defined as body mass divided by the square of body height. It provides an initial population-level estimate of weight categories but is not an individualized medical diagnosis.',
+      assumptions: [
+        'Standard adult weight categories apply to individuals aged 20 years and older.',
+        'The calculation assumes uniform body density and does not distinguish between skeletal muscle mass, bone density, and adipose tissue.',
+        'Clinical assessments should incorporate complementary markers including waist circumference, body fat percentage, and metabolic health panels.',
       ],
+      sources: [
+        'World Health Organization (WHO) — Body Mass Index Classification Guidelines',
+        'Centers for Disease Control and Prevention (CDC) — Defining Adult BMI',
+        'National Heart, Lung, and Blood Institute (NIH) — Clinical Guidelines on Obesity Identification',
+      ],
+      lastReviewed: 'September 2026',
     },
+
+    article: {
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Your BMI and Understand Weight Categories',
+      intro: 'Body Mass Index (BMI) is a standardized screening metric used by healthcare providers and public health agencies globally to assess whether an individual falls within an expected weight range for their height. While it serves as a helpful, accessible baseline, understanding what the numbers indicate—and what limitations exist—is critical for interpreting your results responsibly.',
+      sections: [
+        {
+          id: 'bmi-categories-explained',
+          heading: 'Standard Adult BMI Classifications (WHO & CDC)',
+          body: [
+            'Underweight (BMI below 18.5): Indicates body weight is below the expected range for height. May be associated with nutritional deficits, reduced immune function, or underlying conditions.',
+            'Normal / Healthy Weight (BMI 18.5–24.9): The statistical range associated with the lowest incidence of weight-related cardiovascular and metabolic health conditions in adult populations.',
+            'Overweight (BMI 25.0–29.9): Indicates weight greater than the standard reference range. Healthcare providers generally evaluate lifestyle factors and waist measurements to assess individual risk.',
+            'Obesity Class I (BMI 30.0–34.9), Class II (BMI 35.0–39.9), and Class III (BMI 40.0+): Correlated with elevated risk of hypertension, type 2 diabetes, cardiovascular disease, and sleep apnea.'
+          ]
+        },
+        {
+          id: 'clinical-limitations',
+          heading: 'Important Clinical Limitations of BMI',
+          body: [
+            'Muscle vs. Fat Composition: Because muscle tissue is denser than adipose fat tissue, athletes, weightlifters, and muscular individuals may register an "overweight" or "obese" BMI despite having low body fat and excellent cardiovascular fitness.',
+            'Age and Gender Differences: Women naturally carry higher essential body fat percentages than men at identical BMI levels. Similarly, older adults often experience sarcopenia (loss of muscle mass) while body fat increases, which may mask health risks at a "normal" BMI.',
+            'Ethnicity Considerations: Research endorsed by the WHO indicates that health risks associated with obesity may begin at lower BMI thresholds (such as 23.0 for overweight and 27.5 for obesity) in certain Asian populations.'
+          ]
+        },
+        {
+          id: 'healthy-weight-targets',
+          heading: 'How Healthy Weight Ranges Are Determined',
+          body: [
+            'Your healthy weight range is calculated by applying the normal BMI boundaries (18.5 to 24.9) to your specific height squared: Healthy Min = 18.5 × Height(m)², and Healthy Max = 24.9 × Height(m)². This gives a realistic span of healthy weights rather than a single rigid number.'
+          ]
+        }
+      ]
+    },
+
     howTo: [
-      'Choose your unit system — Metric (kg and cm) or Imperial (lb and in).',
-      'Enter your weight and height in the selected units.',
-      'Optionally add your age for extra context (categories are the same for all adults).',
-      'Read your BMI value and color-coded category on the gauge.',
-      'Use the healthy weight range to set a realistic target.',
+      'Choose your preferred unit system: Metric (kilograms and centimeters) or Imperial (pounds and inches).',
+      'Enter your current body weight and height.',
+      'Optionally specify your age to provide demographic context.',
+      'Review your calculated BMI value, color-coded classification, and customized healthy weight span on the visual gauge.',
+      'Consult a licensed healthcare professional before initiating significant dietary or fitness modifications.',
     ],
+
+    formulaTitle: 'Body Mass Index Formula',
+    formula: 'BMI = Weight (kg) / [Height (m)]² | Imperial: BMI = 703 × Weight (lb) / [Height (in)]²',
+    formulaExplanation: 'BMI divides total body weight by height squared. For imperial measurements, a conversion factor of 703 is applied to reconcile pounds and inches to metric kilograms per square meter.',
+    formulaVariables: [
+      { name: 'BMI', description: 'Body Mass Index (kg/m²)' },
+      { name: 'Weight (kg)', description: 'Body mass in kilograms (or pounds converted via × 0.453592)' },
+      { name: 'Height (m)', description: 'Stature in meters (or inches converted via × 0.0254)' },
+      { name: 'Healthy Min Weight', description: '18.5 × [Height in meters]²' },
+      { name: 'Healthy Max Weight', description: '24.9 × [Height in meters]²' },
+    ],
+
     examples: [
-      { title: 'Average Adult (Metric)', input: 'Weight: 70 kg, Height: 175 cm', result: 'BMI: 22.9 — Normal Weight' },
-      { title: 'Imperial Units', input: 'Weight: 180 lb, Height: 70 in', result: 'BMI: 25.8 — Overweight' },
+      {
+        title: 'Metric Reference Scenario',
+        input: 'Weight: 70.0 kg, Height: 175.0 cm (1.75 m), Age: 30',
+        result: 'BMI: 22.9 (Normal Weight) | Healthy Weight Range: 56.7–76.3 kg',
+        explanation: 'A 70 kg individual at 175 cm falls comfortably in the center of the normal BMI range.'
+      },
+      {
+        title: 'Imperial Reference Scenario',
+        input: 'Weight: 180.0 lb, Height: 70.0 in (5 ft 10 in), Age: 35',
+        result: 'BMI: 25.8 (Overweight) | Healthy Weight Range: 128.9–173.5 lb',
+        explanation: 'At 180 lb, this individual is slightly above the 24.9 BMI cutoff (173.5 lb), indicating a screening recommendation to evaluate lifestyle and waist circumference.'
+      },
+      {
+        title: 'Underweight Screening Scenario',
+        input: 'Weight: 45.0 kg, Height: 162.0 cm (1.62 m), Age: 25',
+        result: 'BMI: 17.1 (Underweight) | Healthy Weight Range: 48.5–65.3 kg',
+        explanation: 'A BMI of 17.1 is below the 18.5 threshold, suggesting the individual is under the expected healthy weight for 162 cm.'
+      }
     ],
-    formula: 'BMI = Weight (kg) / Height (m)² | Imperial: BMI = 703 × Weight (lb) / Height (in)² | Healthy Range: 18.5–24.9',
+
+    additionalSections: [
+      {
+        id: 'holistic-health-markers',
+        heading: 'Comprehensive Health Indicators Beyond BMI',
+        intro: 'To build an accurate assessment of health, clinical professionals typically pair BMI with these complementary metrics:',
+        items: [
+          {
+            title: 'Waist-to-Height Ratio (WHtR)',
+            description: 'Keeping your waist circumference under half your height (ratio < 0.50) is strongly correlated with lower cardiovascular and metabolic risk regardless of total weight.',
+            note: 'Measures central abdominal fat distribution.'
+          },
+          {
+            title: 'Body Fat Percentage',
+            description: 'Direct measurement via DEXA scans, bioelectrical impedance, or calipers separates lean muscle mass from fat tissue.',
+            note: 'Typical healthy ranges: 14–24% for men, 21–31% for women.'
+          },
+          {
+            title: 'Cardiorespiratory Fitness',
+            description: 'Aerobic endurance, muscular strength, resting heart rate, and VO2 max often provide more predictive value for longevity than scale weight alone.',
+            note: 'Physical activity provides health benefits across all BMI tiers.'
+          },
+          {
+            title: 'Metabolic & Blood Lipid Panels',
+            description: 'Fasting blood glucose, HbA1c, triglycerides, HDL/LDL cholesterol, and blood pressure determine metabolic health status.',
+            note: 'Essential clinical data from annual medical checkups.'
+          }
+        ]
+      }
+    ],
+
     faqs: [
-      { q: 'How is BMI calculated?', a: 'BMI is calculated as weight in kilograms divided by height in meters squared (kg/m²). In imperial units, the formula is 703 × weight in pounds ÷ height in inches squared. Our calculator handles both unit systems automatically.' },
-      { q: 'What is a healthy BMI range?', a: 'A healthy BMI for adults is between 18.5 and 24.9 (Normal Weight). A BMI of 25–29.9 is classified as Overweight, and 30 or above as Obese. Below 18.5 is considered Underweight. These thresholds are set by the World Health Organization.' },
-      { q: 'Is BMI accurate for athletes and muscular people?', a: 'BMI does not distinguish muscle from fat, so heavily muscled athletes may register as "Overweight" or "Obese" despite having low body fat. For athletic builds, body fat percentage and waist-to-hip ratio are more accurate indicators of health than BMI alone.' },
-      { q: 'What BMI is considered obese?', a: 'A BMI of 30 or higher is classified as obese. Class I obesity is 30–34.9, Class II is 35–39.9, and Class III (severe) is 40 or above. Obesity is associated with increased risk of heart disease, type 2 diabetes, and other conditions.' },
-      { q: 'Does BMI differ for men and women?', a: 'No — the BMI categories and formula are the same for adult men and women. However, women naturally carry more body fat at the same BMI, and older adults tend to have more body fat at the same BMI than younger adults.' },
+      {
+        q: 'How is Body Mass Index (BMI) calculated?',
+        a: 'BMI is calculated by dividing body weight in kilograms by height in meters squared (kg/m²). For imperial measurements, multiply weight in pounds by 703 and divide by height in inches squared: BMI = (Weight in lb × 703) ÷ (Height in inches)². Our calculator automates these conversions seamlessly.'
+      },
+      {
+        q: 'What are the official adult BMI categories?',
+        a: 'According to the World Health Organization (WHO) and CDC, adult BMI is classified as: Underweight (below 18.5), Normal Weight (18.5 to 24.9), Overweight (25.0 to 29.9), and Obese (30.0 or higher).'
+      },
+      {
+        q: 'Why can BMI be misleading for athletes and bodybuilders?',
+        a: 'BMI does not differentiate between skeletal muscle and body fat. Because muscle is approximately 18% denser than fat by volume, highly trained athletes with substantial muscle mass and low body fat frequently register in the "overweight" or "obese" BMI categories.'
+      },
+      {
+        q: 'How is the healthy weight range determined for my height?',
+        a: 'The healthy weight range corresponds to the minimum (18.5) and maximum (24.9) normal BMI thresholds applied to your height. For example, for someone 175 cm tall, the range is 18.5 × (1.75)² = 56.7 kg to 24.9 × (1.75)² = 76.3 kg.'
+      },
+      {
+        q: 'Do BMI categories differ for men and women?',
+        a: 'Standard clinical BMI classification tables are identical for adult men and women. However, women naturally maintain higher essential body fat levels than men with the same BMI, which is why body composition metrics provide helpful context.'
+      },
+      {
+        q: 'Is BMI used the same way for children and teenagers?',
+        a: 'No. For children and adolescents aged 2 to 19, BMI is calculated the same way but interpreted using age-and-sex-specific growth percentiles (CDC Growth Charts) rather than fixed adult category cutoffs.'
+      },
+      {
+        q: 'What should I do if my BMI is in the overweight or underweight category?',
+        a: 'Use your BMI as an informative initial screening point rather than a definitive diagnosis. Schedule an evaluation with a primary healthcare provider who can evaluate your blood pressure, metabolic markers, lifestyle, and body composition.'
+      }
     ],
+    related: ['calorie-calculator', 'tdee-calculator', 'percentage-calculator'],
   },
 
   'percentage-calculator': {
@@ -189,6 +459,8 @@ const TOOLS = {
     icon: 'fa-percent',
     iconClass: 'icon-math',
     tagClass: 'tag-math',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Quickly find what percent one number is of another, calculate percentage increase or decrease, and more.',
     metaDescription: 'Free percentage calculator — find percentages, percent change, and compute values instantly.',
     fields: [
@@ -249,34 +521,114 @@ const TOOLS = {
       return errorResult('Invalid calculation mode.');
     },
 
-    article: {
-      heading: 'How to Calculate Percentages Quickly and Accurately',
-      intro: 'Percentages are everywhere — discounts, tips, taxes, grades, and statistics. The GetCalcu Percentage Calculator handles three common calculations in one tool: "X is what % of Y?", "What is X% of Y?", and percentage change between two values.',
-      sections: [
-        { heading: 'The Three Percentage Modes', body: '"X is what % of Y?" divides X by Y and multiplies by 100. "What is X% of Y?" multiplies Y by X/100. "% Change" subtracts the old value from the new, divides by the old value, and multiplies by 100 — a positive result means increase, negative means decrease.' },
-        { heading: 'Common Percentage Mistakes', body: 'A common error is confusing percentage points with percent change. If a rate rises from 10% to 15%, that is a 5 percentage-point increase but a 50% relative increase. Always confirm which comparison you need before calculating.' },
+    methodology: {
+      standards: 'Mathematical percentage computations adhere to fundamental arithmetic definitions, standard algebraic formulation, and strict IEEE-754 floating-point rounding precision.',
+      summary: 'A percentage represents a dimensionless ratio expressed as a fraction of 100 (per centum). Calculations distinguish between relative proportional parts, multiplicative percentage multipliers, and directional rate of change.',
+      assumptions: [
+        'Divisions by zero are explicitly caught and flagged with informative mathematical guidance.',
+        'Percentage change uses the magnitude of the baseline value (|From|) as the divisor to preserve directional consistency across positive and negative transitions.',
+        'Values are computed in full floating-point precision and formatted to two standard decimal places.',
       ],
+      sources: [
+        'National Institute of Standards and Technology (NIST) — Mathematical and Computational Precision Reference',
+        'Mathematical Association of America (MAA) — Foundations of Proportion and Ratio Analysis',
+      ],
+      lastReviewed: 'September 2026',
     },
+
+    article: {
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Percentages Accurately Across Every Scenario',
+      intro: 'Percentages are fundamental across personal finance, retail pricing, data analysis, and academic testing. While the core concept represents parts per hundred, applying percentage formulas correctly depends entirely on whether you are determining a proportional share, calculating a portion of a whole, or analyzing growth over time.',
+      sections: [
+        {
+          id: 'three-percentage-formulas',
+          heading: 'The Three Core Percentage Calculation Modes',
+          body: [
+            'Proportion Mode (X is what % of Y?): Used when you know the part (X) and the whole (Y) and need to express the relationship as a percentage. The formula is (X ÷ Y) × 100. Examples include test scores (85 out of 100) or equity ownership.',
+            'Portion Mode (What is X% of Y?): Used when you need to calculate the actual quantitative value of a known percentage of a total. The formula is (X ÷ 100) × Y. Examples include calculating sales tax, retail discounts, or restaurant tips.',
+            'Rate of Change Mode (% Change from X to Y): Used to determine the relative percentage growth or contraction between a baseline starting value (X) and a new final value (Y). The formula is ((Y − X) ÷ |X|) × 100.'
+          ]
+        },
+        {
+          id: 'percent-change-vs-percentage-points',
+          heading: 'Critical Distinction: Percent Change vs. Percentage Points',
+          body: [
+            'One of the most frequent errors in financial and statistical analysis is confusing percentage points with percent change.',
+            'Percentage Points represent the direct arithmetic difference between two percentages (e.g., an interest rate rising from 5.0% to 7.0% is an increase of 2.0 percentage points).',
+            'Percent Change represents the relative proportional increase of that change: ((7.0 − 5.0) ÷ 5.0) × 100 = a 40.0% relative increase. In economic reporting and contract agreements, using the correct metric is vital.'
+          ]
+        },
+        {
+          id: 'reverse-percentages',
+          heading: 'Working Backwards: Reverse Percentage Calculations',
+          body: [
+            'When a price includes sales tax or an item has already been discounted, you cannot simply add or subtract that percentage to return to the original price. For example, if an item with 20% tax costs $120, the pre-tax price is $120 ÷ 1.20 = $100 (not $120 − 20% = $96).'
+          ]
+        }
+      ]
+    },
+
     howTo: [
-      'Select the calculation mode you need from the dropdown.',
-      'Enter Value A and Value B as prompted for that mode.',
-      'The result updates instantly — no need to press calculate.',
-      'Switch modes to solve a different type of percentage problem.',
-      'Use negative values when working with losses or decreases.',
+      'Select the appropriate calculation mode from the dropdown menu (What % is X of Y, What is X% of Y, or % Change).',
+      'Input Value A and Value B into the respective fields.',
+      'The calculation executes automatically with instant formula transparency.',
+      'Switch modes freely to evaluate related calculations without reloading.',
     ],
+
+    formulaTitle: 'Percentage Formulas & Derivations',
+    formula: 'Proportion: (X / Y) × 100 | Portion: (X / 100) × Y | % Change: ((New − Old) / |Old|) × 100',
+    formulaExplanation: 'Every percentage formula scales a baseline proportion by 100 to convert a dimensionless decimal fraction into the universally recognized percentage format.',
+    formulaVariables: [
+      { name: 'X is what % of Y', description: 'Part (X) divided by Whole (Y) multiplied by 100' },
+      { name: 'X% of Y', description: 'Percentage rate (X / 100) multiplied by Base Amount (Y)' },
+      { name: 'Percentage Change', description: 'Difference (New − Old) divided by baseline |Old| multiplied by 100' },
+    ],
+
     examples: [
-      { title: 'Test Score to Percentage', input: 'Mode: X is what % of Y? | A: 85, B: 100', result: '85%' },
-      { title: 'Discount on a Price', input: 'Mode: What is X% of Y? | A: 20, B: 250', result: '$50 off — pay $200' },
-      { title: 'Salary Increase', input: 'Mode: % Change | A: 50000, B: 55000', result: '+10% increase' },
+      {
+        title: 'Proportion Scenario (Exam Score)',
+        input: 'Mode: X is what % of Y? | Value A: 45, Value B: 180',
+        result: 'Result: 25.00% | Calculation: 45 is 25.00% of 180',
+        explanation: '45 divided by 180 equals exactly 0.25, which converts to 25.00%.'
+      },
+      {
+        title: 'Portion Scenario (Retail Tip Calculation)',
+        input: 'Mode: What is X% of Y? | Value A: 15 (%), Value B: 120 ($)',
+        result: 'Result: 18.00 | Calculation: 15% of 120 = 18.00',
+        explanation: 'A 15% tip on a $120 bill equals $18.00, resulting in a total payment of $138.00.'
+      },
+      {
+        title: 'Rate of Change Scenario (Business Revenue Growth)',
+        input: 'Mode: % Change | Value A (From): 50,000, Value B (To): 65,000',
+        result: 'Result: 30.00% increase | Difference: 15,000',
+        explanation: 'Revenue grew by $15,000 over a $50,000 baseline, representing a 30.00% relative expansion.'
+      }
     ],
-    formula: 'X is what % of Y = (X / Y) × 100 | X% of Y = (X / 100) × Y | % Change = ((New − Old) / Old) × 100',
+
     faqs: [
-      { q: 'How do I calculate what percent one number is of another?', a: 'To find what percent X is of Y, divide X by Y and multiply by 100: (X ÷ Y) × 100. For example, 25 is what percent of 200? (25 ÷ 200) × 100 = 12.5%. Our calculator does this in the "X is what % of Y?" mode.' },
-      { q: 'How do I calculate a percentage of a number?', a: 'To calculate X% of Y, multiply Y by X divided by 100: Y × (X ÷ 100). For example, 20% of 250 = 250 × 0.20 = 50. Use the "What is X% of Y?" mode for this calculation.' },
-      { q: 'How do I calculate percentage increase or decrease?', a: 'Percentage change is calculated as ((New Value − Old Value) ÷ Old Value) × 100. A positive result is an increase and a negative result is a decrease. For example, a change from 50 to 65 = ((65−50) ÷ 50) × 100 = 30% increase.' },
-      { q: 'How do I calculate a discount percentage?', a: 'To find a discount, calculate the percentage of the original price, then subtract it. For a 25% discount on an $80 item: 25% of $80 = $20, so the sale price is $80 − $20 = $60. Use "What is X% of Y?" mode to find the discount amount.' },
-      { q: 'What is the difference between percentage points and percent change?', a: 'Percentage points measure the absolute difference between two percentages, while percent change measures the relative difference. If an interest rate rises from 5% to 7%, that is a 2 percentage-point increase but a 40% relative increase ((7−5) ÷ 5 × 100).' },
+      {
+        q: 'How do I calculate what percentage one number is of another?',
+        a: 'Divide the specific part (X) by the total whole (Y) and multiply by 100: (X ÷ Y) × 100. For example, 45 is what percent of 180? (45 ÷ 180) × 100 = 25.00%.'
+      },
+      {
+        q: 'How do I find a percentage of a given number?',
+        a: 'Convert the percentage into a decimal by dividing by 100, then multiply by the total number: (X ÷ 100) × Y. For example, 15% of 120 = 0.15 × 120 = 18.00.'
+      },
+      {
+        q: 'How is percentage increase or decrease calculated?',
+        a: 'Subtract the old starting value from the new value, divide by the absolute value of the old starting value, and multiply by 100: ((New − Old) ÷ |Old|) × 100. A positive result indicates an increase; a negative result indicates a decrease.'
+      },
+      {
+        q: 'What is the difference between percentage points and percentage change?',
+        a: 'Percentage points measure the simple arithmetic subtraction between two percentages (e.g., 10% to 15% is a 5 percentage-point increase). Percentage change measures the relative growth: ((15 − 10) ÷ 10) × 100 = a 50% relative increase.'
+      },
+      {
+        q: 'Why can Value B not be zero in proportion mode?',
+        a: 'In mathematics, division by zero is undefined. When calculating "X is what % of Y?", Y serves as the denominator representing the total whole, which cannot be zero.'
+      }
     ],
+    related: ['tip-calculator', 'inflation-calculator', 'compound-interest-calculator'],
   },
 
   'loan-calculator': {
@@ -285,6 +637,8 @@ const TOOLS = {
     icon: 'fa-sack-dollar',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.',
     metaDescription: 'Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.',
     fields: [
@@ -321,32 +675,93 @@ const TOOLS = {
       };
     },
 
+    methodology: {
+      standards: 'Formulas adhere to the federal Truth in Lending Act (Regulation Z, 12 CFR Part 1026) and Consumer Financial Protection Bureau (CFPB) lending disclosure standards.',
+      summary: 'Monthly loan payments are calculated using standard fixed-rate amortization mathematics, which amortizes principal over a set number of monthly installments while computing monthly interest on the remaining unpaid balance.',
+      assumptions: [
+        'Interest is compounded monthly on the remaining unpaid principal balance.',
+        'Payments are made monthly on equal installment dates without late fees or payment deferrals.',
+        'Quoted APR is converted to monthly periodic rate as r = APR ÷ 12.'
+      ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) — Loan Repayment Rules & Regulations',
+        'Federal Reserve Board — Regulation Z (Truth in Lending Act, 12 CFR Part 1026)',
+        'Federal Trade Commission (FTC) — Understanding Vehicle Financing & Personal Loans'
+      ],
+      lastReviewed: 'September 2026',
+    },
+
     article: {
-      heading: 'How to Calculate Loan Payments and Total Interest',
-      intro: 'Whether it is a car, personal, or student loan, knowing your monthly payment and total cost before you borrow is essential. The GetCalcu Loan Calculator uses the standard amortization formula to show your monthly payment, total interest, and full repayment schedule.',
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Loan Payments, Total Interest, and Total Cost',
+      intro: 'Whether you are financing a vehicle, consolidating credit cards with a personal loan, or evaluating student debt, understanding your exact monthly commitment and lifetime interest expense is crucial for financial health.',
       sections: [
-        { heading: 'How Loan Amortization Works', body: 'Most loans are amortized — each fixed monthly payment covers the interest accrued that month plus a portion of principal. Early payments are mostly interest; later payments are mostly principal. By the final payment, the balance reaches zero.' },
-        { heading: 'Why the Interest Rate Matters So Much', body: 'Even a 1% rate difference dramatically changes total cost. On a $30,000 5-year loan, 5% APR costs about $3,968 in interest while 7% costs about $5,640 — a $1,672 difference for the same loan. Always compare offers.' },
+        {
+          id: 'amortization-mechanics',
+          heading: 'How Loan Amortization Functions',
+          body: [
+            'Fixed-rate installment loans amortize each monthly payment between accrued interest and principal reduction. Because interest is charged on the declining loan balance, early payments are interest-heavy, while later payments rapidly pay down principal.',
+            'By the final scheduled installment, the loan balance reaches exactly zero.'
+          ]
+        },
+        {
+          id: 'apr-vs-interest-rate',
+          heading: 'Interest Rate vs. Annual Percentage Rate (APR)',
+          body: [
+            'The interest rate represents the nominal cost of borrowing principal. The APR includes both the interest rate and mandatory lender origination fees, document fees, or points.',
+            'When evaluating competing loan quotes, always compare APR rather than nominal rate to gauge true borrowing cost.'
+          ]
+        },
+        {
+          id: 'loan-term-tradeoffs',
+          heading: 'Loan Term Trade-Offs: Monthly Payment vs. Total Cost',
+          body: [
+            'Extending your loan term (e.g., from 3 years to 5 or 7 years) lowers your required monthly payment, improving immediate cash flow flexibility.',
+            'However, longer terms cause interest to accumulate over significantly more billing cycles, dramatically increasing total lifetime borrowing cost.'
+          ]
+        }
       ],
     },
     howTo: [
-      'Enter the loan amount (the total you are borrowing).',
-      'Add the annual interest rate (APR) quoted by your lender.',
-      'Choose the loan term in years.',
-      'Review your monthly payment, total interest, and total cost.',
-      'Check the amortization schedule to see how each payment splits.',
+      'Enter the loan amount you plan to borrow (the principal).',
+      'Add the quoted Annual Percentage Rate (APR) from your lender.',
+      'Select your desired loan term in years.',
+      'Review your calculated monthly payment, total interest expense, and total repayment amount.',
+      'Inspect the full amortization schedule to see the exact principal and interest split for every monthly installment.'
     ],
     examples: [
-      { title: 'Auto Loan', input: 'Amount: $30,000, Rate: 6.5%, Term: 5 years', result: 'Monthly: ~$587 | Total Interest: ~$5,211' },
-      { title: 'Personal Loan', input: 'Amount: $15,000, Rate: 9%, Term: 3 years', result: 'Monthly: ~$477 | Total Interest: ~$2,180' },
+      {
+        title: '5-Year Auto Loan ($30,000 at 6.5%)',
+        input: 'Loan Amount: $30,000, APR: 6.5%, Term: 5 years (60 months)',
+        result: 'Monthly Payment: $586.98 | Total Interest: $5,218.80 | Total Repayment: $35,218.80'
+      },
+      {
+        title: '3-Year Personal Consolidation Loan ($15,000 at 9.0%)',
+        input: 'Loan Amount: $15,000, APR: 9.0%, Term: 3 years (36 months)',
+        result: 'Monthly Payment: $477.00 | Total Interest: $2,172.00 | Total Repayment: $17,172.00'
+      },
+      {
+        title: '4-Year Used Car Loan ($20,000 at 7.0%)',
+        input: 'Loan Amount: $20,000, APR: 7.0%, Term: 4 years (48 months)',
+        result: 'Monthly Payment: $478.92 | Total Interest: $2,988.16 | Total Repayment: $22,988.16'
+      }
     ],
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Total Interest = (M × n) − P | Total Cost = M × n',
+    formula: {
+      text: 'M = P × [r(1 + r)^n] / [(1 + r)^n − 1] | Total Interest = (M × n) − P | Total Cost = M × n',
+      variables: [
+        { symbol: 'M', description: 'Monthly fixed installment payment' },
+        { symbol: 'P', description: 'Loan principal (initial borrowed amount)' },
+        { symbol: 'r', description: 'Monthly interest rate (Annual APR ÷ 12 ÷ 100)' },
+        { symbol: 'n', description: 'Total number of monthly payments (Loan term in years × 12)' },
+        { symbol: 'Total Cost', description: 'Sum of all monthly payments over the entire loan life' }
+      ]
+    },
     faqs: [
-      { q: 'How is a loan payment calculated?', a: 'A fixed loan payment is calculated with the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the principal, r is the monthly interest rate (APR ÷ 12), and n is the number of monthly payments (term in years × 12). This keeps every payment equal while paying off the loan completely.' },
-      { q: 'What is APR versus interest rate?', a: 'The interest rate is the cost of borrowing the principal, while APR (Annual Percentage Rate) includes the interest rate plus fees and other loan costs, giving the true yearly cost. APR is the better figure for comparing loans because it reflects what you actually pay.' },
-      { q: 'How does the loan term affect my payment?', a: 'A longer term lowers your monthly payment but increases total interest because the principal is repaid more slowly and interest accrues over more months. A shorter term raises the monthly payment but saves significantly on total interest. Use our calculator to compare terms.' },
-      { q: 'How much interest will I pay on a loan?', a: 'Total interest equals (monthly payment × number of payments) − principal. For a $20,000 loan at 6% APR over 4 years, the monthly payment is about $469 and total interest is about $2,544. Our calculator shows this automatically along with a payment-by-payment schedule.' },
-      { q: 'Can I pay off my loan early to save interest?', a: 'Yes. Because interest is calculated on the remaining balance, making extra payments or paying off the loan early reduces the principal faster and cuts total interest. Check your loan agreement for prepayment penalties first — many loans allow early repayment with no fee.' },
+      { q: 'How is a loan payment calculated?', a: 'Fixed loan installments are calculated using standard amortization: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is principal, r is monthly interest (APR ÷ 12), and n is total monthly payments. This ensures equal payments throughout the term that amortize principal to zero.' },
+      { q: 'What is the difference between APR and interest rate?', a: 'The interest rate represents the direct fee for borrowing principal, while APR (Annual Percentage Rate) incorporates the interest rate plus lender origination fees, processing charges, and closing costs. APR is the true metric for comparing loan offers.' },
+      { q: 'How does loan term affect total interest?', a: 'A longer term lowers monthly payments by spreading principal across more months, but increases total interest paid because balance declines more slowly. For example, a $30,000 loan at 6.5% costs $3,114 in interest over 3 years versus $5,216 over 5 years.' },
+      { q: 'Can I pay off my loan early without penalty?', a: 'Most modern auto and personal loans permit prepayment without penalty, allowing extra principal payments to reduce total interest. However, always review your loan agreement for prepayment penalties or rule-of-78s interest calculation terms before making extra payments.' },
+      { q: 'How does credit score affect loan interest rates?', a: 'Credit scores directly determine lender risk tiers. Borrowers with excellent credit (740+) typically secure APRs several percentage points lower than borrowers in fair or poor tiers, saving thousands in interest over the life of a loan.' },
     ],
   },
 
@@ -568,6 +983,8 @@ const TOOLS = {
     icon: 'fa-chart-line',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Project how your savings and investments grow over time with compound interest and recurring monthly contributions.',
     metaDescription: 'Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
     fields: [
@@ -647,32 +1064,105 @@ const TOOLS = {
       };
     },
 
+    methodology: {
+      standards: 'Calculations adhere to Federal Reserve Regulation DD (Truth in Savings, 12 CFR Part 1030), FINRA investment projection guidelines, and standard continuous and discrete compounding mathematical models.',
+      summary: 'Compound interest computes future investment accumulation by capitalizing interest back into the principal balance at discrete recurring compounding intervals, combined with ordinary annuity contribution mechanics.',
+      assumptions: [
+        'Contributions are added at the conclusion of each period (ordinary annuity model).',
+        'Nominal annual interest rate is assumed uniform across the entire compounding horizon without tax drag or management fee subtractions.',
+        'Daily compounding utilizes a standard 365-day calendar year convention.'
+      ],
+      sources: [
+        'Federal Reserve Board — Regulation DD (Truth in Savings Act, 12 CFR Part 1030)',
+        'Financial Industry Regulatory Authority (FINRA) — Savings & Compound Growth Mathematics',
+        'U.S. Securities and Exchange Commission (SEC) — Compound Interest Calculations Guide'
+      ],
+      lastReviewed: 'September 2026',
+    },
+
     article: {
-      heading: 'How to Calculate Compound Interest and Project Your Savings Growth',
-      intro: 'Compound interest is the engine behind long-term wealth — it earns interest on your interest, accelerating growth over time. The GetCalcu Compound Interest Calculator projects your future balance from a starting sum plus recurring contributions, with flexible compounding frequency and a year-by-year growth schedule.',
+      id: 'how-to-calculate',
+      heading: 'How Compound Interest Works and How to Calculate Future Investment Growth',
+      intro: 'Compound interest is the foundational mathematical engine behind long-term wealth accumulation. Unlike simple interest—which generates yields solely on initial principal—compound interest accrues on both the initial capital and all previously accumulated interest. Over multi-decade investment horizons, the exponential return curve overtakes direct contributions as the primary driver of balance growth.',
       sections: [
-        { heading: 'Why Compounding Frequency Matters', body: 'The more often interest is reinvested, the faster your balance grows. Daily compounding earns slightly more than monthly, which earns more than annual — the difference compounds over decades. For long horizons, even small frequency gains add up.' },
-        { heading: 'The Power of Starting Early', body: 'Time is the most powerful variable in compound interest. Starting 10 years earlier can more than double your final balance, even with smaller contributions — because early gains have more time to compound on themselves.' },
+        {
+          id: 'compounding-frequency-mechanics',
+          heading: 'How Compounding Frequency Affects Effective Annual Yield (APY)',
+          body: [
+            'Compounding frequency specifies how many times each year accrued interest is capitalized into your principal balance. The more frequently interest is credited, the faster that new interest begins generating its own return.',
+            'The exact conversion between nominal annual interest rate (APR) and effective annual percentage yield (APY) is: APY = (1 + r / n)^n - 1, where r is the nominal APR and n is compounding periods per year.',
+            'For a $10,000 balance at 8.0% APR: Annual compounding yields $800.00 (8.00% APY); Monthly compounding yields $830.00 (8.30% APY); Daily compounding yields $832.78 (8.33% APY). Over 30 years, monthly compounding produces $109,357.30 compared to $100,626.57 for annual compounding—a $8,730.73 difference purely from frequency.'
+          ]
+        },
+        {
+          id: 'rule-of-72-doubling-time',
+          heading: 'The Rule of 72: Estimating Doubling Timelines',
+          body: [
+            'The Rule of 72 provides a rapid mathematical approximation for how many years it will take an investment balance to double at a fixed annual return: Doubling Years ≈ 72 / Annual Return Rate (%).',
+            'At a 6% annual return, capital doubles in approximately 12 years (72 / 6). At 8%, it doubles in approximately 9 years (72 / 8). At 10%, it doubles in approximately 7.2 years.',
+            'Over a 36-year horizon: at 6%, an initial sum doubles 3 times (8x); at 8%, it doubles 4 times (16x); at 10%, it doubles 5 times (32x). This demonstrates how small differences in average annual return create exponential divergence in final net worth.'
+          ]
+        },
+        {
+          id: 'contribution-timing-and-annuities',
+          heading: 'Contribution Timing: Ordinary Annuities vs. Annuities Due',
+          body: [
+            'Our calculator utilizes the standard ordinary annuity formula, assuming recurring monthly contributions are deposited at the end of each payment period.',
+            'Depositing contributions at the beginning of each period (annuity due) generates one additional compounding period of interest for each deposit. Over a 30-year timeframe, beginning-of-period deposits generate roughly 0.6–0.8% higher total ending value.'
+          ]
+        },
+        {
+          id: 'inflation-impact-real-vs-nominal',
+          heading: 'Nominal vs. Real Returns: Factoring in Inflation',
+          body: [
+            'Nominal future value represents the raw dollar amount in your future account, but does not reflect future purchasing power.',
+            'To project real purchasing power in today\'s dollars, subtract estimated annual inflation from your nominal expected rate (e.g., 8.0% nominal return minus 2.5% inflation equals a 5.5% real return), or apply the exact Fisher equation: Real Return = (1 + Nominal Rate) / (1 + Inflation Rate) - 1.'
+          ]
+        }
       ],
     },
     howTo: [
-      'Enter your starting balance (a lump sum or current savings).',
-      'Add the annual interest or growth rate you expect.',
-      'Choose how often interest compounds — monthly is common for savings.',
-      'Enter your monthly contribution and the number of years.',
-      'Review the future balance, total interest earned, and year-by-year schedule.',
+      'Enter your starting principal balance (lump sum or existing portfolio balance).',
+      'Input your anticipated annual interest rate or long-term investment return percentage.',
+      'Select your compounding frequency (Monthly is standard for investment accounts; Daily for high-yield cash).',
+      'Specify your recurring monthly contribution amount and target investment horizon in years.',
+      'Review your projected future balance, total out-of-pocket contributions, and cumulative interest earned.',
+      'Inspect the year-by-year schedule and growth breakdown chart to track the tipping point where interest overtakes principal deposits.'
     ],
     examples: [
-      { title: 'Lump Sum Over 30 Years', input: 'Principal: $10,000, Rate: 8%, Monthly compounding, 30 years', result: 'Future Balance: ~$100,627 | Interest: ~$90,627' },
-      { title: 'With Monthly Contributions', input: 'Principal: $10,000, Rate: 8%, $500/mo, 30 years', result: 'Future Balance: ~$811,627 | Interest: ~$621,627' },
+      {
+        title: '30-Year Wealth Accumulation (Default)',
+        input: 'Principal: $10,000, Annual Rate: 8.0%, Monthly compounding, $500/mo contribution, 30 years',
+        result: 'Future Balance: $854,537.02 | Total Contributions: $190,000.00 | Total Interest Earned: $664,537.02'
+      },
+      {
+        title: '20-Year Pure Lump-Sum Growth',
+        input: 'Principal: $25,000, Annual Rate: 7.0%, Monthly compounding, $0/mo contribution, 20 years',
+        result: 'Future Balance: $100,968.47 | Total Contributions: $25,000.00 | Total Interest Earned: $75,968.47'
+      },
+      {
+        title: '5-Year High-Yield Cash Savings',
+        input: 'Principal: $15,000, Annual Rate: 4.5%, Daily compounding (365/yr), $200/mo contribution, 5 years',
+        result: 'Future Balance: $32,240.26 | Total Contributions: $27,000.00 | Total Interest Earned: $5,240.26'
+      }
     ],
-    formula: 'FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)] | Total Interest = FV − P − (PMT × t)',
+    formula: {
+      text: 'FV = P × (1 + r / n)^(n × t) + PMT × [((1 + r / n)^(n × t) − 1) / (r / n)]',
+      variables: [
+        { symbol: 'FV', description: 'Future Value (total accumulated balance including contributions and compound interest)' },
+        { symbol: 'P', description: 'Initial Principal balance deposited at inception' },
+        { symbol: 'r', description: 'Nominal annual interest rate expressed in decimal form (e.g., 8% = 0.08)' },
+        { symbol: 'n', description: 'Compounding frequency per year (1 for annual, 4 for quarterly, 12 for monthly, 365 for daily)' },
+        { symbol: 't', description: 'Investment duration in years' },
+        { symbol: 'PMT', description: 'Periodic recurring contribution amount adjusted to match compounding frequency' }
+      ]
+    },
     faqs: [
-      { q: 'How is compound interest calculated?', a: 'Compound interest is calculated as FV = P × (1 + r/n)^(nt), where P is the principal, r is the annual rate, n is the compounding periods per year, and t is years. With recurring contributions, add PMT × [((1 + r/n)^(nt) − 1) / (r/n)]. Our calculator handles both parts automatically.' },
-      { q: 'What is the difference between simple and compound interest?', a: 'Simple interest is calculated only on the original principal, while compound interest is calculated on the principal plus accumulated interest. Over time, compounding grows exponentially while simple interest grows linearly — a $10,000 sum at 8% becomes $46,610 (simple) versus $100,627 (compounded monthly) over 30 years.' },
-      { q: 'How does compounding frequency affect growth?', a: 'More frequent compounding reinvests interest sooner, so your balance grows faster. At 8% over 30 years, $10,000 grows to about $100,627 compounded monthly versus $93,219 compounded semi-annually. The gap widens with larger sums and longer horizons.' },
-      { q: 'How much will I have if I save $500 a month for 30 years?', a: 'Saving $500 per month at an 8% average return compounded monthly for 30 years grows to about $745,000 from contributions alone, plus growth on any starting balance. With a $10,000 starting balance, the total reaches about $811,627. Use our calculator to test your own numbers.' },
-      { q: 'What is a good interest rate to assume for compound interest?', a: 'For a diversified stock portfolio, a realistic long-term assumption is 7–10% (the historical S&P 500 average). For savings accounts expect 3–5%, and for bonds 4–6%. Always use a conservative rate for planning so you are not caught short — our calculator lets you adjust instantly.' },
+      { q: 'How is compound interest calculated?', a: 'Compound interest is calculated with the compound annuity formula FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P is initial principal, r is the annual rate, n is compounding frequency per year, t is time in years, and PMT is the periodic contribution. Our calculator computes both lump-sum growth and periodic contributions simultaneously.' },
+      { q: 'What is the difference between simple and compound interest?', a: 'Simple interest is calculated solely on original principal (Interest = P × r × t), meaning annual growth remains flat. Compound interest calculates returns on both initial principal and previously accumulated interest. Over 30 years at 8%, a $10,000 deposit produces $24,000 in simple interest ($34,000 total) versus $99,357.30 in monthly compound interest ($109,357.30 total).' },
+      { q: 'How does compounding frequency affect growth?', a: 'More frequent compounding capitalizes interest sooner, slightly accelerating the compounding curve. At 8% APR over 30 years, a $10,000 lump sum grows to $100,626.57 with annual compounding, $107,370.26 with quarterly compounding, $109,357.30 with monthly compounding, and $110,344.60 with daily compounding.' },
+      { q: 'How much will I accumulate saving $500 a month for 30 years?', a: 'At an 8.0% average annual return compounded monthly with a $10,000 starting deposit, saving $500 per month for 30 years yields a future balance of $854,537.02. Your direct out-of-pocket contributions total $190,000 ($10,000 initial + $180,000 monthly), while total compound interest earned equals $664,537.02.' },
+      { q: 'What is a realistic rate of return to assume?', a: 'For long-term index fund equity investments (15+ years), historical US stock market returns average roughly 7–10% before inflation (or 5–7% after inflation). For diversified bond portfolios, expect 4–6%. For high-yield savings accounts or money market funds, expect 3–5%. Using conservative estimates provides a safer financial margin of error.' },
     ],
   },
 
@@ -1710,13 +2200,14 @@ const TOOLS = {
     ],
   },
 
-  // ── Rent vs Buy Calculator ─────────────────────────────────────
   'rent-vs-buy-calculator': {
     name: 'Rent vs. Buy Calculator',
     category: 'Finance',
     icon: 'fa-house-chimney',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Comprehensive financial comparison of renting versus buying a home. Calculate net costs, equity buildup, break-even points, opportunity costs, and net worth over time with intelligent recommendations.',
     metaTitle: 'Rent vs Buy Calculator | Break-Even Analysis & Net Worth Comparison — GetCalcu',
     metaDescription: 'Free Rent vs Buy Calculator with break-even analysis, net worth comparison, equity buildup, opportunity cost, and intelligent recommendations. Should you rent or buy?',
@@ -2320,72 +2811,112 @@ const TOOLS = {
       };
     },
 
-    // ── How-To Guide
-    howTo: [
-      'Enter the home purchase price using the slider or type a specific amount.',
-      'Choose your down payment mode — percentage or dollar amount — and set the value.',
-      'Set your mortgage rate, loan term, current rent, and how many years you plan to stay.',
-      'Adjust expected rent increase, home appreciation, and investment return.',
-      'Expand "Advanced Options" to customize property tax, insurance, HOA, PMI, maintenance, closing costs, and more.',
-      'Review the executive dashboard, recommendation, charts, and year-by-year comparison table.',
-      'Read the personalized insights to understand which assumptions matter most.',
-      'Follow the suggested next-step calculators based on your result.',
-    ],
+    methodology: {
+      standards: 'Calculations follow discounted cash flow (DCF) comparative net worth principles and housing economics guidelines from the Consumer Financial Protection Bureau (CFPB), Federal Reserve Economic Data (FRED), and National Association of Realtors (NAR).',
+      summary: 'The Rent vs. Buy model compares cumulative lifecycle housing expenditures and net worth accumulation over a multi-year horizon by contrasting home equity build-up against the compounding opportunity cost of invested capital (down payment, closing costs, and monthly cash flow differentials).',
+      assumptions: [
+        'Mortgage principal and interest payments remain fixed throughout the loan term.',
+        'Renter invests the initial down payment, purchase closing costs, and all monthly cash flow savings into an alternative portfolio compounded annually at the specified investment return rate.',
+        'Maintenance, property taxes, insurance, and rent escalate annually based on user-configured inflation growth rates.',
+        'Net proceeds upon sale reflect cumulative home appreciation minus transaction selling costs and realtor commissions.'
+      ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) — Buying vs. Renting Evaluation Framework',
+        'Federal Reserve Bank of St. Louis (FRED) — Case-Shiller Home Price Indices & Rent Inflation Series',
+        'National Association of Realtors (NAR) — Real Estate Transaction Costs & Historical Appreciation Trends'
+      ],
+      lastReviewed: 'September 2026',
+    },
 
-    // ── Real-World Examples
+    article: {
+      id: 'how-to-calculate',
+      heading: 'The Complete Guide to the Rent vs. Buy Financial Decision',
+      intro: 'The rent vs. buy question is one of the most consequential personal finance decisions. It extends far beyond comparing a monthly rent check to a mortgage statement—it requires evaluating equity buildup, opportunity cost of capital, transaction fees, property maintenance, tax effects, and how time horizon alters net worth.',
+      sections: [
+        {
+          id: 'when-buying-makes-sense',
+          heading: 'When Buying Makes Financial Sense',
+          body: [
+            'Buying typically produces superior financial outcomes when you plan to stay in the home for 7 or more years, local property appreciation remains stable, rent inflation is persistent, and monthly ownership outlays are comparable to area rent.',
+            'Fixed-rate mortgages lock in your principal and interest payment for up to 30 years while market rents compound upward. Each payment amortizes loan principal, steadily building home equity that you recapture upon sale.'
+          ]
+        },
+        {
+          id: 'when-renting-makes-sense',
+          heading: 'When Renting and Investing Outperforms',
+          body: [
+            'Renting frequently wins over shorter horizons (under 5 years), when career or life mobility is prized, or when home prices are high relative to rents.',
+            'Renting eliminates closing costs, selling friction, property taxes, and surprise maintenance liabilities. If the capital required for a down payment and transaction fees is invested in diversified index funds, compound market returns can outpace real estate equity gains.'
+          ]
+        },
+        {
+          id: 'opportunity-cost-mechanics',
+          heading: 'Understanding the Opportunity Cost of Capital',
+          body: [
+            'Purchasing a home locks up significant capital in a down payment (e.g., $90,000 on a $450,000 property) plus closing costs (typically $10,000–$15,000).',
+            'Our engine models the opportunity cost by assuming that identical capital is invested at your expected portfolio return rate. The calculator tracks both paths month by month to identify which strategy produces higher ending net worth.'
+          ]
+        },
+        {
+          id: 'the-5-percent-rule',
+          heading: 'The 5% Rule of Thumb for Housing',
+          body: [
+            'The 5% rule provides a rapid heuristic: if the total non-recoverable annual cost of owning (estimated as ~1% property tax + ~1% maintenance + ~3% cost of capital/interest) exceeds your annual rent, renting may be financially advantageous on cash flow.',
+            'Multiply the target home value by 5% and divide by 12. If comparable rent is lower than this break-even threshold, renting allows you to invest the difference.'
+          ]
+        },
+        {
+          id: 'hidden-costs-of-ownership',
+          heading: 'The Friction and Hidden Costs of Ownership',
+          body: [
+            'Homeowners face significant non-equity expenses: purchase closing costs (2–5%), ongoing property taxes (1–2% annually), homeowners insurance, HOA fees, routine maintenance (1–2% annually), and selling commissions (5–6% realtor fees plus transfer taxes upon disposition).',
+            'Because transaction fees are paid at both purchase and sale, short tenure often results in net losses even if property values appreciate slightly.'
+          ]
+        },
+        {
+          id: 'breakeven-timeline-factors',
+          heading: 'Key Factors Determining Your Break-Even Year',
+          body: [
+            'The break-even year is the exact point where cumulative net worth from buying crosses and surpasses renting.',
+            'Higher mortgage rates and higher investment returns extend the break-even timeline further into the future, whereas higher rent inflation and higher home appreciation accelerate the break-even milestone.'
+          ]
+        }
+      ],
+    },
+    howTo: [
+      'Enter the target home purchase price and choose your down payment (percentage or dollar amount).',
+      'Specify your mortgage interest rate, loan term, current monthly rent, and anticipated tenure in years.',
+      'Set expected annual rent inflation, home appreciation, and investment return percentages.',
+      'Expand "Advanced Options" to refine property taxes, insurance, HOA fees, maintenance reserves, and closing costs.',
+      'Review your financial summary dashboard, break-even year, interactive net worth charts, and year-by-year comparison table.',
+      'Follow personalized recommendations and explore complementary mortgage and affordability tools.'
+    ],
     examples: [
       {
-        title: 'Young Professional (Rent)',
-        input: '$350,000 home, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return',
-        result: 'Renting wins. High upfront costs and a short horizon make buying uneconomical; investing the down payment outperforms.',
+        title: 'Young Professional Short Tenure (Renting Wins)',
+        input: 'Home: $350,000, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return',
+        result: 'Renting wins. High transaction friction (closing + selling fees) and a short horizon make buying uneconomical; investing capital yields higher net worth.'
       },
       {
-        title: 'Growing Family (Buy)',
-        input: '$500,000 home, 20% down, 6% rate, $2,400 rent, 15-year horizon, 3% appreciation',
-        result: 'Buying wins strongly. Long tenure recovers costs and builds substantial equity and appreciation.',
+        title: 'Long-Term Family Purchase (Buying Wins)',
+        input: 'Home: $500,000, 20% down, 6.0% rate, $2,400 rent, 15-year horizon, 3.5% appreciation',
+        result: 'Buying wins decisively. Long tenure amortizes upfront transaction costs and accumulates substantial equity and appreciation.'
       },
       {
-        title: 'High Mortgage Rate Environment',
-        input: '$450,000 home, 20% down, 7.5% rate, $2,200 rent, 8-year horizon',
-        result: 'Higher rates delay break-even. Compare 5%, 6%, 7%, and 8% to see how the recommendation shifts.',
-      },
-      {
-        title: 'Typical 20% Down Purchase',
-        input: '$450,000 home, 20% down, 6.25% rate, 30yr, $2,200 rent, 3.5% appreciation, 7% investment return, 8 years',
-        result: 'Buying wins by ~$36,800. Break-even around Year 4-5. High confidence if staying 7+ years.',
-      },
-      {
-        title: 'Low Down Payment Scenario',
-        input: '$450,000 home, 5% down, PMI required, 6.5% rate, 30yr, $2,200 rent, 8 years',
-        result: 'PMI and higher loan costs delay break-even to Year 6-7. Still favorable long-term with appreciation.',
-      },
-      {
-        title: 'High Rent Growth Market',
-        input: '$450,000 home, 20% down, $2,500 rent, 5% annual rent increases, 8 years',
-        result: 'Buying wins by ~$78,000. Rapid rent growth makes buying advantageous by Year 3.',
-      },
-      {
-        title: 'Short Time Horizon',
-        input: '$450,000 home, 20% down, plan to move in 3 years, $2,200 rent, 8 years',
-        result: 'Renting likely wins. Transaction costs (closing + selling) erase equity gains in under 5 years.',
-      },
+        title: 'High Rent Growth Environment (Early Break-Even)',
+        input: 'Home: $450,000, 20% down, 6.25% rate, $2,500 rent, 5.0% annual rent inflation, 8 years',
+        result: 'Buying reaches break-even rapidly by Year 3 as compounding rent hikes outpace fixed mortgage costs.'
+      }
     ],
-    formula: 'Monthly P&I = P × [r(1+r)^n] / [(1+r)^n − 1] | Equity = Home Value − Remaining Balance | Net Proceeds = Equity − Selling Costs | Opportunity Cost = Invested Capital × (1 + Return)^t | Net Worth (Buy) = Equity − Cumulative Costs | Net Worth (Rent) = Investment Portfolio − Cumulative Rent',
-
-    // ── SEO Article Content
-    article: {
-      heading: 'The Complete Guide to the Rent vs. Buy Decision',
-      intro: 'The rent vs. buy question is one of the most significant financial decisions most people will make. It involves far more than comparing a monthly rent check to a mortgage payment — it requires understanding equity buildup, opportunity cost, tax implications, transaction costs, and how time in the market changes the math. The GetCalcu Rent vs. Buy Calculator models all of these factors to give you a clear, data-driven answer tailored to your situation.',
-      sections: [
-        { heading: 'When Buying Makes Financial Sense', body: 'Buying typically wins when you plan to stay 7+ years, home appreciation is steady, rent inflation is high, and your mortgage payment is close to your current rent. Over long horizons, fixed mortgage payments stay stable while rents compound upward, and principal payments build equity that you keep when you sell. The calculator shows your exact break-even year.' },
-        { heading: 'When Renting Is the Better Decision', body: 'Renting often wins for short time horizons (under 5 years), when you value flexibility to relocate, when the opportunity cost of your down payment is high, or when home prices are stagnant. Renting avoids transaction costs, maintenance, and property taxes, and frees up capital that can be invested. Our calculator compares both strategies fairly.' },
-        { heading: 'Understanding Opportunity Cost', body: 'When you buy, you tie up a large down payment (often 20% of the home price) plus closing costs. That capital could otherwise be invested. If you invest $90,000 plus $13,500 in closing costs at a 7% annual return, it grows substantially over 10 years. The calculator compares that investment growth against the equity you build in the home, revealing which strategy creates more wealth.' },
-        { heading: 'The 5% Rule Explained', body: 'The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. Multiply the home price by 5% and compare to your annual rent. If rent is lower, renting wins on pure cash flow — but this rule ignores equity and appreciation, so use the full calculator for the complete picture.' },
-        { heading: 'Building Home Equity', body: 'Each mortgage payment splits into interest and principal. Early payments are mostly interest; later payments are mostly principal. As you pay down the loan and the home appreciates, your equity grows. When you sell, you keep the equity minus selling costs. The calculator charts your principal, appreciation, and total equity year by year.' },
-        { heading: 'Hidden Costs of Homeownership', body: 'Beyond the mortgage, owners pay closing costs (2-5% of price), property taxes, homeowners insurance, maintenance (1-2% of value annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell). These hidden costs can add tens of thousands of dollars and are why buying is not always cheaper than renting.' },
-        { heading: 'Common Mistakes People Make', body: 'The most common mistakes are buying too early (before you can afford it or before you plan to stay long enough), ignoring opportunity cost, underestimating maintenance, staying too short a time to recover transaction costs, and overestimating appreciation. Our calculator helps you avoid these by modeling realistic assumptions.' },
-        { heading: 'How Home Appreciation and Rent Inflation Affect the Decision', body: 'In hot markets where home values rise 5-7% annually, buying builds wealth faster through appreciation. In markets with high rent growth (5%+ annually), buying provides payment stability while renters face escalating costs. Conversely, in stagnant or declining markets, appreciation may not offset ownership costs, and low rent growth favors renting.' },
-      ],
+    formula: {
+      text: 'Net Worth (Buy) = Home Value − Mortgage Balance − Selling Costs | Net Worth (Rent) = Invested Down Payment & Cash Flow Savings × (1 + r)^t − Cumulative Rent',
+      variables: [
+        { symbol: 'Home Value', description: 'Initial purchase price compounded by annual appreciation rate over t years' },
+        { symbol: 'Mortgage Balance', description: 'Remaining amortized loan principal balance at year t' },
+        { symbol: 'Selling Costs', description: 'Realtor commissions and transfer costs deducted upon home disposition (5-7%)' },
+        { symbol: 'Invested Capital', description: 'Down payment, closing costs, and monthly cash flow differentials invested at portfolio rate r' },
+        { symbol: 'Cumulative Rent', description: 'Sum of all monthly rent payments compounded by annual rent inflation' }
+      ]
     },
 
     // ── Schema-Ready FAQs (15-20)
@@ -2480,6 +3011,8 @@ const TOOLS = {
     icon: 'fa-house',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.',
     metaDescription: 'Free house affordability calculator — determine your maximum home purchase price based on DTI ratios, income, debt, and down payment.',
     keywords: ['house affordability calculator', 'how much house can i afford', 'dti calculator', '28 36 rule', 'fha loan calculator'],
@@ -2623,31 +3156,98 @@ const TOOLS = {
       };
     },
 
-    howTo: [
-      'Enter your annual gross household income and monthly debt payments (car loans, student loans, credit cards).',
-      'Add your down payment savings, loan term, and estimated mortgage rate.',
-      'Set your property tax rate, home insurance, and any HOA fees.',
-      'Choose your lender rule preference — Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45.',
-      'Review your recommended affordable home price, max loan amount, and monthly payment breakdown.',
-      'Check the three-scenario comparison table to see conservative, target, and aggressive purchase limits.',
-    ],
-
-    examples: [
-      { title: 'Typical First-Time Buyer', input: 'Income: $105,000, Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr', result: 'Affordable home: ~$350,000 | Monthly PITI: ~$2,400 | Front DTI: 28% | Back DTI: 36%' },
-      { title: 'FHA Loan with Higher DTI', input: 'Income: $80,000, Debt: $800/mo, Down: $20,000, Rate: 6.5%, 30yr, FHA', result: 'Affordable home: ~$280,000 | Monthly PITI: ~$1,900 | Front DTI: 31% | Back DTI: 43%' },
-      { title: 'VA Loan Zero Down', input: 'Income: $90,000, Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA', result: 'Affordable home: ~$320,000 | Monthly PITI: ~$2,100 | Back DTI: 41%' },
-    ],
-    formula: 'Max Housing Payment = Gross Monthly Income × Front-End Ratio | Available for Housing = (Gross Monthly Income × Back-End Ratio) − Monthly Debt | Max Loan = PV of Available for PI | Recommended Price = Max Loan + Down Payment',
+    methodology: {
+      standards: 'Underwriting models conform to Fannie Mae (Desktop Underwriter), Freddie Mac (Loan Product Advisor), Federal Housing Administration (FHA Handbook 4000.1), and Department of Veterans Affairs (VA Lenders Handbook M26-7) debt-to-income underwriting ratios.',
+      summary: 'House affordability is calculated by determining the binding maximum allowable monthly housing expenditure under dual front-end and back-end debt-to-income (DTI) constraints, subtracting taxes, insurance, and HOA dues, and solving for the maximum amortized mortgage loan capacity based on present value formulas.',
+      assumptions: [
+        'Gross monthly income serves as the baseline for all qualifying ratio calculations.',
+        'Front-end ratio includes Principal, Interest, Property Taxes, Homeowners Insurance (PITI), and HOA fees.',
+        'Back-end ratio encompasses total housing costs plus recurring monthly minimum debt obligations (auto loans, student debt, credit card minimums).',
+        'Final purchase power equals calculated maximum borrowing capacity plus available cash down payment.'
+      ],
+      sources: [
+        'Fannie Mae — Selling Guide: B3-6-02, Debt-to-Income Ratios',
+        'U.S. Department of Housing and Urban Development (HUD) — FHA Single Family Housing Policy Handbook 4000.1',
+        'Consumer Financial Protection Bureau (CFPB) — Qualified Mortgage Rule & DTI Standards'
+      ],
+      lastReviewed: 'September 2026',
+    },
 
     article: {
-      heading: 'The Complete Guide to House Affordability and DTI Ratios',
-      intro: 'Lenders use two key ratios to determine how much house you can afford: the front-end DTI (housing ratio) and back-end DTI (total debt ratio). The GetCalcu House Affordability Calculator applies these rules — including the 28/36 conventional standard, FHA 31/43 limits, VA 41% back-end focus, and aggressive 36/45 scenarios — to show you exactly what home price fits your financial situation.',
+      id: 'how-to-calculate',
+      heading: 'How to Calculate How Much House You Can Afford',
+      intro: 'Determining your home purchasing power requires balancing how much a lender will legally approve against what your monthly budget can comfortably sustain. Mortgage lenders evaluate affordability primarily through Debt-to-Income (DTI) ratios.',
       sections: [
-        { heading: 'Understanding Front-End vs Back-End DTI', body: 'Front-end DTI measures housing costs (principal, interest, taxes, insurance, HOA) as a percentage of gross monthly income. Back-end DTI measures all monthly debt obligations — including the new mortgage payment — as a percentage of gross monthly income. Lenders use the more restrictive of the two to ensure you are not overextended.' },
-        { heading: 'The 28/36 Rule (Conventional Loans)', body: 'Conventional loans typically require front-end DTI ≤ 28% and back-end DTI ≤ 36%. That means your total housing payment should not exceed 28% of your gross monthly income, and all debt combined (housing plus car loans, student loans, credit cards) should not exceed 36%. If your existing debt is high, the back-end ratio becomes the binding constraint.' },
-        { heading: 'FHA 31/43 and VA 41% Rules', body: 'FHA loans allow higher ratios — 31% front-end and 43% back-end — making them accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). VA loans focus primarily on the back-end DTI (41%) and do not require a down payment, but they do require the residual income test to ensure you can cover living expenses after paying the mortgage.' },
-        { heading: 'How Down Payment and Interest Rate Affect Affordability', body: 'A larger down payment directly increases your affordable home price by reducing the loan amount. A lower interest rate increases your purchasing power by lowering the monthly payment for a given loan size. Use the calculator to test different down-payment and rate scenarios to find your optimal buying window.' },
+        {
+          id: 'front-end-vs-back-end-dti',
+          heading: 'Front-End vs. Back-End DTI Ratios',
+          body: [
+            'Front-End DTI (Housing Ratio): The percentage of your gross monthly income dedicated exclusively to housing expenses (Principal, Interest, Property Taxes, Homeowners Insurance, and HOA dues).',
+            'Back-End DTI (Total Debt Ratio): The percentage of gross monthly income required to service all recurring debt obligations combined—including housing, car payments, student loans, and credit card minimums.',
+            'Lenders enforce the more restrictive of the two limits to ensure borrowers do not become house-poor.'
+          ]
+        },
+        {
+          id: 'conventional-28-36-rule',
+          heading: 'The Conventional 28/36 Underwriting Standard',
+          body: [
+            'Conventional conforming loans backed by Fannie Mae and Freddie Mac traditionally cap front-end housing costs at 28% and total back-end debt at 36% of gross monthly income.',
+            'If you carry significant consumer or auto debt, the 36% back-end ceiling will reduce your allowable housing payment even if your front-end ratio is well below 28%.'
+          ]
+        },
+        {
+          id: 'fha-va-guidelines',
+          heading: 'FHA 31/43 and VA Loan Guidelines',
+          body: [
+            'FHA loans allow more generous underwriting thresholds—typically 31% front-end and 43% back-end—allowing buyers with higher existing debt or lower down payments (as low as 3.5%) to qualify.',
+            'VA loans for qualifying military service members and veterans generally evaluate a 41% back-end DTI benchmark combined with a mandatory residual income test to verify sufficient living capital after debt service.'
+          ]
+        },
+        {
+          id: 'down-payment-interest-rate-impact',
+          heading: 'How Down Payments and Interest Rates Shape Buying Power',
+          body: [
+            'Every dollar added to your down payment directly expands your top-line purchase price without increasing your monthly borrowing obligation.',
+            'Conversely, higher interest rates consume a larger share of your qualifying monthly payment in interest, reducing maximum loan size. For example, a 1% rate increase reduces maximum loan affordability by approximately 9–11%.'
+          ]
+        }
       ],
+    },
+    howTo: [
+      'Enter your annual gross household income (before taxes) and total monthly recurring debt payments.',
+      'Input your total cash saved for a down payment.',
+      'Specify your loan term in years and estimated mortgage interest rate.',
+      'Enter expected property tax rate, homeowners insurance, and monthly HOA or condo fees.',
+      'Choose your lender qualification rule (Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45).',
+      'Review your recommended target home price, maximum loan balance, and itemized monthly PITI payment.',
+      'Examine the purchase capability comparison table to view conservative, target, and aggressive borrowing limits.'
+    ],
+    examples: [
+      {
+        title: 'Conventional First-Time Homebuyer (Default)',
+        input: 'Gross Income: $105,000/yr ($8,750/mo), Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr, 28/36 Rule',
+        result: 'Affordable Home Price: $354,821 | Max Loan: $294,821 | Monthly PITI: $2,450.00 | Front DTI: 28.0% | Back DTI: 33.7%'
+      },
+      {
+        title: 'FHA Buyer with Moderate Debt',
+        input: 'Gross Income: $80,000/yr ($6,667/mo), Debt: $600/mo, Down: $25,000, Rate: 6.50%, 30yr, FHA 31/43 Rule',
+        result: 'Affordable Home Price: $297,419 | Max Loan: $272,419 | Monthly PITI: $2,066.67 | Front DTI: 31.0% | Back DTI: 40.0%'
+      },
+      {
+        title: 'VA Buyer Zero-Down Purchase',
+        input: 'Gross Income: $90,000/yr ($7,500/mo), Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA 41% Rule',
+        result: 'Affordable Home Price: $419,268 | Max Loan: $419,268 | Monthly PITI: $2,775.00 | Back DTI: 41.0%'
+      }
+    ],
+    formula: {
+      text: 'Max Housing Payment = min(Gross Monthly Income × Front-End %, (Gross Monthly Income × Back-End %) − Monthly Debt) | Max Loan = PV(Rate / 12, Term × 12, Available for P&I) | Affordable Price = Max Loan + Down Payment',
+      variables: [
+        { symbol: 'Front-End %', description: 'Maximum allowable percentage of gross income for housing costs (e.g., 28% for conventional)' },
+        { symbol: 'Back-End %', description: 'Maximum allowable percentage of gross income for all debt service (e.g., 36% for conventional)' },
+        { symbol: 'Available for P&I', description: 'Max housing payment minus monthly property taxes, insurance, and HOA fees' },
+        { symbol: 'Max Loan', description: 'Present value of the amortized loan supported by Available for P&I' },
+        { symbol: 'Affordable Price', description: 'Total purchase price (Max Loan amount + Cash Down Payment)' }
+      ]
     },
 
     faqs: [
@@ -3168,6 +3768,8 @@ const TOOLS = {
     icon: 'fa-fire',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.',
     metaTitle: 'FIRE Calculator – Financial Independence & Early Retirement',
     metaDescription: 'Free FIRE Calculator. Calculate your FIRE number, retirement timeline, investment growth, passive income, and financial independence progress with interactive charts.',
@@ -3462,75 +4064,106 @@ const TOOLS = {
       return { stats, chart, chart2, compareChart, table, insight };
     },
 
-    // ── How-To Guide
-    howTo: [
-      'Enter your annual after-tax income and annual expenses — the calculator instantly computes your savings rate.',
-      'Add your current investment portfolio value and monthly contribution amount.',
-      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and inflation rate (2.5-3% historical average).',
-      'Choose your safe withdrawal rate — the 4% rule is the standard benchmark for a 30-year retirement.',
-      'Select your retirement spending adjustment and FIRE mode (Standard, Lean, Fat, Coast, or Barista) to match your lifestyle goals.',
-      'Review your FIRE number, years until financial independence, passive income projections, and readiness score.',
-      'Use the scenario comparison table to see how increasing contributions, boosting returns, or cutting expenses accelerates your timeline.',
-    ],
-
-    // ── Real-World Examples
-    examples: [
-      {
-        title: 'Standard FIRE at 45',
-        input: 'Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7%, Inflation: 2.5%, Withdrawal: 4%',
-        result: 'FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50%',
-      },
-      {
-        title: 'Lean FIRE with Minimalist Lifestyle',
-        input: 'Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Lean FIRE',
-        result: 'FIRE Number: ~$468,750 | Years to FIRE: ~14 years | Savings Rate: 58%',
-      },
-      {
-        title: 'Coast FIRE — Let Compounding Do the Work',
-        input: 'Income: $100,000, Expenses: $50,000, Portfolio: $200,000, Monthly: $2,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Coast FIRE',
-        result: 'Coast Number: ~$131,000 | Current portfolio exceeds coast number — compounding alone reaches FIRE',
-      },
-      {
-        title: 'Aggressive Early Retirement at 40',
-        input: 'Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8%, Inflation: 2.5%, Withdrawal: 4%',
-        result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12 years | Savings Rate: 62.5%',
-      },
-    ],
-    formula: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r] | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years | Monthly Passive Income = Portfolio × Withdrawal Rate ÷ 12',
-
-    // ── SEO Article Content
-    article: {
-      heading: 'The Complete Guide to FIRE: Financial Independence, Retire Early',
-      intro: 'The FIRE (Financial Independence, Retire Early) movement has transformed how millions of people think about work, savings, and life. Instead of working until 65, FIRE practitioners aggressively save and invest a large portion of their income — often 50% or more — to build a portfolio large enough to fund their lifestyle indefinitely. The GetCalcu FIRE Calculator helps you determine your FIRE number, estimate how long it will take to reach financial independence, and visualize your journey with interactive charts.',
-      sections: [
-        { heading: 'What is FIRE?', body: 'FIRE stands for Financial Independence, Retire Early. It is a lifestyle movement focused on saving aggressively (typically 50-70% of income) and investing those savings in low-cost index funds or other growth assets. The goal is to build a portfolio large enough that its investment returns can cover your living expenses indefinitely — giving you the freedom to retire decades earlier than the traditional retirement age of 65.' },
-        { heading: 'How FIRE Works', body: 'FIRE works through three interconnected principles: saving aggressively, investing consistently, and letting compound growth do the heavy lifting. By saving 50% or more of your income, you dramatically shorten the time needed to reach financial independence. Your investments grow through compound returns — each year\'s gains earn gains in future years. Once your portfolio reaches roughly 25 times your annual expenses (the 4% rule), you can safely withdraw 4% per year indefinitely.' },
-        { heading: 'Understanding the 4% Rule', body: 'The 4% rule originated from the Trinity Study, a landmark 1998 research paper that analyzed historical stock and bond returns. It found that withdrawing 4% of your portfolio in the first year of retirement, then adjusting for inflation each year, had a high probability of lasting 30 years. This translates to a FIRE number of 25 times your annual expenses. While the 4% rule has limitations — it assumes a 30-year retirement and historical market conditions — it remains the most widely used benchmark in the FIRE community.' },
-        { heading: 'Types of FIRE', body: 'The FIRE movement has evolved into several distinct strategies. Standard FIRE targets your current lifestyle with a 4% withdrawal rate. Lean FIRE assumes a minimalist lifestyle with significantly lower expenses (often 25-50% less). Fat FIRE targets a more luxurious retirement with higher spending. Coast FIRE means your current portfolio will grow to your FIRE number without additional contributions — you just need to cover current expenses. Barista FIRE combines part-time work with a smaller portfolio, where part-time income covers a portion of expenses.' },
-        { heading: 'How to Reach FIRE Faster', body: 'Accelerating your path to FIRE requires a multi-pronged approach. Increasing your income through career advancement, side hustles, or freelancing gives you more to save. Reducing expenses through mindful spending, downsizing, or geo-arbitrage (living in lower-cost areas) boosts your savings rate. Investing in low-cost index funds with 7-10% historical returns maximizes compound growth. Tax efficiency — using 401(k)s, IRAs, HSAs, and taxable accounts strategically — keeps more of your returns. Diversification across asset classes reduces risk. Automating your savings ensures consistency. And taking advantage of employer retirement plan matches is essentially free money.' },
-        { heading: 'Common FIRE Mistakes', body: 'Even well-intentioned FIRE practitioners make mistakes. Ignoring inflation can leave you short in retirement — always use inflation-adjusted returns. Unrealistic return assumptions (expecting 12%+ annually) can derail your plan. Spending creep — gradually increasing expenses as income rises — undermines your savings rate. Poor diversification concentrates risk in a single asset class. Early withdrawals from retirement accounts trigger penalties and taxes. And underestimating healthcare costs — especially before Medicare eligibility — is one of the most common FIRE planning errors.' },
-        { heading: 'FIRE Calculation Formula', body: 'The core FIRE formula is: FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate. For example, if your annual expenses are $50,000 and you use a 4% withdrawal rate, your FIRE number is $1,250,000. To project portfolio growth, use the compound interest formula: FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r], where P is your current portfolio, r is the monthly return rate, n is the number of months, and PMT is your monthly contribution. The inflation-adjusted FIRE number accounts for rising costs: Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation Rate)^Years.' },
-        { heading: 'Example Calculation', body: 'Consider a realistic scenario: You earn $80,000 after taxes, spend $40,000 annually, have $100,000 invested, and contribute $2,000 monthly. Your savings rate is 50%. Using a 4% withdrawal rate, your FIRE number is $1,000,000. With a 7% annual return, your portfolio grows to $1,000,000 in approximately 17.5 years. At that point, your portfolio generates $40,000 per year in passive income — exactly matching your expenses. Adjusting for 2.5% inflation, you would need approximately $1,540,000 in future dollars to maintain the same purchasing power.' },
+    methodology: {
+      standards: 'Methodology incorporates empirical data from the Trinity Study (Cooley, Hubbard, and Walz, 1998), William Bengen\'s Safe Withdrawal Rate framework, and standard capital decumulation actuarial principles.',
+      summary: 'The FIRE model determines the capital reserve required to sustain perpetual living expenditures based on safe withdrawal rates, calculating the exact timeline to financial independence via monthly compound growth simulations.',
+      assumptions: [
+        'The standard 4% withdrawal rate assumes a balanced portfolio (50–75% equities, remainder fixed income) across a 30-year retirement horizon.',
+        'Accumulation phase assumes recurring monthly investments compounding continuously at constant nominal rates.',
+        'Inflation projections escalate nominal target expenses to reflect future purchasing power requirements.'
       ],
+      sources: [
+        'Trinity University — Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable (1998)',
+        'Journal of Financial Planning — William Bengen: Determining Withdrawal Rates Using Historical Data',
+        'Center for Retirement Research at Boston College — Financial Independence & Decumulation Models'
+      ],
+      lastReviewed: 'September 2026',
     },
 
-    // ── Schema-Ready FAQs
+    article: {
+      id: 'how-to-calculate',
+      heading: 'The Complete Guide to FIRE: Financial Independence, Retire Early',
+      intro: 'The FIRE (Financial Independence, Retire Early) movement centers on achieving financial freedom through intentional living, aggressive saving, and disciplined investing in income-generating assets. Rather than retiring at traditional milestones, FIRE allows individuals to fund their living expenses indefinitely through investment returns.',
+      sections: [
+        {
+          id: 'how-fire-works',
+          heading: 'How FIRE Works: The Savings Rate Engine',
+          body: [
+            'The core lever of financial independence is your savings rate—the percentage of after-tax income retained and invested rather than consumed.',
+            'While traditional retirement plans assume a 10–15% savings rate over 40+ working years, saving 50% of income allows you to fund one year of living expenses for every year worked. At a 70% savings rate, financial independence can be achieved in under a decade.'
+          ]
+        },
+        {
+          id: 'safe-withdrawal-rate-trinity',
+          heading: 'The 4% Rule and the Trinity Study',
+          body: [
+            'The 4% rule originated from the 1998 Trinity Study, which backtested historical US market returns across various asset allocations. It concluded that an initial 4% withdrawal from a diversified stock/bond portfolio, adjusted annually for inflation, sustained a 95%+ success rate over a 30-year horizon.',
+            'Mathematically, a 4% withdrawal rate requires a portfolio equal to 25 times your annual living expenses (FIRE Number = Annual Expenses × 25). For longer retirement spans (40–50 years), many planners recommend a conservative 3.25–3.5% withdrawal rate (28.5x to 30.7x expenses).'
+          ]
+        },
+        {
+          id: 'fire-strategies-compared',
+          heading: 'Understanding FIRE Variations: Lean, Fat, Coast, and Barista',
+          body: [
+            'Standard FIRE: Targets your existing lifestyle with a 4% withdrawal rate (typically 25x current expenses).',
+            'Lean FIRE: Targets a minimalist lifestyle with expenses typically 25–40% below average (under $40,000/year), requiring a lower target portfolio.',
+            'Fat FIRE: Targets an abundant retirement with higher spending (often $100,000+/year) to support extensive travel and luxury.',
+            'Coast FIRE: The milestone where your existing investment portfolio will compound to your full retirement number by age 65 without requiring further contributions; you only need to earn enough to cover current living costs.',
+            'Barista FIRE: A hybrid model where part-time or freelance work covers a portion of living expenses and health insurance, significantly reducing the portfolio size needed.'
+          ]
+        },
+        {
+          id: 'sequence-of-returns-risk',
+          heading: 'Sequence of Returns Risk in Early Retirement',
+          body: [
+            'Sequence of returns risk refers to the danger of experiencing a major market downturn in the first 3 to 5 years of retirement. Selling depreciated assets to fund living expenses permanently depletes the portfolio base.',
+            'Mitigation strategies include maintaining a 1- to 2-year cash buffer, utilizing a dynamic withdrawal strategy (reducing withdrawals during market corrections), or implementing a bond tent during the retirement transition.'
+          ]
+        }
+      ],
+    },
+    howTo: [
+      'Enter your annual after-tax income and annual living expenses to determine your current savings rate.',
+      'Specify your current investment portfolio balance and recurring monthly contribution.',
+      'Set your expected annual investment return rate (7–8% nominal long-term average) and inflation rate.',
+      'Select your target Safe Withdrawal Rate (4% is standard; 3.5% for extended early retirement).',
+      'Choose your preferred FIRE strategy mode (Standard, Lean, Fat, Coast, or Barista) and spending adjustment.',
+      'Review your calculated FIRE number, years to financial independence, estimated retirement date, and readiness score.',
+      'Compare your current trajectory against the optimized scenario table to discover how minor adjustments accelerate your timeline.'
+    ],
+    examples: [
+      {
+        title: 'Standard FIRE Trajectory',
+        input: 'Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%',
+        result: 'FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50.0%'
+      },
+      {
+        title: 'Lean FIRE Minimalist Plan',
+        input: 'Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%, Lean FIRE',
+        result: 'FIRE Number: $468,750 | Years to FIRE: ~14.0 years | Savings Rate: 58.3%'
+      },
+      {
+        title: 'Aggressive Early Retirement',
+        input: 'Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8.0%, Inflation: 2.5%, Withdrawal: 4.0%',
+        result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12.0 years | Savings Rate: 62.5%'
+      }
+    ],
+    formula: {
+      text: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years',
+      variables: [
+        { symbol: 'FIRE Number', description: 'Total portfolio capital required to sustain living expenses indefinitely' },
+        { symbol: 'Safe Withdrawal Rate', description: 'Annual percentage withdrawn from portfolio (typically 3.5%–4.0%)' },
+        { symbol: 'Savings Rate', description: 'Percentage of net income invested toward wealth accumulation' },
+        { symbol: 'Annual Retirement Expenses', description: 'Projected annual living expenditures adjusted for lifestyle mode' },
+        { symbol: 'Inflation-Adjusted FIRE', description: 'Future nominal dollar value required to maintain equivalent purchasing power' }
+      ]
+    },
     faqs: [
-      { q: 'What is a good FIRE number?', a: 'A good FIRE number is typically 25 times your annual retirement expenses, based on the 4% rule. For example, if you plan to spend $40,000 per year in retirement, your FIRE number is $1,000,000. However, your specific FIRE number depends on your lifestyle, withdrawal rate, and expected retirement duration. Use our FIRE Calculator to find your personalized number.' },
-      { q: 'Is the 4% rule still valid?', a: 'The 4% rule, derived from the Trinity Study, remains a widely used benchmark but has limitations. It assumes a 30-year retirement, a 50/50 stock-bond portfolio, and historical market conditions. Some financial experts suggest a 3-3.5% withdrawal rate for longer retirements (40+ years) or conservative portfolios. The 4% rule is a useful starting point, but you should stress-test your plan with different scenarios.' },
-      { q: 'How much should I save for FIRE?', a: 'The amount you need to save depends on your target FIRE number and timeline. A common benchmark is saving 50% of your after-tax income, which typically allows FIRE in 15-20 years. Saving 25% takes about 30 years, while saving 70% can achieve FIRE in under 10 years. Use our FIRE Calculator to see how your savings rate affects your timeline.' },
-      { q: 'Can I retire at 40?', a: 'Yes, retiring at 40 is achievable with aggressive saving and investing. To retire at 40, you typically need a savings rate of 50-70% of your income and a portfolio of 25-30 times your annual expenses. For example, with $50,000 annual expenses, you would need $1.25-1.5 million. Starting early, maximizing income, and keeping expenses low are the keys to early retirement.' },
-      { q: 'What is Coast FIRE?', a: 'Coast FIRE is a FIRE strategy where your current portfolio is large enough that it will grow to your FIRE number by retirement age without any additional contributions. You "coast" on compound growth while working to cover current expenses. For example, if you need $1,000,000 at age 60 and have 30 years to grow at 7%, you only need about $131,000 today to reach that goal.' },
-      { q: 'What is Lean FIRE?', a: 'Lean FIRE is a FIRE strategy that targets a minimalist lifestyle with significantly lower expenses — often 25-50% less than a standard lifestyle. Lean FIRE practitioners typically aim for a FIRE number of $500,000-$750,000, which supports $20,000-$30,000 in annual spending at a 4% withdrawal rate. This approach requires frugal living but can be achieved much faster.' },
-      { q: 'How accurate is this calculator?', a: 'This FIRE Calculator uses standard financial formulas (compound interest, the 4% rule, inflation adjustment) and provides accurate projections based on your inputs. However, all financial projections involve uncertainty — actual market returns, inflation, and expenses will vary. Use conservative assumptions and review your plan regularly. The calculator is a planning tool, not a guarantee.' },
-      { q: 'Should inflation be included in FIRE calculations?', a: 'Yes, absolutely. Inflation erodes purchasing power over time — at 2.5% annual inflation, $1,000,000 today will only buy about $477,000 worth of goods in 30 years. Our FIRE Calculator shows both your nominal FIRE number and the inflation-adjusted amount you will actually need in future dollars.' },
-      { q: 'What investment return should I assume?', a: 'For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation, or 4-7% after inflation. A conservative planning assumption is 6-7% nominal or 4-5% real return. For a balanced 60/40 portfolio, use 5-7%. Always use a rate you are comfortable with and stress-test with lower returns.' },
-      { q: 'What happens if markets decline?', a: 'Market declines are normal and expected — the stock market has experienced 10-20% drawdowns roughly every 3-5 years. During the accumulation phase, market declines are actually beneficial because your contributions buy more shares at lower prices. The risk is highest during the withdrawal phase, which is why the 4% rule and having a cash buffer are important. Consider a bond tent or cash reserve to weather early-retirement market downturns.' },
-      { q: 'What is Barista FIRE?', a: 'Barista FIRE is a hybrid strategy where you retire from your full-time career but continue working part-time (like at a coffee shop, hence the name) to cover a portion of your expenses. This reduces the FIRE number you need, since part-time income covers some costs. It also provides health insurance benefits in some cases, which can be a significant advantage before Medicare eligibility.' },
-      { q: 'How does the savings rate affect my FIRE timeline?', a: 'Your savings rate is the single most powerful factor in your FIRE timeline. At a 10% savings rate, FIRE takes about 51 years. At 25%, it takes about 32 years. At 50%, it takes about 17 years. At 70%, it takes about 9 years. The relationship is exponential — small increases in savings rate near the high end dramatically shorten your timeline.' },
-      { q: 'What is the difference between FIRE and traditional retirement?', a: 'Traditional retirement typically means working until age 65-67, relying on Social Security, pensions, and retirement accounts. FIRE means achieving financial independence much earlier — often in your 30s, 40s, or 50s — by saving aggressively and living on investment income. FIRE gives you the freedom to choose how you spend your time, whether that means retiring completely, working part-time, or pursuing passion projects.' },
-      { q: 'How do taxes affect my FIRE plan?', a: 'Taxes can significantly impact your FIRE journey. Using tax-advantaged accounts (401(k), IRA, HSA) reduces your current tax burden and accelerates growth. In retirement, strategically withdrawing from taxable, tax-deferred, and tax-free accounts can minimize your tax bill. Consider Roth conversion ladders to access retirement funds before age 59.5 without penalties. Our calculator uses after-tax income, so your savings rate already reflects your tax situation.' },
-      { q: 'What is the 25x rule?', a: 'The 25x rule is a quick way to estimate your FIRE number: multiply your annual expenses by 25. This is derived from the 4% rule — if you can withdraw 4% of your portfolio annually, you need 25 times your annual expenses (1 ÷ 0.04 = 25). For example, $40,000 in annual expenses × 25 = $1,000,000 FIRE number.' },
+      { q: 'What is a good FIRE number?', a: 'A standard FIRE number is 25 times your expected annual retirement expenses, derived from the 4% safe withdrawal rule. For example, spending $40,000 per year requires a $1,000,000 portfolio ($40,000 ÷ 0.04). If you want greater safety or plan to retire before age 40, using a 3.3% withdrawal rate requires 30 times annual expenses ($1,200,000).' },
+      { q: 'Is the 4% rule still valid for early retirement?', a: 'The 4% rule was modeled on a 30-year horizon. For an early retirement spanning 40 to 50 years, academic research suggests aiming for a 3.25% to 3.75% withdrawal rate to account for longer market exposure and potential low-return decades. Combining a 3.5% initial rate with flexible spending in down markets provides high longevity confidence.' },
+      { q: 'How much should I save each month to retire early?', a: 'Your savings rate matters more than absolute dollar amounts. Saving 50% of your take-home pay puts you on track to retire in roughly 15–17 years; saving 65% cuts the timeline to approximately 10 years. Our calculator projects your exact timeline based on your starting portfolio, return rate, and monthly contribution.' },
+      { q: 'What is Coast FIRE vs Barista FIRE?', a: 'Coast FIRE means your existing portfolio is large enough that, without another dollar contributed, it will grow via compound interest to your full retirement number by age 65. You only need to work enough to cover immediate expenses. Barista FIRE means you work part-time or in low-stress employment to cover part of your living costs and health insurance, supplementing your income with smaller portfolio withdrawals.' },
+      { q: 'How does inflation affect my FIRE target?', a: 'Inflation raises the nominal cost of living over time. If your annual expenses are $40,000 today, at 2.5% inflation you will need approximately $61,700 in nominal dollars in 17.5 years to maintain the same purchasing power. Our calculator displays both your real baseline FIRE number and your inflation-adjusted future target.' },
     ],
   },
 

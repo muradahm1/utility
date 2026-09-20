@@ -771,6 +771,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 .icon-math { background: rgba(139,92,246,0.12); color: #8B5CF6; }
 .icon-finance { background: rgba(16,185,129,0.12); color: #10B981; }
 .icon-chart { background: rgba(249,115,22,0.12); color: #F97316; }
+.icon-construction { background: rgba(249,115,22,0.12); color: #F97316; }
+.icon-engineering { background: rgba(59,130,246,0.12); color: #3B82F6; }
 
 .tool-card h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 6px; }
 .tool-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 16px; flex: 1; }
@@ -779,6 +781,8 @@ input:checked + .slider:before { transform: translateX(20px); }
 .tag-finance { background: rgba(16,185,129,0.12); color: #10B981; }
 .tag-health { background: rgba(236,72,153,0.12); color: #EC4899; }
 .tag-math { background: rgba(139,92,246,0.12); color: #8B5CF6; }
+.tag-construction { background: rgba(249,115,22,0.12); color: #F97316; }
+.tag-engineering { background: rgba(59,130,246,0.12); color: #3B82F6; }
 
 /* Why Us */
 .why-us-banner {
@@ -3006,5 +3010,588 @@ body.has-maintenance-banner {
 .tool-results-toolbar .btn {
     min-width: 100px;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   GetCalcu Educational Layout, On This Page & Methodology Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Smooth Anchor Scrolling with Header Offset */
+html {
+    scroll-behavior: smooth;
+}
+
+.tool-runner-card[id],
+section[id],
+article[id],
+.article-subsection[id] {
+    scroll-margin-top: 96px;
+}
+
+/* ── Methodology & Editorial Standards Card ───────────────────── */
+.methodology-card {
+    margin-top: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+}
+
+.methodology-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.methodology-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.methodology-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--primary-color);
+    padding: 4px 10px;
+    border-radius: 9999px;
+}
+
+.methodology-header h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.methodology-review-date {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.methodology-summary {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.methodology-block {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+}
+
+.methodology-subheading {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.methodology-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.methodology-sources {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    flex-wrap: wrap;
+}
+
+.methodology-sources-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.methodology-sources-list {
+    color: var(--text-secondary);
+}
+
+/* ── Two-Column Educational Layout ────────────────────────────── */
+.educational-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 28px;
+    align-items: start;
+    margin-top: 28px;
+}
+
+.educational-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.educational-sidebar {
+    position: sticky;
+    top: 92px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+}
+
+/* ── "On This Page" Navigation Component ──────────────────────── */
+.on-this-page-container {
+    width: 100%;
+}
+
+.on-this-page-details {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s ease;
+}
+
+.on-this-page-details:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.on-this-page-summary {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    outline: none;
+}
+
+.on-this-page-summary::-webkit-details-marker {
+    display: none;
+}
+
+.on-this-page-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+.on-this-page-title i {
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.on-this-page-chevron {
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.on-this-page-details[open] .on-this-page-chevron {
+    transform: rotate(180deg);
+}
+
+.on-this-page-nav {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.on-this-page-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.on-this-page-item {
+    margin: 0;
+}
+
+.on-this-page-link {
+    display: block;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    line-height: 1.4;
+    border-radius: var(--radius-sm);
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.on-this-page-link:hover,
+.on-this-page-link:focus-visible {
+    color: var(--primary-color);
+    background: rgba(99, 102, 241, 0.08);
+    border-left-color: var(--primary-color);
+    padding-left: 12px;
+    outline: none;
+}
+
+/* ── Deep Educational Content Cards ───────────────────────────── */
+.educational-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+}
+
+.educational-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 16px 0;
+    line-height: 1.3;
+}
+
+.section-lead-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.article-intro-text p {
+    font-size: 14.5px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 20px;
+}
+
+.article-subsection {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-color);
+}
+
+.article-subsection:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.article-subheading {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+}
+
+.article-body-text p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 12px;
+}
+
+.article-body-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* ── How-To Steps ─────────────────────────────────────────────── */
+.how-to-steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.how-to-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--primary-color);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.step-content {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+}
+
+/* ── Formula Box & Variables ──────────────────────────────────── */
+.formula-display-box {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+}
+
+.formula-display-box code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+    line-height: 1.6;
+    display: block;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.formula-explanation-text p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    margin-bottom: 16px;
+}
+
+.formula-variables-wrap {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+}
+
+.formula-variables-heading {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+}
+
+.formula-variables-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.formula-variables-list strong {
+    color: var(--text-primary);
+}
+
+/* ── Real-World Worked Examples ───────────────────────────────── */
+.worked-examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.worked-example-card {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.worked-example-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.worked-example-row {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.example-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.worked-example-result {
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.example-val-highlight {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.worked-example-explanation {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 6px;
+    padding: 8px 10px;
+    background: rgba(99, 102, 241, 0.05);
+    border-radius: var(--radius-sm);
+    border-left: 2px solid var(--primary-color);
+}
+
+/* ── Domain Costs Grid (e.g. Closing, HOA, Maintenance) ────────── */
+.costs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.cost-item-card {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+}
+
+.cost-item-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+}
+
+.cost-item-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0 0 6px 0;
+}
+
+.cost-item-note {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--primary-color);
+    display: block;
+}
+
+/* ── FAQs Accordion ───────────────────────────────────────────── */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.faq-accordion-item {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-main);
+    padding: 16px 20px;
+    transition: border-color 0.15s ease;
+}
+
+.faq-accordion-item:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.faq-summary {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    outline: none;
+    user-select: none;
+}
+
+.faq-summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-chevron {
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.faq-accordion-item[open] .faq-chevron {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.faq-answer p {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* ── Mobile & Tablet Responsiveness ───────────────────────────── */
+@media (max-width: 991px) {
+    .educational-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .educational-sidebar {
+        position: static;
+        order: -1;
+        max-height: none;
+        overflow: visible;
+        width: 100%;
+    }
+    
+    .on-this-page-details {
+        padding: 14px 18px;
+    }
+    
+    .educational-card {
+        padding: 22px 20px;
+    }
+    
+    .methodology-card {
+        padding: 20px 20px;
+    }
+}
+
 
 

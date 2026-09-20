@@ -137,6 +137,6 @@ describe('Safe module loading (try/catch resilience)', () => {
         expect(() => {
             registerConstructionCalculators(registerTool, undefined);
         }).not.toThrow();
-        expect(registered).toHaveLength(3);
+        expect(registered).toHaveLength(4);
     });
 });

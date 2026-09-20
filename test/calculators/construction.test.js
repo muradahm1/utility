@@ -8,6 +8,7 @@ import {
     concreteCalculator,
     paintCalculator,
     tileCalculator,
+    stairCalculator,
     constructionCalculators,
     registerConstructionCalculators
 } from '../../js/calculators/construction.js';
@@ -16,8 +17,8 @@ describe('Construction module exports', () => {
     it('exports registerConstructionCalculators function', () => {
         expect(typeof registerConstructionCalculators).toBe('function');
     });
-    it('exports 3 calculators', () => {
-        expect(constructionCalculators).toHaveLength(3);
+    it('exports 4 calculators', () => {
+        expect(constructionCalculators).toHaveLength(4);
     });
     it('each calculator has required fields', () => {
         constructionCalculators.forEach(calc => {
@@ -29,13 +30,13 @@ describe('Construction module exports', () => {
             expect(typeof calc.calculate).toBe('function');
         });
     });
-    it('registerConstructionCalculators registers all 3 tools', () => {
+    it('registerConstructionCalculators registers all 4 tools', () => {
         const registered = [];
         const reg = {};
         const registerTool = (slug, def) => { reg[slug] = def; registered.push(slug); return true; };
         const toolExists = (slug) => slug in reg;
         registerConstructionCalculators(registerTool, toolExists);
-        expect(registered).toEqual(['concrete-calculator', 'paint-calculator', 'tile-calculator']);
+        expect(registered).toEqual(['concrete-calculator', 'paint-calculator', 'tile-calculator', 'stair-calculator']);
     });
     it('registerConstructionCalculators skips already-registered tools', () => {
         const registered = [];
@@ -184,5 +185,55 @@ describe('Tile Calculator', () => {
         const tSmall = parseInt(small.stats.find(s => s.label === 'Tiles Needed (excl. waste)').value);
         const tLarge = parseInt(large.stats.find(s => s.label === 'Tiles Needed (excl. waste)').value);
         expect(tLarge).toBeLessThan(tSmall);
+    });
+});
+
+describe('Stair Calculator', () => {
+    const base = {
+        total_height: 108, preferred_riser: 7, stair_width: 36,
+        tread_mode: 'comfort', target_tread: 10, building_code: 'irc',
+        landing: 'none', headroom: 84, material_waste: 10,
+    };
+    it('9ft rise / 7in riser = 15 risers, 14 treads, comfort tread 10.6in, 3 stringers', () => {
+        const r = stairCalculator.calculate(base);
+        expect(r.error).toBeFalsy();
+        expect(r.stats.find(s => s.label === 'Risers Needed').value).toBe('15 risers');
+        expect(r.stats.find(s => s.label === 'Treads Needed').value).toBe('14 treads');
+        expect(r.stats.find(s => s.label === 'Riser Height').value).toBe('7.2 in');
+        expect(r.stats.find(s => s.label === 'Tread Depth').value).toBe('10.6 in');
+        expect(r.stats.find(s => s.label === 'Stringers Needed').value).toBe('3 stringers');
+    });
+    it('produces a step-by-step detail table sized to the tread count', () => {
+        const r = stairCalculator.calculate(base);
+        expect(r.table).toBeDefined();
+        expect(r.table.mode).toBe(true);
+        expect(r.table.rows).toHaveLength(14);
+        expect(r.table.footer.riser).toBe(108);
+    });
+    it('custom tread depth overrides the comfort rule', () => {
+        const r = stairCalculator.calculate({ ...base, tread_mode: 'custom', target_tread: 12 });
+        expect(r.error).toBeFalsy();
+        expect(r.stats.find(s => s.label === 'Tread Depth').value).toBe('12 in');
+    });
+    it('includes a chart for riser and tread per step', () => {
+        const r = stairCalculator.calculate(base);
+        expect(r.chart).toBeDefined();
+        expect(r.chart.type).toBe('bar');
+        expect(r.chart.labels).toHaveLength(14);
+        expect(r.chart.datasets).toHaveLength(2);
+    });
+    it('flags a non-compliant deep riser when IRC code is selected', () => {
+        const r = stairCalculator.calculate({ ...base, preferred_riser: 10 });
+        expect(r.error).toBeFalsy();
+        expect(r.insight.tone).toBe('warning');
+        expect(r.insights.length).toBeGreaterThan(0);
+    });
+    it('returns an error for an undersized rise', () => {
+        const r = stairCalculator.calculate({ ...base, total_height: 6 });
+        expect(r.error).toBe(true);
+    });
+    it('returns an error for non-positive inputs', () => {
+        const r = stairCalculator.calculate({ ...base, stair_width: 0 });
+        expect(r.error).toBe(true);
     });
 });

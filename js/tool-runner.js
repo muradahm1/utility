@@ -7,7 +7,7 @@
  * @module tool-runner
  */
 import { initializeMigration, legacyHelpers, initToolRunner, updateSeoMeta } from './core/migration.js';
-import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo } from './core/calculator-engine.js';
+import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo, buildEducationalLayoutHtml, buildMethodologyHtml } from './core/calculator-engine.js';
 import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml, buildTableSpecHtml } from './core/calculator-engine.js';
 import { ChartManager } from './modules/charts.js';
@@ -58,7 +58,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const TOOLS = window.TOOLS || {};
-    const tool = TOOLS[slug];
+    // Prefer the legacy window.TOOLS registry, but also resolve against the
+    // core registry so modular calculators (construction/engineering/tools.js
+    // modules) that register via registerTool() are reachable at runtime.
+    // Before this fallback, modular tools rendered a false "Tool Not Found".
+    const tool = TOOLS[slug]
+        || (window.CORE && typeof window.CORE.getTool === 'function' ? window.CORE.getTool(slug) : undefined);
 
     if (!tool) {
         if (!slug) {
@@ -426,8 +431,7 @@ function initLegacyRunner(tool, slug, container) {
                 </div>
             </div>
             ${buildJourneyHtml(result.journey)}
-            ${buildSeoContentHtml()}
-            ${buildRelatedToolsHtml()}`;
+            ${buildEducationalLayoutHtml(tool, slug)}`;
 
         if (result.chart) renderChart(result.chart);
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
