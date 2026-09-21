@@ -8,8 +8,10 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "echo \"No linter configured yet\"",
-    "build:seo": "node build-seo.js",
-    "build": "node build-seo.js"
+    "build:css": "node scripts/minify-css.js",
+    "build:tools": "node scripts/build-tools-core.js",
+    "build:seo": "node scripts/minify-css.js && node scripts/build-tools-core.js && node build-seo.js",
+    "build": "node scripts/minify-css.js && node scripts/build-tools-core.js && node build-seo.js"
   },
   "devDependencies": {
     "jsdom": "^25.0.0",

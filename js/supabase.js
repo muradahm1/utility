@@ -2,30 +2,53 @@
 // UtilityHub — Supabase Client & Helpers
 // ============================================================
 
-const _sb = supabase.createClient(APP_CONFIG.SUPABASE_URL, APP_CONFIG.SUPABASE_ANON, {
-    auth: {
-        autoRefreshToken:    true,
-        persistSession:      true,
-        detectSessionInUrl:  true,
-        storageKey:          'uh_session',
+let _sb = null;
+
+function getSupabase() {
+    if (_sb) return _sb;
+    if (typeof supabase === 'undefined' || typeof APP_CONFIG === 'undefined') {
+        return null;
     }
-});
+    try {
+        _sb = supabase.createClient(APP_CONFIG.SUPABASE_URL, APP_CONFIG.SUPABASE_ANON, {
+            auth: {
+                autoRefreshToken:    true,
+                persistSession:      true,
+                detectSessionInUrl:  true,
+                storageKey:          'uh_session',
+            }
+        });
+    } catch (e) {
+        console.warn('[Supabase] Init deferred or unavailable:', e);
+    }
+    return _sb;
+}
 
 // ── Session ──────────────────────────────────────────────────
 
 async function getSession() {
-    const { data: { session } } = await _sb.auth.getSession();
+    const client = getSupabase();
+    if (!client) return null;
+    const { data: { session } } = await client.auth.getSession();
     return session;
 }
 
 async function getUser() {
-    const { data: { user } } = await _sb.auth.getUser();
+    const client = getSupabase();
+    if (!client) return null;
+    const { data: { user } } = await client.auth.getUser();
     return user;
 }
 
 // Fires callback immediately with current session, then on every change
 function onAuthChange(callback) {
-    _sb.auth.onAuthStateChange((_event, session) => callback(session));
+    const client = getSupabase();
+    if (!client) {
+        // If not initialized yet, invoke with null session
+        callback(null);
+        return;
+    }
+    client.auth.onAuthStateChange((_event, session) => callback(session));
     // Also fire immediately
     getSession().then(callback);
 }
@@ -33,7 +56,9 @@ function onAuthChange(callback) {
 // ── Auth Actions ─────────────────────────────────────────────
 
 async function signUp(email, password, displayName) {
-    const { data, error } = await _sb.auth.signUp({
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Authentication service unavailable' } };
+    const { data, error } = await client.auth.signUp({
         email,
         password,
         options: {
@@ -45,12 +70,16 @@ async function signUp(email, password, displayName) {
 }
 
 async function signIn(email, password) {
-    const { data, error } = await _sb.auth.signInWithPassword({ email, password });
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Authentication service unavailable' } };
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
     return { data, error };
 }
 
 async function signInWithGoogle() {
-    const { data, error } = await _sb.auth.signInWithOAuth({
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Authentication service unavailable' } };
+    const { data, error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: `${location.origin}/` }
     });
@@ -58,29 +87,37 @@ async function signInWithGoogle() {
 }
 
 async function resetPassword(email) {
-    const { data, error } = await _sb.auth.resetPasswordForEmail(email, {
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Authentication service unavailable' } };
+    const { data, error } = await client.auth.resetPasswordForEmail(email, {
         redirectTo: `${location.origin}/auth?mode=update-password`,
     });
     return { data, error };
 }
 
 async function updatePassword(newPassword) {
-    const { data, error } = await _sb.auth.updateUser({ password: newPassword });
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Authentication service unavailable' } };
+    const { data, error } = await client.auth.updateUser({ password: newPassword });
     return { data, error };
 }
 
 async function signOut() {
-    const { error } = await _sb.auth.signOut();
+    const client = getSupabase();
+    if (!client) return { error: null };
+    const { error } = await client.auth.signOut();
     return { error };
 }
 
 // ── Calculations (History) ───────────────────────────────────
 
 async function saveCalculation(toolSlug, toolName, inputs, results) {
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Not signed in' } };
     const user = await getUser();
     if (!user) return { error: { message: 'Not signed in' } };
 
-    const { data, error } = await _sb
+    const { data, error } = await client
         .from('calculations')
         .insert({
             user_id:   user.id,
@@ -96,12 +133,12 @@ async function saveCalculation(toolSlug, toolName, inputs, results) {
 }
 
 async function getHistory(limit = 50) {
-    // Security fix (ISSUE-002): scope the query to the authenticated user so rows
-    // are filtered at query time, not solely relying on Row Level Security.
+    const client = getSupabase();
+    if (!client) return { data: [], error: { message: 'Not signed in' } };
     const user = await getUser();
     if (!user) return { data: [], error: { message: 'Not signed in' } };
 
-    const { data, error } = await _sb
+    const { data, error } = await client
         .from('calculations')
         .select('id, tool_slug, tool_name, inputs, results, created_at')
         .eq('user_id', user.id)
@@ -112,7 +149,9 @@ async function getHistory(limit = 50) {
 }
 
 async function deleteCalculation(id) {
-    const { error } = await _sb
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Not signed in' } };
+    const { error } = await client
         .from('calculations')
         .delete()
         .eq('id', id);
@@ -121,10 +160,12 @@ async function deleteCalculation(id) {
 }
 
 async function clearAllHistory() {
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Not signed in' } };
     const user = await getUser();
     if (!user) return { error: { message: 'Not signed in' } };
 
-    const { error } = await _sb
+    const { error } = await client
         .from('calculations')
         .delete()
         .eq('user_id', user.id);
@@ -135,7 +176,9 @@ async function clearAllHistory() {
 // ── Profile ──────────────────────────────────────────────────
 
 async function getProfile() {
-    const { data, error } = await _sb
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Not signed in' } };
+    const { data, error } = await client
         .from('profiles')
         .select('display_name, avatar_url, created_at')
         .single();
@@ -144,10 +187,12 @@ async function getProfile() {
 }
 
 async function updateProfile(displayName) {
+    const client = getSupabase();
+    if (!client) return { error: { message: 'Not signed in' } };
     const user = await getUser();
     if (!user) return { error: { message: 'Not signed in' } };
 
-    const { data, error } = await _sb
+    const { data, error } = await client
         .from('profiles')
         .update({ display_name: displayName })
         .eq('id', user.id)

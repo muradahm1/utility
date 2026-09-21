@@ -1,11 +1,13 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const masterIconPath = 'C:\\Users\\DELL\\.gemini\\antigravity\\brain\\66cf436f-7c05-4c4a-8905-fa67cd81a110\\getcalcu_icon_master_1787938881840.jpg';
-const masterOgPath = 'C:\\Users\\DELL\\.gemini\\antigravity\\brain\\66cf436f-7c05-4c4a-8905-fa67cd81a110\\getcalcu_og_image_1787938836256.jpg';
+const primaryMasterIcon = 'C:\\Users\\DELL\\.gemini\\antigravity\\brain\\66cf436f-7c05-4c4a-8905-fa67cd81a110\\getcalcu_icon_master_1787938881840.jpg';
+const primaryMasterOg = 'C:\\Users\\DELL\\.gemini\\antigravity\\brain\\66cf436f-7c05-4c4a-8905-fa67cd81a110\\getcalcu_og_image_1787938836256.jpg';
 
 const rootDir = path.resolve(__dirname, '..');
+const masterIconPath = fs.existsSync(primaryMasterIcon) ? primaryMasterIcon : path.join(rootDir, 'icon-512.png');
+const masterOgPath = fs.existsSync(primaryMasterOg) ? primaryMasterOg : path.join(rootDir, 'og-image.png');
 
 async function buildAssets() {
     console.log('Generating brand assets...');
@@ -72,6 +74,13 @@ async function buildAssets() {
         .png({ quality: 100 })
         .toFile(path.join(rootDir, 'favicon-32x32.png'));
     console.log('✓ Created favicon-32x32.png (32x32)');
+
+    // 72x72 UI Brand Logo (for 36x36 2x retina display in header/footer)
+    await sharp(masterIconPath)
+        .resize(72, 72)
+        .png({ quality: 90 })
+        .toFile(path.join(rootDir, 'logo.png'));
+    console.log('✓ Created logo.png (72x72)');
 
     console.log('All brand assets successfully generated!');
 }

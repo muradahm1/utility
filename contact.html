@@ -44,7 +44,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
     <link rel="shortcut icon" href="/favicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
     <style>
         .contact-layout {
@@ -100,7 +100,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="app-container">
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -242,7 +242,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <footer class="site-footer">
                 <div class="footer-inner">
                     <div class="footer-brand">
-                        <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                        <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
                         <span class="brand-name">GetCalcu</span>
                     </div>
                     <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -277,9 +277,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Note (ISSUE-001): EmailJS credentials are no longer loaded client-side.
          Contact messages are sent via the serverless endpoint /api/contact
          which holds credentials in Vercel environment variables. -->
-    <script src="/js/config.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/supabase.js"></script>
     <script src="/js/app.js"></script>
     <script>
         const form = document.getElementById('contact-form');

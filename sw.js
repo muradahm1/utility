@@ -20,7 +20,7 @@ const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/tool.html',
-  '/css/style.css',
+  '/css/style.min.css',
   '/css/icons.css',
   '/css/webfonts/fa-solid-900.woff2',
   '/js/tools.js',

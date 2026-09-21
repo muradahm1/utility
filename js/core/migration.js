@@ -259,6 +259,9 @@ export function updateSeoMeta(tool, slug) {
  * @param {string} pageUrl - Page URL
  */
 export function addSchemaMarkup(tool, pageUrl) {
+    if (typeof document === 'undefined' || document.querySelector('script[type="application/ld+json"]')) {
+        return;
+    }
     // SoftwareApplication schema
     const schemaScript = document.createElement('script');
     schemaScript.type = 'application/ld+json';

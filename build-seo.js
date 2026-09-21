@@ -294,7 +294,7 @@ function renderSidebarNav(activeSlug = null, isHome = false) {
   return `
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -923,7 +923,7 @@ const toolPageTemplate = (tool) => {
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -975,7 +975,7 @@ const toolPageTemplate = (tool) => {
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -1002,9 +1002,8 @@ const toolPageTemplate = (tool) => {
         </div>
     </div>
 
-    <script src="/js/tools.js"></script>
+    <script src="/js/tools-core.js"></script>
     <script src="/js/tools-template.js"></script>
-    <script src="/js/modules/budget-planner.js" type="module"></script>
     <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.js"></script>
     <script src="/js/config.js" defer></script>
@@ -1219,7 +1218,7 @@ const categoryPageTemplate = (cat, catTools) => {
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -1360,7 +1359,7 @@ const categoryPageTemplate = (cat, catTools) => {
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -1387,11 +1386,8 @@ const categoryPageTemplate = (cat, catTools) => {
         </div>
     </div>
 
-    <script src="/js/tools.js"></script>
+    <script src="/js/tools-core.js" defer></script>
     <script src="/js/app.js"></script>
-    <script src="/js/config.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="/js/supabase.js" defer></script>
     <script src="/js/cookie-consent.js" defer></script>
     <script src="/js/maintenance-banner.js" defer></script>
     <script src="/js/pwa.js" defer></script>

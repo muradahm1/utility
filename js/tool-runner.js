@@ -160,6 +160,10 @@ function updateSeoLegacy(tool, slug) {
     const twDesc = document.querySelector('meta[name="twitter:description"]');
     if (twDesc) twDesc.setAttribute('content', tool.metaDescription);
 
+    if (document.querySelector('script[type="application/ld+json"]')) {
+        return;
+    }
+
     const schemaScript = document.createElement('script');
     schemaScript.type = 'application/ld+json';
     schemaScript.textContent = JSON.stringify({
