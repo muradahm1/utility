@@ -9,7 +9,26 @@ document.addEventListener('DOMContentLoaded', () => {
     initFooterYear();
     initCategoryFilter();
     initBackToTop();
+    updateCategoryCounts();
 });
+
+// ── Category Counts Sync ───────────────────────────────────────
+function updateCategoryCounts() {
+    if (typeof TOOLS === 'undefined') return;
+    const counts = {};
+    Object.values(TOOLS).forEach(t => {
+        if (t && t.category) {
+            const key = t.category.toLowerCase();
+            counts[key] = (counts[key] || 0) + 1;
+        }
+    });
+    Object.keys(counts).forEach(cat => {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) {
+            el.textContent = `${counts[cat]} tools`;
+        }
+    });
+}
 
 // ── Footer Year ────────────────────────────────────────────────
 function initFooterYear() {
