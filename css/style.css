@@ -2516,6 +2516,37 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     transform: scaleX(1);
 }
 
+/* Footer Social Links */
+.footer-social-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 4px 0;
+}
+
+.footer-social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.footer-social-icon:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
 .footer-links a:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
@@ -3260,9 +3291,9 @@ body.has-maintenance-banner {
     }
 }
 
-/* ── Monetization / Ad Infrastructure ─────────────────────────── */
-
+/* ── Monetization / Ad Infrastructure (Disabled by default) ── */
 .ad-slot {
+    display: none !important; /* Set to flex when ads are enabled in APP_CONFIG */
     background: var(--bg-main);
     border: 1px dashed var(--border-color);
     border-radius: var(--radius-md);
@@ -3271,7 +3302,6 @@ body.has-maintenance-banner {
     color: var(--text-secondary);
     font-size: 13px;
     min-height: 90px;
-    display: flex;
     align-items: center;
     justify-content: center;
     margin: 16px 0;
