@@ -5,34 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
     <link rel="manifest" href="/manifest.json">
-    <title>About Us | GetCalcu</title>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <!-- Google Analytics & Tag Manager DataLayer Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
     </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
-<!-- End Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
+    <!-- End Google Tag Manager -->
+    <title>About Us | GetCalcu</title>
     <meta name="description" content="Learn about GetCalcu's mission to provide fast, free, and privacy-focused online calculators and tools for everyone.">
     <link rel="canonical" href="https://www.getcalcu.com/about">
     <meta property="og:type" content="website">
     <meta property="og:title" content="About Us | GetCalcu">
-    <meta property="og:description" content="Fast, free, and privacy-first online calculators and tools for everyone.">
+    <meta property="og:description" content="Learn about GetCalcu's mission to provide fast, free, and privacy-focused online calculators and tools for everyone.">
     <meta property="og:url" content="https://www.getcalcu.com/about">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon.png">
+    <meta property="og:image" content="https://www.getcalcu.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About Us | GetCalcu">
+    <meta name="twitter:description" content="Learn about GetCalcu's mission to provide fast, free, and privacy-focused online calculators and tools for everyone.">
+    <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
     <link rel="shortcut icon" href="/favicon.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/icons.css">
     <style>
         .about-hero {
@@ -93,25 +105,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="app-container">
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
                 <a href="/" class="nav-item"><i class="fa-solid fa-house"></i><span>Home</span></a>
-                <a href="/?category=finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
-                <a href="/?category=health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
-                <a href="/?category=business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
-                <a href="/?category=education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
-                <a href="/?category=construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
-                <a href="/?category=engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
-                <a href="/?category=math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
+                <a href="/category/finance" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Finance</span></a>
+                <a href="/category/health" class="nav-item"><i class="fa-solid fa-heart-pulse"></i><span>Health</span></a>
+                <a href="/category/business" class="nav-item"><i class="fa-solid fa-briefcase"></i><span>Business</span></a>
+                <a href="/category/education" class="nav-item"><i class="fa-solid fa-graduation-cap"></i><span>Education</span></a>
+                <a href="/category/construction" class="nav-item"><i class="fa-solid fa-helmet-safety"></i><span>Construction</span></a>
+                <a href="/category/engineering" class="nav-item"><i class="fa-solid fa-gears"></i><span>Engineering</span></a>
+                <a href="/category/math" class="nav-item"><i class="fa-solid fa-percent"></i><span>Math</span></a>
                 <a href="/history" class="nav-item auth-only hidden"><i class="fa-solid fa-clock-rotate-left"></i><span>History</span></a>
             </nav>
             <div class="sidebar-footer">
                 <div class="promo-card" id="sidebar-promo">
                     <h4>Save your results</h4>
                     <p>Create a free account to save your calculations and history.</p>
-                    <a href="/auth.html?mode=signup" class="btn btn-primary btn-sm">Sign up free</a>
+                    <a href="/auth?mode=signup" class="btn btn-primary btn-sm">Sign up free</a>
                 </div>
                 <div class="theme-switch-container">
                     <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
@@ -144,11 +156,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="content-body">
                 <!-- Hero -->
                 <div class="about-hero">
-                    <div class="feature-icon" style="margin: 0 auto 16px; width:52px; height:52px; background: var(--primary-color); border-radius:14px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-                        <img src="favicon.png" alt="GetCalcu" style="width:32px; height:32px; object-fit:contain;">
-                    </div>
-                    <h1>Built for Everyone. Free Forever.</h1>
-                    <p>GetCalcu is a privacy-first utility hub delivering instant, accurate calculators and converters — no sign-up, no paywalls, no data harvesting. Just the answers you need, right now.</p>
+                    <div style="width:48px; height:48px; border-radius:12px; background:rgba(99,102,241,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin: 0 auto 16px;">
+                            <img src="/favicon.png" alt="GetCalcu" style="width:32px; height:32px; object-fit:contain;">
+                        </div>
+                    <h1>Built for Clarity. Free for Everyone.</h1>
+                    <p>GetCalcu provides fast, dependable calculators for everyday questions and milestone decisions — completely free, private, and uncluttered.</p>
                 </div>
 
                 <div class="tool-runner-card">
@@ -156,97 +168,97 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                         <!-- Mission -->
                         <h2 class="section-title">Our Mission</h2>
-                        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">In a digital world cluttered with paywalls, intrusive ads, and data harvesting, we set out to build something better. GetCalcu was founded on a simple principle: powerful tools should be accessible to <em>everyone</em> — students, professionals, and everyday users — completely free and fully respectful of your privacy.</p>
+                        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">When you are planning a mortgage, calculating compound interest, or estimating material for a renovation, you need clear, honest numbers. You shouldn't have to navigate paywalls, pop-up forms, or hidden tracking scripts just to do math. We founded GetCalcu on a simple standard: powerful, easy-to-use tools should be accessible to everyone, with total respect for your privacy.</p>
 
                         <div class="callout-box">
-                            <strong>Our promise:</strong> Every tool on GetCalcu runs in your browser. Your inputs never touch our servers. We will never sell your data, require an account to use our tools, or hide results behind a subscription.
+                            <strong>Our Privacy Promise:</strong> Every calculator on GetCalcu executes entirely within your browser. Your financial numbers, loan details, and personal data never touch our servers or leave your device.
                         </div>
 
                         <!-- Core Values -->
-                        <h2 class="section-title">Our Core Values</h2>
+                        <h2 class="section-title">What We Stand For</h2>
                         <div class="values-grid">
                             <div class="value-card">
                                 <div class="v-icon" style="background: rgba(16,185,129,0.12); color:#10B981;"><i class="fa-solid fa-bullseye"></i></div>
-                                <h4>Accuracy</h4>
-                                <p>Every formula is rigorously researched, cross-validated, and peer-reviewed before launch.</p>
+                                <h4>Mathematical Precision</h4>
+                                <p>Formulas are validated against authoritative financial, engineering, and academic benchmarks.</p>
                             </div>
                             <div class="value-card">
                                 <div class="v-icon" style="background: rgba(245,158,11,0.12); color:#F59E0B;"><i class="fa-solid fa-bolt"></i></div>
-                                <h4>Speed</h4>
-                                <p>Results appear as you type. No loading spinners, no server round-trips for calculations.</p>
+                                <h4>Instant Response</h4>
+                                <p>Answers update live as you type. No waiting for server calls or page reloads.</p>
                             </div>
                             <div class="value-card">
                                 <div class="v-icon" style="background: rgba(59,130,246,0.12); color:#3B82F6;"><i class="fa-solid fa-universal-access"></i></div>
-                                <h4>Accessibility</h4>
-                                <p>Fully responsive, keyboard-navigable, and screen-reader friendly on every device.</p>
+                                <h4>Everyday Simplicity</h4>
+                                <p>Designed for clarity on smartphones, tablets, and desktop screens alike.</p>
                             </div>
                             <div class="value-card">
                                 <div class="v-icon" style="background: rgba(139,92,246,0.12); color:#8B5CF6;"><i class="fa-solid fa-eye"></i></div>
-                                <h4>Transparency</h4>
-                                <p>Open about how tools work, how we sustain the platform, and what data (none) we collect.</p>
+                                <h4>Transparent Math</h4>
+                                <p>We show the underlying formulas and explain what each variable means in plain English.</p>
                             </div>
                             <div class="value-card">
                                 <div class="v-icon" style="background: rgba(99,102,241,0.12); color:#6366F1;"><i class="fa-solid fa-shield-halved"></i></div>
-                                <h4>Privacy</h4>
-                                <p>Your inputs stay in your browser. We do not collect, store, or sell any personal data. Period.</p>
+                                <h4>True Privacy</h4>
+                                <p>Your personal data and calculations stay yours. No selling, no tracking, no exceptions.</p>
                             </div>
                         </div>
 
                         <!-- Why Choose Us -->
-                        <h2 class="section-title">Why Choose GetCalcu?</h2>
+                        <h2 class="section-title">Why Use GetCalcu?</h2>
                         <div class="why-us-banner">
                             <div class="features-grid">
                                 <div class="feature-item">
                                     <div class="feature-icon"><i class="fa-solid fa-user-lock"></i></div>
                                     <div>
-                                        <h4>No Account Needed</h4>
-                                        <p>Use any tool instantly — zero friction, zero sign-up required.</p>
+                                        <h4>No Sign-Up Required</h4>
+                                        <p>Open any tool and start calculating instantly — zero barriers.</p>
                                     </div>
                                 </div>
                                 <div class="feature-item">
                                     <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
                                     <div>
-                                        <h4>Instant Results</h4>
-                                        <p>Real-time calculations as you type, powered entirely in-browser.</p>
+                                        <h4>Real-Time Results</h4>
+                                        <p>Dynamic charts and numbers recalculate smoothly with every keystroke.</p>
                                     </div>
                                 </div>
                                 <div class="feature-item">
                                     <div class="feature-icon"><i class="fa-solid fa-mobile-screen"></i></div>
                                     <div>
-                                        <h4>Works on Any Device</h4>
-                                        <p>Fully responsive layout optimized for mobile, tablet, and desktop.</p>
+                                        <h4>Mobile-First Design</h4>
+                                        <p>Clean, modern interface tailored for fast thumb-friendly inputs on the go.</p>
                                     </div>
                                 </div>
                                 <div class="feature-item">
                                     <div class="feature-icon"><i class="fa-solid fa-rectangle-ad"></i></div>
                                     <div>
-                                        <h4>Clean, Focused UI</h4>
-                                        <p>No pop-ups, no layout-shifting ads, no distractions — just your answer.</p>
+                                        <h4>Distraction-Free Layout</h4>
+                                        <p>No intrusive pop-ups, no layout jumps, and no aggressive interruptions.</p>
                                     </div>
                                 </div>
                                 <div class="feature-item">
                                     <div class="feature-icon"><i class="fa-solid fa-infinity"></i></div>
                                     <div>
-                                        <h4>100% Free Forever</h4>
-                                        <p>No freemium tiers, no paywalls. Every tool is free for everyone, always.</p>
+                                        <h4>Free Forever</h4>
+                                        <p>Every tool is free for everyone, with no locked premium tiers or hidden charges.</p>
                                     </div>
                                 </div>
                                 <div class="feature-item">
                                     <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
                                     <div>
-                                        <h4>Privacy by Default</h4>
-                                        <p>GDPR & CCPA aligned. No personal data collected from our tools.</p>
+                                        <h4>Strict Client-Side Math</h4>
+                                        <p>GDPR & CCPA aligned. Your inputs never touch a remote backend server.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Trust & QA -->
-                        <h2 class="section-title">Trust & Quality Assurance</h2>
-                        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">Every calculator on GetCalcu goes through a strict development process: we research established formulas from authoritative sources, cross-validate outputs against industry-standard tools, and conduct internal code reviews before any tool goes live. We also welcome bug reports from our community — if something looks off, <a href="/contact" style="color: var(--primary-color); font-weight: 600;">let us know</a>.</p>
+                        <h2 class="section-title">Quality & Accuracy Standards</h2>
+                        <p style="color: var(--text-secondary); line-height: 1.7; font-size: 15px;">Every calculator on GetCalcu is built against recognized industry standards: from standard banking amortization equations and IRS tax guidelines to NIST metrology tables and academic grading scales. Our engineering team continually maintains automated test suites to ensure calculations remain consistent and accurate across updates. If you ever spot a discrepancy or have a suggestion, <a href="/contact" style="color: var(--primary-color); font-weight: 600;">we'd love to hear from you</a>.</p>
 
                         <div class="callout-box" style="margin-top: 16px;">
-                            <strong>Important disclaimer:</strong> While we strive for maximum accuracy, our tools are designed for informational and educational purposes. They are not a substitute for professional financial, medical, or legal advice. Always consult a qualified professional for critical decisions.
+                            <strong>Note:</strong> GetCalcu tools are provided for informational and educational planning. While we maintain rigorous mathematical precision, these tools are not a substitute for licensed financial, tax, medical, or legal counsel.
                         </div>
 
                     </div>
@@ -256,7 +268,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <footer class="site-footer">
                 <div class="footer-inner">
                     <div class="footer-brand">
-                        <div class="brand-icon"><img src="favicon.png" alt="GetCalcu"></div>
+                        <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
                         <span class="brand-name">GetCalcu</span>
                     </div>
                     <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -288,13 +300,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
-    <script src="js/config.js"></script>
+    <script src="/js/config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/cookie-consent.js"></script>
-    <script src="js/maintenance-banner.js"></script>
-    <script src="js/pwa.js" defer></script>
+    <script src="/js/supabase.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/cookie-consent.js"></script>
+    <script src="/js/maintenance-banner.js"></script>
+    <script src="/js/pwa.js" defer></script>
 </body>
 </html>
 

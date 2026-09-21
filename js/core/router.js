@@ -70,7 +70,13 @@ export function getQueryParams() {
  * @param {string|null} slug - Tool slug from URL
  * @returns {Object} Result with tool, isValid, and error message
  */
+const SLUG_ALIASES = {
+    'true-home-buying-cost-calculator': 'true-home-buying-system',
+    'freelance-true-hourly-rate-calculator': 'freelance-true-rate-system'
+};
+
 export function resolveToolFromUrl(slug) {
+    if (slug && SLUG_ALIASES[slug]) slug = SLUG_ALIASES[slug];
     // No slug provided
     if (!slug) {
         return {

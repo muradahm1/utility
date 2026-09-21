@@ -17,6 +17,41 @@
 
 const TOOLS = {
   'mortgage-calculator': {
+    presets: [
+          {
+                "label": "30-Yr Fixed (20% Down)",
+                "values": {
+                      "home_price": 400000,
+                      "down_payment": 80000,
+                      "interest_rate": 6.8,
+                      "loan_term": 30,
+                      "property_tax": 4800,
+                      "insurance": 1200
+                }
+          },
+          {
+                "label": "15-Yr Fixed (Save Interest)",
+                "values": {
+                      "home_price": 400000,
+                      "down_payment": 80000,
+                      "interest_rate": 6,
+                      "loan_term": 15,
+                      "property_tax": 4800,
+                      "insurance": 1200
+                }
+          },
+          {
+                "label": "FHA Starter (3.5% Down)",
+                "values": {
+                      "home_price": 320000,
+                      "down_payment": 11200,
+                      "interest_rate": 6.5,
+                      "loan_term": 30,
+                      "property_tax": 3800,
+                      "insurance": 1100
+                }
+          }
+    ],
     name: 'Mortgage Calculator',
     category: 'Finance',
     icon: 'fa-house',
@@ -978,6 +1013,38 @@ const TOOLS = {
 
   // ── Compound Interest Calculator ─────────────────────────────────────
   'compound-interest-calculator': {
+    presets: [
+          {
+                "label": "Index Fund ($500/mo @ 8%)",
+                "values": {
+                      "initial_deposit": 10000,
+                      "monthly_contribution": 500,
+                      "annual_rate": 8,
+                      "investment_term": 20,
+                      "compound_frequency": 12
+                }
+          },
+          {
+                "label": "Aggressive ($1,000/mo @ 10%)",
+                "values": {
+                      "initial_deposit": 25000,
+                      "monthly_contribution": 1000,
+                      "annual_rate": 10,
+                      "investment_term": 25,
+                      "compound_frequency": 12
+                }
+          },
+          {
+                "label": "Conservative HYSA (4.5%)",
+                "values": {
+                      "initial_deposit": 5000,
+                      "monthly_contribution": 250,
+                      "annual_rate": 4.5,
+                      "investment_term": 10,
+                      "compound_frequency": 12
+                }
+          }
+    ],
     name: 'Compound Interest Calculator',
     category: 'Finance',
     icon: 'fa-chart-line',
@@ -1452,14 +1519,15 @@ const TOOLS = {
       // dollars, producing an apples-to-oranges comparison (ISSUE-004).
       const targetNestEgg   = roundTo(desiredIncomeToday * 25, 2);
 
-      // ── Monthly and annual retirement income (4% rule)
+      // ── Monthly and annual retirement income (4% rule in TODAY's purchasing power)
       const monthlyRetireIncome = roundTo(totalNestEgg * 0.04 / 12, 2);
       const annualRetireIncome  = roundTo(totalNestEgg * 0.04, 2);
 
-      // ── Inflation-adjusted monthly income (today's dollars)
-      // PV = FV / (1 + inflation)^years
-      const inflationAdjMonthly = roundTo(
-        monthlyRetireIncome / Math.pow(1 + inflationRate, yearsToRetire), 2
+      // ── Nominal future monthly income (future inflated dollars at retirement age)
+      // Since totalNestEgg is already in constant today's dollars (Fisher real return),
+      // nominal future income scales by inflation factor rather than double-discounting.
+      const futureNominalMonthly = roundTo(
+        monthlyRetireIncome * Math.pow(1 + inflationRate, yearsToRetire), 2
       );
 
       // ── Achieved replacement rate
@@ -1512,15 +1580,15 @@ const TOOLS = {
 
       return {
         stats: [
-          { label: 'Projected Nest Egg',             value: fmt(totalNestEgg),          highlight: true },
-          { label: 'Target Nest Egg (4% Rule)',       value: fmt(targetNestEgg)                         },
-          { label: 'Status',                          value: status,                     warn: totalNestEgg < targetNestEgg },
-          { label: 'Monthly Retirement Income',       value: fmt(monthlyRetireIncome)                   },
-          { label: 'Annual Retirement Income',        value: fmt(annualRetireIncome)                    },
-          { label: 'Total Contributions',             value: fmt(totalContribs)                         },
-          { label: 'Investment Growth',               value: fmt(totalGrowth)                           },
-          { label: 'Inflation-Adj. Monthly Income',   value: fmt(inflationAdjMonthly)                   },
-          { label: 'Income Replacement Rate',         value: pct(achievedReplaceRate / 100)             },
+          { label: "Projected Nest Egg (Today's $)",    value: fmt(totalNestEgg),          highlight: true },
+          { label: "Target Nest Egg (4% Rule)",         value: fmt(targetNestEgg)                         },
+          { label: 'Status',                            value: status,                     warn: totalNestEgg < targetNestEgg },
+          { label: "Monthly Income (Today's $)",        value: fmt(monthlyRetireIncome)                   },
+          { label: "Annual Income (Today's $)",         value: fmt(annualRetireIncome)                    },
+          { label: 'Total Contributions',               value: fmt(totalContribs)                         },
+          { label: 'Investment Growth',                 value: fmt(totalGrowth)                           },
+          { label: 'Future Monthly (At Retirement $)',  value: fmt(futureNominalMonthly)                  },
+          { label: 'Income Replacement Rate',           value: pct(achievedReplaceRate / 100)             },
           { label: 'Additional Monthly Savings Needed', value: fmt(additionalMonthlyNeeded), warn: additionalMonthlyNeeded > 0 },
         ],
         chart: { principal: totalContribs, totalInterest: totalGrowth },
@@ -1601,6 +1669,38 @@ const TOOLS = {
     ],
   },
   'savings-calculator': {
+    presets: [
+          {
+                "label": "Biweekly Acceleration ($250)",
+                "values": {
+                      "mode": "biweekly-monthly",
+                      "initial_deposit": 5000,
+                      "recurring_deposit": 250,
+                      "deposit_frequency": "biweekly",
+                      "interest_rate": 4.5,
+                      "duration_years": 5
+                }
+          },
+          {
+                "label": "Goal Timeline ($50k Target)",
+                "values": {
+                      "mode": "goal-timeline",
+                      "initial_deposit": 10000,
+                      "recurring_deposit": 500,
+                      "deposit_frequency": "monthly",
+                      "interest_rate": 4.5,
+                      "target_goal": 50000
+                }
+          },
+          {
+                "label": "6-Month Emergency Runway",
+                "values": {
+                      "mode": "emergency-fund",
+                      "initial_deposit": 12000,
+                      "essential_expenses": 3500
+                }
+          }
+    ],
     name: 'Savings & Strategy Calculator',
     category: 'Finance',
     icon: 'fa-piggy-bank',
@@ -1718,11 +1818,6 @@ const TOOLS = {
         const tUse = Math.max(t, 1);
         const fvNom = fv(P0, M, rNom/k, k*tUse);
         const fvPost = fv(P0, M, rNet/k, k*tUse);
-        // Real future value (today's dollars): compound each period's balance and
-        // contributions at the real post-tax rate (Fisher equation). Previously the
-        // whole post-tax FV was divided by a single inflation factor, which
-        // over-discounted contributions made in future years and understated the
-        // real buying power (ISSUE-005).
         const fvReal = roundTo(fv(P0, M, rReal/k, k*tUse), 2);
         const rowsS = []; let run = P0;
         for (let y = 1; y <= tUse; y++) {
@@ -1733,10 +1828,10 @@ const TOOLS = {
           run = nE;
         }
         return { stats: [
-          { label: 'Real Return (Post-Tax, Post-Inflation)', value: pct(rReal/100), highlight: true },
+          { label: 'Real Return (Post-Tax, Post-Inflation)', value: pct(rReal), highlight: true },
           { label: 'Advertised APY', value: pct(rNom) },
-          { label: 'Post-Tax Nominal Return', value: pct(rNet/100) },
-          { label: 'Inflation Drag', value: pct(roundTo(rNet - rReal, 4)/100), warn: true },
+          { label: 'Post-Tax Nominal Return', value: pct(rNet) },
+          { label: 'Inflation Drag', value: pct(roundTo(rNet - rReal, 4)), warn: true },
           { label: "Real Future Value (Today's $)", value: fmt(fvReal) },
           { label: 'Post-Tax Future Value (Nominal $)', value: fmt(fvPost) },
           { label: 'Nominal Future Value (Pre-Tax $)', value: fmt(fvNom) },
@@ -1746,8 +1841,8 @@ const TOOLS = {
           { key: 'deposits', label: 'Deposits', format: 'currency' }, { key: 'nominalEnd', label: 'Nominal End', format: 'currency' },
           { key: 'postTaxEnd', label: 'Post-Tax End', format: 'currency' }, { key: 'realEndTodayDollars', label: "Real (Today's $)", format: 'currency', emphasis: true } ], rows: rowsS },
         insight: { tone: 'warning', icon: 'fa-percent',
-          headline: 'Your bank advertises ' + pct(rNom) + ' APY, but your real return is only ' + pct(rRealD/100) + '.',
-          detail: 'After ' + pct(tau) + ' tax and ' + pct(pi) + ' inflation, your purchasing-power yield collapses to ' + pct(rRealD/100) + '. Over ' + tUse + ' years, ' + fmt(P0) + ' plus ' + fmt(M) + '/month grows to ' + fmt(fvReal) + " in today's dollars." } };
+          headline: 'Your bank advertises ' + pct(rNom) + ' APY, but your real return is only ' + pct(rReal) + '.',
+          detail: 'After ' + pct(tau) + ' tax and ' + pct(pi) + ' inflation, your purchasing-power yield collapses to ' + pct(rReal) + '. Over ' + tUse + ' years, ' + fmt(P0) + ' plus ' + fmt(M) + '/month grows to ' + fmt(fvReal) + " in today's dollars." } };
       }
 
       if (v.mode === 'goal-timeline') {
@@ -1830,6 +1925,38 @@ const TOOLS = {
 
   // ── Credit Card Payoff & Strategy Calculator ───────────────────────────────
   'credit-card-payoff-calculator': {
+    presets: [
+          {
+                "label": "Fixed Payoff ($300/mo)",
+                "values": {
+                      "mode": "min-payment",
+                      "balance": 6000,
+                      "apr": 22.5,
+                      "min_pct": 2.5,
+                      "monthly_payment": 300
+                }
+          },
+          {
+                "label": "24-Month Debt-Free Goal",
+                "values": {
+                      "mode": "target-date",
+                      "balance": 8000,
+                      "apr": 21,
+                      "target_months": 24
+                }
+          },
+          {
+                "label": "0% Balance Transfer (18 Mo)",
+                "values": {
+                      "mode": "balance-transfer",
+                      "balance": 7500,
+                      "apr": 24,
+                      "transfer_fee": 3,
+                      "promo_months": 18,
+                      "monthly_payment": 450
+                }
+          }
+    ],
     name: 'Credit Card Payoff & Strategy Calculator',
     category: 'Finance',
     icon: 'fa-credit-card',
@@ -2699,7 +2826,7 @@ const TOOLS = {
         };
       });
 
-      const table = {
+      const table = makeTableSpec({
         mode: 'comparison',
         title: `Year-by-Year Comparison (${analysisPeriod} Years)`,
         columns: [
@@ -2718,7 +2845,7 @@ const TOOLS = {
           { key: 'difference', label: 'Difference', format: 'currency' },
         ],
         rows: tableRows,
-      };
+      });
 
       // ── BUILD INSIGHT ──
       const insightTone = winner === 'buy' ? 'positive' : 'neutral';
@@ -4779,10 +4906,5046 @@ const TOOLS = {
       { q: 'Should I tip on the pre-tax or post-tax amount?', a: 'Traditionally, tips are calculated on the pre-tax amount. However, many people tip on the post-tax total. Our calculator lets you enter both tax and tip percentages separately for clarity.' },
     ],
   },
+  'true-home-buying-system': {
+    id: 'true-home-buying-system',
+    name: 'True Home Buying System',
+    category: 'Finance',
+    icon: 'fa-house-circle-check',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
+    metaTitle: 'True Cost of Buying a House Calculator (With Closing Costs & Taxes)',
+    metaDescription: 'Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.',
+    keywords: [
+      'true cost of buying a house calculator',
+      'home buying cost calculator',
+      'true home buying system',
+      'cash required to close calculator',
+      'closing costs calculator',
+      'total cost of homeownership',
+      'pitia mortgage calculator',
+      'maintenance reserve calculator',
+      'rent vs buy break even calculator',
+      'house buying decision calculator',
+      'mortgage break even matrix',
+      'true monthly cost of ownership',
+      'home equity vs sp500 index funds',
+      'fha mip cmhc mortgage calculator'
+    ],
+    related: [
+      'mortgage-calculator',
+      'rent-vs-buy-calculator',
+      'house-affordability-calculator',
+      '15-year-mortgage-calculator',
+      'fha-loan-calculator',
+      'amortization-calculator',
+      'refinance-calculator',
+      'budget-planner'
+    ],
+    presets: [
+      {
+        label: 'US Standard (20% Down)',
+        values: {
+          country: 'US',
+          state_province: 'TX',
+          home_price: 450000,
+          down_payment_pct: 20,
+          closing_costs_pct: 3.0,
+          prepaids_reserve_pct: 1.0,
+          interest_rate: 6.8,
+          loan_term: 30,
+          property_tax_rate: 1.68,
+          home_insurance: 1800,
+          hoa_fees: 0,
+          enable_maintenance: 'yes',
+          maintenance_pct: 1.0,
+          current_rent: 2200,
+          rent_increase_pct: 3.0,
+          home_appreciation_pct: 3.5,
+          investment_return_pct: 7.5,
+          ownership_years: 10,
+          selling_cost_pct: 6.0
+        }
+      },
+      {
+        label: 'US FHA Starter (3.5% Down)',
+        values: {
+          country: 'US',
+          state_province: 'FL',
+          home_price: 350000,
+          down_payment_pct: 3.5,
+          closing_costs_pct: 3.5,
+          prepaids_reserve_pct: 1.2,
+          interest_rate: 6.5,
+          loan_term: 30,
+          property_tax_rate: 0.91,
+          home_insurance: 2200,
+          hoa_fees: 50,
+          enable_maintenance: 'yes',
+          maintenance_pct: 1.0,
+          current_rent: 1950,
+          rent_increase_pct: 3.5,
+          home_appreciation_pct: 4.0,
+          investment_return_pct: 7.5,
+          ownership_years: 7,
+          selling_cost_pct: 6.0
+        }
+      },
+      {
+        label: 'Canada Urban Home (CMHC 10% Down)',
+        values: {
+          country: 'CA',
+          state_province: 'ON',
+          home_price: 650000,
+          down_payment_pct: 10,
+          closing_costs_pct: 2.5,
+          prepaids_reserve_pct: 1.0,
+          interest_rate: 5.2,
+          loan_term: 25,
+          property_tax_rate: 1.05,
+          home_insurance: 1400,
+          hoa_fees: 0,
+          enable_maintenance: 'yes',
+          maintenance_pct: 1.0,
+          current_rent: 2600,
+          rent_increase_pct: 3.0,
+          home_appreciation_pct: 3.5,
+          investment_return_pct: 7.5,
+          ownership_years: 10,
+          selling_cost_pct: 5.0
+        }
+      },
+      {
+        label: 'Condo / Townhome with HOA',
+        values: {
+          country: 'US',
+          state_province: 'CA',
+          home_price: 550000,
+          down_payment_pct: 15,
+          closing_costs_pct: 2.8,
+          prepaids_reserve_pct: 1.0,
+          interest_rate: 6.75,
+          loan_term: 30,
+          property_tax_rate: 0.75,
+          home_insurance: 1200,
+          hoa_fees: 350,
+          enable_maintenance: 'yes',
+          maintenance_pct: 0.75,
+          current_rent: 2500,
+          rent_increase_pct: 3.0,
+          home_appreciation_pct: 4.0,
+          investment_return_pct: 7.5,
+          ownership_years: 8,
+          selling_cost_pct: 6.0
+        }
+      }
+    ],
+    fields: [
+      { id: 'jurisdiction_section', type: 'section', label: 'Jurisdiction & Location Rules', icon: 'fa-globe' },
+      {
+        id: 'country',
+        label: 'Country / Regulatory System',
+        type: 'select',
+        default: 'US',
+        options: [
+          { value: 'US', label: 'United States (CFPB / Monthly Compounding / PMI / FHA)' },
+          { value: 'CA', label: 'Canada (Bank Act / Semi-Annual Compounding / CMHC Insurance)' }
+        ],
+        hint: 'Applies official statutory mortgage compounding rules, default insurance tiers, and tax benchmarks.'
+      },
+      {
+        id: 'state_province',
+        label: 'State / Province / Territory',
+        type: 'select',
+        default: 'TX',
+        options: [
+          { value: 'AL', label: 'Alabama (US) — Avg Tax 0.40%' },
+          { value: 'AK', label: 'Alaska (US) — Avg Tax 1.04%' },
+          { value: 'AZ', label: 'Arizona (US) — Avg Tax 0.53%' },
+          { value: 'AR', label: 'Arkansas (US) — Avg Tax 0.54%' },
+          { value: 'CA', label: 'California (US) — Avg Tax 0.75%' },
+          { value: 'CO', label: 'Colorado (US) — Avg Tax 0.52%' },
+          { value: 'CT', label: 'Connecticut (US) — Avg Tax 1.79%' },
+          { value: 'DE', label: 'Delaware (US) — Avg Tax 0.61%' },
+          { value: 'FL', label: 'Florida (US) — Avg Tax 0.91%' },
+          { value: 'GA', label: 'Georgia (US) — Avg Tax 0.81%' },
+          { value: 'HI', label: 'Hawaii (US) — Avg Tax 0.32%' },
+          { value: 'ID', label: 'Idaho (US) — Avg Tax 0.54%' },
+          { value: 'IL', label: 'Illinois (US) — Avg Tax 2.08%' },
+          { value: 'IN', label: 'Indiana (US) — Avg Tax 0.77%' },
+          { value: 'IA', label: 'Iowa (US) — Avg Tax 1.43%' },
+          { value: 'KS', label: 'Kansas (US) — Avg Tax 1.34%' },
+          { value: 'KY', label: 'Kentucky (US) — Avg Tax 0.80%' },
+          { value: 'LA', label: 'Louisiana (US) — Avg Tax 0.56%' },
+          { value: 'ME', label: 'Maine (US) — Avg Tax 1.20%' },
+          { value: 'MD', label: 'Maryland (US) — Avg Tax 1.05%' },
+          { value: 'MA', label: 'Massachusetts (US) — Avg Tax 1.14%' },
+          { value: 'MI', label: 'Michigan (US) — Avg Tax 1.38%' },
+          { value: 'MN', label: 'Minnesota (US) — Avg Tax 1.02%' },
+          { value: 'MS', label: 'Mississippi (US) — Avg Tax 0.67%' },
+          { value: 'MO', label: 'Missouri (US) — Avg Tax 0.93%' },
+          { value: 'MT', label: 'Montana (US) — Avg Tax 0.73%' },
+          { value: 'NE', label: 'Nebraska (US) — Avg Tax 1.54%' },
+          { value: 'NV', label: 'Nevada (US) — Avg Tax 0.59%' },
+          { value: 'NH', label: 'New Hampshire (US) — Avg Tax 1.93%' },
+          { value: 'NJ', label: 'New Jersey (US) — Avg Tax 2.23%' },
+          { value: 'NM', label: 'New Mexico (US) — Avg Tax 0.67%' },
+          { value: 'NY', label: 'New York (US) — Avg Tax 1.40%' },
+          { value: 'NC', label: 'North Carolina (US) — Avg Tax 0.70%' },
+          { value: 'ND', label: 'North Dakota (US) — Avg Tax 0.95%' },
+          { value: 'OH', label: 'Ohio (US) — Avg Tax 1.53%' },
+          { value: 'OK', label: 'Oklahoma (US) — Avg Tax 0.85%' },
+          { value: 'OR', label: 'Oregon (US) — Avg Tax 0.93%' },
+          { value: 'PA', label: 'Pennsylvania (US) — Avg Tax 1.49%' },
+          { value: 'RI', label: 'Rhode Island (US) — Avg Tax 1.40%' },
+          { value: 'SC', label: 'South Carolina (US) — Avg Tax 0.56%' },
+          { value: 'SD', label: 'South Dakota (US) — Avg Tax 1.14%' },
+          { value: 'TN', label: 'Tennessee (US) — Avg Tax 0.64%' },
+          { value: 'TX', label: 'Texas (US) — Avg Tax 1.68%' },
+          { value: 'UT', label: 'Utah (US) — Avg Tax 0.57%' },
+          { value: 'VT', label: 'Vermont (US) — Avg Tax 1.83%' },
+          { value: 'VA', label: 'Virginia (US) — Avg Tax 0.87%' },
+          { value: 'WA', label: 'Washington (US) — Avg Tax 0.88%' },
+          { value: 'WV', label: 'West Virginia (US) — Avg Tax 0.55%' },
+          { value: 'WI', label: 'Wisconsin (US) — Avg Tax 1.61%' },
+          { value: 'WY', label: 'Wyoming (US) — Avg Tax 0.56%' },
+          { value: 'DC', label: 'District of Columbia (US) — Avg Tax 0.62%' },
+          { value: 'ON', label: 'Ontario (CA) — Avg Tax 1.05%' },
+          { value: 'BC', label: 'British Columbia (CA) — Avg Tax 0.45%' },
+          { value: 'AB', label: 'Alberta (CA) — Avg Tax 0.85%' },
+          { value: 'QC', label: 'Quebec (CA) — Avg Tax 1.15%' },
+          { value: 'MB', label: 'Manitoba (CA) — Avg Tax 1.30%' },
+          { value: 'SK', label: 'Saskatchewan (CA) — Avg Tax 1.25%' },
+          { value: 'NS', label: 'Nova Scotia (CA) — Avg Tax 1.35%' },
+          { value: 'NB', label: 'New Brunswick (CA) — Avg Tax 1.50%' },
+          { value: 'NL', label: 'Newfoundland & Labrador (CA) — Avg Tax 1.10%' },
+          { value: 'PE', label: 'Prince Edward Island (CA) — Avg Tax 1.40%' },
+          { value: 'YT', label: 'Yukon (CA) — Avg Tax 0.90%' },
+          { value: 'NT', label: 'Northwest Territories (CA) — Avg Tax 0.95%' },
+          { value: 'NU', label: 'Nunavut (CA) — Avg Tax 0.90%' }
+        ],
+        hint: 'Select your state or province to load official statistical property tax benchmarks.'
+      },
+
+      { id: 'upfront_section', type: 'section', label: '1. Upfront Liquidity Interface', icon: 'fa-money-bill-wave' },
+      {
+        id: 'home_price',
+        label: 'Home Purchase Price ($)',
+        type: 'range',
+        default: 450000,
+        min: 50000,
+        max: 5000000,
+        step: 5000,
+        hint: 'The agreed total purchase price of the property.'
+      },
+      {
+        id: 'down_payment_pct',
+        label: 'Down Payment (%)',
+        type: 'range',
+        default: 20,
+        min: 0,
+        max: 100,
+        step: 0.5,
+        hint: 'Percentage paid upfront in cash. Minimum 3.5% (US FHA) / 5% (Canada CMHC); 20% eliminates mortgage default insurance.'
+      },
+      {
+        id: 'closing_costs_pct',
+        label: 'Closing Costs (%)',
+        type: 'range',
+        default: 3.0,
+        min: 0,
+        max: 10,
+        step: 0.1,
+        hint: 'Transactional fees charged by lenders, title/settlement companies, appraisals, and government recording (typically 2% to 5%).'
+      },
+      {
+        id: 'prepaids_reserve_pct',
+        label: 'Escrow / Prepaids Reserve (%)',
+        type: 'range',
+        default: 1.0,
+        min: 0,
+        max: 5,
+        step: 0.1,
+        hint: 'Upfront liquid deposit required by lenders to fund initial property tax and hazard insurance escrow accounts.'
+      },
+
+      { id: 'monthly_section', type: 'section', label: '2. Loaded Monthly Budget Engine (PITIA Framework)', icon: 'fa-calculator' },
+      {
+        id: 'interest_rate',
+        label: 'Mortgage Annual Interest Rate (%)',
+        type: 'range',
+        default: 6.8,
+        min: 0.1,
+        max: 20,
+        step: 0.05,
+        hint: 'Annual mortgage rate (APR). Canadian mortgages automatically calculate semi-annual compounding per the Bank Act.'
+      },
+      {
+        id: 'loan_term',
+        label: 'Loan Amortization Term',
+        type: 'select',
+        default: 30,
+        options: [
+          { value: 15, label: '15 Years (Faster Equity, Higher Payment)' },
+          { value: 20, label: '20 Years' },
+          { value: 25, label: '25 Years (Standard Canada Max for Insured)' },
+          { value: 30, label: '30 Years (Standard US Benchmark)' }
+        ],
+        hint: 'Repayment period. Insured Canadian mortgages are generally capped at 25 years.'
+      },
+      {
+        id: 'property_tax_rate',
+        label: 'Property Tax Rate (% of Value/yr)',
+        type: 'range',
+        default: 1.2,
+        min: 0,
+        max: 5,
+        step: 0.05,
+        hint: 'Annual local property tax rate. Automatically adjusts based on selected jurisdiction or can be set manually.'
+      },
+      {
+        id: 'home_insurance',
+        label: 'Homeowners Insurance Annual Premium ($)',
+        type: 'number',
+        default: 1500,
+        min: 0,
+        max: 50000,
+        step: 100,
+        hint: 'Yearly hazard and structural homeowners insurance premium.'
+      },
+      {
+        id: 'hoa_fees',
+        label: 'Monthly HOA / Condo Dues ($)',
+        type: 'number',
+        default: 0,
+        min: 0,
+        max: 5000,
+        step: 25,
+        hint: 'Mandatory monthly dues for condominiums, townhomes, or master-planned communities.'
+      },
+      {
+        id: 'enable_maintenance',
+        label: 'Enable Maintenance Reserve Account',
+        type: 'select',
+        default: 'yes',
+        options: [
+          { value: 'yes', label: 'Enabled (Recommended 1% Annual Rule)' },
+          { value: 'no', label: 'Disabled (0% Reserve)' }
+        ],
+        hint: 'Automatically allocates 1% of total home price annually (divided by 12) for long-term structural repairs, roofing, and mechanical updates.'
+      },
+      {
+        id: 'maintenance_pct',
+        label: 'Maintenance Reserve (% of Home Value/yr)',
+        type: 'number',
+        default: 1.0,
+        min: 0,
+        max: 5,
+        step: 0.1,
+        condition: (v) => v.enable_maintenance === 'yes',
+        hint: 'Recommended rule of thumb is 1% to 2% of home purchase price annually in liquid reserves.'
+      },
+
+      { id: 'breakeven_section', type: 'section', label: '3. 5-Year vs 10-Year Break-Even Matrix (Rent vs Buy)', icon: 'fa-chart-line' },
+      {
+        id: 'current_rent',
+        label: 'Current / Alternative Monthly Rent ($)',
+        type: 'number',
+        default: 2200,
+        min: 0,
+        max: 30000,
+        step: 50,
+        hint: 'Monthly rent for an equivalent property in your market.'
+      },
+      {
+        id: 'rent_increase_pct',
+        label: 'Estimated Annual Rent Increase (%)',
+        type: 'range',
+        default: 3.0,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: 'Historical rent growth averages 2% to 4% annually.'
+      },
+      {
+        id: 'home_appreciation_pct',
+        label: 'Estimated Annual Property Appreciation (%)',
+        type: 'range',
+        default: 3.5,
+        min: -5,
+        max: 15,
+        step: 0.1,
+        hint: 'Long-term historical national average home appreciation is approximately 3% to 4% annually.'
+      },
+      {
+        id: 'investment_return_pct',
+        label: 'S&P 500 / Alternative Investment Return (%)',
+        type: 'range',
+        default: 7.5,
+        min: 0,
+        max: 20,
+        step: 0.1,
+        hint: 'Expected long-term annual return if down payment & closing cash were invested in low-cost index funds.'
+      },
+      {
+        id: 'ownership_years',
+        label: 'Planned Ownership Horizon (Years)',
+        type: 'range',
+        default: 10,
+        min: 1,
+        max: 30,
+        step: 1,
+        hint: 'How long you realistically plan to stay before selling or refinancing.'
+      },
+      {
+        id: 'selling_cost_pct',
+        label: 'Selling Transaction Costs (%)',
+        type: 'number',
+        default: 6.0,
+        min: 0,
+        max: 15,
+        step: 0.1,
+        hint: 'Realtor commissions, transfer taxes, and closing legal fees paid upon selling (typically 5% to 6%).'
+      }
+    ],
+    fieldLabels(v) {
+      const isCA = v.country === 'CA';
+      const sym = isCA ? 'C$' : '$';
+      const price = safeNum(v.home_price, 450000);
+      const downPct = safeNum(v.down_payment_pct, 20);
+      const downDollar = roundTo(price * (downPct / 100), 0);
+      return {
+        down_payment_pct: `Down Payment (${downPct}% ≈ ${sym}${downDollar.toLocaleString('en-US')})`
+      };
+    },
+    calculate(v) {
+      const isCA = v.country === 'CA';
+      const sym = isCA ? 'C$' : '$';
+      const homePrice = safeNum(v.home_price, 450000);
+      if (homePrice <= 0) return errorResult('Please enter a valid home purchase price greater than $0.');
+
+      const downPct = safeNum(v.down_payment_pct, 20);
+      const closingPct = safeNum(v.closing_costs_pct, 3.0);
+      const prepaidsPct = safeNum(v.prepaids_reserve_pct, 1.0);
+
+      const downPaymentDollar = roundTo(homePrice * (downPct / 100), 2);
+      const closingCostsDollar = roundTo(homePrice * (closingPct / 100), 2);
+      const prepaidsDollar = roundTo(homePrice * (prepaidsPct / 100), 2);
+      const totalLiquidCashRequired = roundTo(downPaymentDollar + closingCostsDollar + prepaidsDollar, 2);
+
+      const baseLoanAmount = Math.max(0, homePrice - downPaymentDollar);
+      let mortgageInsuranceRate = 0;
+      let isInsuredLoan = false;
+      let cmhcPremiumDollar = 0;
+      let monthlyPMIDollar = 0;
+
+      if (isCA) {
+        // Canadian CMHC Default Insurance Rules (Official Schedule)
+        if (downPct < 20 && baseLoanAmount > 0) {
+          isInsuredLoan = true;
+          if (downPct >= 15) mortgageInsuranceRate = 0.028;
+          else if (downPct >= 10) mortgageInsuranceRate = 0.031;
+          else mortgageInsuranceRate = 0.040;
+          cmhcPremiumDollar = roundTo(baseLoanAmount * mortgageInsuranceRate, 2);
+        }
+      } else {
+        // US Conventional PMI / FHA benchmark
+        if (downPct < 20 && baseLoanAmount > 0) {
+          isInsuredLoan = true;
+          // Typical US annual PMI: ~0.65% of loan amount
+          monthlyPMIDollar = roundTo((baseLoanAmount * 0.0065) / 12, 2);
+        }
+      }
+
+      // Total loan financed
+      const financedLoanAmount = isCA && isInsuredLoan ? (baseLoanAmount + cmhcPremiumDollar) : baseLoanAmount;
+      const annualInterestRate = safeNum(v.interest_rate, 6.8);
+      const loanTermYears = Math.min(30, Math.max(5, Math.round(safeNum(v.loan_term, 30))));
+      const totalMonths = loanTermYears * 12;
+
+      // Compounding calculations: Canada is semi-annual per Bank Act; US is monthly
+      let monthlyRate = 0;
+      if (annualInterestRate > 0) {
+        if (isCA) {
+          monthlyRate = Math.pow(1 + (annualInterestRate / 200), 1 / 6) - 1;
+        } else {
+          monthlyRate = (annualInterestRate / 100) / 12;
+        }
+      }
+
+      let monthlyPI = 0;
+      if (financedLoanAmount > 0 && totalMonths > 0) {
+        if (monthlyRate === 0) {
+          monthlyPI = financedLoanAmount / totalMonths;
+        } else {
+          monthlyPI = financedLoanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+        }
+      }
+      monthlyPI = roundTo(monthlyPI, 2);
+
+      // Property tax calculation
+      const propTaxRate = safeNum(v.property_tax_rate, 1.2);
+      const annualPropertyTax = roundTo(homePrice * (propTaxRate / 100), 2);
+      const monthlyPropertyTax = roundTo(annualPropertyTax / 12, 2);
+
+      // Insurance & HOA
+      const annualInsurance = safeNum(v.home_insurance, 1500);
+      const monthlyInsurance = roundTo(annualInsurance / 12, 2);
+      const monthlyHOA = safeNum(v.hoa_fees, 0);
+
+      // Maintenance Reserve calculation
+      const enableMaintenance = v.enable_maintenance !== 'no';
+      const maintPct = enableMaintenance ? safeNum(v.maintenance_pct, 1.0) : 0;
+      const annualMaintenance = roundTo(homePrice * (maintPct / 100), 2);
+      const monthlyMaintenance = roundTo(annualMaintenance / 12, 2);
+
+      // Loaded PITIA + M Monthly Cost
+      const trueMonthlyCost = roundTo(monthlyPI + monthlyPropertyTax + monthlyInsurance + monthlyHOA + monthlyMaintenance + monthlyPMIDollar, 2);
+
+      // Rent vs Buy Parameters
+      const currentRent = safeNum(v.current_rent, 2200);
+      const rentIncreaseRate = safeNum(v.rent_increase_pct, 3.0) / 100;
+      const appreciationRate = safeNum(v.home_appreciation_pct, 3.5) / 100;
+      const investmentReturnRate = safeNum(v.investment_return_pct, 7.5) / 100;
+      const horizonYears = Math.min(30, Math.max(1, Math.round(safeNum(v.ownership_years, 10))));
+      const sellingCostRate = safeNum(v.selling_cost_pct, 6.0) / 100;
+
+      // Multi-Year Simulation Matrix (Year 1 to 30)
+      let balance = financedLoanAmount;
+      let cumPrincipal = 0;
+      let cumInterest = 0;
+      let cumOwnershipCashPaid = totalLiquidCashRequired;
+      let cumRentPaid = 0;
+      let rentMonthly = currentRent;
+      let investmentPortfolio = totalLiquidCashRequired; // Renter invests down payment + closing costs
+      let breakEvenYear = null;
+
+      const schedule = [];
+      const maxSimYears = Math.max(10, horizonYears);
+
+      for (let yr = 1; yr <= maxSimYears; yr++) {
+        let yrInterest = 0;
+        let yrPrincipal = 0;
+
+        for (let m = 0; m < 12 && balance > 0; m++) {
+          const interestPortion = balance * monthlyRate;
+          let principalPortion = monthlyPI - interestPortion;
+          if (principalPortion > balance) principalPortion = balance;
+          yrInterest += interestPortion;
+          yrPrincipal += principalPortion;
+          balance -= principalPortion;
+        }
+        balance = Math.max(0, balance);
+        cumInterest += yrInterest;
+        cumPrincipal += yrPrincipal;
+
+        const yrTaxes = annualPropertyTax * Math.pow(1.02, yr - 1);
+        const yrIns = annualInsurance * Math.pow(1.03, yr - 1);
+        const yrHOA = monthlyHOA * 12;
+        const yrMaint = annualMaintenance * Math.pow(1.02, yr - 1);
+        const yrPMI = (yr <= 8 && monthlyPMIDollar > 0) ? (monthlyPMIDollar * 12) : 0;
+        const yrOwnOutflow = (yrPrincipal + yrInterest) + yrTaxes + yrIns + yrHOA + yrMaint + yrPMI;
+        cumOwnershipCashPaid += yrOwnOutflow;
+
+        // Property appreciation
+        const homeMarketValue = homePrice * Math.pow(1 + appreciationRate, yr);
+        const accumulatedEquity = Math.max(0, homeMarketValue - balance);
+        const sellingCosts = homeMarketValue * sellingCostRate;
+        const netProceedsAfterSale = accumulatedEquity - sellingCosts;
+
+        // Renting side
+        const yrRent = rentMonthly * 12;
+        cumRentPaid += yrRent;
+        rentMonthly *= (1 + rentIncreaseRate);
+
+        // Alternative S&P 500 investment portfolio
+        // Compounded upfront capital + monthly cash flow differential
+        investmentPortfolio = (investmentPortfolio * (1 + investmentReturnRate));
+        const ownMonthlyAvg = yrOwnOutflow / 12;
+        const rentMonthlyAvg = yrRent / 12;
+        const monthlyDiff = ownMonthlyAvg - rentMonthlyAvg;
+        if (monthlyDiff > 0) {
+          // Owning is more expensive monthly -> Renter invests monthly savings
+          investmentPortfolio += (monthlyDiff * 12 * (1 + (investmentReturnRate / 2)));
+        }
+
+        // Net Wealth Analysis
+        const buyerNetWealth = netProceedsAfterSale;
+        const renterNetWealth = investmentPortfolio;
+        const netWealthAdvantage = roundTo(buyerNetWealth - renterNetWealth, 2);
+
+        if (breakEvenYear === null && netWealthAdvantage > 0) {
+          breakEvenYear = yr;
+        }
+
+        schedule.push({
+          year: yr,
+          yearLabel: `Year ${yr}`,
+          homeValue: roundTo(homeMarketValue, 2),
+          loanBalance: roundTo(balance, 2),
+          equity: roundTo(accumulatedEquity, 2),
+          netProceeds: roundTo(netProceedsAfterSale, 2),
+          cumOwnershipCost: roundTo(cumOwnershipCashPaid, 2),
+          cumRentPaid: roundTo(cumRentPaid, 2),
+          indexFundValue: roundTo(investmentPortfolio, 2),
+          netAdvantage: netWealthAdvantage
+        });
+      }
+
+      const y5 = schedule[4] || schedule[schedule.length - 1];
+      const y10 = schedule[9] || schedule[schedule.length - 1];
+      const yHorizon = schedule[horizonYears - 1] || schedule[schedule.length - 1];
+
+      // Format matrix table for 5-Yr vs 10-Yr vs Horizon
+      const matrixRows = [
+        {
+          metric: 'Home Market Value',
+          y5: sym + y5.homeValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.homeValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.homeValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: `Compounding at ${v.home_appreciation_pct || 3.5}%/yr`
+        },
+        {
+          metric: 'Remaining Mortgage Balance',
+          y5: sym + y5.loanBalance.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.loanBalance.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.loanBalance.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: 'Principal amortized through monthly payments'
+        },
+        {
+          metric: 'Accumulated Home Equity',
+          y5: sym + y5.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: 'Market Value minus Mortgage Balance'
+        },
+        {
+          metric: 'Net Sale Proceeds (After Fees)',
+          y5: sym + y5.netProceeds.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.netProceeds.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.netProceeds.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: `Equity minus ${v.selling_cost_pct || 6.0}% broker & closing costs`
+        },
+        {
+          metric: 'Alternative S&P 500 Index Fund',
+          y5: sym + y5.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: sym + y10.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: sym + yHorizon.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: `Down payment & cash savings invested at ${v.investment_return_pct || 7.5}%/yr`
+        },
+        {
+          metric: 'Net Financial Difference (Buy vs Rent)',
+          y5: (y5.netAdvantage >= 0 ? '+' : '-') + sym + Math.abs(y5.netAdvantage).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          y10: (y10.netAdvantage >= 0 ? '+' : '-') + sym + Math.abs(y10.netAdvantage).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          yHorizon: (yHorizon.netAdvantage >= 0 ? '+' : '-') + sym + Math.abs(yHorizon.netAdvantage).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+          note: 'Net Home Proceeds minus Alternative Index Fund Portfolio'
+        }
+      ];
+
+      const matrixTable = makeTableSpec({
+        mode: 'comparison',
+        title: '5-Year vs 10-Year vs Horizon Break-Even Decision Matrix',
+        columns: [
+          { key: 'metric', label: 'Financial Metric', emphasis: true },
+          { key: 'y5', label: '5-Year Horizon', emphasis: true },
+          { key: 'y10', label: '10-Year Horizon', emphasis: true },
+          { key: 'yHorizon', label: `Year ${horizonYears} (Your Plan)`, emphasis: true },
+          { key: 'note', label: 'Underlying Financial Driver' }
+        ],
+        rows: matrixRows
+      });
+
+      // Chart 1: True Monthly Cost Breakdown (Doughnut)
+      const chartLabels = ['Principal & Interest', 'Property Taxes', 'Homeowners Insurance', 'Maintenance Reserve'];
+      const chartData = [monthlyPI, monthlyPropertyTax, monthlyInsurance, monthlyMaintenance];
+      const chartColors = ['#6366F1', '#F59E0B', '#3B82F6', '#10B981'];
+
+      if (monthlyHOA > 0) {
+        chartLabels.push('HOA / Condo Dues');
+        chartData.push(monthlyHOA);
+        chartColors.push('#8B5CF6');
+      }
+      if (monthlyPMIDollar > 0) {
+        chartLabels.push('Mortgage Insurance (PMI)');
+        chartData.push(monthlyPMIDollar);
+        chartColors.push('#EF4444');
+      }
+
+      const chart = {
+        type: 'doughnut',
+        labels: chartLabels,
+        datasets: [{
+          label: 'Monthly Allocation',
+          data: chartData,
+          backgroundColor: chartColors
+        }],
+        title: 'Loaded Monthly Ownership Cost Breakdown (PITIA Framework)'
+      };
+
+      // Chart 2: 5-Yr & 10-Yr Wealth Comparison: Home Equity vs S&P 500 Index Fund (Line)
+      const simLabels = schedule.slice(0, 15).map(s => `Year ${s.year}`);
+      const equityLine = schedule.slice(0, 15).map(s => s.equity);
+      const indexLine = schedule.slice(0, 15).map(s => s.indexFundValue);
+      const chart2 = {
+        type: 'line',
+        labels: simLabels,
+        datasets: [
+          { label: 'Real Estate Net Equity', data: equityLine, color: '#10B981', borderColor: '#10B981' },
+          { label: 'S&P 500 Alternative Portfolio', data: indexLine, color: '#6366F1', borderColor: '#6366F1' }
+        ],
+        yLabel: 'Wealth ($)',
+        title: 'Wealth Horizon: Home Equity Growth vs. Index Fund Portfolio'
+      };
+
+      // Chart 3: Amortization & Home Value (Area/Line)
+      const homeValLine = schedule.slice(0, 15).map(s => s.homeValue);
+      const loanBalLine = schedule.slice(0, 15).map(s => s.loanBalance);
+      const chart3 = {
+        type: 'line',
+        labels: simLabels,
+        datasets: [
+          { label: 'Estimated Home Value', data: homeValLine, color: '#10B981', borderColor: '#10B981' },
+          { label: 'Remaining Mortgage Balance', data: loanBalLine, color: '#EF4444', borderColor: '#EF4444' }
+        ],
+        yLabel: 'Value ($)',
+        title: 'Mortgage Amortization & Equity Buildup Over Time'
+      };
+
+      // Summary KPIs
+      const summary = {
+        kpis: [
+          { label: 'Liquid Cash to Close', value: sym + totalLiquidCashRequired.toLocaleString('en-US', { maximumFractionDigits: 0 }), highlight: true, color: '#6366F1' },
+          { label: 'True Monthly Cost', value: sym + trueMonthlyCost.toLocaleString('en-US', { maximumFractionDigits: 0 }) + '/mo', highlight: true, color: '#10B981' },
+          { label: 'Pure Mortgage P&I', value: sym + monthlyPI.toLocaleString('en-US', { maximumFractionDigits: 0 }) + '/mo' },
+          { label: '5-Yr Net Equity', value: sym + y5.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+          { label: '10-Yr Net Equity', value: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+          { label: 'Break-Even Horizon', value: breakEvenYear ? `Year ${breakEvenYear}` : '> 10 Years', highlight: true }
+        ]
+      };
+
+      const stats = [
+        { label: 'Total Liquid Cash Required to Close', value: sym + totalLiquidCashRequired.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), highlight: true },
+        { label: 'Down Payment Required', value: sym + downPaymentDollar.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Estimated Closing Costs', value: sym + closingCostsDollar.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Escrow & Prepaids Reserve', value: sym + prepaidsDollar.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'True Monthly Cost of Ownership', value: sym + trueMonthlyCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), highlight: true },
+        { label: 'Mortgage Principal & Interest (P&I)', value: sym + monthlyPI.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Property Taxes (Monthly)', value: sym + monthlyPropertyTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Home Insurance (Monthly)', value: sym + monthlyInsurance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: 'Monthly Maintenance Reserve', value: sym + monthlyMaintenance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+        { label: '5-Year Equity vs Index Fund', value: sym + y5.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' vs ' + sym + y5.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+        { label: '10-Year Equity vs Index Fund', value: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' vs ' + sym + y10.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }), highlight: true }
+      ];
+
+      return {
+        summary,
+        stats,
+        table: matrixTable,
+        chart,
+        chart2,
+        chart3,
+        insight: {
+          tone: (breakEvenYear && breakEvenYear <= 6) ? 'positive' : 'neutral',
+          icon: 'fa-house-circle-check',
+          headline: `Total cash required to close is ${sym}${totalLiquidCashRequired.toLocaleString('en-US')}, with a loaded monthly cost of ${sym}${trueMonthlyCost.toLocaleString('en-US')}/mo.`,
+          detail: `Your monthly mortgage P&I of ${sym}${monthlyPI.toLocaleString('en-US')} makes up only ${roundTo((monthlyPI / trueMonthlyCost) * 100, 1)}% of your true housing outlay. Taxes, insurance, and maintenance add ${sym}${(trueMonthlyCost - monthlyPI).toLocaleString('en-US')}/mo. ${breakEvenYear ? `Based on your assumptions, buying achieves a structural net wealth advantage over renting in Year ${breakEvenYear}.` : 'At current rent and return assumptions, renting remains competitive over the initial horizon.'}`
+        }
+      };
+    },
+    article: {
+      heading: 'True Cost of Buying a House: Upfront Cash, PITIA Framework & Break-Even Analysis',
+      intro: 'When evaluating homeownership, relying solely on bank mortgage estimates creates severe financial blind spots. A rigorous decision model combines total upfront liquidity, the full PITIA monthly framework, maintenance reserves, and a multi-year opportunity cost matrix against index fund investing.',
+      sections: [
+        {
+          heading: 'How Much Cash Do You Really Need Upfront to Buy a House?',
+          body: 'When calculating how much liquid cash you need to purchase a home, relying solely on your down payment figure is a significant risk. The total cash required to close is a combination of three distinct financial obligations:\n\n• The Down Payment: Ranging from 3.5% for FHA loans to 20% for conventional loans to avoid private mortgage insurance (PMI).\n• Closing Costs: Transactional fees charged by lenders, title companies, and local government entities. These typically average between 2% and 5% of the total purchase price.\n• Escrow and Prepaids: Upfront cash deposits required to seed your homeowners insurance and property tax escrow accounts.'
+        },
+        {
+          heading: 'What is the True Monthly Cost of Home Ownership?',
+          body: 'A standard bank mortgage estimate only highlights your Principal and Interest (P&I). To understand the true cash flow impact on your household budget, you must utilize the PITIA framework:\n\n• Principal & Interest (P&I): The baseline cost of borrowing the capital.\n• Taxes: Local property taxes, which can adjust annually based on municipal assessments.\n• Insurance: Homeowners insurance policies and structural hazard protections.\n• Association Fees (HOA): Mandatory monthly dues for condominiums or master-planned communities.\n\nFurthermore, a resilient budget must factor in a non-negotiable line item: the annual home maintenance reserve. As a general rule of thumb, homeowners should allocate 1% to 2% of the property\'s total market value each year into a liquid savings account to cover structural repairs, roofing, and mechanical updates over time.'
+        },
+        {
+          heading: 'Rent vs. Buy: Determining Your Structural Break-Even Point',
+          body: 'Deciding to buy a home based on whether a monthly mortgage payment matches current local rent is a mathematical error. Determining your true break-even point requires analyzing the opportunity cost of capital over specific horizons:\n\n• The 5-Year Window: In the first five years of homeownership, the vast majority of your monthly payments go directly toward mortgage interest rather than building principal equity. Amortization schedules show that if you relocate within 5 years, transaction fees and closing costs frequently outpace any property appreciation, making renting more cost-effective.\n• The 10-Year Horizon: Over longer timelines, compounding real estate appreciation and the compounding value of a locked, fixed-rate housing payment outrun rising rental inflation.\n• The Investment Component: A true rent vs. buy analysis evaluates the return on your down payment if it were alternatively invested in low-cost index funds tracking historical market returns, weighed directly against the leveraged returns generated by real estate equity.'
+        },
+        {
+          heading: 'United States & Canadian Mortgage Architecture Differences',
+          body: 'Mortgage calculations differ significantly across national borders. In the United States, 30-year fixed mortgages compound monthly, and private mortgage insurance (PMI) is automatically cancellable at 78% LTV under the Homeowners Protection Act of 1998. In Canada, under the Bank Act and Interest Act, fixed-rate mortgages are legally required to compound semi-annually, not in advance. High-ratio Canadian mortgages (less than 20% down) require statutory CMHC mortgage loan insurance with premiums ranging from 2.80% to 4.00% added directly to the principal balance.'
+        }
+      ]
+    },
+    howTo: [
+      'Select your Country (US or Canada) and State/Province to automatically apply statutory compounding rules, local property tax rates, and mortgage insurance rules (PMI or CMHC).',
+      'Input the target home purchase price and your upfront down payment percentage (e.g., 5%, 10%, or 20%).',
+      'Review the Upfront Liquidity breakdown: down payment + closing costs (2-5%) + prepaid escrow reserve to calculate Total Liquid Cash Required to Close.',
+      'Calibrate the Loaded Monthly PITIA framework: Principal & Interest, local property tax, hazard insurance, HOA dues, and the 1% annual maintenance reserve.',
+      'Analyze the 5-Year vs. 10-Year Opportunity Cost Matrix comparing home equity against investing the down payment capital in S&P 500 index funds to pinpoint your break-even year.'
+    ],
+    examples: [
+      { title: 'US Starter Home ($400k, 10% Down in Texas)', input: 'Price: $400,000, Down: 10% ($40,000), Rate: 6.8%, Texas (1.68% Tax)', result: 'Cash-to-Close: $56,000 | True Monthly Cost: $3,618/mo | Break-Even: Year 5' },
+      { title: 'Canadian Condo ($650k, 15% Down in Ontario)', input: 'Price: $650,000, Down: 15% ($97,500), Rate: 5.5%, Ontario (0.95% Tax)', result: 'Cash-to-Close: $123,500 | True Monthly Cost: $4,580/mo | Break-Even: Year 4' }
+    ],
+    formula: 'Total Cash to Close = Down Payment + Closing Costs + Escrow Reserves | True Monthly Cost = Monthly P&I + Property Tax + Hazard Insurance + HOA + (1% × Home Value ÷ 12) | Mortgage P&I (US): M = P × [r(1+r)^n] / [(1+r)^n − 1] | Mortgage P&I (CA Semi-Annual): r_eff = (1 + r/2)^(1/6) − 1',
+    faqs: [
+      {
+        q: 'What is the difference between mortgage payment and true cost of ownership?',
+        a: 'A standard mortgage payment only covers Principal and Interest (P&I). The true cost of homeownership (PITIA+M) also includes local property taxes, homeowners insurance, HOA/condo dues, mortgage insurance (PMI/CMHC), and ongoing structural maintenance reserves (typically 1% of home value annually).'
+      },
+      {
+        q: 'How much liquid cash do I really need upfront to buy a house?',
+        a: 'In addition to your down payment (3.5% to 20%), buyers must pay 2% to 5% in closing fees (lender origination, title insurance, appraisal, escrow) and 1% in prepaid property tax and hazard insurance escrows. For a $400,000 home with 10% down, total liquid cash required to close is typically around $56,000.'
+      },
+      {
+        q: 'Why is the 5-year break-even point critical for home buyers?',
+        a: 'In the first 3 to 5 years of a standard mortgage, roughly 70% of monthly payments go toward interest rather than principal equity. When factoring in upfront closing costs and 6% broker selling fees, moving within 5 years often costs more than renting.'
+      },
+      {
+        q: 'How does Canadian mortgage compounding differ from the US?',
+        a: 'In the United States, mortgage interest compounds monthly. In Canada, federal law (the Bank Act and Interest Act) mandates that fixed mortgage interest compounds semi-annually, not in advance. This results in a slightly lower effective monthly rate for Canadian mortgages at the same nominal APR.'
+      }
+    ]
+  },
+
+  'freelance-true-rate-system': {
+    id: 'freelance-true-rate-system',
+    name: 'Freelance True Rate System',
+    category: 'Business',
+    icon: 'fa-briefcase',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
+    metaTitle: 'True Freelance Hourly Rate Calculator (After Taxes & Expenses)',
+    metaDescription: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
+    keywords: [
+      'freelance true hourly rate calculator',
+      'freelance true rate system',
+      'freelance rate calculator',
+      'hourly rate after taxes and expenses',
+      'freelance billable utilization rate',
+      'reverse income calculator',
+      'freelance gross day rate calculator',
+      'upwork fiverr platform fee calculator',
+      'self employment tax rate calculator',
+      'freelancer pricing calculator'
+    ],
+    related: [
+      'freelance-hourly-rate-calculator',
+      'self-employment-tax-calculator',
+      'salary-calculator',
+      'break-even-calculator',
+      'profit-margin-calculator',
+      'budget-planner'
+    ],
+    presets: [
+      {
+        label: 'Solo Consultant (Direct Clients)',
+        values: {
+          desired_net_income: 90000,
+          weeks_worked: 48,
+          hours_per_week: 40,
+          utilization_rate_pct: 70,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 22.0,
+          monthly_expenses: 450,
+          platform_fee_model: 'processor',
+          custom_platform_fee_pct: 3.0
+        }
+      },
+      {
+        label: 'Marketplace Freelancer (Upwork 10%)',
+        values: {
+          desired_net_income: 75000,
+          weeks_worked: 48,
+          hours_per_week: 40,
+          utilization_rate_pct: 65,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 20.0,
+          monthly_expenses: 350,
+          platform_fee_model: 'upwork',
+          custom_platform_fee_pct: 10.0
+        }
+      },
+      {
+        label: 'Creative Pro (Fiverr 20%)',
+        values: {
+          desired_net_income: 60000,
+          weeks_worked: 46,
+          hours_per_week: 35,
+          utilization_rate_pct: 75,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 18.0,
+          monthly_expenses: 300,
+          platform_fee_model: 'fiverr',
+          custom_platform_fee_pct: 20.0
+        }
+      },
+      {
+        label: 'High-Overhead Agency Solo',
+        values: {
+          desired_net_income: 120000,
+          weeks_worked: 48,
+          hours_per_week: 45,
+          utilization_rate_pct: 60,
+          self_employment_tax_pct: 15.3,
+          income_tax_pct: 25.0,
+          monthly_expenses: 1200,
+          platform_fee_model: 'processor',
+          custom_platform_fee_pct: 3.0
+        }
+      }
+    ],
+    fields: [
+      { id: 'income_section', type: 'section', label: '1. Reverse Income Engine', icon: 'fa-money-bill-trend-up' },
+      {
+        id: 'desired_net_income',
+        label: 'Desired Annual Net Take-Home Income ($)',
+        type: 'range',
+        default: 85000,
+        min: 10000,
+        max: 500000,
+        step: 1000,
+        hint: 'The target net cash you want in your personal pocket after all taxes, fees, and business operating overhead.'
+      },
+
+      { id: 'utilization_section', type: 'section', label: '2. Billable Hour Utilization Tracker', icon: 'fa-business-time' },
+      {
+        id: 'weeks_worked',
+        label: 'Desired Weeks Worked Per Year',
+        type: 'range',
+        default: 48,
+        min: 20,
+        max: 52,
+        step: 1,
+        hint: 'Standard is 48 weeks (allowing 4 weeks of unpaid vacation, sick leave, and holidays).'
+      },
+      {
+        id: 'hours_per_week',
+        label: 'Target Workweek Hours',
+        type: 'range',
+        default: 40,
+        min: 10,
+        max: 80,
+        step: 1,
+        hint: 'Total working hours committed per week across all billable and non-billable duties.'
+      },
+      {
+        id: 'utilization_rate_pct',
+        label: 'Billable Utilization Rate (%)',
+        type: 'range',
+        default: 70,
+        min: 20,
+        max: 100,
+        step: 1,
+        hint: 'Percentage of working hours spent on paying client deliverables vs non-billable business management (typical: 60%–75%).'
+      },
+
+      { id: 'tax_overhead_section', type: 'section', label: '3. Tax & Operational Expense Deductions', icon: 'fa-receipt' },
+      {
+        id: 'self_employment_tax_pct',
+        label: 'Self-Employment Tax Reserve (%)',
+        type: 'range',
+        default: 15.3,
+        min: 0,
+        max: 30,
+        step: 0.1,
+        hint: 'Covers federal FICA self-employment taxes (15.3% in US for Social Security + Medicare, or CPP in Canada).'
+      },
+      {
+        id: 'income_tax_pct',
+        label: 'Estimated Federal / State Income Tax (%)',
+        type: 'range',
+        default: 22.0,
+        min: 0,
+        max: 50,
+        step: 0.5,
+        hint: 'Estimated effective income tax bracket (federal + state/provincial).'
+      },
+      {
+        id: 'monthly_expenses',
+        label: 'Monthly Business Overhead ($)',
+        type: 'number',
+        default: 400,
+        min: 0,
+        max: 20000,
+        step: 25,
+        hint: 'Software subscriptions, equipment replacement reserves, private health insurance, phone, internet, accounting, and legal.'
+      },
+
+      { id: 'fee_friction_section', type: 'section', label: '4. Platform Fee Friction Filter', icon: 'fa-filter-circle-dollar' },
+      {
+        id: 'platform_fee_model',
+        label: 'Platform Fee Model',
+        type: 'select',
+        default: 'none',
+        options: [
+          { value: 'none', label: 'None / Direct Wire & Invoicing (0%)' },
+          { value: 'processor', label: 'Payment Processing Gateway — Stripe / PayPal (3%)' },
+          { value: 'upwork', label: 'Upwork Marketplace (10%)' },
+          { value: 'fiverr', label: 'Fiverr Marketplace (20%)' },
+          { value: 'custom', label: 'Custom Platform Fee %' }
+        ],
+        hint: 'Select the fee structure subtracted by your client acquisition platform or billing gateway.'
+      },
+      {
+        id: 'custom_platform_fee_pct',
+        label: 'Custom Platform Fee (%)',
+        type: 'number',
+        default: 5.0,
+        min: 0,
+        max: 50,
+        step: 0.1,
+        condition: (v) => v.platform_fee_model === 'custom',
+        hint: 'Custom marketplace commission or client management fee percentage.'
+      }
+    ],
+    calculate(v) {
+      const desiredNetIncome = safeNum(v.desired_net_income, 85000);
+      if (desiredNetIncome <= 0) return errorResult('Please enter a desired annual net income greater than $0.');
+
+      const weeksWorked = Math.max(1, Math.min(52, safeNum(v.weeks_worked, 48)));
+      const hoursPerWeek = Math.max(1, Math.min(100, safeNum(v.hours_per_week, 40)));
+      const utilizationRatePct = Math.max(10, Math.min(100, safeNum(v.utilization_rate_pct, 70)));
+
+      const totalAnnualHours = roundTo(weeksWorked * hoursPerWeek, 0);
+      const billableHours = roundTo(totalAnnualHours * (utilizationRatePct / 100), 1);
+      const nonBillableHours = Math.max(0, roundTo(totalAnnualHours - billableHours, 1));
+
+      // Tax Reserve computation
+      const seTaxPct = safeNum(v.self_employment_tax_pct, 15.3);
+      const incTaxPct = safeNum(v.income_tax_pct, 22.0);
+      const totalTaxReserveRate = Math.min(0.80, (seTaxPct + incTaxPct) / 100);
+
+      // Desired Net = PreTaxProfit * (1 - totalTaxReserveRate)
+      const preTaxProfitNeeded = desiredNetIncome / (1 - totalTaxReserveRate);
+      const annualTaxReserveFund = roundTo(preTaxProfitNeeded - desiredNetIncome, 2);
+
+      // Business Overhead computation
+      const monthlyExpenses = safeNum(v.monthly_expenses, 400);
+      const annualExpenses = roundTo(monthlyExpenses * 12, 2);
+
+      // Net business revenue required after platform friction
+      const netBusinessRevenue = preTaxProfitNeeded + annualExpenses;
+
+      // Platform fee friction
+      let platformFeePct = 0;
+      if (v.platform_fee_model === 'processor') platformFeePct = 3.0;
+      else if (v.platform_fee_model === 'upwork') platformFeePct = 10.0;
+      else if (v.platform_fee_model === 'fiverr') platformFeePct = 20.0;
+      else if (v.platform_fee_model === 'custom') platformFeePct = safeNum(v.custom_platform_fee_pct, 5.0);
+
+      const platformFeeRate = Math.min(0.50, platformFeePct / 100);
+      const grossAnnualBillingTarget = roundTo(netBusinessRevenue / (1 - platformFeeRate), 2);
+      const annualPlatformFees = roundTo(grossAnnualBillingTarget - netBusinessRevenue, 2);
+
+      // Rate targets
+      const requiredHourlyRate = billableHours > 0 ? roundTo(grossAnnualBillingTarget / billableHours, 2) : 0;
+      const grossDayRate = roundTo(requiredHourlyRate * 8, 2);
+      const grossWeeklyBillingTarget = roundTo(grossAnnualBillingTarget / weeksWorked, 2);
+      const grossMonthlyBillingTarget = roundTo(grossAnnualBillingTarget / 12, 2);
+
+      // Rate Breakdown & Real Take-Home Degradation
+      const afterFeeHourlyRate = roundTo(requiredHourlyRate * (1 - platformFeeRate), 2);
+      const afterExpenseHourlyRate = roundTo((netBusinessRevenue - annualExpenses) / billableHours, 2);
+      const afterTaxBillableRate = roundTo(desiredNetIncome / billableHours, 2);
+      const trueEffectiveTakeHomeAllHours = totalAnnualHours > 0 ? roundTo(desiredNetIncome / totalAnnualHours, 2) : 0;
+
+      // Chart 1: Revenue Waterfall (Bar/Stacked Bar)
+      const chart = {
+        type: 'bar',
+        labels: ['Gross Invoiced', 'Platform Fees', 'Business Expenses', 'Tax Reserve', 'Net Take-Home'],
+        datasets: [{
+          label: 'Annual Allocation ($)',
+          data: [
+            grossAnnualBillingTarget,
+            -annualPlatformFees,
+            -annualExpenses,
+            -annualTaxReserveFund,
+            desiredNetIncome
+          ],
+          backgroundColor: ['#3B82F6', '#EF4444', '#F59E0B', '#8B5CF6', '#10B981']
+        }],
+        yLabel: 'Amount ($)',
+        title: 'Annual Revenue Waterfall (Gross Invoicing to Pocketed Take-Home)'
+      };
+
+      // Chart 2: Working Time Allocation (Doughnut)
+      const chart2 = {
+        type: 'doughnut',
+        labels: ['Billable Client Deliverables', 'Unpaid Admin & Bookkeeping', 'Sales, Pitching & Marketing', 'Unpaid Time Off (Vacation/Sick)'],
+        datasets: [{
+          label: 'Annual Hours',
+          data: [
+            billableHours,
+            roundTo(nonBillableHours * 0.55, 0),
+            roundTo(nonBillableHours * 0.45, 0),
+            roundTo((52 - weeksWorked) * hoursPerWeek, 0)
+          ],
+          backgroundColor: ['#10B981', '#6366F1', '#F59E0B', '#94A3B8']
+        }],
+        title: 'Annual Working Time Allocation (Billable vs Non-Billable Overhead)'
+      };
+
+      // Chart 3: Hourly Rate Degradation (Bar)
+      const chart3 = {
+        type: 'bar',
+        labels: ['Quoted Client Rate', 'After Platform Fees', 'After Operating Expenses', 'Take-Home (Billable Hr)', 'True Take-Home (All Worked Hrs)'],
+        datasets: [{
+          label: 'Rate ($/hr)',
+          data: [
+            requiredHourlyRate,
+            afterFeeHourlyRate,
+            afterExpenseHourlyRate,
+            afterTaxBillableRate,
+            trueEffectiveTakeHomeAllHours
+          ],
+          backgroundColor: ['#3B82F6', '#8B5CF6', '#F59E0B', '#10B981', '#14B8A6']
+        }],
+        yLabel: 'Rate ($/hr)',
+        title: 'The Freelancer Rate Decay: What You Quote vs. What You Actually Pocket'
+      };
+
+      // Table 1: Complete Financial Waterfall Table
+      const waterfallRows = [
+        { item: 'Gross Annual Invoiced Billing Target', amount: '$' + grossAnnualBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '100.0%', description: 'Top-line client invoicing needed' },
+        { item: 'Platform & Gateway Processing Fees', amount: '-$' + annualPlatformFees.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '-' + roundTo((annualPlatformFees / grossAnnualBillingTarget) * 100, 1) + '%', description: `${platformFeePct}% marketplace or payment gateway fee` },
+        { item: 'Operating Business Overhead', amount: '-$' + annualExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '-' + roundTo((annualExpenses / grossAnnualBillingTarget) * 100, 1) + '%', description: 'Software, hardware, insurance, phone, internet' },
+        { item: 'Estimated Tax Reserve Fund', amount: '-$' + annualTaxReserveFund.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: '-' + roundTo((annualTaxReserveFund / grossAnnualBillingTarget) * 100, 1) + '%', description: `${roundTo(totalTaxReserveRate * 100, 1)}% Self-Employment & Income tax` },
+        { item: 'Net Take-Home Income (In Pocket)', amount: '$' + desiredNetIncome.toLocaleString('en-US', { minimumFractionDigits: 2 }), pctGross: roundTo((desiredNetIncome / grossAnnualBillingTarget) * 100, 1) + '%', description: 'Your net annual living cash' }
+      ];
+
+      const waterfallTable = makeTableSpec({
+        mode: 'financial',
+        title: 'Annual Financial Waterfall & Margin Deduction Breakdown',
+        columns: [
+          { key: 'item', label: 'Financial Category', emphasis: true },
+          { key: 'amount', label: 'Annual Cash Flow', emphasis: true },
+          { key: 'pctGross', label: '% of Gross Billing' },
+          { key: 'description', label: 'Operational Context' }
+        ],
+        rows: waterfallRows
+      });
+
+      const summary = {
+        kpis: [
+          { label: 'Required Client Hourly Rate', value: '$' + requiredHourlyRate.toLocaleString('en-US', { minimumFractionDigits: 2 }) + '/hr', highlight: true, color: '#6366F1' },
+          { label: 'Gross Day Rate (8h)', value: '$' + grossDayRate.toLocaleString('en-US', { minimumFractionDigits: 0 }) + '/day', highlight: true, color: '#10B981' },
+          { label: 'True Take-Home (All Hrs)', value: '$' + trueEffectiveTakeHomeAllHours.toLocaleString('en-US', { minimumFractionDigits: 2 }) + '/hr', highlight: true },
+          { label: 'Annual Gross Billing', value: '$' + grossAnnualBillingTarget.toLocaleString('en-US', { maximumFractionDigits: 0 }) },
+          { label: 'Annual Billable Hours', value: billableHours.toLocaleString('en-US') + ' hrs' },
+          { label: 'Total Friction Deductions', value: '$' + roundTo(annualPlatformFees + annualExpenses + annualTaxReserveFund, 0).toLocaleString('en-US') }
+        ]
+      };
+
+      const stats = [
+        { label: 'Required Client Hourly Rate', value: '$' + requiredHourlyRate.toLocaleString('en-US', { minimumFractionDigits: 2 }), highlight: true },
+        { label: 'Gross Day Rate (8h Billable)', value: '$' + grossDayRate.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Weekly Gross Billing Target', value: '$' + grossWeeklyBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Monthly Gross Billing Target', value: '$' + grossMonthlyBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Annual Gross Billing Target', value: '$' + grossAnnualBillingTarget.toLocaleString('en-US', { minimumFractionDigits: 2 }), highlight: true },
+        { label: 'True Effective Hourly Take-Home (Total Hrs)', value: '$' + trueEffectiveTakeHomeAllHours.toLocaleString('en-US', { minimumFractionDigits: 2 }) + '/hr', highlight: true },
+        { label: 'Annual Billable Hours', value: billableHours.toLocaleString('en-US') + ' hrs' },
+        { label: 'Annual Non-Billable Overhead Hours', value: nonBillableHours.toLocaleString('en-US') + ' hrs' },
+        { label: 'Annual Estimated Tax Reserve', value: '$' + annualTaxReserveFund.toLocaleString('en-US', { minimumFractionDigits: 2 }), warn: true },
+        { label: 'Annual Business Expenses', value: '$' + annualExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 }) },
+        { label: 'Annual Platform & Gateway Fees', value: '$' + annualPlatformFees.toLocaleString('en-US', { minimumFractionDigits: 2 }) }
+      ];
+
+      return {
+        summary,
+        stats,
+        table: waterfallTable,
+        chart,
+        chart2,
+        chart3,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-briefcase',
+          headline: `To take home $${desiredNetIncome.toLocaleString('en-US')} net, you must charge clients $${requiredHourlyRate.toFixed(2)}/hr (or $${grossDayRate.toLocaleString('en-US')}/day).`,
+          detail: `Out of your 40-hour workweek, only ${utilizationRatePct}% (${roundTo(hoursPerWeek * (utilizationRatePct / 100), 1)} hours) generates billable revenue. Across taxes, operating overhead, and platform fees, ${roundTo(((grossAnnualBillingTarget - desiredNetIncome) / grossAnnualBillingTarget) * 100, 1)}% of your gross billing is absorbed by structural business costs.`
+        }
+      };
+    },
+    article: {
+      heading: 'What is a True Freelance Hourly Rate? Deductions, Utilization & Reverse Income Engine',
+      intro: 'Many new solo entrepreneurs assume that earning $50 per hour in a corporate job means charging a freelance client $50 per hour preserves their standard of living. This calculation is a critical financial error. Your advertised freelance rate is your top-line business revenue, not your personal take-home income.',
+      sections: [
+        {
+          heading: 'What is a True Freelance Hourly Rate?',
+          body: 'Many new solo entrepreneurs assume that if they earned $50 per hour in a corporate position, charging a client $50 per hour as a freelancer preserves their standard of living. This calculation is incorrect. Your advertised freelance rate is your top-line business revenue, not your personal take-home income.\n\nTo achieve true parity with a traditional salary, a freelancer\'s gross billing rate must account for structural tax obligations, specialized operating software, unbillable administrative overhead, and the absolute absence of corporate benefits.'
+        },
+        {
+          heading: 'Why Your Advertised Hourly Rate Isn\'t Your Real Take-Home Income',
+          body: 'To understand what you actually earn, your gross hourly revenue must be put through a series of mandatory financial deductions:\n\n• The Self-Employment Tax Penalty: In a W-2 environment, employers cover 50% of your payroll taxes. As a freelance business owner, you are legally responsible for both the employer and employee portions, introducing a heavy tax burden before standard income tax brackets apply.\n• Platform Friction and Payment Processing Fees: Digital marketplaces and payment processing gateways routinely subtract 2% to 20% of your gross invoice total before the capital arrives in your bank account.\n• Operational Expense Reductions: Software licensing, professional liability protection, health insurance premiums, and equipment replacement reserves erode your top-line hourly pricing.'
+        },
+        {
+          heading: 'The Impact of Unbillable Hours on Daily Profitability',
+          body: 'The most common mistake made by freelancers is assuming an 8-hour workday translates directly into 8 billable hours. In reality, a self-employed professional operates at a distinct utilization rate. A massive portion of your working week is allocated to non-billable tasks:\n\n• Client acquisition, pitching, and scope-of-work negotiation.\n• Bookkeeping, invoicing, and contract management.\n• Internal administrative upkeep and professional education.\n\nIf you work 40 hours a week but spend 15 of those hours managing your business rather than executing client deliverables, your utilization rate is only 62.5%. If you fail to adjust your baseline hourly rate upward to compensate for these non-billable tracking hours, your actual hourly earnings will fall well below your target income goals.'
+        }
+      ]
+    },
+    howTo: [
+      'Enter your desired net take-home annual income (the actual post-tax money you want in your personal account).',
+      'Input target annual weeks worked (default: 48) and adjust the billable utilization rate slider (default: 70%) to factor in unbillable admin, marketing, and client pitching hours.',
+      'Specify self-employment tax (15.3% SECA), estimated income tax bracket, and recurring monthly business overhead expenses.',
+      'Select your client billing channel (Direct Invoicing 0%, Payment Processor 3%, Upwork 10%, or Fiverr 20%) to account for platform fee friction.',
+      'Review your Required Gross Hourly Rate, Standard Day Rate, Monthly Retainer Target, and Revenue Waterfall Breakdown.'
+    ],
+    examples: [
+      { title: 'Solo Consultant (Direct Invoicing, $90,000 Net Take-Home)', input: 'Net Income: $90,000, 48 wks @ 40 hrs (70% billable), Overhead: $450/mo, Direct 0%', result: 'Target Rate: $118.96/hr | Day Rate: $952/day | Gross Billing: $159,885' },
+      { title: 'Marketplace Freelancer (Upwork 10%, $75,000 Net Take-Home)', input: 'Net Income: $75,000, 48 wks @ 40 hrs (65% billable), Overhead: $350/mo, Upwork 10%', result: 'Target Rate: $115.82/hr | Day Rate: $927/day | Gross Billing: $144,539' }
+    ],
+    formula: 'Gross Revenue Target = [(Desired Net Income / (1 - Effective Income Tax - SECA Tax)) + Annual Overhead] / (1 - Platform Fee Rate) | True Hourly Rate = Gross Revenue Target / (Weeks Worked × Hours/Week × Billable Utilization Rate)',
+    faqs: [
+      {
+        q: 'Why must freelancers charge 2x to 3x their corporate hourly wage?',
+        a: 'Freelancers carry complete financial responsibility for employer payroll taxes (FICA SECA 15.3%), private health insurance, software licenses, equipment, and unpaid vacation. Furthermore, because freelancers spend 25% to 40% of their time on unbillable administration and sales, fewer hours are available to generate income.'
+      },
+      {
+        q: 'What is a healthy freelance billable utilization rate?',
+        a: 'A realistic billable utilization rate for full-time solo freelancers ranges between 60% and 75% (24 to 30 billable hours per 40-hour workweek). Utilization rates above 80% often cause burnout and lead to an empty sales pipeline.'
+      },
+      {
+        q: 'How much should a self-employed freelancer set aside for taxes?',
+        a: 'Most solo freelancers in the United States should reserve between 25% and 35% of their net business profit for quarterly estimated tax payments (covering 15.3% Self-Employment Tax plus federal and state income taxes).'
+      },
+      {
+        q: 'How do platform fees impact gross client rates?',
+        a: 'If a freelance platform charges a 10% fee (such as Upwork) or 20% (such as Fiverr), you must price your services significantly higher to achieve the same take-home pay. For example, on a 20% fee marketplace, charging $100/hr leaves you with only $80/hr before taxes and business expenses.'
+      }
+    ]
+  },
+
+  'beam-deflection-calculator': {
+    id: 'beam-deflection-calculator',
+    name: 'Beam Deflection Calculator',
+    category: 'Engineering',
+    icon: 'fa-ruler-combined',
+    iconClass: 'icon-engineering',
+    tagClass: 'tag-engineering',
+    description: 'Calculate maximum deflection for simply supported and cantilever beams under point load.',
+    metaDescription: 'Free beam deflection calculator — estimate maximum deflection for simply supported and cantilever beams.',
+    fields: [
+      { id: 'beamType', label: 'Beam Type', type: 'select', default: 'simply', options: [
+        { value: 'simply', label: 'Simply Supported (center load)' },
+        { value: 'cantilever', label: 'Cantilever (end load)' },
+      ], hint: 'Select the beam support condition.' },
+      { id: 'length', label: 'Beam Length (ft)', type: 'number', default: 10, min: 1, step: 0.5, hint: 'Span length in feet.' },
+      { id: 'load', label: 'Load (lbs)', type: 'number', default: 1000, min: 0, step: 100, hint: 'Total load in pounds.' },
+      { id: 'moi', label: 'Moment of Inertia (in⁴)', type: 'number', default: 100, min: 0.1, step: 1, hint: 'Section property from beam tables.' },
+    ],
+    calculate(v) {
+      const beamType = v.beamType || 'simply';
+      const L = safeNum(v.length, 0) * 12;
+      const P = safeNum(v.load, 0);
+      const I = safeNum(v.moi, 0);
+      const E = 29000000;
+      if (L <= 0 || P <= 0 || I <= 0) return errorResult('Enter positive values for all fields.');
+      let deflection;
+      if (beamType === 'simply') {
+        deflection = (P * L * L * L) / (48 * E * I);
+      } else {
+        deflection = (P * L * L * L) / (3 * E * I);
+      }
+      return {
+        stats: [
+          { label: 'Beam Type', value: beamType === 'simply' ? 'Simply Supported' : 'Cantilever' },
+          { label: 'Max Deflection', value: roundTo(deflection, 4) + ' in', highlight: true },
+          { label: 'Deflection (in)', value: roundTo(deflection, 4) },
+          { label: 'L/Δ Ratio', value: 'L/' + roundTo(L / deflection, 1) },
+        ],
+        formula: 'δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]',
+      };
+    },
+    article: { heading: 'Understanding Beam Deflection in Structural Engineering', intro: 'Beam deflection is the degree to which a beam bends under load. Excessive deflection can damage finishes and affect structural integrity.', sections: [
+      { heading: 'The Deflection Formula', body: 'Deflection depends on load, span length, material stiffness (E), and cross-section shape (I). The formulas differ for simply supported and cantilever beams.' },
+      { heading: 'Allowable Deflection Limits', body: 'Building codes typically limit deflection to L/360 for live loads and L/240 for dead loads. For a 10 ft beam, that is about 0.33 inches for live load.' },
+      { heading: 'Increasing Stiffness', body: 'To reduce deflection, increase the moment of inertia (deeper beam), use a stiffer material (steel vs wood), add supports, or reduce the span.' },
+    ] },
+    howTo: ['Select beam type.', 'Enter beam length, load, and moment of inertia.', 'Review maximum deflection and L/Δ ratio.'],
+    formula: 'δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]',
+    examples: [
+      { title: 'Wood Beam', input: 'Simply supported, 10 ft, 1000 lbs, I = 100 in⁴', result: 'δ ≈ 0.0106 in, L/δ ≈ 11320' },
+      { title: 'Steel Cantilever', input: 'Cantilever, 8 ft, 500 lbs, I = 200 in⁴', result: 'δ ≈ 0.0030 in, L/δ ≈ 31900' },
+    ],
+    faqs: [
+      { q: 'What is moment of inertia?', a: 'Moment of inertia (I) measures a beam resistance to bending. It depends on the cross-section shape. Deeper beams have much higher I than wider beams of the same area.' },
+      { q: 'What is the modulus of elasticity?', a: 'E (modulus of elasticity) measures material stiffness. Steel is about 29,000,000 psi. Wood is about 1,500,000–1,800,000 psi depending on grade.' },
+      { q: 'What is L/360?', a: 'L/360 is a common deflection limit. It means the maximum deflection should not exceed the span length divided by 360. For a 10 ft span, that is 0.33 inches.' },
+      { q: 'Can I use this for steel beams?', a: 'Yes, but ensure you use the correct moment of inertia for the steel section. This calculator uses E = 29,000,000 psi, which is standard for steel.' },
+    ],
+  },
+  'ohms-law-calculator': {
+    id: 'ohms-law-calculator',
+    name: "Ohm's Law Calculator",
+    category: 'Engineering',
+    icon: 'fa-bolt',
+    iconClass: 'icon-engineering',
+    tagClass: 'tag-engineering',
+    description: "Calculate voltage, current, resistance, and power using Ohm's Law relationships.",
+    metaDescription: "Free Ohm's Law calculator — calculate voltage (V), current (I), resistance (R), and electric power (P) instantly.",
+    fields: [
+      { id: 'voltage', label: 'Voltage (V - Volts)', type: 'number', default: 12, min: 0, step: 0.1, hint: 'Leave at 0 if calculating voltage from I and R.' },
+      { id: 'current', label: 'Current (I - Amperes)', type: 'number', default: 2, min: 0, step: 0.01, hint: 'Leave at 0 if calculating current from V and R.' },
+      { id: 'resistance', label: 'Resistance (R - Ohms Ω)', type: 'number', default: 6, min: 0, step: 0.1, hint: 'Leave at 0 if calculating resistance from V and I.' },
+    ],
+    calculate(v) {
+      let V = safeNum(v.voltage, 0);
+      let I = safeNum(v.current, 0);
+      let R = safeNum(v.resistance, 0);
+      let P = 0;
+      let calculatedField = '';
+
+      if (V > 0 && I > 0 && R === 0) {
+        R = V / I;
+        calculatedField = 'Resistance';
+      } else if (V > 0 && R > 0 && I === 0) {
+        I = V / R;
+        calculatedField = 'Current';
+      } else if (I > 0 && R > 0 && V === 0) {
+        V = I * R;
+        calculatedField = 'Voltage';
+      } else if (V > 0 && I > 0 && R > 0) {
+        R = V / I;
+        calculatedField = 'Recalculated Resistance';
+      } else {
+        return errorResult('Please enter at least two known values (Voltage, Current, or Resistance).');
+      }
+
+      P = V * I;
+
+      return {
+        stats: [
+          { label: 'Voltage (V)', value: roundTo(V, 2) + ' V', highlight: calculatedField === 'Voltage' },
+          { label: 'Current (I)', value: roundTo(I, 4) + ' A', highlight: calculatedField === 'Current' },
+          { label: 'Resistance (R)', value: roundTo(R, 2) + ' Ω', highlight: calculatedField === 'Resistance' || calculatedField.includes('Resistance') },
+          { label: 'Power (P)', value: roundTo(P, 2) + ' W', highlight: true },
+        ],
+        formula: 'V = I × R | I = V ÷ R | R = V ÷ I | P = V × I = I² × R',
+      };
+    },
+    article: { heading: "Understanding Ohm's Law in Electrical Engineering", intro: "Ohm's Law is the foundational principle of electrical circuits, defining the direct relationship between voltage, current, resistance, and electrical power.", sections: [
+      { heading: 'The Core Relationships', body: 'Voltage (V) = Current (I) × Resistance (R). Power (P) = Voltage (V) × Current (I).' }
+    ] },
+    howTo: ['Enter any two known values among Voltage, Current, and Resistance.', 'Leave the unknown field at 0.', 'View the calculated unknown value and total electrical power in Watts.'],
+    formula: 'V = I × R | P = V × I',
+    examples: [
+      { title: '12V Auto Circuit', input: 'Voltage: 12V, Resistance: 6Ω', result: 'Current = 2.0A, Power = 24.0W' }
+    ],
+    faqs: [
+      { q: "What is Ohm's Law?", a: "Ohm's Law states that the current through a conductor between two points is directly proportional to the voltage across the two points and inversely proportional to the resistance." }
+    ]
+  },
+  'pressure-calculator': {
+    id: 'pressure-calculator',
+    name: 'Pressure Calculator',
+    category: 'Engineering',
+    icon: 'fa-gauge-high',
+    iconClass: 'icon-engineering',
+    tagClass: 'tag-engineering',
+    description: 'Convert between PSI, Bar, Pascal, Atmosphere, and calculate pressure from force and surface area.',
+    metaDescription: 'Free pressure calculator — convert between PSI, Bar, kPa, MPa, and atmospheres, or calculate pressure from force and area.',
+    fields: [
+      { id: 'force', label: 'Force (Pounds-force lbf / Newtons N)', type: 'number', default: 100, min: 0, step: 1, hint: 'Applied force.' },
+      { id: 'area', label: 'Surface Area (Square inches in² / m²)', type: 'number', default: 10, min: 0.01, step: 0.1, hint: 'Surface area over which force is distributed.' },
+      { id: 'unit_system', label: 'Unit System', type: 'select', default: 'imperial',
+        options: [
+          { value: 'imperial', label: 'Imperial (Force in lbf, Area in in² → Output in PSI)' },
+          { value: 'metric', label: 'Metric (Force in N, Area in m² → Output in Pa/kPa)' }
+        ], hint: 'Choose units for force and area.' }
+    ],
+    calculate(v) {
+      const force = safeNum(v.force, 0);
+      const area = safeNum(v.area, 0);
+      const isMetric = v.unit_system === 'metric';
+      if (force <= 0 || area <= 0) return errorResult('Force and Area must both be greater than zero.');
+
+      let psi = 0;
+      let kpa = 0;
+      let bar = 0;
+      let atm = 0;
+
+      if (isMetric) {
+        const pa = force / area;
+        kpa = pa / 1000;
+        psi = kpa * 0.145038;
+        bar = kpa / 100;
+        atm = kpa / 101.325;
+      } else {
+        psi = force / area;
+        kpa = psi * 6.89476;
+        bar = psi * 0.0689476;
+        atm = psi * 0.068046;
+      }
+
+      return {
+        stats: [
+          { label: 'Pressure (PSI)', value: roundTo(psi, 2) + ' psi', highlight: !isMetric },
+          { label: 'Pressure (kPa)', value: roundTo(kpa, 2) + ' kPa', highlight: isMetric },
+          { label: 'Pressure (Bar)', value: roundTo(bar, 4) + ' bar' },
+          { label: 'Atmospheres (atm)', value: roundTo(atm, 4) + ' atm' },
+        ],
+        formula: 'P = Force / Area | 1 PSI = 6.89476 kPa | 1 Bar = 100 kPa ≈ 14.5038 PSI',
+      };
+    },
+    article: { heading: 'Pressure Units and Force Distribution in Engineering', intro: 'Pressure is defined as force applied perpendicular to the surface of an object per unit area over which that force is distributed.', sections: [
+      { heading: 'Units of Pressure', body: 'PSI (pounds per square inch) is commonly used in the United States, while Pascals (Pa), Kilopascals (kPa), and Bar are standard international metric units.' }
+    ] },
+    howTo: ['Enter the total force applied.', 'Enter the surface contact area.', 'Select Imperial or Metric unit mode.', 'View pressure in PSI, kPa, Bar, and Atmospheres.'],
+    formula: 'P = F ÷ A',
+    examples: [
+      { title: 'Hydraulic Piston', input: 'Force: 500 lbf, Area: 5 in²', result: 'Pressure = 100 PSI (689.5 kPa)' }
+    ],
+    faqs: [
+      { q: 'What is 1 atmosphere of pressure in PSI?', a: 'One standard atmosphere (atm) at sea level is approximately 14.696 PSI or 101.325 kPa.' }
+    ]
+  },
+  'concrete-calculator': {
+    id: 'concrete-calculator',
+    name: 'Concrete Calculator',
+    category: 'Construction',
+    icon: 'fa-truck-ramp-box',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Calculate concrete volume in cubic yards, cubic feet, and 60lb/80lb bags needed for slabs, footings, and columns.',
+    metaDescription: 'Free concrete calculator — estimate concrete volume in cubic yards, cubic feet, and bags needed for slabs, footings, and columns.',
+    fields: [
+      { id: 'shape', label: 'Shape', type: 'select', default: 'slab',
+        options: [
+          { value: 'slab', label: 'Slab / Pad (rectangular)' },
+          { value: 'footing', label: 'Footing / Wall (rectangular)' },
+          { value: 'column', label: 'Column / Cylinder (round)' },
+        ], hint: 'Select the concrete pour shape.' },
+      { id: 'length', label: 'Length (ft)', type: 'number', default: 10, min: 0, step: 0.5, hint: 'Length in feet.' },
+      { id: 'width', label: 'Width (ft)', type: 'number', default: 10, min: 0, step: 0.5, hint: 'Width in feet.' },
+      { id: 'diameter', label: 'Diameter (ft)', type: 'number', default: 1, min: 0, step: 0.25, hint: 'Diameter for round columns.' },
+      { id: 'depth', label: 'Depth / Thickness (in)', type: 'number', default: 4, min: 0.5, step: 0.5, hint: 'Thickness in inches (4in is standard for residential slabs).' },
+      { id: 'quantity', label: 'Quantity', type: 'number', default: 1, min: 1, step: 1, hint: 'Number of identical pours.' },
+      { id: 'waste', label: 'Waste Margin (%)', type: 'number', default: 10, min: 0, max: 25, step: 1, hint: 'Recommended: 10% for uneven subgrade and spillage.' }
+    ],
+    calculate(v) {
+      const shape = v.shape || 'slab';
+      const L = safeNum(v.length, 0);
+      const W = safeNum(v.width, 0);
+      const D = safeNum(v.diameter, 0);
+      const depthIn = safeNum(v.depth, 0);
+      const qty = Math.max(1, Math.round(safeNum(v.quantity, 1)));
+      const waste = safeNum(v.waste, 10);
+
+      let volumeCF = 0;
+      if (shape === 'column') {
+        const r = D / 2;
+        volumeCF = Math.PI * r * r * (depthIn / 12);
+      } else {
+        if (L <= 0 || W <= 0) return errorResult('Enter valid length and width.');
+        volumeCF = L * W * (depthIn / 12);
+      }
+      if (volumeCF <= 0 || depthIn <= 0) return errorResult('Please enter positive dimensions.');
+
+      const totalCF = roundTo(volumeCF * qty * (1 + waste / 100), 2);
+      const totalCY = roundTo(totalCF / 27, 2);
+      const totalM3 = roundTo(totalCF * 0.0283168, 2);
+      const bags60 = Math.ceil(totalCF / 0.45);
+      const bags80 = Math.ceil(totalCF / 0.60);
+
+      return {
+        stats: [
+          { label: 'Concrete Needed (Cubic Yards)', value: totalCY + ' yd³', highlight: true },
+          { label: 'Concrete Needed (Cubic Feet)', value: totalCF + ' ft³' },
+          { label: 'Concrete Needed (Cubic Meters)', value: totalM3 + ' m³' },
+          { label: '80lb Pre-mix Bags', value: bags80 + ' bags' },
+          { label: '60lb Pre-mix Bags', value: bags60 + ' bags' },
+          { label: 'Total Weight', value: Math.round(totalCF * 145).toLocaleString('en-US') + ' lbs' },
+        ],
+        formula: 'Volume (yd³) = (Length × Width × (Depth ÷ 12)) ÷ 27 × (1 + Waste%)',
+      };
+    },
+    article: { heading: 'How to Calculate Concrete Volume Accurately', intro: 'Ordering concrete accurately prevents expensive short-load fees or messy excess waste.', sections: [
+      { heading: 'Cubic Yards Calculation', body: 'Concrete is measured in cubic yards (27 cubic feet). Multiply length by width by depth in feet, then divide by 27.' }
+    ] },
+    howTo: ['Select slab, footing, or column shape.', 'Enter dimensions in feet and thickness in inches.', 'Review cubic yards and bag count required.'],
+    formula: 'yd³ = (ft × ft × (in / 12)) / 27',
+    examples: [
+      { title: '10x10 Patio Slab (4in deep)', input: '10ft × 10ft × 4in, 10% waste', result: '1.36 Cubic Yards (62 bags of 80lb)' }
+    ],
+    faqs: [
+      { q: 'How thick should a concrete patio be?', a: 'Standard residential patios and sidewalks are typically 4 inches thick.' }
+    ]
+  },
+  'paint-calculator': {
+    id: 'paint-calculator',
+    name: 'Paint Calculator',
+    category: 'Construction',
+    icon: 'fa-paint-roller',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Calculate paint gallons and liters needed for interior or exterior walls, accounting for doors, windows, and coats.',
+    metaDescription: 'Free paint calculator — estimate gallons and liters of paint needed for rooms, walls, doors, and ceilings.',
+    fields: [
+      { id: 'room_length', label: 'Room Length (ft)', type: 'number', default: 12, min: 1, step: 0.5, hint: 'Length of the room in feet.' },
+      { id: 'room_width', label: 'Room Width (ft)', type: 'number', default: 12, min: 1, step: 0.5, hint: 'Width of the room in feet.' },
+      { id: 'ceiling_height', label: 'Ceiling Height (ft)', type: 'number', default: 8, min: 1, step: 0.5, hint: 'Standard ceiling height is 8 to 9 feet.' },
+      { id: 'doors', label: 'Number of Doors', type: 'number', default: 1, min: 0, step: 1, hint: 'Subtracted as ~21 sq ft each.' },
+      { id: 'windows', label: 'Number of Windows', type: 'number', default: 2, min: 0, step: 1, hint: 'Subtracted as ~15 sq ft each.' },
+      { id: 'coats', label: 'Number of Coats', type: 'number', default: 2, min: 1, max: 4, step: 1, hint: 'Most interior projects require 2 coats.' },
+      { id: 'paint_ceiling', label: 'Include Ceiling?', type: 'select', default: 'no',
+        options: [
+          { value: 'no', label: 'No — Walls Only' },
+          { value: 'yes', label: 'Yes — Include Ceiling Area' }
+        ], hint: 'Include ceiling square footage.' }
+    ],
+    calculate(v) {
+      const L = safeNum(v.room_length, 0);
+      const W = safeNum(v.room_width, 0);
+      const H = safeNum(v.ceiling_height, 0);
+      const doors = safeNum(v.doors, 0);
+      const windows = safeNum(v.windows, 0);
+      const coats = safeNum(v.coats, 2);
+      const incCeiling = v.paint_ceiling === 'yes';
+
+      if (L <= 0 || W <= 0 || H <= 0) return errorResult('Enter positive room dimensions.');
+
+      const wallArea = 2 * (L + W) * H;
+      const deductions = (doors * 21) + (windows * 15);
+      let netArea = Math.max(0, wallArea - deductions);
+      if (incCeiling) netArea += (L * W);
+
+      const totalPaintArea = netArea * coats;
+      const gallonsNeeded = roundTo(totalPaintArea / 350, 2);
+      const gallonsToBuy = Math.ceil(gallonsNeeded);
+      const litersNeeded = roundTo(gallonsNeeded * 3.78541, 2);
+
+      return {
+        stats: [
+          { label: 'Paint Needed (Gallons)', value: gallonsNeeded + ' gal (' + gallonsToBuy + ' to buy)', highlight: true },
+          { label: 'Paint Needed (Liters)', value: litersNeeded + ' L' },
+          { label: 'Total Wall Area', value: roundTo(netArea, 0) + ' sq ft' },
+          { label: 'Total Coverage with Coats', value: roundTo(totalPaintArea, 0) + ' sq ft' },
+        ],
+        formula: 'Gallons = ((2 × (L + W) × H − (Doors × 21 + Windows × 15)) × Coats) ÷ 350 sq ft/gal',
+      };
+    },
+    article: { heading: 'How to Estimate Paint Coverage for Rooms', intro: 'A gallon of quality interior paint covers approximately 350 to 400 square feet per coat.', sections: [
+      { heading: 'Accounting for Openings', body: 'Standard doors subtract approximately 21 sq ft, while average windows subtract about 15 sq ft.' }
+    ] },
+    howTo: ['Enter room length, width, and ceiling height.', 'Add number of doors and windows.', 'Choose 1 or 2 coats.', 'View required paint in gallons and liters.'],
+    formula: 'Gallons = Net Area × Coats / 350',
+    examples: [
+      { title: '12x12 Bedroom (8ft ceiling, 2 coats)', input: '12x12x8, 1 door, 2 windows, 2 coats', result: '1.91 Gallons (Buy 2 Gallons)' }
+    ],
+    faqs: [
+      { q: 'How many square feet does one gallon of paint cover?', a: 'One gallon of paint typically covers 350 to 400 square feet on smooth, primed walls.' }
+    ]
+  },
+  'tile-calculator': {
+    id: 'tile-calculator',
+    name: 'Tile Calculator',
+    category: 'Construction',
+    icon: 'fa-table-cells-large',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Calculate floor or wall tile counts, square footage, boxes needed, and waste factor for home renovations.',
+    metaDescription: 'Free tile calculator — estimate square footage, total tiles, and boxes needed with waste factor for floors and walls.',
+    fields: [
+      { id: 'area_length', label: 'Area Length (ft)', type: 'number', default: 10, min: 0.5, step: 0.5, hint: 'Length of the floor or wall area in feet.' },
+      { id: 'area_width', label: 'Area Width (ft)', type: 'number', default: 10, min: 0.5, step: 0.5, hint: 'Width of the floor or wall area in feet.' },
+      { id: 'tile_size', label: 'Tile Size (inches)', type: 'select', default: '12x12',
+        options: [
+          { value: '4x4', label: '4" × 4" (Backsplash/Mosaic)' },
+          { value: '6x6', label: '6" × 6" (Wall/Floor)' },
+          { value: '12x12', label: '12" × 12" (Standard Floor 1 sq ft)' },
+          { value: '12x24', label: '12" × 24" (Modern Rectangular 2 sq ft)' },
+          { value: '24x24', label: '24" × 24" (Large Format 4 sq ft)' }
+        ], hint: 'Standard nominal tile dimensions.' },
+      { id: 'tiles_per_box', label: 'Tiles Per Box', type: 'number', default: 10, min: 1, step: 1, hint: 'Check the manufacturer packaging for box count.' },
+      { id: 'waste_pct', label: 'Waste Margin (%)', type: 'number', default: 10, min: 0, max: 25, step: 1, hint: '10% standard, 15% for diagonal layout or intricate cuts.' }
+    ],
+    calculate(v) {
+      const L = safeNum(v.area_length, 0);
+      const W = safeNum(v.area_width, 0);
+      const size = v.tile_size || '12x12';
+      const perBox = Math.max(1, Math.round(safeNum(v.tiles_per_box, 10)));
+      const waste = safeNum(v.waste_pct, 10);
+
+      if (L <= 0 || W <= 0) return errorResult('Enter positive area dimensions.');
+
+      const totalSqFt = L * W;
+      const sizeMap = {
+        '4x4': 16 / 144,
+        '6x6': 36 / 144,
+        '12x12': 1.0,
+        '12x24': 2.0,
+        '24x24': 4.0
+      };
+      const tileSqFt = sizeMap[size] || 1.0;
+
+      const rawTiles = totalSqFt / tileSqFt;
+      const totalTiles = Math.ceil(rawTiles * (1 + waste / 100));
+      const totalBoxes = Math.ceil(totalTiles / perBox);
+      const sqFtWithWaste = roundTo(totalSqFt * (1 + waste / 100), 2);
+
+      return {
+        stats: [
+          { label: 'Tiles Needed (with waste)', value: totalTiles + ' tiles', highlight: true },
+          { label: 'Boxes to Purchase', value: totalBoxes + ' boxes' },
+          { label: 'Raw Area', value: roundTo(totalSqFt, 2) + ' sq ft' },
+          { label: 'Area with ' + waste + '% Waste', value: sqFtWithWaste + ' sq ft' },
+        ],
+        formula: 'Tiles = (Area sq ft ÷ Tile sq ft) × (1 + Waste%)',
+      };
+    },
+    article: { heading: 'How to Measure and Calculate Tile for Floors and Walls', intro: 'Ordering the correct amount of tile ensures consistent dye lots and prevents mid-project delays.', sections: [
+      { heading: 'The 10% Waste Rule', body: 'Tile projects always produce cut remnants and breakage. Adding 10% ensures you have enough to finish cleanly.' }
+    ] },
+    howTo: ['Enter length and width of the room.', 'Select your tile size.', 'Enter tiles per box.', 'View total tiles and boxes to buy.'],
+    formula: 'Boxes = Math.ceil(Total Tiles / Tiles Per Box)',
+    examples: [
+      { title: '10x10 Bathroom (12x12 tiles)', input: '10ft × 10ft, 12x12 tiles, 10% waste, 10/box', result: '110 Tiles (11 Boxes)' }
+    ],
+    faqs: [
+      { q: 'Why do I need a 10% waste factor for tile?', a: 'Tiles must be cut around edges, corners, and plumbing fixtures, creating unusable scraps.' }
+    ]
+  },
+
+  'auto-loan-calculator': {
+    presets: [
+          {
+                "label": "New Vehicle (60 Mo @ 6.5%)",
+                "values": {
+                      "vehicle_price": 38000,
+                      "down_payment": 5000,
+                      "trade_in_value": 0,
+                      "trade_in_owed": 0,
+                      "interest_rate": 6.5,
+                      "loan_term_months": 60,
+                      "sales_tax_rate": 6,
+                      "dealer_fees": 500
+                }
+          },
+          {
+                "label": "Used Vehicle (36 Mo @ 8.0%)",
+                "values": {
+                      "vehicle_price": 22000,
+                      "down_payment": 3000,
+                      "trade_in_value": 0,
+                      "trade_in_owed": 0,
+                      "interest_rate": 8,
+                      "loan_term_months": 36,
+                      "sales_tax_rate": 6,
+                      "dealer_fees": 350
+                }
+          },
+          {
+                "label": "Trade-in Equity (48 Mo @ 5.5%)",
+                "values": {
+                      "vehicle_price": 35000,
+                      "down_payment": 2000,
+                      "trade_in_value": 10000,
+                      "trade_in_owed": 4000,
+                      "interest_rate": 5.5,
+                      "loan_term_months": 48,
+                      "sales_tax_rate": 6,
+                      "dealer_fees": 400
+                }
+          }
+    ],
+    name: 'Auto Loan Calculator',
+    category: 'Finance',
+    icon: 'fa-route',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate monthly car payments, interest paid, trade-in value, sales tax, and full loan amortization.',
+    metaDescription: 'Free auto loan calculator — calculate monthly car payments, interest, dealer fees, sales tax, and amortization schedule with trade-in equity.',
+    fields: [
+      { id: 'vehicle_price', label: 'Vehicle Price ($)', type: 'number', default: 35000, min: 500, step: 500, hint: 'The negotiated purchase price of the vehicle before taxes and fees.' },
+      { id: 'down_payment', label: 'Down Payment ($)', type: 'number', default: 5000, min: 0, step: 500, hint: 'Cash paid upfront towards the purchase.' },
+      { id: 'trade_in_value', label: 'Trade-in Value ($)', type: 'number', default: 0, min: 0, step: 500, hint: 'The estimated trade-in value of your current car.' },
+      { id: 'trade_in_owed', label: 'Amount Owed on Trade-in ($)', type: 'number', default: 0, min: 0, step: 500, hint: 'Remaining loan balance on your trade-in vehicle (if any).' },
+      { id: 'interest_rate', label: 'Interest Rate APR (%)', type: 'number', default: 6.5, min: 0, max: 40, step: 0.1, hint: 'Annual interest rate for the auto loan.' },
+      { id: 'loan_term_months', label: 'Loan Term (months)', type: 'select', default: 60, options: [24, 36, 48, 60, 72, 84].map(m => ({ value: m, label: `${m} months (${(m/12).toFixed(1).replace('.0','')} years)` })), hint: 'Repayment period. Shorter terms save on total interest.' },
+      { id: 'sales_tax_rate', label: 'Sales Tax Rate (%)', type: 'number', default: 6.0, min: 0, max: 25, step: 0.25, hint: 'State and local vehicle sales tax rate.' },
+      { id: 'dealer_fees', label: 'Doc & Registration Fees ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'Title, registration, and dealership documentation fees.' },
+    ],
+    calculate(v) {
+      const price = safeNum(v.vehicle_price, 0);
+      const down = safeNum(v.down_payment, 0);
+      const tradeValue = safeNum(v.trade_in_value, 0);
+      const tradeOwed = safeNum(v.trade_in_owed, 0);
+      const annualRate = safeNum(v.interest_rate, 0);
+      const months = Math.max(1, Math.round(safeNum(v.loan_term_months, 60)));
+      const taxRate = safeNum(v.sales_tax_rate, 0);
+      const fees = safeNum(v.dealer_fees, 0);
+
+      if (price <= 0) {
+        return errorResult('Vehicle price must be greater than zero.');
+      }
+
+      const netTradeIn = tradeValue - tradeOwed;
+      const tradeTaxCredit = Math.max(0, tradeValue);
+      const taxableAmount = Math.max(0, price - tradeTaxCredit);
+      const salesTax = roundTo(taxableAmount * (taxRate / 100), 2);
+
+      const netDownAndTrade = down + netTradeIn;
+      const principal = roundTo(price + salesTax + fees - netDownAndTrade, 2);
+
+      if (principal <= 0) {
+        return {
+          stats: [
+            { label: 'Monthly Payment', value: '$0.00', highlight: true },
+            { label: 'Loan Amount (Principal)', value: '$0.00' },
+            { label: 'Sales Tax', value: fmt(salesTax) },
+            { label: 'Total Purchase Price', value: fmt(price + salesTax + fees) },
+            { label: 'Down Payment & Trade Equity', value: fmt(netDownAndTrade) },
+          ],
+          insight: {
+            tone: 'positive',
+            icon: 'fa-circle-check',
+            headline: 'Paid in Full — No Financing Needed',
+            detail: 'Your down payment and trade-in equity cover the entire vehicle purchase price, taxes, and fees.'
+          }
+        };
+      }
+
+      const r = annualRate / 100 / 12;
+      const monthlyPayment = r === 0
+        ? roundTo(principal / months, 2)
+        : roundTo(principal * (r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1), 2);
+
+      const totalPaid = roundTo(monthlyPayment * months, 2);
+      const totalInterest = Math.max(0, roundTo(totalPaid - principal, 2));
+      const totalVehicleCost = roundTo(down + (tradeValue > tradeOwed ? tradeValue - tradeOwed : 0) + totalPaid, 2);
+
+      const schedule = buildAmortization(principal, r, months, monthlyPayment);
+
+      return {
+        stats: [
+          { label: 'Monthly Payment', value: fmt(monthlyPayment), highlight: true },
+          { label: 'Loan Amount (Financed)', value: fmt(principal) },
+          { label: 'Total Interest Paid', value: fmt(totalInterest), warn: totalInterest > principal * 0.3 },
+          { label: 'Sales Tax', value: fmt(salesTax) },
+          { label: 'Total Amount Paid (Loan)', value: fmt(totalPaid) },
+          { label: 'Total All-in Vehicle Cost', value: fmt(totalVehicleCost) },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Principal (Vehicle)', 'Interest Paid', 'Sales Tax & Fees'],
+          data: [Math.max(0, price - down - Math.max(0, netTradeIn)), totalInterest, salesTax + fees],
+          colors: ['#6366F1', '#EF4444', '#10B981']
+        },
+        table: schedule,
+        insight: {
+          tone: months > 60 ? 'warning' : 'neutral',
+          icon: 'fa-car-side',
+          headline: `Loan Term: ${months} months (${(months/12).toFixed(1).replace('.0','')} yrs) at ${annualRate}% APR`,
+          detail: months > 60
+            ? 'Longer loan terms (over 60 months) lower monthly payments but significantly increase lifetime interest and the risk of negative equity (owing more than the car is worth).'
+            : 'A loan term of 60 months or under keeps total financing costs low while building positive equity faster.'
+        }
+      };
+    },
+    article: {
+      heading: 'How to Calculate Your Auto Loan Payment and Total Costs',
+      intro: 'When buying a car, the sticker price is only part of the equation. Interest rates, loan terms, trade-in equity, sales taxes, and dealer documentation fees all impact your true monthly payment and lifetime cost.',
+      sections: [
+        { heading: 'The Impact of Loan Terms on Lifetime Interest', body: 'While a 72- or 84-month auto loan reduces your monthly bill, it dramatically increases the total interest you pay. In many cases, borrowers remain "underwater" (owing more than the vehicle is worth) for the first 3 to 4 years of a 72+ month loan.' },
+        { heading: 'How Trade-in Value and Sales Tax Work', body: 'In most US states and international jurisdictions, your trade-in value reduces the taxable purchase price of the new vehicle. For instance, trading in a $10,000 car on a $35,000 purchase means you only pay sales tax on $25,000, saving hundreds of dollars in taxes.' },
+      ]
+    },
+    howTo: [
+      'Enter the vehicle sticker price and your cash down payment.',
+      'Add trade-in value and any outstanding loan balance on your current vehicle.',
+      'Select your loan term (e.g. 48, 60, or 72 months) and loan APR.',
+      'Review your monthly payment, lifetime interest, and month-by-month amortization schedule.'
+    ],
+    examples: [
+      { title: 'Standard 60-Month Auto Loan', input: '$35,000 Price, $5,000 Down, 6.5% APR, 60 Months', result: '$622/mo | Total Interest: ~$5,340' },
+      { title: '72-Month Term vs 48-Month Comparison', input: '$35,000 Price, $5,000 Down, 6.5% APR', result: '48 Months: $743/mo ($3,660 interest) vs 72 Months: $536/mo ($6,560 interest)' }
+    ],
+    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Financed = Price + Tax + Fees − Down − Net Trade-in',
+    faqs: [
+      { q: 'What is a good auto loan interest rate?', a: 'Auto loan interest rates vary based on credit score, new vs used status, and loan term. Prime borrowers with credit scores over 720 typically secure APRs between 5% and 7% on new vehicles.' },
+      { q: 'Should I choose a 48, 60, or 72-month auto loan?', a: 'Financial experts generally recommend a maximum term of 60 months for new cars and 48 months for used cars to prevent paying excessive interest and falling into negative equity.' },
+      { q: 'How does a trade-in affect vehicle sales tax?', a: 'In most states, the trade-in allowance is subtracted from the purchase price before sales tax is calculated, reducing the total tax you owe.' },
+      { q: 'What fees are included in the auto loan?', a: 'Common fees include dealer documentation fees, state title and registration fees, and local sales tax.' }
+    ]
+  },
+
+  'salary-calculator': {
+    presets: [
+          {
+                "label": "US Median ($65k Single)",
+                "values": {
+                      "gross_income": 65000,
+                      "pay_frequency": "annual",
+                      "filing_status": "single",
+                      "state_tax_rate": 4.5,
+                      "pretax_401k": 3000,
+                      "pretax_health": 150
+                }
+          },
+          {
+                "label": "Tech / Senior ($130k Married)",
+                "values": {
+                      "gross_income": 130000,
+                      "pay_frequency": "annual",
+                      "filing_status": "married",
+                      "state_tax_rate": 5.5,
+                      "pretax_401k": 12000,
+                      "pretax_health": 350
+                }
+          },
+          {
+                "label": "Hourly Full-Time ($28/hr)",
+                "values": {
+                      "gross_income": 28,
+                      "pay_frequency": "hourly",
+                      "hours_per_week": 40,
+                      "filing_status": "single",
+                      "state_tax_rate": 4,
+                      "pretax_401k": 0,
+                      "pretax_health": 100
+                }
+          }
+    ],
+    name: 'Salary & Paycheck Calculator',
+    category: 'Finance',
+    icon: 'fa-wallet',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate your net take-home pay, federal & state taxes, FICA deductions, and hourly wage breakdown.',
+    metaDescription: 'Free paycheck & salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security & Medicare), and deductions.',
+    fields: [
+      { id: 'gross_income', label: 'Gross Income / Salary ($)', type: 'number', default: 75000, min: 100, step: 1000, hint: 'Your gross earnings before taxes and deductions.' },
+      { id: 'pay_frequency', label: 'Pay Frequency', type: 'select', default: 'annual', options: [
+        { value: 'annual', label: 'Annual Salary' },
+        { value: 'monthly', label: 'Monthly' },
+        { value: 'biweekly', label: 'Biweekly (every 2 weeks)' },
+        { value: 'weekly', label: 'Weekly' },
+        { value: 'hourly', label: 'Hourly' }
+      ], hint: 'How often you receive your salary or wage.' },
+      { id: 'hours_per_week', label: 'Hours Per Week', type: 'number', default: 40, min: 1, max: 168, step: 1, condition: v => v.pay_frequency === 'hourly', hint: 'Expected working hours per week (standard is 40).' },
+      { id: 'filing_status', label: 'Filing Status', type: 'select', default: 'single', options: [
+        { value: 'single', label: 'Single' },
+        { value: 'married', label: 'Married Filing Jointly' },
+        { value: 'head', label: 'Head of Household' }
+      ], hint: 'Your tax filing status for federal tax bracket calculation.' },
+      { id: 'state_tax_rate', label: 'Estimated State Tax Rate (%)', type: 'number', default: 5.0, min: 0, max: 15, step: 0.1, hint: 'State income tax rate (e.g. 0% in TX/FL/WA, ~5% average, up to 13% in CA).' },
+      { id: 'pretax_401k', label: '401(k) / Retirement Deduction ($/yr)', type: 'number', default: 4000, min: 0, step: 500, hint: 'Annual pre-tax retirement contribution.' },
+      { id: 'pretax_health', label: 'Health Insurance Pre-tax ($/mo)', type: 'number', default: 200, min: 0, step: 25, hint: 'Monthly pre-tax health and dental insurance premium.' },
+    ],
+    calculate(v) {
+      let annualGross = safeNum(v.gross_income, 0);
+      const freq = v.pay_frequency || 'annual';
+
+      if (freq === 'monthly') annualGross *= 12;
+      else if (freq === 'biweekly') annualGross *= 26;
+      else if (freq === 'weekly') annualGross *= 52;
+      else if (freq === 'hourly') {
+        const hrs = Math.max(1, safeNum(v.hours_per_week, 40));
+        annualGross = annualGross * hrs * 52;
+      }
+
+      if (annualGross <= 0) return errorResult('Gross income must be greater than zero.');
+
+      const status = v.filing_status || 'single';
+      const stateRate = safeNum(v.state_tax_rate, 5) / 100;
+      const pretax401k = Math.min(annualGross * 0.9, safeNum(v.pretax_401k, 0));
+      const pretaxHealthAnnual = safeNum(v.pretax_health, 0) * 12;
+      const totalPretax = roundTo(pretax401k + pretaxHealthAnnual, 2);
+
+      const socSecCap = 168600;
+      const socSecTaxable = Math.min(annualGross, socSecCap);
+      const socSecTax = roundTo(socSecTaxable * 0.062, 2);
+
+      const medThreshold = status === 'married' ? 250000 : 200000;
+      let medTax = annualGross * 0.0145;
+      if (annualGross > medThreshold) {
+        medTax += (annualGross - medThreshold) * 0.009;
+      }
+      medTax = roundTo(medTax, 2);
+      const totalFica = roundTo(socSecTax + medTax, 2);
+
+      const stdDeduction = status === 'married' ? 29200 : status === 'head' ? 21900 : 14600;
+      const taxableFedIncome = Math.max(0, annualGross - totalPretax - stdDeduction);
+
+      let fedTax = 0;
+      const brackets = status === 'married'
+        ? [
+            { cap: 23200, rate: 0.10 },
+            { cap: 94300, rate: 0.12 },
+            { cap: 201050, rate: 0.22 },
+            { cap: 383900, rate: 0.24 },
+            { cap: 487450, rate: 0.32 },
+            { cap: 731200, rate: 0.35 },
+            { cap: Infinity, rate: 0.37 },
+          ]
+        : [
+            { cap: 11600, rate: 0.10 },
+            { cap: 47150, rate: 0.12 },
+            { cap: 100525, rate: 0.22 },
+            { cap: 191950, rate: 0.24 },
+            { cap: 243725, rate: 0.32 },
+            { cap: 609350, rate: 0.35 },
+            { cap: Infinity, rate: 0.37 },
+          ];
+
+      let prevCap = 0;
+      for (const b of brackets) {
+        if (taxableFedIncome > prevCap) {
+          const taxableChunk = Math.min(taxableFedIncome, b.cap) - prevCap;
+          fedTax += taxableChunk * b.rate;
+          prevCap = b.cap;
+        } else {
+          break;
+        }
+      }
+      fedTax = roundTo(fedTax, 2);
+
+      const stateTaxable = Math.max(0, annualGross - totalPretax);
+      const stateTax = roundTo(stateTaxable * stateRate, 2);
+
+      const totalTax = roundTo(fedTax + totalFica + stateTax, 2);
+      const netTakeHomeAnnual = roundTo(annualGross - totalTax - totalPretax, 2);
+      const netMonthly = roundTo(netTakeHomeAnnual / 12, 2);
+      const netBiweekly = roundTo(netTakeHomeAnnual / 26, 2);
+      const netWeekly = roundTo(netTakeHomeAnnual / 52, 2);
+      const netHourly = roundTo(netTakeHomeAnnual / 2080, 2);
+      const effectiveTaxRate = roundTo((totalTax / annualGross) * 100, 1);
+
+      return {
+        stats: [
+          { label: 'Take-Home Pay (Monthly)', value: fmt(netMonthly), highlight: true },
+          { label: 'Take-Home Pay (Biweekly)', value: fmt(netBiweekly) },
+          { label: 'Take-Home Pay (Annual)', value: fmt(netTakeHomeAnnual) },
+          { label: 'Effective Total Tax Rate', value: `${effectiveTaxRate}%`, warn: effectiveTaxRate > 30 },
+          { label: 'Federal Income Tax', value: fmt(fedTax) },
+          { label: 'FICA (Social Security & Medicare)', value: fmt(totalFica) },
+          { label: 'Estimated State Tax', value: fmt(stateTax) },
+          { label: 'Total Pre-tax Deductions', value: fmt(totalPretax) },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Net Take-Home Pay', 'Federal Tax', 'FICA Tax', 'State Tax', 'Pre-tax Deductions'],
+          data: [netTakeHomeAnnual, fedTax, totalFica, stateTax, totalPretax],
+          colors: ['#10B981', '#6366F1', '#3B82F6', '#F59E0B', '#8B5CF6']
+        },
+        insight: {
+          tone: 'positive',
+          icon: 'fa-wallet',
+          headline: `Net Take-Home Pay: ${pct(netTakeHomeAnnual / annualGross)} of Gross Salary`,
+          detail: `You keep approximately ${fmt(netBiweekly)} every two weeks (${fmt(netHourly)}/hr equivalent) after all estimated federal, FICA, state taxes, and pre-tax deductions.`
+        }
+      };
+    },
+    article: {
+      heading: 'How to Calculate Your Net Paycheck and Understand Tax Withholding',
+      intro: 'Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).',
+      sections: [
+        { heading: 'FICA Taxes Explained', body: 'FICA consists of Social Security (6.2% on earnings up to the annual wage cap) and Medicare (1.45% on all earnings, plus an additional 0.9% for high earners).' },
+        { heading: 'Pre-Tax Deductions Save You Money', body: 'Contributing to traditional 401(k) accounts, HSAs, and pre-tax health insurance reduces your taxable income, lowering the amount of federal and state taxes withheld from each paycheck.' }
+      ]
+    },
+    howTo: [
+      'Enter your gross income and select your pay frequency (annual, monthly, biweekly, or hourly).',
+      'Select your tax filing status (Single, Married, or Head of Household).',
+      'Set your state tax rate or leave at the 5% national average.',
+      'Add optional pre-tax retirement or health insurance deductions.',
+      'Review your net take-home pay and complete tax breakdown.'
+    ],
+    examples: [
+      { title: '$75,000 Single Filer', input: 'Salary: $75k, Filing: Single, 5% State Tax, $4k 401k', result: 'Net Pay: ~$4,650/mo | $2,146 biweekly | 22.4% Effective Tax' },
+      { title: '$120,000 Married Filer', input: 'Salary: $120k, Filing: Married, 5% State Tax', result: 'Net Pay: ~$7,490/mo | $3,457 biweekly | 21.8% Effective Tax' }
+    ],
+    formula: 'Net Pay = Gross Income − Federal Tax − FICA Tax − State Tax − Pre-tax Deductions',
+    faqs: [
+      { q: 'What is the difference between gross pay and net pay?', a: 'Gross pay is the total amount earned before any deductions or taxes. Net pay (take-home pay) is the remaining money deposited into your bank account after all taxes and deductions.' },
+      { q: 'How does filing status affect paycheck withholding?', a: 'Filing status determines your standard deduction and income tax brackets. Married couples filing jointly have wider tax brackets, typically lowering tax withholding compared to single filers.' },
+      { q: 'How much are FICA taxes?', a: 'FICA taxes equal 7.65% for employees (6.2% Social Security + 1.45% Medicare). Employers match an identical 7.65%.' }
+    ]
+  },
+
+  'tdee-calculator': {
+    presets: [
+          {
+                "label": "Fat Loss Cut (-500 kcal)",
+                "values": {
+                      "unit": "imperial",
+                      "gender": "male",
+                      "age": 30,
+                      "weight": 185,
+                      "height": 70,
+                      "activity_level": "moderate",
+                      "goal": "cut_standard"
+                }
+          },
+          {
+                "label": "Lean Bulk (+300 kcal)",
+                "values": {
+                      "unit": "imperial",
+                      "gender": "male",
+                      "age": 25,
+                      "weight": 165,
+                      "height": 69,
+                      "activity_level": "very_active",
+                      "goal": "bulk_lean"
+                }
+          },
+          {
+                "label": "Maintenance & Tone",
+                "values": {
+                      "unit": "imperial",
+                      "gender": "female",
+                      "age": 28,
+                      "weight": 135,
+                      "height": 65,
+                      "activity_level": "light",
+                      "goal": "maintain"
+                }
+          }
+    ],
+    name: 'TDEE & Daily Calorie Calculator',
+    category: 'Health',
+    icon: 'fa-fire',
+    iconClass: 'icon-health',
+    tagClass: 'tag-health',
+    description: 'Calculate your Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), and daily macro calorie targets.',
+    metaDescription: 'Free TDEE calculator — calculate your Total Daily Energy Expenditure, BMR, daily calorie targets for weight loss or muscle gain, and macro splits.',
+    fields: [
+      { id: 'unit', label: 'Unit System', type: 'select', default: 'metric', options: [
+        { value: 'metric', label: 'Metric (kg / cm)' },
+        { value: 'imperial', label: 'Imperial (lbs / inches)' }
+      ], hint: 'Choose metric or imperial units.' },
+      { id: 'gender', label: 'Gender', type: 'select', default: 'male', options: [
+        { value: 'male', label: 'Male' },
+        { value: 'female', label: 'Female' }
+      ], hint: 'Biological sex influences baseline metabolic formulas.' },
+      { id: 'age', label: 'Age', type: 'number', default: 28, min: 14, max: 110, step: 1, hint: 'Age in years.' },
+      { id: 'weight', label: 'Weight', type: 'number', default: 75, min: 20, max: 500, step: 0.5, hint: 'Your current body weight.' },
+      { id: 'height', label: 'Height', type: 'number', default: 178, min: 60, max: 260, step: 1, hint: 'Your height.' },
+      { id: 'activity_level', label: 'Activity Level', type: 'select', default: 'moderate', options: [
+        { value: 'sedentary', label: 'Sedentary (desk job, little or no exercise)' },
+        { value: 'light', label: 'Light Exercise (1-2 days/week)' },
+        { value: 'moderate', label: 'Moderate Exercise (3-5 days/week)' },
+        { value: 'heavy', label: 'Heavy Exercise (6-7 days/week)' },
+        { value: 'athlete', label: 'Athlete / Physical Job (2x per day)' }
+      ], hint: 'Your weekly physical activity and exercise routine.' },
+      { id: 'goal', label: 'Fitness Goal', type: 'select', default: 'maintain', options: [
+        { value: 'cut_fast', label: 'Fast Weight Loss (-2 lbs/week [-1000 kcal])' },
+        { value: 'cut_standard', label: 'Moderate Weight Loss (-1 lb/week [-500 kcal])' },
+        { value: 'cut_mild', label: 'Mild Weight Loss (-0.5 lb/week [-250 kcal])' },
+        { value: 'maintain', label: 'Maintain Current Weight' },
+        { value: 'bulk_mild', label: 'Lean Muscle Gain (+0.5 lb/week [+250 kcal])' },
+        { value: 'bulk_standard', label: 'Standard Muscle Gain (+1 lb/week [+500 kcal])' }
+      ], hint: 'Calorie adjustment based on your target body composition goal.' }
+    ],
+    fieldLabels(v) {
+      return {
+        weight: v.unit === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)',
+        height: v.unit === 'imperial' ? 'Height (inches)' : 'Height (cm)',
+      };
+    },
+    calculate(v) {
+      let weightKg = safeNum(v.weight, 0);
+      let heightCm = safeNum(v.height, 0);
+
+      if (v.unit === 'imperial') {
+        weightKg *= 0.453592;
+        heightCm *= 2.54;
+      }
+
+      if (weightKg <= 0 || heightCm <= 0) return errorResult('Please enter valid height and weight values.');
+
+      const age = Math.max(14, safeNum(v.age, 25));
+      const gender = v.gender || 'male';
+
+      let bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
+      bmr += gender === 'male' ? 5 : -161;
+      bmr = Math.round(bmr);
+
+      const mults = {
+        sedentary: 1.2,
+        light: 1.375,
+        moderate: 1.55,
+        heavy: 1.725,
+        athlete: 1.9,
+      };
+      const actMult = mults[v.activity_level] || 1.55;
+      const tdee = Math.round(bmr * actMult);
+
+      const goalOffsets = {
+        cut_fast: -1000,
+        cut_standard: -500,
+        cut_mild: -250,
+        maintain: 0,
+        bulk_mild: 250,
+        bulk_standard: 500,
+      };
+      const targetCalories = Math.max(1000, tdee + (goalOffsets[v.goal] || 0));
+
+      const proteinGrams = Math.round((targetCalories * 0.30) / 4);
+      const carbsGrams = Math.round((targetCalories * 0.40) / 4);
+      const fatGrams = Math.round((targetCalories * 0.30) / 9);
+
+      return {
+        stats: [
+          { label: 'Target Daily Calories', value: `${fmtN(targetCalories)} kcal/day`, highlight: true },
+          { label: 'Maintenance Calories (TDEE)', value: `${fmtN(tdee)} kcal/day` },
+          { label: 'Basal Metabolic Rate (BMR)', value: `${fmtN(bmr)} kcal/day` },
+          { label: 'Daily Protein Target', value: `${proteinGrams}g (30%)` },
+          { label: 'Daily Carbohydrates Target', value: `${carbsGrams}g (40%)` },
+          { label: 'Daily Fats Target', value: `${fatGrams}g (30%)` },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: [`Protein (${proteinGrams}g)`, `Carbohydrates (${carbsGrams}g)`, `Fats (${fatGrams}g)`],
+          data: [proteinGrams * 4, carbsGrams * 4, fatGrams * 9],
+          colors: ['#3B82F6', '#10B981', '#F59E0B']
+        },
+        insight: {
+          tone: 'positive',
+          icon: 'fa-utensils',
+          headline: `Daily Target: ${fmtN(targetCalories)} kcal`,
+          detail: `To meet your fitness goal, consume approximately ${fmtN(targetCalories)} calories per day split across ${proteinGrams}g protein, ${carbsGrams}g carbs, and ${fatGrams}g healthy fats.`
+        }
+      };
+    },
+    article: {
+      heading: 'Understanding TDEE, BMR, and Macro Calorie Targets',
+      intro: 'Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a 24-hour period, encompassing your resting metabolic rate, physical activity, and food digestion.',
+      sections: [
+        { heading: 'BMR vs TDEE', body: 'Basal Metabolic Rate (BMR) represents the energy expended simply to keep your vital organs functioning at complete rest. TDEE multiplies BMR by your activity level to establish your true maintenance calories.' },
+        { heading: 'How to Adjust Calories for Weight Loss or Muscle Gain', body: 'Consuming 500 calories below your TDEE creates a deficit leading to approximately 1 pound of weight loss per week (3,500 kcal deficit = 1 lb fat). Conversely, a 250-500 calorie surplus supports muscle hypertrophy with minimal fat gain.' }
+      ]
+    },
+    howTo: [
+      'Select Metric (kg/cm) or Imperial (lbs/in) units.',
+      'Enter your age, gender, weight, and height.',
+      'Select your weekly activity level and primary fitness goal.',
+      'Read your BMR, TDEE, target daily calories, and suggested macronutrient split.'
+    ],
+    examples: [
+      { title: 'Moderate Active Male (Weight Loss)', input: 'Age: 28, Male, 75kg, 178cm, Moderate Activity, -500 kcal Goal', result: 'TDEE: ~2,580 kcal | Target: 2,080 kcal/day (156g Protein, 208g Carbs, 69g Fat)' },
+      { title: 'Sedentary Female (Maintenance)', input: 'Age: 32, Female, 65kg, 165cm, Sedentary, Maintain Goal', result: 'TDEE: ~1,650 kcal | BMR: ~1,375 kcal' }
+    ],
+    formula: 'BMR (Mifflin-St Jeor) = (10 × kg) + (6.25 × cm) − (5 × age) + (5 or −161) | TDEE = BMR × Activity',
+    faqs: [
+      { q: 'What is TDEE?', a: 'TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn each day through basal metabolism, daily movement, digestion, and exercise.' },
+      { q: 'How accurate is the Mifflin-St Jeor formula?', a: 'The Mifflin-St Jeor formula is widely recognized in clinical dietetics as one of the most reliable equations for estimating BMR in healthy individuals within 5-10% of metabolic chamber tests.' },
+      { q: 'How many calories should I cut to lose 1 pound per week?', a: 'A caloric deficit of 500 calories per day equals 3,500 calories per week, which corresponds to approximately 1 pound of fat loss per week.' }
+    ]
+  },
+
+  'unit-converter': {
+    name: 'Universal Unit Converter',
+    category: 'Math',
+    icon: 'fa-scale-balanced',
+    iconClass: 'icon-math',
+    tagClass: 'tag-math',
+    description: 'Convert between units of length, weight, temperature, volume, speed, digital data, area, and pressure instantly.',
+    metaDescription: 'Free online unit converter — instantly convert units of length, weight, temperature, volume, speed, data, area, and pressure with multi-unit comparison tables.',
+    fields: [
+      { id: 'dimension', label: 'Conversion Type', type: 'select', default: 'length', options: [
+        { value: 'length', label: 'Length & Distance' },
+        { value: 'weight', label: 'Weight & Mass' },
+        { value: 'temperature', label: 'Temperature' },
+        { value: 'volume', label: 'Volume & Capacity' },
+        { value: 'speed', label: 'Speed & Velocity' },
+        { value: 'data', label: 'Digital Data & Storage' },
+        { value: 'area', label: 'Area' },
+        { value: 'pressure', label: 'Pressure' },
+        { value: 'time', label: 'Time' },
+      ], hint: 'Choose the measurement category to convert.' },
+      { id: 'amount', label: 'Value to Convert', type: 'number', default: 10, min: -999999999, step: 0.1, hint: 'The numerical quantity you want to convert.' },
+      { id: 'unit_length_from', label: 'From Unit', type: 'select', hint: 'The starting length unit to convert from.', default: 'meters', condition: v => (v.dimension || 'length') === 'length', options: [
+        { value: 'meters', label: 'Meters (m)' },
+        { value: 'kilometers', label: 'Kilometers (km)' },
+        { value: 'centimeters', label: 'Centimeters (cm)' },
+        { value: 'millimeters', label: 'Millimeters (mm)' },
+        { value: 'miles', label: 'Miles (mi)' },
+        { value: 'yards', label: 'Yards (yd)' },
+        { value: 'feet', label: 'Feet (ft)' },
+        { value: 'inches', label: 'Inches (in)' },
+        { value: 'nautical_miles', label: 'Nautical Miles (NM)' }
+      ] },
+      { id: 'unit_length_to', label: 'To Unit', type: 'select', hint: 'The target length unit to convert into.', default: 'feet', condition: v => (v.dimension || 'length') === 'length', options: [
+        { value: 'meters', label: 'Meters (m)' },
+        { value: 'kilometers', label: 'Kilometers (km)' },
+        { value: 'centimeters', label: 'Centimeters (cm)' },
+        { value: 'millimeters', label: 'Millimeters (mm)' },
+        { value: 'miles', label: 'Miles (mi)' },
+        { value: 'yards', label: 'Yards (yd)' },
+        { value: 'feet', label: 'Feet (ft)' },
+        { value: 'inches', label: 'Inches (in)' },
+        { value: 'nautical_miles', label: 'Nautical Miles (NM)' }
+      ] },
+
+      { id: 'unit_weight_from', label: 'From Unit', type: 'select', hint: 'The starting weight unit to convert from.', default: 'kilograms', condition: v => v.dimension === 'weight', options: [
+        { value: 'kilograms', label: 'Kilograms (kg)' },
+        { value: 'grams', label: 'Grams (g)' },
+        { value: 'milligrams', label: 'Milligrams (mg)' },
+        { value: 'metric_tons', label: 'Metric Tons (t)' },
+        { value: 'pounds', label: 'Pounds (lb)' },
+        { value: 'ounces', label: 'Ounces (oz)' },
+        { value: 'stones', label: 'Stones (st)' }
+      ] },
+      { id: 'unit_weight_to', label: 'To Unit', type: 'select', hint: 'The target weight unit to convert into.', default: 'pounds', condition: v => v.dimension === 'weight', options: [
+        { value: 'kilograms', label: 'Kilograms (kg)' },
+        { value: 'grams', label: 'Grams (g)' },
+        { value: 'milligrams', label: 'Milligrams (mg)' },
+        { value: 'metric_tons', label: 'Metric Tons (t)' },
+        { value: 'pounds', label: 'Pounds (lb)' },
+        { value: 'ounces', label: 'Ounces (oz)' },
+        { value: 'stones', label: 'Stones (st)' }
+      ] },
+
+      { id: 'unit_temp_from', label: 'From Unit', type: 'select', hint: 'The starting temperature scale to convert from.', default: 'celsius', condition: v => v.dimension === 'temperature', options: [
+        { value: 'celsius', label: 'Celsius (°C)' },
+        { value: 'fahrenheit', label: 'Fahrenheit (°F)' },
+        { value: 'kelvin', label: 'Kelvin (K)' }
+      ] },
+      { id: 'unit_temp_to', label: 'To Unit', type: 'select', hint: 'The target temperature scale to convert into.', default: 'fahrenheit', condition: v => v.dimension === 'temperature', options: [
+        { value: 'celsius', label: 'Celsius (°C)' },
+        { value: 'fahrenheit', label: 'Fahrenheit (°F)' },
+        { value: 'kelvin', label: 'Kelvin (K)' }
+      ] },
+
+      { id: 'unit_vol_from', label: 'From Unit', type: 'select', hint: 'The starting volume unit to convert from.', default: 'liters', condition: v => v.dimension === 'volume', options: [
+        { value: 'liters', label: 'Liters (L)' },
+        { value: 'milliliters', label: 'Milliliters (mL)' },
+        { value: 'cubic_meters', label: 'Cubic Meters (m³)' },
+        { value: 'gallons_us', label: 'US Gallons (gal)' },
+        { value: 'quarts_us', label: 'US Quarts (qt)' },
+        { value: 'pints_us', label: 'US Pints (pt)' },
+        { value: 'cups_us', label: 'US Cups' },
+        { value: 'fl_oz_us', label: 'US Fluid Ounces (fl oz)' },
+        { value: 'tablespoons', label: 'Tablespoons (tbsp)' },
+        { value: 'teaspoons', label: 'Teaspoons (tsp)' }
+      ] },
+      { id: 'unit_vol_to', label: 'To Unit', type: 'select', hint: 'The target volume unit to convert into.', default: 'gallons_us', condition: v => v.dimension === 'volume', options: [
+        { value: 'liters', label: 'Liters (L)' },
+        { value: 'milliliters', label: 'Milliliters (mL)' },
+        { value: 'cubic_meters', label: 'Cubic Meters (m³)' },
+        { value: 'gallons_us', label: 'US Gallons (gal)' },
+        { value: 'quarts_us', label: 'US Quarts (qt)' },
+        { value: 'pints_us', label: 'US Pints (pt)' },
+        { value: 'cups_us', label: 'US Cups' },
+        { value: 'fl_oz_us', label: 'US Fluid Ounces (fl oz)' },
+        { value: 'tablespoons', label: 'Tablespoons (tbsp)' },
+        { value: 'teaspoons', label: 'Teaspoons (tsp)' }
+      ] },
+
+      { id: 'unit_speed_from', label: 'From Unit', type: 'select', hint: 'The starting velocity unit to convert from.', default: 'kmh', condition: v => v.dimension === 'speed', options: [
+        { value: 'kmh', label: 'Kilometers per Hour (km/h)' },
+        { value: 'mph', label: 'Miles per Hour (mph)' },
+        { value: 'ms', label: 'Meters per Second (m/s)' },
+        { value: 'knots', label: 'Knots (kn)' },
+        { value: 'fts', label: 'Feet per Second (ft/s)' }
+      ] },
+      { id: 'unit_speed_to', label: 'To Unit', type: 'select', hint: 'The target velocity unit to convert into.', default: 'mph', condition: v => v.dimension === 'speed', options: [
+        { value: 'kmh', label: 'Kilometers per Hour (km/h)' },
+        { value: 'mph', label: 'Miles per Hour (mph)' },
+        { value: 'ms', label: 'Meters per Second (m/s)' },
+        { value: 'knots', label: 'Knots (kn)' },
+        { value: 'fts', label: 'Feet per Second (ft/s)' }
+      ] },
+
+      { id: 'unit_data_from', label: 'From Unit', type: 'select', hint: 'The starting digital storage unit to convert from.', default: 'gigabytes', condition: v => v.dimension === 'data', options: [
+        { value: 'bytes', label: 'Bytes (B)' },
+        { value: 'kilobytes', label: 'Kilobytes (KB)' },
+        { value: 'megabytes', label: 'Megabytes (MB)' },
+        { value: 'gigabytes', label: 'Gigabytes (GB)' },
+        { value: 'terabytes', label: 'Terabytes (TB)' },
+        { value: 'petabytes', label: 'Petabytes (PB)' }
+      ] },
+      { id: 'unit_data_to', label: 'To Unit', type: 'select', hint: 'The target digital storage unit to convert into.', default: 'megabytes', condition: v => v.dimension === 'data', options: [
+        { value: 'bytes', label: 'Bytes (B)' },
+        { value: 'kilobytes', label: 'Kilobytes (KB)' },
+        { value: 'megabytes', label: 'Megabytes (MB)' },
+        { value: 'gigabytes', label: 'Gigabytes (GB)' },
+        { value: 'terabytes', label: 'Terabytes (TB)' },
+        { value: 'petabytes', label: 'Petabytes (PB)' }
+      ] },
+
+      { id: 'unit_area_from', label: 'From Unit', type: 'select', hint: 'The starting area unit to convert from.', default: 'sq_meters', condition: v => v.dimension === 'area', options: [
+        { value: 'sq_meters', label: 'Square Meters (m²)' },
+        { value: 'sq_kilometers', label: 'Square Kilometers (km²)' },
+        { value: 'sq_feet', label: 'Square Feet (sq ft)' },
+        { value: 'sq_yards', label: 'Square Yards (sq yd)' },
+        { value: 'sq_miles', label: 'Square Miles (sq mi)' },
+        { value: 'acres', label: 'Acres (ac)' },
+        { value: 'hectares', label: 'Hectares (ha)' }
+      ] },
+      { id: 'unit_area_to', label: 'To Unit', type: 'select', hint: 'The target area unit to convert into.', default: 'sq_feet', condition: v => v.dimension === 'area', options: [
+        { value: 'sq_meters', label: 'Square Meters (m²)' },
+        { value: 'sq_kilometers', label: 'Square Kilometers (km²)' },
+        { value: 'sq_feet', label: 'Square Feet (sq ft)' },
+        { value: 'sq_yards', label: 'Square Yards (sq yd)' },
+        { value: 'sq_miles', label: 'Square Miles (sq mi)' },
+        { value: 'acres', label: 'Acres (ac)' },
+        { value: 'hectares', label: 'Hectares (ha)' }
+      ] },
+
+      { id: 'unit_pressure_from', label: 'From Unit', type: 'select', hint: 'The starting pressure unit to convert from.', default: 'psi', condition: v => v.dimension === 'pressure', options: [
+        { value: 'pascals', label: 'Pascals (Pa)' },
+        { value: 'kilopascals', label: 'Kilopascals (kPa)' },
+        { value: 'bar', label: 'Bar (bar)' },
+        { value: 'psi', label: 'Pounds per Sq Inch (psi)' },
+        { value: 'atm', label: 'Standard Atmospheres (atm)' },
+        { value: 'mmhg', label: 'Millimeters of Mercury (mmHg / Torr)' }
+      ] },
+      { id: 'unit_pressure_to', label: 'To Unit', type: 'select', hint: 'The target pressure unit to convert into.', default: 'bar', condition: v => v.dimension === 'pressure', options: [
+        { value: 'pascals', label: 'Pascals (Pa)' },
+        { value: 'kilopascals', label: 'Kilopascals (kPa)' },
+        { value: 'bar', label: 'Bar (bar)' },
+        { value: 'psi', label: 'Pounds per Sq Inch (psi)' },
+        { value: 'atm', label: 'Standard Atmospheres (atm)' },
+        { value: 'mmhg', label: 'Millimeters of Mercury (mmHg / Torr)' }
+      ] },
+
+      { id: 'unit_time_from', label: 'From Unit', type: 'select', hint: 'The starting time unit to convert from.', default: 'hours', condition: v => v.dimension === 'time', options: [
+        { value: 'seconds', label: 'Seconds (s)' },
+        { value: 'minutes', label: 'Minutes (min)' },
+        { value: 'hours', label: 'Hours (h)' },
+        { value: 'days', label: 'Days (d)' },
+        { value: 'weeks', label: 'Weeks (wk)' },
+        { value: 'months', label: 'Months (30.44 days)' },
+        { value: 'years', label: 'Years (365.25 days)' }
+      ] },
+      { id: 'unit_time_to', label: 'To Unit', type: 'select', hint: 'The target time unit to convert into.', default: 'minutes', condition: v => v.dimension === 'time', options: [
+        { value: 'seconds', label: 'Seconds (s)' },
+        { value: 'minutes', label: 'Minutes (min)' },
+        { value: 'hours', label: 'Hours (h)' },
+        { value: 'days', label: 'Days (d)' },
+        { value: 'weeks', label: 'Weeks (wk)' },
+        { value: 'months', label: 'Months (30.44 days)' },
+        { value: 'years', label: 'Years (365.25 days)' }
+      ] }
+    ],
+    calculate(v) {
+      const dim = v.dimension || 'length';
+      const amt = safeNum(v.amount, 0);
+
+      // Conversion factors to Base Unit
+      const lengthBase = {
+        meters: 1, kilometers: 1000, centimeters: 0.01, millimeters: 0.001,
+        miles: 1609.344, yards: 0.9144, feet: 0.3048, inches: 0.0254, nautical_miles: 1852
+      };
+      const weightBase = {
+        kilograms: 1, grams: 0.001, milligrams: 0.000001, metric_tons: 1000,
+        pounds: 0.45359237, ounces: 0.028349523125, stones: 6.35029318
+      };
+      const volumeBase = {
+        liters: 1, milliliters: 0.001, cubic_meters: 1000,
+        gallons_us: 3.785411784, quarts_us: 0.946352946, pints_us: 0.473176473,
+        cups_us: 0.2365882365, fl_oz_us: 0.0295735295625, tablespoons: 0.01478676478125, teaspoons: 0.00492892159375
+      };
+      const speedBase = {
+        ms: 1, kmh: 1 / 3.6, mph: 0.44704, knots: 0.514444, fts: 0.3048
+      };
+      const dataBase = {
+        bytes: 1, kilobytes: 1024, megabytes: 1024 * 1024, gigabytes: 1024 * 1024 * 1024,
+        terabytes: 1024 * 1024 * 1024 * 1024, petabytes: 1024 * 1024 * 1024 * 1024 * 1024
+      };
+      const areaBase = {
+        sq_meters: 1, sq_kilometers: 1000000, sq_feet: 0.09290304,
+        sq_yards: 0.83612736, sq_miles: 2589988.110336, acres: 4046.8564224, hectares: 10000
+      };
+      const pressureBase = {
+        pascals: 1, kilopascals: 1000, bar: 100000, psi: 6894.757293168,
+        atm: 101325, mmhg: 133.322387415
+      };
+      const timeBase = {
+        seconds: 1, minutes: 60, hours: 3600, days: 86400,
+        weeks: 604800, months: 2629800, years: 31557600
+      };
+
+      let resultValue = 0;
+      let fromKey = 'meters';
+      let toKey = 'feet';
+      let tableRows = [];
+
+      if (dim === 'temperature') {
+        fromKey = v.unit_temp_from || 'celsius';
+        toKey = v.unit_temp_to || 'fahrenheit';
+
+        // Convert to Celsius base
+        let inCelsius = amt;
+        if (fromKey === 'fahrenheit') inCelsius = (amt - 32) * (5 / 9);
+        else if (fromKey === 'kelvin') inCelsius = amt - 273.15;
+
+        // Convert from Celsius to Target
+        if (toKey === 'celsius') resultValue = inCelsius;
+        else if (toKey === 'fahrenheit') resultValue = inCelsius * (9 / 5) + 32;
+        else if (toKey === 'kelvin') resultValue = inCelsius + 273.15;
+
+        tableRows = [
+          { Unit: 'Celsius (°C)', Value: roundTo(inCelsius, 4) + ' °C' },
+          { Unit: 'Fahrenheit (°F)', Value: roundTo(inCelsius * (9 / 5) + 32, 4) + ' °F' },
+          { Unit: 'Kelvin (K)', Value: roundTo(inCelsius + 273.15, 4) + ' K' },
+        ];
+      } else {
+        const factorMap = {
+          length: { factors: lengthBase, from: v.unit_length_from || 'meters', to: v.unit_length_to || 'feet' },
+          weight: { factors: weightBase, from: v.unit_weight_from || 'kilograms', to: v.unit_weight_to || 'pounds' },
+          volume: { factors: volumeBase, from: v.unit_vol_from || 'liters', to: v.unit_vol_to || 'gallons_us' },
+          speed: { factors: speedBase, from: v.unit_speed_from || 'kmh', to: v.unit_speed_to || 'mph' },
+          data: { factors: dataBase, from: v.unit_data_from || 'gigabytes', to: v.unit_data_to || 'megabytes' },
+          area: { factors: areaBase, from: v.unit_area_from || 'sq_meters', to: v.unit_area_to || 'sq_feet' },
+          pressure: { factors: pressureBase, from: v.unit_pressure_from || 'psi', to: v.unit_pressure_to || 'bar' },
+          time: { factors: timeBase, from: v.unit_time_from || 'hours', to: v.unit_time_to || 'minutes' },
+        }[dim] || { factors: lengthBase, from: 'meters', to: 'feet' };
+
+        fromKey = factorMap.from;
+        toKey = factorMap.to;
+        const fromFactor = factorMap.factors[fromKey] || 1;
+        const toFactor = factorMap.factors[toKey] || 1;
+
+        const inBase = amt * fromFactor;
+        resultValue = inBase / toFactor;
+
+        tableRows = Object.keys(factorMap.factors).map(k => {
+          const val = inBase / factorMap.factors[k];
+          const displayVal = Math.abs(val) < 0.00001 && val !== 0 ? val.toExponential(4) : Number(roundTo(val, 6)).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 });
+          return { Unit: k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), Value: displayVal };
+        });
+      }
+
+      const formatDisplay = (n) => {
+        const num = safeNum(n, 0);
+        if (Math.abs(num) < 0.00001 && num !== 0) return num.toExponential(4);
+        return Number(roundTo(num, 6)).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 });
+      };
+
+      const table = makeTableSpec({
+        mode: 'conversions',
+        title: `Multi-Unit Conversion Equivalents for ${formatDisplay(amt)} ${fromKey.replace(/_/g, ' ')}`,
+        columns: [
+          { key: 'unit', label: 'Unit', emphasis: true },
+          { key: 'value', label: 'Converted Value', emphasis: true }
+        ],
+        rows: tableRows.map(r => ({
+          unit: r.Unit,
+          value: r.Value
+        }))
+      });
+
+      return {
+        stats: [
+          { label: `Converted Value (${toKey.replace(/_/g, ' ')})`, value: formatDisplay(resultValue), highlight: true },
+          { label: 'Initial Amount', value: `${formatDisplay(amt)} ${fromKey.replace(/_/g, ' ')}` },
+          { label: 'Conversion Factor', value: `1 ${fromKey.replace(/_/g, ' ')} = ${formatDisplay(resultValue / (amt || 1))} ${toKey.replace(/_/g, ' ')}` },
+        ],
+        table,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-scale-balanced',
+          headline: `${amt} ${fromKey.replace(/_/g, ' ')} = ${formatDisplay(resultValue)} ${toKey.replace(/_/g, ' ')}`,
+          detail: 'See the full multi-unit conversion table below for equivalent values across all standard measurement systems.'
+        }
+      };
+    },
+    article: {
+      heading: 'How to Convert Measurement Units Accurately',
+      intro: 'Unit conversion translates quantities expressed in one measurement scale (such as metric) into equivalent values in another (such as imperial or US customary).',
+      sections: [
+        { heading: 'Metric vs Imperial Systems', body: 'The International System of Units (SI / Metric) is based on decimal multiples of ten (meters, kilograms, liters). Imperial and US customary units rely on historical fractions (inches, feet, pounds, gallons).' },
+        { heading: 'Temperature Conversion Nuances', body: 'Unlike linear conversions, temperature conversions require offset adjustments because 0°C is 32°F (freezing point of water) and 0 K is absolute zero (-273.15°C).' }
+      ]
+    },
+    howTo: [
+      'Select the measurement dimension (Length, Weight, Temp, Volume, Speed, Data, Area, Pressure, or Time).',
+      'Enter the numerical value to convert.',
+      'Pick the "From" and "To" units.',
+      'View the converted result and reference table.'
+    ],
+    examples: [
+      { title: 'Length Conversion', input: '10 Meters to Feet', result: '32.8084 Feet' },
+      { title: 'Weight Conversion', input: '70 Kilograms to Pounds', result: '154.3236 Pounds' },
+      { title: 'Temperature Conversion', input: '100° Celsius to Fahrenheit', result: '212° Fahrenheit' }
+    ],
+    formula: 'Result = Value × (From Unit Base Factor ÷ To Unit Base Factor)',
+    faqs: [
+      { q: 'How many inches are in a meter?', a: 'There are exactly 39.3701 inches in 1 meter (1 inch = 2.54 cm).' },
+      { q: 'How do you convert Celsius to Fahrenheit?', a: 'Multiply the Celsius temperature by 9/5 (or 1.8) and add 32: °F = (°C × 1.8) + 32.' },
+      { q: 'How many pounds in a kilogram?', a: 'There are approximately 2.20462 pounds in 1 kilogram.' }
+    ]
+  },
+
+
+
+  // ── Business: Profit Margin Calculator ──────────────────────────────────
+  'profit-margin-calculator': {
+    name: 'Profit Margin Calculator',
+    category: 'Business',
+    icon: 'fa-chart-line',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate gross profit, gross margin percentage, markup, net profit, and operating margin with full cost breakdown.',
+    metaTitle: 'Profit Margin Calculator | Gross Margin, Markup & Net Profit — GetCalcu',
+    metaDescription: 'Free online Profit Margin Calculator. Calculate gross margin %, markup %, net profit, and revenue pricing targets with cost breakdown charts.',
+    keywords: [
+      'profit margin calculator',
+      'gross margin calculator',
+      'markup calculator',
+      'net profit calculator',
+      'cost markup margin formula'
+    ],
+    presets: [
+      { label: 'E-Commerce Retail (45% Margin)', values: { calc_mode: 'margin_from_price', cost: 55, revenue: 100, operating_expenses: 15 } },
+      { label: 'SaaS / Digital (80% Margin)', values: { calc_mode: 'margin_from_price', cost: 20, revenue: 100, operating_expenses: 40 } },
+      { label: 'Restaurant / Food (28% Margin)', values: { calc_mode: 'margin_from_price', cost: 18, revenue: 25, operating_expenses: 4 } }
+    ],
+    fields: [
+      { id: 'calc_mode', label: 'Calculation Mode', type: 'select', default: 'margin_from_price', hint: 'Choose whether to calculate your profit margin from cost and price, or determine the required selling price for a target margin.', options: [
+        { value: 'margin_from_price', label: 'Calculate Margin from Cost & Sale Price' },
+        { value: 'price_from_margin', label: 'Calculate Selling Price from Cost & Target Margin' }
+      ] },
+      { id: 'cost', label: 'Cost of Goods Sold (COGS) ($)', type: 'number', default: 60, min: 0.01, step: 1, hint: 'Direct cost to manufacture or acquire one unit.' },
+      { id: 'revenue', label: 'Selling Price / Revenue ($)', type: 'number', default: 100, min: 0.01, step: 1, condition: v => v.calc_mode === 'margin_from_price', hint: 'The price charged to the customer.' },
+      { id: 'target_margin', label: 'Target Gross Margin (%)', type: 'number', default: 40, min: 0.01, max: 99.9, step: 0.5, condition: v => v.calc_mode === 'price_from_margin', hint: 'Desired profit margin percentage.' },
+      { id: 'operating_expenses', label: 'Operating Overhead per Unit ($)', type: 'number', default: 15, min: 0, step: 1, hint: 'Indirect costs (marketing, shipping, software, rent).' }
+    ],
+    calculate(v) {
+      const cost = safeNum(v.cost, 0);
+      const opex = safeNum(v.operating_expenses, 0);
+      let revenue = 0;
+      let margin = 0;
+
+      if (cost <= 0) return errorResult('Cost of goods sold must be greater than $0.');
+
+      if (v.calc_mode === 'price_from_margin') {
+        const targetMargin = safeNum(v.target_margin, 40) / 100;
+        if (targetMargin >= 1) return errorResult('Target margin must be less than 100%.');
+        revenue = roundTo(cost / (1 - targetMargin), 2);
+        margin = targetMargin * 100;
+      } else {
+        revenue = safeNum(v.revenue, 0);
+        if (revenue <= 0) return errorResult('Selling price must be greater than $0.');
+        margin = roundTo(((revenue - cost) / revenue) * 100, 2);
+      }
+
+      const grossProfit = roundTo(revenue - cost, 2);
+      const markup = roundTo(((revenue - cost) / cost) * 100, 2);
+      const netProfit = roundTo(grossProfit - opex, 2);
+      const netMargin = roundTo((netProfit / revenue) * 100, 2);
+
+      const stats = [
+        { label: 'Gross Profit', value: fmt(grossProfit), highlight: true },
+        { label: 'Gross Margin', value: pct(margin / 100), highlight: true },
+        { label: 'Markup Percentage', value: pct(markup / 100) },
+        { label: 'Selling Price', value: fmt(revenue) },
+        { label: 'Net Profit (After Overhead)', value: fmt(netProfit), warn: netProfit < 0, highlight: true },
+        { label: 'Net Margin', value: pct(netMargin / 100), warn: netMargin < 0 }
+      ];
+
+      const chart = {
+        type: 'doughnut',
+        labels: ['COGS (Direct Cost)', 'Operating Expenses', 'Net Profit'],
+        data: [cost, opex, Math.max(0, netProfit)],
+        colors: ['#EF4444', '#F59E0B', '#10B981']
+      };
+
+      const table = makeTableSpec({
+        mode: 'breakdown',
+        title: 'Profit Margin & Operating Cost Breakdown',
+        columns: [
+          { key: 'metric', label: 'Financial Metric', emphasis: true },
+          { key: 'value', label: 'Amount', format: 'currency' },
+          { key: 'percentage', label: 'Share of Revenue', emphasis: true }
+        ],
+        rows: [
+          { metric: 'Selling Price (Gross Revenue)', value: revenue, percentage: '100.00%' },
+          { metric: 'Cost of Goods Sold (COGS)', value: cost, percentage: pct(cost / revenue) },
+          { metric: 'Gross Profit', value: grossProfit, percentage: pct(grossProfit / revenue) },
+          { metric: 'Operating Overhead (OpEx)', value: opex, percentage: pct(opex / revenue) },
+          { metric: 'Net Bottom-Line Profit', value: netProfit, percentage: pct(netProfit / revenue) }
+        ]
+      });
+
+      return {
+        stats,
+        chart,
+        table,
+        insight: {
+          tone: netProfit > 0 ? 'positive' : 'warning',
+          icon: 'fa-chart-pie',
+          headline: `Gross Margin is ${pct(margin / 100)} with a ${pct(markup / 100)} Markup.`,
+          detail: `For every ${fmt(revenue)} in sales, you keep ${fmt(grossProfit)} in gross profit and ${fmt(netProfit)} in net profit after overhead.`
+        }
+      };
+    },
+    article: {
+      heading: 'Understanding Margin vs Markup in Business Pricing',
+      intro: 'Profit margin and markup are two related ways of measuring the profitability of a product or service, but they describe different ratios.',
+      sections: [
+        { heading: 'Margin vs Markup', body: 'Gross Margin is the percentage of selling price that is profit: (Price - Cost) / Price. Markup is the percentage added to the cost to get the price: (Price - Cost) / Cost. A 50% markup equals a 33.3% margin.' },
+        { heading: 'Gross vs Net Profit', body: 'Gross profit only accounts for direct product costs (COGS). Net profit subtracts all operating overhead including marketing, salaries, rent, and software fees.' }
+      ]
+    },
+    howTo: [
+      'Enter your unit Cost of Goods Sold (COGS).',
+      'Enter your Selling Price (or pick "Calculate Selling Price" with your target margin).',
+      'Add operating overhead to see your bottom-line Net Profit.',
+      'Review the gross margin, markup percentage, and profit breakdown.'
+    ],
+    examples: [
+      { title: 'Standard Retail Markup', input: 'Cost: $50, Price: $100', result: 'Gross Profit: $50 (50% Margin, 100% Markup)' },
+      { title: 'Target 40% Margin Pricing', input: 'Cost: $60, Target Margin: 40%', result: 'Selling Price: $100 (Markup: 66.67%)' }
+    ],
+    formula: 'Gross Margin = ((Revenue - Cost) ÷ Revenue) × 100 | Markup = ((Revenue - Cost) ÷ Cost) × 100 | Net Profit = Gross Profit - Operating Expenses',
+    faqs: [
+      { q: 'What is a good profit margin?', a: 'A healthy gross margin varies by industry: e-commerce averages 35-50%, SaaS and software average 70-85%, while restaurants and grocery stores often operate at 10-25%.' },
+      { q: 'Why is markup always higher than margin?', a: 'Because markup is calculated against the smaller cost base, while margin is calculated against the larger total revenue base.' }
+    ]
+  },
+
+  // ── Business: Break-Even Calculator ─────────────────────────────────────
+  'break-even-calculator': {
+    name: 'Break-Even Calculator',
+    category: 'Business',
+    icon: 'fa-scale-balanced',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Determine the exact number of units and total sales revenue needed to cover all fixed and variable business costs.',
+    metaTitle: 'Break-Even Calculator | Units, Revenue & Contribution Margin — GetCalcu',
+    metaDescription: 'Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.',
+    keywords: [
+      'break even calculator',
+      'break even point formula',
+      'contribution margin calculator',
+      'business break even analysis',
+      'fixed vs variable cost calculator'
+    ],
+    presets: [
+      { label: 'Physical Product ($5k Fixed)', values: { fixed_costs: 5000, sale_price: 50, variable_cost: 20, target_profit: 3000 } },
+      { label: 'SaaS Subscription ($20k Fixed)', values: { fixed_costs: 20000, sale_price: 49, variable_cost: 5, target_profit: 10000 } },
+      { label: 'Consulting / Agency ($12k Fixed)', values: { fixed_costs: 12000, sale_price: 150, variable_cost: 30, target_profit: 8000 } }
+    ],
+    fields: [
+      { id: 'fixed_costs', label: 'Total Fixed Costs ($ / month)', type: 'number', default: 8000, min: 0, step: 100, hint: 'Non-variable expenses: rent, salaries, insurance, software licenses.' },
+      { id: 'sale_price', label: 'Selling Price per Unit ($)', type: 'number', default: 60, min: 0.01, step: 1, hint: 'Average price charged per unit or subscription.' },
+      { id: 'variable_cost', label: 'Variable Cost per Unit ($)', type: 'number', default: 20, min: 0, step: 1, hint: 'Direct per-unit costs: materials, labor, shipping, merchant fees.' },
+      { id: 'target_profit', label: 'Target Monthly Profit ($) (optional)', type: 'number', default: 4000, min: 0, step: 100, hint: 'Desired profit above break-even.' }
+    ],
+    calculate(v) {
+      const fixed = safeNum(v.fixed_costs, 0);
+      const price = safeNum(v.sale_price, 0);
+      const varCost = safeNum(v.variable_cost, 0);
+      const targetProfit = safeNum(v.target_profit, 0);
+
+      if (price <= 0) return errorResult('Selling price must be greater than $0.');
+      if (price <= varCost) return errorResult('Selling price must exceed variable cost to achieve profitability.');
+
+      const cmUnit = roundTo(price - varCost, 2);
+      const cmRatio = roundTo((cmUnit / price) * 100, 2);
+      const breakEvenUnits = Math.ceil(fixed / cmUnit);
+      const breakEvenRevenue = roundTo(breakEvenUnits * price, 2);
+
+      const targetUnits = Math.ceil((fixed + targetProfit) / cmUnit);
+      const targetRevenue = roundTo(targetUnits * price, 2);
+
+      const stats = [
+        { label: 'Break-Even Units', value: fmtN(breakEvenUnits) + ' units', highlight: true },
+        { label: 'Break-Even Sales Revenue', value: fmt(breakEvenRevenue), highlight: true },
+        { label: 'Contribution Margin / Unit', value: fmt(cmUnit) },
+        { label: 'Contribution Margin Ratio', value: pct(cmRatio / 100) },
+        { label: 'Units to Target Profit', value: fmtN(targetUnits) + ' units' },
+        { label: 'Revenue to Target Profit', value: fmt(targetRevenue) }
+      ];
+
+      // Volume milestones for sensitivity table
+      const mults = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+      const table = makeTableSpec({
+        mode: 'sensitivity',
+        title: 'Break-Even & Production Volume Sensitivity Analysis',
+        columns: [
+          { key: 'volume', label: 'Volume Capacity' },
+          { key: 'units', label: 'Units Sold' },
+          { key: 'revenue', label: 'Gross Revenue', format: 'currency' },
+          { key: 'totalCost', label: 'Total Production Costs', format: 'currency' },
+          { key: 'profit', label: 'Net Profit / Loss', format: 'currency', emphasis: true }
+        ],
+        rows: mults.map(m => {
+          const u = Math.round(breakEvenUnits * m);
+          const rev = roundTo(u * price, 2);
+          const totCost = roundTo(fixed + (u * varCost), 2);
+          const net = roundTo(rev - totCost, 2);
+          return {
+            volume: `${(m * 100).toFixed(0)}% of Break-Even`,
+            units: `${fmtN(u)} units`,
+            revenue: rev,
+            totalCost: totCost,
+            profit: net
+          };
+        })
+      });
+
+      const chartLabels = mults.map(m => (m * 100) + '%');
+      const revData = mults.map(m => roundTo(Math.round(breakEvenUnits * m) * price, 2));
+      const costData = mults.map(m => roundTo(fixed + (Math.round(breakEvenUnits * m) * varCost), 2));
+
+      const chart = {
+        type: 'line',
+        labels: chartLabels,
+        datasets: [
+          { label: 'Total Revenue', data: revData, color: '#10B981' },
+          { label: 'Total Costs', data: costData, color: '#EF4444' }
+        ]
+      };
+
+      return {
+        stats,
+        chart,
+        table,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-scale-balanced',
+          headline: `You need to sell ${fmtN(breakEvenUnits)} units (${fmt(breakEvenRevenue)}) to break even.`,
+          detail: `Each unit sold contributes ${fmt(cmUnit)} (${pct(cmRatio / 100)}) toward fixed expenses. To hit your target profit of ${fmt(targetProfit)}, sell ${fmtN(targetUnits)} units.`
+        }
+      };
+    },
+    article: {
+      heading: 'How to Perform a Break-Even Analysis',
+      intro: 'A break-even analysis identifies the exact volume of unit sales needed so total revenues equal total costs, resulting in zero net profit or loss.',
+      sections: [
+        { heading: 'Fixed vs Variable Costs', body: 'Fixed costs remain constant regardless of sales volume (rent, salaries, subscriptions). Variable costs scale directly with unit volume (raw materials, production, shipping, merchant processing).' },
+        { heading: 'Contribution Margin', body: 'Contribution margin is Selling Price minus Variable Cost. This is the dollar amount from every sale that directly funds fixed overhead and generates net profit.' }
+      ]
+    },
+    howTo: [
+      'Enter total monthly fixed overhead costs.',
+      'Enter the selling price and variable cost per unit.',
+      'Optionally set a target monthly profit goal.',
+      'View break-even volume, revenue, and sensitivity tables.'
+    ],
+    examples: [
+      { title: 'Retail Boutique', input: 'Fixed: $6,000, Price: $50, Variable: $20', result: 'Break-even: 200 units ($10,000 revenue)' },
+      { title: 'SaaS App', input: 'Fixed: $15,000, Price: $30/mo, Variable: $3/mo', result: 'Break-even: 556 subscribers ($16,680/mo revenue)' }
+    ],
+    formula: 'Break-Even Units = Fixed Costs ÷ (Price - Variable Cost) | Break-Even Revenue = Break-Even Units × Price',
+    faqs: [
+      { q: 'What happens if fixed costs increase?', a: 'When fixed costs rise, your break-even point increases, meaning you must sell more units or raise prices to avoid operating at a loss.' },
+      { q: 'How can I lower my break-even point?', a: 'You can lower your break-even point by increasing unit selling price, negotiating lower variable material costs, or reducing fixed overhead.' }
+    ]
+  },
+
+  // ── Business: Customer Lifetime Value Calculator ────────────────────────
+  'customer-lifetime-value-calculator': {
+    name: 'Customer Lifetime Value (LTV / CAC) Calculator',
+    category: 'Business',
+    icon: 'fa-chart-line',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate Customer Lifetime Value (LTV), LTV to CAC ratio, payback period, and unit economics health for growth.',
+    metaTitle: 'Customer Lifetime Value Calculator | LTV:CAC Ratio & Payback — GetCalcu',
+    metaDescription: 'Free Customer Lifetime Value (LTV) Calculator. Analyze LTV to CAC ratio, customer acquisition payback timeline, and growth unit economics.',
+    keywords: [
+      'customer lifetime value calculator',
+      'ltv cac calculator',
+      'cac payback period calculator',
+      'saas ltv formula',
+      'unit economics calculator'
+    ],
+    presets: [
+      { label: 'B2B SaaS ($200/mo, 3 Yr Lifespan)', values: { avg_order_value: 200, purchase_frequency: 12, customer_lifespan: 3, gross_margin: 80, cac: 1500 } },
+      { label: 'E-Commerce DTC ($75 AOV, 2x/yr)', values: { avg_order_value: 75, purchase_frequency: 2.5, customer_lifespan: 2, gross_margin: 50, cac: 45 } },
+      { label: 'Subscription Box ($40/mo, 14 Mo)', values: { avg_order_value: 40, purchase_frequency: 12, customer_lifespan: 1.2, gross_margin: 60, cac: 65 } }
+    ],
+    fields: [
+      { id: 'avg_order_value', label: 'Average Order / Transaction Value ($)', type: 'number', default: 120, min: 0.01, step: 5, hint: 'Average dollar amount spent per purchase or monthly subscription.' },
+      { id: 'purchase_frequency', label: 'Purchase Frequency (orders per year)', type: 'number', default: 4, min: 0.1, step: 0.5, hint: 'How many times a customer buys in one year (use 12 for monthly subscriptions).' },
+      { id: 'customer_lifespan', label: 'Average Customer Lifespan (years)', type: 'number', default: 3, min: 0.1, step: 0.5, hint: 'How many years the average customer stays active.' },
+      { id: 'gross_margin', label: 'Gross Margin (%)', type: 'number', default: 70, min: 1, max: 100, step: 1, hint: 'Gross profit percentage after product fulfillment costs.' },
+      { id: 'cac', label: 'Customer Acquisition Cost (CAC) ($)', type: 'number', default: 250, min: 0.01, step: 10, hint: 'Total sales and marketing cost to acquire one paying customer.' }
+    ],
+    calculate(v) {
+      const aov = safeNum(v.avg_order_value, 0);
+      const freq = safeNum(v.purchase_frequency, 1);
+      const lifespan = safeNum(v.customer_lifespan, 1);
+      const marginPct = safeNum(v.gross_margin, 70) / 100;
+      const cac = safeNum(v.cac, 0);
+
+      if (aov <= 0 || freq <= 0 || lifespan <= 0) return errorResult('Order value, frequency, and lifespan must be greater than zero.');
+
+      const annualRevenue = roundTo(aov * freq, 2);
+      const lifetimeRevenue = roundTo(annualRevenue * lifespan, 2);
+      const ltv = roundTo(lifetimeRevenue * marginPct, 2);
+      const ltvCacRatio = cac > 0 ? roundTo(ltv / cac, 2) : 0;
+      const annualProfit = roundTo(annualRevenue * marginPct, 2);
+      const monthlyProfit = annualProfit / 12;
+      const paybackMonths = monthlyProfit > 0 ? roundTo(cac / monthlyProfit, 1) : 0;
+      const netLifetimeProfit = roundTo(ltv - cac, 2);
+
+      let healthLabel = 'Healthy (3x - 5x)';
+      let healthTone = 'positive';
+      if (ltvCacRatio < 1) { healthLabel = 'Critical / Losing Money (<1.0x)'; healthTone = 'warning'; }
+      else if (ltvCacRatio < 3) { healthLabel = 'Low Margin / Vulnerable (1.0x - 2.9x)'; healthTone = 'warning'; }
+      else if (ltvCacRatio > 5) { healthLabel = 'High Return / Underinvesting in Growth (>5.0x)'; healthTone = 'positive'; }
+
+      const stats = [
+        { label: 'Customer Lifetime Value (LTV)', value: fmt(ltv), highlight: true },
+        { label: 'LTV to CAC Ratio', value: ltvCacRatio + 'x', highlight: true },
+        { label: 'CAC Payback Period', value: paybackMonths + ' months' },
+        { label: 'Net Profit per Customer (LTV - CAC)', value: fmt(netLifetimeProfit) },
+        { label: 'Annual Revenue per Customer', value: fmt(annualRevenue) },
+        { label: 'Gross Lifetime Revenue', value: fmt(lifetimeRevenue) }
+      ];
+
+      const bars = [
+        { label: 'LTV vs Acquisition Cost (CAC)', value: ltv, target: Math.max(ltv, cac * 3), color: '#10B981', caption: 'LTV: ' + fmt(ltv) + ' | CAC: ' + fmt(cac) }
+      ];
+
+      return {
+        stats,
+        bars,
+        insight: {
+          tone: healthTone,
+          icon: 'fa-users',
+          headline: `LTV:CAC Ratio is ${ltvCacRatio}x (${healthLabel}).`,
+          detail: `Each customer generates ${fmt(ltv)} in lifetime gross profit against a ${fmt(cac)} acquisition cost, paying back acquisition in ${paybackMonths} months.`
+        }
+      };
+    },
+    article: {
+      heading: 'Understanding LTV:CAC and SaaS Unit Economics',
+      intro: 'Customer Lifetime Value (LTV) measures the net profit a single customer contributes over their entire relationship with your company.',
+      sections: [
+        { heading: 'The 3:1 Rule for LTV:CAC', body: 'A 3:1 ratio (LTV = 3x CAC) is widely considered the golden benchmark. Below 1:1, you lose money on every customer. Above 5:1, you may be underinvesting in marketing and leaving market share on the table.' },
+        { heading: 'CAC Payback Period', body: 'The payback period tells you how many months of customer revenue are required to recoup the upfront sales and marketing acquisition cost.' }
+      ]
+    },
+    howTo: [
+      'Enter your Average Order Value (AOV) and annual purchase frequency.',
+      'Set expected customer retention lifespan in years.',
+      'Add gross margin percentage and Customer Acquisition Cost (CAC).',
+      'Analyze your LTV:CAC ratio and payback timeline.'
+    ],
+    examples: [
+      { title: 'B2B Software SaaS', input: '$150/mo, 80% Margin, 3 Yr Lifespan, $1,200 CAC', result: 'LTV: $4,320 | Ratio: 3.6x | Payback: 10.0 mo' }
+    ],
+    formula: 'LTV = (AOV × Frequency × Lifespan) × Gross Margin % | LTV:CAC = LTV ÷ CAC | Payback = CAC ÷ Monthly Gross Profit',
+    faqs: [
+      { q: 'What is a good CAC payback period?', a: 'For B2B SaaS, under 12 months is considered excellent. For B2C and e-commerce, payback should ideally occur within the first purchase or within 6 months.' }
+    ]
+  },
+
+  // ── Education: GPA Calculator ───────────────────────────────────────────
+  'gpa-calculator': {
+    name: 'College & High School GPA Calculator',
+    category: 'Education',
+    icon: 'fa-graduation-cap',
+    iconClass: 'icon-education',
+    tagClass: 'tag-education',
+    description: 'Calculate semester and cumulative grade point averages (GPA) on 4.0 and weighted 5.0 scales with target GPA forecasting.',
+    metaTitle: 'GPA Calculator | College 4.0 & Weighted High School Scale — GetCalcu',
+    metaDescription: 'Free online GPA Calculator. Calculate semester and cumulative GPA on 4.0 and 5.0 weighted scales. Project target graduation GPA effortlessly.',
+    keywords: [
+      'gpa calculator',
+      'college gpa calculator 4.0',
+      'weighted gpa calculator',
+      'high school gpa scale',
+      'cumulative gpa calculator'
+    ],
+    presets: [
+      { label: "Dean's List Semester (3.9 GPA)", values: { c1_grade: 'A', c1_credits: 4, c2_grade: 'A', c2_credits: 3, c3_grade: 'A-', c3_credits: 3, c4_grade: 'B+', c4_credits: 3, c5_grade: 'A', c5_credits: 3 } },
+      { label: 'Standard College Term (3.2 GPA)', values: { c1_grade: 'B+', c1_credits: 4, c2_grade: 'B', c2_credits: 3, c3_grade: 'A-', c3_credits: 3, c4_grade: 'B-', c4_credits: 3, c5_grade: 'C+', c5_credits: 3 } },
+      { label: 'Honors / AP Weighted (4.4 GPA)', values: { c1_grade: 'A', c1_credits: 4, c1_scale: 'ap', c2_grade: 'A', c2_credits: 3, c2_scale: 'ap', c3_grade: 'A-', c3_credits: 3, c3_scale: 'honors', c4_grade: 'B+', c4_credits: 3, c4_scale: 'regular' } }
+    ],
+    fields: [
+      { id: 'c1_grade', label: 'Course 1 Grade', type: 'select', default: 'A', options: [
+        { value: 'A+', label: 'A+ (4.0 / 97-100%)' }, { value: 'A', label: 'A (4.0 / 93-96%)' }, { value: 'A-', label: 'A- (3.7 / 90-92%)' },
+        { value: 'B+', label: 'B+ (3.3 / 87-89%)' }, { value: 'B', label: 'B (3.0 / 83-86%)' }, { value: 'B-', label: 'B- (2.7 / 80-82%)' },
+        { value: 'C+', label: 'C+ (2.3 / 77-79%)' }, { value: 'C', label: 'C (2.0 / 73-76%)' }, { value: 'C-', label: 'C- (1.7 / 70-72%)' },
+        { value: 'D', label: 'D (1.0 / 65-69%)' }, { value: 'F', label: 'F (0.0 / <65%)' }
+      ] },
+      { id: 'c1_credits', label: 'Course 1 Credits', type: 'number', default: 4, min: 0.5, max: 10, step: 0.5 },
+      { id: 'c1_scale', label: 'Course 1 Level', type: 'select', default: 'regular', options: [{ value: 'regular', label: 'Regular (4.0 Scale)' }, { value: 'honors', label: 'Honors (+0.5 pt)' }, { value: 'ap', label: 'AP / IB (+1.0 pt)' }] },
+
+      { id: 'c2_grade', label: 'Course 2 Grade', type: 'select', default: 'A-', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c2_credits', label: 'Course 2 Credits', type: 'number', default: 3, min: 0.5, max: 10, step: 0.5 },
+
+      { id: 'c3_grade', label: 'Course 3 Grade', type: 'select', default: 'B+', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c3_credits', label: 'Course 3 Credits', type: 'number', default: 3, min: 0.5, max: 10, step: 0.5 },
+
+      { id: 'c4_grade', label: 'Course 4 Grade', type: 'select', default: 'A', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c4_credits', label: 'Course 4 Credits', type: 'number', default: 3, min: 0.5, max: 10, step: 0.5 },
+
+      { id: 'c5_grade', label: 'Course 5 Grade', type: 'select', default: 'B', options: [
+        { value: 'A+', label: 'A+' }, { value: 'A', label: 'A' }, { value: 'A-', label: 'A-' },
+        { value: 'B+', label: 'B+' }, { value: 'B', label: 'B' }, { value: 'B-', label: 'B-' },
+        { value: 'C+', label: 'C+' }, { value: 'C', label: 'C' }, { value: 'C-', label: 'C-' },
+        { value: 'D', label: 'D' }, { value: 'F', label: 'F' }
+      ] },
+      { id: 'c5_credits', label: 'Course 5 Credits', type: 'number', default: 3, min: 0, max: 10, step: 0.5 },
+
+      { id: 'prior_gpa', label: 'Prior Cumulative GPA (optional)', type: 'number', default: 3.4, min: 0, max: 5.0, step: 0.01, hint: 'Leave at 0 if this is your first semester.' },
+      { id: 'prior_credits', label: 'Prior Completed Credits (optional)', type: 'number', default: 30, min: 0, step: 1 }
+    ],
+    calculate(v) {
+      const gradeMap = {
+        'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+        'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+        'C+': 2.3, 'C': 2.0, 'C-': 1.7,
+        'D': 1.0, 'F': 0.0
+      };
+
+      const weightBonus = { regular: 0, honors: 0.5, ap: 1.0 };
+
+      let totalCredits = 0;
+      let totalQualityPoints = 0;
+      let totalWeightedPoints = 0;
+      const rows = [];
+
+      for (let i = 1; i <= 5; i++) {
+        const gradeKey = v['c' + i + '_grade'] || 'A';
+        const cr = safeNum(v['c' + i + '_credits'], 0);
+        const scale = v['c' + i + '_scale'] || 'regular';
+        if (cr > 0) {
+          const basePts = gradeMap[gradeKey] !== undefined ? gradeMap[gradeKey] : 4.0;
+          const weightedPts = basePts + (weightBonus[scale] || 0);
+          totalCredits += cr;
+          totalQualityPoints += basePts * cr;
+          totalWeightedPoints += weightedPts * cr;
+          rows.push({
+            course: 'Course ' + i,
+            grade: gradeKey,
+            credits: cr,
+            unweighted: basePts.toFixed(1),
+            weighted: weightedPts.toFixed(1)
+          });
+        }
+      }
+
+      if (totalCredits === 0) return errorResult('Please enter at least one course with credit hours.');
+
+      const semesterGpa = roundTo(totalQualityPoints / totalCredits, 2);
+      const weightedGpa = roundTo(totalWeightedPoints / totalCredits, 2);
+
+      const priorGpa = safeNum(v.prior_gpa, 0);
+      const priorCr = safeNum(v.prior_credits, 0);
+      let cumulativeGpa = semesterGpa;
+
+      if (priorCr > 0 && priorGpa > 0) {
+        const totalCumPoints = (priorGpa * priorCr) + totalQualityPoints;
+        const totalCumCredits = priorCr + totalCredits;
+        cumulativeGpa = roundTo(totalCumPoints / totalCumCredits, 2);
+      }
+
+      const stats = [
+        { label: 'Semester GPA (4.0 Scale)', value: semesterGpa.toFixed(2), highlight: true },
+        { label: 'Weighted GPA (5.0 Scale)', value: weightedGpa.toFixed(2), highlight: true },
+        { label: 'Cumulative Projected GPA', value: cumulativeGpa.toFixed(2), highlight: true },
+        { label: 'Semester Credits', value: totalCredits + ' hrs' },
+        { label: 'Total Completed Credits', value: (priorCr + totalCredits) + ' hrs' }
+      ];
+
+      const table = makeTableSpec({
+        mode: 'breakdown',
+        title: 'Semester Course & Grade Point Breakdown',
+        columns: [
+          { key: 'course', label: 'Course', emphasis: true },
+          { key: 'grade', label: 'Letter Grade' },
+          { key: 'credits', label: 'Credits' },
+          { key: 'unweighted', label: 'Unweighted Grade Points' },
+          { key: 'weighted', label: 'Weighted Grade Points', emphasis: true }
+        ],
+        rows,
+        footer: {
+          course: 'Semester Totals',
+          grade: '—',
+          credits: totalCredits,
+          unweighted: `Unweighted GPA: ${semesterGpa.toFixed(2)}`,
+          weighted: `Weighted GPA: ${weightedGpa.toFixed(2)}`
+        }
+      });
+
+      return {
+        stats,
+        table,
+        insight: {
+          tone: semesterGpa >= 3.5 ? 'positive' : semesterGpa >= 2.5 ? 'neutral' : 'warning',
+          icon: 'fa-graduation-cap',
+          headline: `Your Semester GPA is ${semesterGpa.toFixed(2)} across ${totalCredits} credit hours.`,
+          detail: priorCr > 0 ? `Including your prior ${priorCr} credits at ${priorGpa.toFixed(2)}, your new cumulative GPA moves to ${cumulativeGpa.toFixed(2)}.` : 'Maintain high performance to qualify for academic honors and scholarships.'
+        }
+      };
+    },
+    article: {
+      heading: 'How Grade Point Average (GPA) Is Calculated',
+      intro: 'GPA represents your average academic performance by weighting your letter grade points by each course credit value.',
+      sections: [
+        { heading: 'Unweighted vs Weighted Scales', body: 'Standard college GPA uses an unweighted 4.0 scale (A=4.0, B=3.0, C=2.0, D=1.0, F=0.0). High schools often apply weighted scales giving an extra 0.5 points for Honors and 1.0 points for Advanced Placement (AP) or International Baccalaureate (IB).' }
+      ]
+    },
+    howTo: [
+      'Select your letter grade and credit hours for each course.',
+      'Select Honors or AP weighting if applicable.',
+      'Optionally enter your prior GPA and completed credits for a cumulative projection.',
+      'Review your calculated semester and cumulative GPA.'
+    ],
+    examples: [
+      { title: '15-Credit College Semester', input: '3 A\'s (9 cr) + 2 B\'s (6 cr)', result: 'GPA: 3.60' }
+    ],
+    formula: 'GPA = Total Quality Points ÷ Total Credit Hours (where Quality Points = Grade Points × Credits)',
+    faqs: [
+      { q: 'What is a 4.0 GPA equivalent in percentage?', a: 'Generally, an unweighted 4.0 GPA corresponds to an average grade percentage of 93-100% (A or A+).' }
+    ]
+  },
+
+  // ── Education: Final Grade Calculator ───────────────────────────────────
+  'final-grade-calculator': {
+    name: 'Final Grade Calculator',
+    category: 'Education',
+    icon: 'fa-graduation-cap',
+    iconClass: 'icon-education',
+    tagClass: 'tag-education',
+    description: 'Calculate the exact score needed on your final exam to earn your desired target course grade.',
+    metaTitle: 'Final Grade Calculator | Required Exam Score — GetCalcu',
+    metaDescription: 'Free Final Grade Calculator. Find out what grade you need on your final exam to pass or achieve your target course grade.',
+    keywords: [
+      'final grade calculator',
+      'what grade do i need on my final exam',
+      'final exam score calculator',
+      'college grade calculator',
+      'passing grade calculator'
+    ],
+    presets: [
+      { label: 'Standard Final (20% Weight for A)', values: { current_grade: 88, target_grade: 90, final_weight: 20 } },
+      { label: 'High-Stakes Final (40% Weight for B)', values: { current_grade: 75, target_grade: 80, final_weight: 40 } },
+      { label: 'Pass the Class (30% Weight for C)', values: { current_grade: 65, target_grade: 70, final_weight: 30 } }
+    ],
+    fields: [
+      { id: 'current_grade', label: 'Current Class Grade (%)', type: 'number', default: 86, min: 0, max: 120, step: 0.5, hint: 'Your existing grade percentage prior to the final exam.' },
+      { id: 'target_grade', label: 'Desired Course Grade (%)', type: 'number', default: 90, min: 0, max: 100, step: 0.5, hint: 'Target minimum overall course score (e.g. 90% for an A, 80% for a B).' },
+      { id: 'final_weight', label: 'Final Exam Weight (%)', type: 'number', default: 25, min: 1, max: 100, step: 1, hint: 'How much the final exam counts toward your total grade.' }
+    ],
+    calculate(v) {
+      const current = safeNum(v.current_grade, 0);
+      const target = safeNum(v.target_grade, 90);
+      const weight = safeNum(v.final_weight, 25) / 100;
+
+      if (weight <= 0 || weight > 1) return errorResult('Final exam weight must be between 1% and 100%.');
+
+      // Required = (Target - Current * (1 - Weight)) / Weight
+      const required = roundTo((target - current * (1 - weight)) / weight, 2);
+
+      let status = 'Achievable';
+      let tone = 'positive';
+      if (required > 100) { status = 'Requires Extra Credit (>100%)'; tone = 'warning'; }
+      else if (required > 90) { status = 'Challenging (90%+ Exam)'; tone = 'neutral'; }
+      else if (required <= 0) { status = 'Guaranteed (0% Needed)'; tone = 'positive'; }
+
+      const stats = [
+        { label: 'Required Final Exam Score', value: required <= 0 ? '0.00% (Already Achieved)' : required.toFixed(2) + '%', highlight: true, warn: required > 100 },
+        { label: 'Goal Difficulty', value: status, highlight: true },
+        { label: 'Current Grade', value: current.toFixed(2) + '%' },
+        { label: 'Target Overall Grade', value: target.toFixed(2) + '%' },
+        { label: 'Final Weight', value: (weight * 100).toFixed(0) + '%' }
+      ];
+
+      // Benchmark targets table
+      const letterGoals = [
+        { grade: 'A (90%)', target: 90 },
+        { grade: 'B (80%)', target: 80 },
+        { grade: 'C (70%)', target: 70 },
+        { grade: 'D (60%)', target: 60 }
+      ];
+
+      const table = makeTableSpec({
+        mode: 'targets',
+        title: 'Grade Threshold Targets & Required Final Scores',
+        columns: [
+          { key: 'goal', label: 'Desired Final Letter Grade', emphasis: true },
+          { key: 'minAvg', label: 'Minimum Overall Avg' },
+          { key: 'required', label: 'Required Score on Final Exam', emphasis: true }
+        ],
+        rows: letterGoals.map(g => {
+          const req = roundTo((g.target - current * (1 - weight)) / weight, 1);
+          return {
+            goal: g.grade,
+            minAvg: `${g.target}%`,
+            required: req <= 0 ? 'Guaranteed (0%)' : req > 100 ? `${req}% (Extra Credit Needed)` : `${req}%`
+          };
+        })
+      });
+
+      return {
+        stats,
+        table,
+        insight: {
+          tone,
+          icon: 'fa-graduation-cap',
+          headline: required <= 0
+            ? `You already have your target grade of ${target}% secured!`
+            : required > 100
+            ? `You need ${required.toFixed(1)}% on the final to reach ${target}%. Consider asking for extra credit.`
+            : `Score at least ${required.toFixed(1)}% on your final exam to secure an overall grade of ${target}%.`,
+          detail: `Your current ${current}% grade makes up ${((1 - weight) * 100).toFixed(0)}% of your class average.`
+        }
+      };
+    },
+    article: {
+      heading: 'How to Calculate Your Required Final Exam Grade',
+      intro: 'Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.',
+      sections: [
+        { heading: 'Weighted Grading Formula', body: 'Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight.' }
+      ]
+    },
+    howTo: [
+      'Enter your current class grade percentage.',
+      'Enter the target letter grade or percentage you want to achieve.',
+      'Enter the weight percentage of the final exam.',
+      'See the exact test score required and check grade cutoff benchmarks.'
+    ],
+    examples: [
+      { title: '85% Current, Aiming for 90% A (20% Final)', input: 'Current: 85%, Target: 90%, Weight: 20%', result: 'Required on Final: 110% (Needs Extra Credit)' }
+    ],
+    formula: 'Final Exam Score = (Target - (Current × (1 - Weight))) ÷ Weight',
+    faqs: [
+      { q: 'What if I need over 100% on the final?', a: 'If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.' }
+    ]
+  },
+
+  // ── Education: Student Loan Calculator ──────────────────────────────────
+  'student-loan-calculator': {
+    name: 'Student Loan Calculator',
+    category: 'Education',
+    icon: 'fa-bookmark',
+    iconClass: 'icon-education',
+    tagClass: 'tag-education',
+    description: 'Calculate monthly student loan payments, compare standard vs accelerated payoff timelines, and see interest saved with extra monthly deposits.',
+    metaTitle: 'Student Loan Calculator | Monthly Payments & Payoff Payback — GetCalcu',
+    metaDescription: 'Free online Student Loan Calculator. Estimate monthly payments, total lifetime interest, and interest saved by paying extra toward principal.',
+    keywords: [
+      'student loan calculator',
+      'college loan repayment calculator',
+      'student debt payoff calculator',
+      'student loan interest savings',
+      'federal student loan payment'
+    ],
+    presets: [
+      { label: 'Federal Undergrad ($35k @ 5.5%)', values: { loan_balance: 35000, interest_rate: 5.5, loan_term: 10, extra_payment: 0 } },
+      { label: 'Graduate School ($75k @ 7.0%)', values: { loan_balance: 75000, interest_rate: 7.0, loan_term: 10, extra_payment: 100 } },
+      { label: 'Accelerated Payoff ($45k + $250/mo)', values: { loan_balance: 45000, interest_rate: 6.0, loan_term: 10, extra_payment: 250 } }
+    ],
+    fields: [
+      { id: 'loan_balance', label: 'Total Student Loan Balance ($)', type: 'number', default: 35000, min: 100, step: 500, hint: 'Total outstanding balance across all student loans.' },
+      { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 5.8, min: 0.01, max: 25, step: 0.05, hint: 'Average interest rate (Federal Direct loans are commonly 5-7%).' },
+      { id: 'loan_term', label: 'Repayment Term (Years)', type: 'select', default: 10, hint: 'Standard federal repayment is 10 years. Extended plans can be 15-25 years.', options: [
+        { value: 5, label: '5 Years' }, { value: 10, label: '10 Years (Standard)' }, { value: 15, label: '15 Years' }, { value: 20, label: '20 Years' }, { value: 25, label: '25 Years' }
+      ] },
+      { id: 'extra_payment', label: 'Extra Monthly Payment ($)', type: 'number', default: 50, min: 0, step: 25, hint: 'Additional amount paid directly toward principal each month.' }
+    ],
+    calculate(v) {
+      const P = safeNum(v.loan_balance, 0);
+      const rate = safeNum(v.interest_rate, 0);
+      const r = rate / 100 / 12;
+      const termYears = safeNum(v.loan_term, 10);
+      const n = termYears * 12;
+      const extra = safeNum(v.extra_payment, 0);
+
+      if (P <= 0) return errorResult('Loan balance must be greater than $0.');
+
+      const standardMonthly = r === 0 ? P / n : (P * (r * Math.pow(1 + r, n))) / (Math.pow(1 + r, n) - 1);
+      const stdPayment = roundTo(standardMonthly, 2);
+      const stdTotalInterest = roundTo(stdPayment * n - P, 2);
+
+      // Simulation with extra payment
+      let bal = P;
+      let m = 0;
+      let accInterest = 0;
+      const schedule = [];
+
+      while (bal > 0.01 && m < 600) {
+        m++;
+        const interestCharge = roundTo(bal * r, 2);
+        let principalPaid = roundTo((stdPayment + extra) - interestCharge, 2);
+        if (principalPaid > bal) principalPaid = bal;
+        bal = roundTo(bal - principalPaid, 2);
+        accInterest += interestCharge;
+        if (m <= 120) {
+          schedule.push({
+            month: m,
+            payment: roundTo(principalPaid + interestCharge, 2),
+            principal: principalPaid,
+            interest: interestCharge,
+            balance: bal
+          });
+        }
+      }
+
+      const totalInterestWithExtra = roundTo(accInterest, 2);
+      const interestSaved = roundTo(Math.max(0, stdTotalInterest - totalInterestWithExtra), 2);
+      const monthsSaved = Math.max(0, n - m);
+      const yearsSaved = (monthsSaved / 12).toFixed(1);
+
+      const stats = [
+        { label: 'Standard Monthly Payment', value: fmt(stdPayment), highlight: true },
+        { label: 'Total Payment (incl. Extra)', value: fmt(stdPayment + extra), highlight: true },
+        { label: 'Total Interest Paid', value: fmt(totalInterestWithExtra), warn: true },
+        { label: 'Interest Saved by Extra Payments', value: fmt(interestSaved), highlight: true },
+        { label: 'Time Saved Off Loan', value: monthsSaved > 0 ? yearsSaved + ' years (' + monthsSaved + ' mos)' : '0 months' },
+        { label: 'Total Amount Repaid', value: fmt(roundTo(P + totalInterestWithExtra, 2)) }
+      ];
+
+      const chart = {
+        type: 'doughnut',
+        labels: ['Original Principal', 'Total Interest Paid'],
+        datasets: [{
+          data: [P, totalInterestWithExtra],
+          colors: ['#6366F1', '#F59E0B'],
+          backgroundColor: ['#6366F1', '#F59E0B']
+        }]
+      };
+
+      return {
+        stats,
+        chart,
+        table: schedule,
+        insight: {
+          tone: extra > 0 ? 'positive' : 'neutral',
+          icon: 'fa-piggy-bank',
+          headline: extra > 0
+            ? `Paying an extra ${fmt(extra)}/mo saves ${fmt(interestSaved)} and ${yearsSaved} years of debt.`
+            : `Your standard monthly payment is ${fmt(stdPayment)} over ${termYears} years.`,
+          detail: `Total lifetime interest on ${fmt(P)} at ${rate}% is ${fmt(totalInterestWithExtra)}.`
+        }
+      };
+    },
+    article: {
+      heading: 'Student Loan Repayment Strategies and Acceleration',
+      intro: 'Student loans amortize monthly based on your interest rate and loan balance. Even small extra monthly payments go 100% to principal, drastically cutting lifetime interest.',
+      sections: [
+        { heading: 'The Power of Extra Principal Payments', body: 'Because student loan interest accrues daily on the remaining principal balance, paying an extra $50 to $100 per month reduces the balance faster and shortens your repayment timeline by years.' }
+      ]
+    },
+    howTo: [
+      'Enter your total student loan balance and interest rate.',
+      'Select your repayment term (standard is 10 years).',
+      'Add an extra monthly payment to see interest and time savings.',
+      'Review your amortization schedule and accelerated payoff date.'
+    ],
+    examples: [
+      { title: 'Standard 10-Year $35k Loan', input: '$35,000 at 5.5%, 10-year term', result: 'Payment: $380/mo | Total Interest: ~$10,600' }
+    ],
+    formula: 'Monthly Payment = P × [r(1+r)^n] ÷ [(1+r)^n - 1]',
+    faqs: [
+      { q: 'How does paying extra reduce my loan term?', a: 'Any extra payment above your required monthly minimum is applied directly to reducing your principal balance, lowering future interest accumulation.' }
+    ]
+  },
+
+  'emergency-fund-calculator': {
+    id: 'emergency-fund-calculator',
+    name: 'Emergency Fund Calculator',
+    category: 'Finance',
+    icon: 'fa-shield-halved',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate how much you need in an emergency fund based on your essential expenses, target runway, and savings timeline.',
+    metaTitle: 'Emergency Fund Calculator — How Much Savings Do You Need? | GetCalcu',
+    metaDescription: 'Free emergency fund calculator. Calculate your 3, 6, or 9-month emergency savings target based on essential expenses and track your funding runway.',
+    keywords: ['emergency fund calculator', 'how much emergency fund', 'safety net savings', 'emergency savings target', '3 month emergency fund', '6 month emergency fund'],
+    fields: [
+      { id: 'housing_rent', label: 'Monthly Housing / Rent / Mortgage ($)', type: 'number', default: 1500, hint: 'Rent, mortgage P&I, property taxes, home insurance' },
+      { id: 'food_groceries', label: 'Monthly Groceries & Essentials ($)', type: 'number', default: 600, hint: 'Groceries, household supplies (excluding dining out)' },
+      { id: 'utilities_bills', label: 'Utilities, Phone & Internet ($)', type: 'number', default: 300, hint: 'Electric, gas, water, cell phone, internet' },
+      { id: 'transportation', label: 'Transportation & Gas ($)', type: 'number', default: 400, hint: 'Auto loan, fuel, insurance, transit passes' },
+      { id: 'healthcare_insurance', label: 'Healthcare & Insurance Premiums ($)', type: 'number', default: 250, hint: 'Health, dental, vision, life insurance out-of-pocket' },
+      { id: 'debt_minimums', label: 'Minimum Required Debt Payments ($)', type: 'number', default: 250, hint: 'Credit card minimums, student loans, personal loans' },
+      { id: 'current_savings', label: 'Current Emergency Savings Balance ($)', type: 'number', default: 4000, hint: 'Cash in checking or high-yield savings accounts' },
+      { id: 'monthly_contribution', label: 'Monthly Amount You Can Save ($)', type: 'number', default: 500, hint: 'Planned monthly contribution toward your emergency fund' },
+      { id: 'target_runway', label: 'Target Runway (Months of Expenses)', type: 'select', default: '6', options: [
+        { value: '3', label: '3 Months (Dual-income, stable jobs)' },
+        { value: '6', label: '6 Months (Recommended standard safety net)' },
+        { value: '9', label: '9 Months (Single-earner or volatile industry)' },
+        { value: '12', label: '12 Months (Freelancer, self-employed, commission)' },
+      ]},
+      { id: 'hysa_rate', label: 'High-Yield Savings Annual APY (%)', type: 'number', default: 4.5, hint: 'Annual percentage yield earned while funds are parked' },
+    ],
+    presets: [
+      { label: 'Starter 3-Month Fund', values: { housing_rent: 1200, food_groceries: 450, utilities_bills: 200, transportation: 250, healthcare_insurance: 150, debt_minimums: 150, current_savings: 1500, monthly_contribution: 400, target_runway: '3', hysa_rate: 4.5 } },
+      { label: 'Family 6-Month Safety', values: { housing_rent: 2000, food_groceries: 800, utilities_bills: 350, transportation: 500, healthcare_insurance: 350, debt_minimums: 300, current_savings: 6000, monthly_contribution: 650, target_runway: '6', hysa_rate: 4.5 } },
+      { label: 'Freelancer 12-Month Cushion', values: { housing_rent: 1800, food_groceries: 600, utilities_bills: 250, transportation: 300, healthcare_insurance: 400, debt_minimums: 200, current_savings: 8000, monthly_contribution: 800, target_runway: '12', hysa_rate: 4.5 } },
+    ],
+    calculate(v) {
+      const housing = safeNum(v.housing_rent, 1500);
+      const food = safeNum(v.food_groceries, 600);
+      const utilities = safeNum(v.utilities_bills, 300);
+      const transport = safeNum(v.transportation, 400);
+      const healthcare = safeNum(v.healthcare_insurance, 250);
+      const debt = safeNum(v.debt_minimums, 250);
+      const savings = safeNum(v.current_savings, 4000);
+      const contrib = safeNum(v.monthly_contribution, 500);
+      const runwayMonths = safeNum(v.target_runway, 6);
+      const apy = safeNum(v.hysa_rate, 4.5) / 100;
+
+      const monthlyExpenses = roundTo(housing + food + utilities + transport + healthcare + debt, 2);
+      const targetFund = roundTo(monthlyExpenses * runwayMonths, 2);
+      const currentRunway = monthlyExpenses > 0 ? roundTo(savings / monthlyExpenses, 1) : 0;
+      const fundedPct = targetFund > 0 ? roundTo(Math.min(100, (savings / targetFund) * 100), 1) : 100;
+      const shortfall = roundTo(Math.max(0, targetFund - savings), 2);
+      const surplus = roundTo(Math.max(0, savings - targetFund), 2);
+      const monthsNeeded = (shortfall > 0 && contrib > 0) ? Math.ceil(shortfall / contrib) : 0;
+      const annualHYSAInterest = roundTo(targetFund * apy, 2);
+
+      let status = 'Needs Attention';
+      if (savings >= targetFund) {
+        status = 'Fully Funded ✓';
+      } else if (savings >= targetFund * 0.5) {
+        status = 'Halfway Funded';
+      }
+
+      // Milestones schedule
+      const table = makeTableSpec({
+        mode: 'schedule',
+        title: 'Emergency Savings Growth & Runway Timeline',
+        columns: [
+          { key: 'month', label: 'Month / Milestone' },
+          { key: 'deposit', label: 'Monthly Deposit', format: 'currency' },
+          { key: 'interest', label: 'Interest Earned', format: 'currency' },
+          { key: 'balance', label: 'Total Fund Balance', format: 'currency', emphasis: true },
+          { key: 'runway', label: 'Runway Covered', emphasis: true }
+        ],
+        rows: []
+      });
+      let balance = savings;
+      const monthlyRate = apy / 12;
+      for (let m = 1; m <= Math.min(60, Math.max(12, monthsNeeded)); m++) {
+        const interest = roundTo(balance * monthlyRate, 2);
+        balance = roundTo(balance + contrib + interest, 2);
+        const monthsCovered = monthlyExpenses > 0 ? (balance / monthlyExpenses).toFixed(1) : '—';
+        table.rows.push({
+          month: `Month ${m}`,
+          deposit: contrib,
+          interest: interest,
+          balance: balance,
+          runway: `${monthsCovered} mo of expenses`
+        });
+        if (balance >= targetFund && m >= monthsNeeded) break;
+      }
+
+      return {
+        stats: [
+          { label: 'Target Emergency Fund', value: fmt(targetFund), highlight: true },
+          { label: 'Monthly Essential Expenses', value: fmt(monthlyExpenses) },
+          { label: 'Current Savings Balance', value: fmt(savings) },
+          { label: 'Funded Progress', value: `${fundedPct}%`, warn: fundedPct < 100 },
+          { label: 'Current Runway', value: `${currentRunway} months` },
+          { label: shortfall > 0 ? 'Funding Shortfall' : 'Funding Surplus', value: fmt(shortfall > 0 ? shortfall : surplus), warn: shortfall > 0 },
+          { label: 'Months to Reach Goal', value: monthsNeeded > 0 ? `${monthsNeeded} months` : 'Target Achieved' },
+          { label: 'Annual Interest in HYSA', value: fmt(annualHYSAInterest) },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Current Savings', 'Funding Shortfall'],
+          datasets: [{
+            data: [savings, Math.max(0, shortfall)],
+            colors: ['#10B981', '#F59E0B'],
+            backgroundColor: ['#10B981', '#F59E0B']
+          }]
+        },
+        table,
+        insight: {
+          tone: shortfall === 0 ? 'positive' : 'neutral',
+          icon: shortfall === 0 ? 'fa-circle-check' : 'fa-shield-halved',
+          headline: shortfall === 0
+            ? `Congratulations! Your emergency fund covers ${currentRunway} months of essential expenses.`
+            : `You need ${fmt(shortfall)} more to reach your ${runwayMonths}-month safety net target.`,
+          detail: shortfall > 0 && contrib > 0
+            ? `At ${fmt(contrib)}/month, you will reach your full ${fmt(targetFund)} target in approximately ${monthsNeeded} months (saving in a ${pct(apy)} HYSA adds ${fmt(annualHYSAInterest)}/yr in passive interest).`
+            : `Once fully funded at ${fmt(targetFund)}, park the money in a High-Yield Savings Account to earn ${fmt(annualHYSAInterest)} in annual interest while remaining completely liquid.`
+        }
+      };
+    },
+    article: {
+      heading: 'How Much Should You Have in an Emergency Fund?',
+      intro: 'An emergency fund is liquid cash set aside to cover unexpected life events—such as sudden job loss, urgent medical emergencies, home repairs, or major auto breakdowns—without resorting to high-interest credit cards or pulling from long-term retirement investments.',
+      sections: [
+        { heading: 'The 3 to 6 Month Rule of Thumb', body: 'Financial advisors generally recommend keeping 3 to 6 months worth of essential living expenses in a dedicated, FDIC-insured High-Yield Savings Account (HYSA). If you have stable dual household incomes, 3 months may suffice. If you are a freelancer, single-income earner, or work in a cyclical industry, 6 to 12 months provides crucial peace of mind.' },
+        { heading: 'What Counts as an "Essential Expense"?', body: 'Only include non-negotiable survival expenses: rent or mortgage, basic groceries, utilities, transportation, health insurance, and minimum debt payments. Exclude discretionary dining out, entertainment, vacations, and luxury subscriptions.' }
+      ]
+    },
+    howTo: [
+      'Tally your monthly essential obligations (rent/mortgage, utilities, food, transport, insurance, minimum debt).',
+      'Select your target safety runway (standard recommendation is 3 to 6 months; freelancers should aim for 9 to 12 months).',
+      'Input your current cash savings and how much you can comfortably contribute each month.',
+      'Review your target emergency fund goal, current months of runway, and the timeline to become fully funded.'
+    ],
+    examples: [
+      { title: 'Standard 6-Month Fund', input: '$3,300/mo expenses, 6 months runway, $4,000 saved', result: 'Target: $19,800 | Shortfall: $15,800 | 32 months at $500/mo' }
+    ],
+    formula: 'Target Fund = Total Monthly Essential Expenses × Desired Runway Months',
+    faqs: [
+      { q: 'Where should I keep my emergency fund?', a: 'Keep your emergency fund in a dedicated High-Yield Savings Account (HYSA) or Money Market Account (MMA) that is FDIC-insured. Avoid investing emergency reserves in volatile stocks or locking them into long-term CDs with early withdrawal penalties.' },
+      { q: 'Should I pay off debt before building an emergency fund?', a: 'Most financial planners recommend building a "starter emergency fund" of $1,000 to 1 month of expenses first, then aggressively paying down high-interest credit cards, and finally expanding the fund to 3-6 months.' }
+    ]
+  },
+
+  '401k-calculator': {
+    id: '401k-calculator',
+    name: '401(k) Retirement Growth Calculator',
+    category: 'Finance',
+    icon: 'fa-piggy-bank',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Project your 401(k) retirement balance, company match growth, and tax-advantaged compound interest.',
+    metaTitle: '401(k) Calculator — Employer Match & Retirement Growth | GetCalcu',
+    metaDescription: 'Calculate your 401(k) balance at retirement. Account for employee contributions, employer company match, annual salary growth, and compound interest.',
+    keywords: ['401k calculator', '401k retirement calculator', 'company match calculator', '401k growth', 'retirement savings projection'],
+    fields: [
+      { id: 'current_age', label: 'Current Age', type: 'number', default: 30, hint: 'Your current age in years' },
+      { id: 'retire_age', label: 'Planned Retirement Age', type: 'number', default: 65, hint: 'Target age when you plan to stop working' },
+      { id: 'annual_salary', label: 'Current Gross Annual Salary ($)', type: 'number', default: 75000, hint: 'Pre-tax gross salary' },
+      { id: 'current_balance', label: 'Current 401(k) Balance ($)', type: 'number', default: 25000, hint: 'Total existing balance across all 401(k) accounts' },
+      { id: 'employee_contrib_pct', label: 'Employee Contribution (% of Salary)', type: 'number', default: 8, hint: 'Percentage of salary deducted into your 401(k)' },
+      { id: 'employer_match_pct', label: 'Employer Match Rate (%)', type: 'number', default: 50, hint: 'e.g., 50% match (company puts in $0.50 for every $1.00 you contribute)' },
+      { id: 'employer_match_limit_pct', label: 'Employer Match Limit (% of Salary)', type: 'number', default: 6, hint: 'e.g., up to 6% of your salary' },
+      { id: 'annual_salary_growth', label: 'Expected Annual Salary Growth (%)', type: 'number', default: 2.5, hint: 'Average annual merit or cost-of-living raise' },
+      { id: 'annual_return', label: 'Expected Annual Investment Return (%)', type: 'number', default: 7.5, hint: 'Historical S&P 500 average is ~7-10% before inflation' },
+    ],
+    presets: [
+      { label: 'Average Contributor', values: { current_age: 30, retire_age: 65, annual_salary: 75000, current_balance: 25000, employee_contrib_pct: 8, employer_match_pct: 50, employer_match_limit_pct: 6, annual_salary_growth: 2.5, annual_return: 7.5 } },
+      { label: 'Aggressive Saver (Max Match)', values: { current_age: 26, retire_age: 65, annual_salary: 65000, current_balance: 12000, employee_contrib_pct: 12, employer_match_pct: 100, employer_match_limit_pct: 5, annual_salary_growth: 3.0, annual_return: 8.0 } },
+      { label: 'Mid-Career Booster', values: { current_age: 42, retire_age: 65, annual_salary: 110000, current_balance: 140000, employee_contrib_pct: 10, employer_match_pct: 50, employer_match_limit_pct: 6, annual_salary_growth: 2.0, annual_return: 7.0 } },
+    ],
+    calculate(v) {
+      const currentAge = safeNum(v.current_age, 30);
+      const retireAge = safeNum(v.retire_age, 65);
+      let salary = safeNum(v.annual_salary, 75000);
+      let balance = safeNum(v.current_balance, 25000);
+      const empPct = safeNum(v.employee_contrib_pct, 8) / 100;
+      const matchPct = safeNum(v.employer_match_pct, 50) / 100;
+      const matchLimitPct = safeNum(v.employer_match_limit_pct, 6) / 100;
+      const salaryGrowth = safeNum(v.annual_salary_growth, 2.5) / 100;
+      const returnRate = safeNum(v.annual_return, 7.5) / 100;
+
+      if (retireAge <= currentAge) {
+        return errorResult('Planned retirement age must be greater than current age.');
+      }
+
+      const yearsToRetire = retireAge - currentAge;
+      let totalEmpContribs = 0;
+      let totalMatchContribs = 0;
+      const table = makeTableSpec({
+        mode: 'growth',
+        title: '401(k) Annual Growth & Employer Match Accumulation Schedule',
+        columns: [
+          { key: 'age', label: 'Age' },
+          { key: 'employeeContrib', label: 'Employee Contribution', format: 'currency' },
+          { key: 'employerMatch', label: 'Employer Match', format: 'currency' },
+          { key: 'growth', label: 'Investment Growth', format: 'currency' },
+          { key: 'balance', label: 'End of Year Balance', format: 'currency', emphasis: true }
+        ],
+        rows: []
+      });
+
+      for (let y = 1; y <= yearsToRetire; y++) {
+        // Annual employee contribution (capped at $23,500 statutory 2026 baseline limit)
+        const empContrib = Math.min(salary * empPct, 23500);
+        // Company match: matches employee contribution up to employer_match_limit_pct of salary
+        const eligibleSalary = salary * Math.min(empPct, matchLimitPct);
+        const matchContrib = eligibleSalary * matchPct;
+
+        const totalYearContrib = empContrib + matchContrib;
+        const interest = roundTo((balance + totalYearContrib / 2) * returnRate, 2);
+        balance = roundTo(balance + totalYearContrib + interest, 2);
+
+        totalEmpContribs = roundTo(totalEmpContribs + empContrib, 2);
+        totalMatchContribs = roundTo(totalMatchContribs + matchContrib, 2);
+
+        table.rows.push({
+          age: `Age ${currentAge + y}`,
+          employeeContrib: roundTo(empContrib, 2),
+          employerMatch: roundTo(matchContrib, 2),
+          growth: interest,
+          balance: balance,
+        });
+
+        salary = roundTo(salary * (1 + salaryGrowth), 2);
+      }
+
+      const totalContribs = roundTo(safeNum(v.current_balance, 25000) + totalEmpContribs + totalMatchContribs, 2);
+      const totalGrowth = roundTo(balance - totalContribs, 2);
+      const monthly4PctIncome = roundTo((balance * 0.04) / 12, 2);
+      const annual4PctIncome = roundTo(balance * 0.04, 2);
+
+      return {
+        stats: [
+          { label: 'Projected 401(k) Balance', value: fmt(balance), highlight: true },
+          { label: 'Total Employee Contributions', value: fmt(totalEmpContribs) },
+          { label: 'Total Employer Match ("Free Money")', value: fmt(totalMatchContribs), highlight: true },
+          { label: 'Investment Compound Growth', value: fmt(totalGrowth) },
+          { label: 'Monthly Retirement Income (4% Rule)', value: fmt(monthly4PctIncome) },
+          { label: 'Annual Retirement Income (4% Rule)', value: fmt(annual4PctIncome) },
+          { label: 'Total Years of Compounding', value: `${yearsToRetire} years` },
+          { label: 'Final Salary at Retirement', value: fmt(salary) },
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Your Contributions', 'Employer Match', 'Compound Investment Growth'],
+          datasets: [{
+            data: [totalEmpContribs, totalMatchContribs, Math.max(0, totalGrowth)],
+            colors: ['#6366F1', '#10B981', '#F59E0B'],
+            backgroundColor: ['#6366F1', '#10B981', '#F59E0B']
+          }]
+        },
+        table,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-piggy-bank',
+          headline: `Your 401(k) is projected to reach ${fmt(balance)} by age ${retireAge}.`,
+          detail: `Your employer contributes ${fmt(totalMatchContribs)} in company matching funds—representing instant, risk-free returns. Under the 4% safe withdrawal rule, this nest egg generates ${fmt(monthly4PctIncome)}/month in retirement income.`
+        }
+      };
+    },
+    article: {
+      heading: 'Maximizing Your 401(k) Retirement Plan & Employer Match',
+      intro: 'A 401(k) is an employer-sponsored, tax-advantaged defined-contribution retirement account. Understanding how compounding growth and company matching work is the single most powerful step you can take toward financial independence.',
+      sections: [
+        { heading: 'Never Leave the Employer Match on the Table', body: 'If your employer offers a 50% match up to 6% of your salary, contributing at least 6% gives you an instant, guaranteed 50% return on your money. Always contribute enough to capture the full match before funding other accounts.' },
+        { heading: 'Pre-Tax Compounding Power', body: 'Because traditional 401(k) contributions are deducted pre-tax, your taxable income decreases today while your full dollar amount compounds tax-deferred over decades.' }
+      ]
+    },
+    howTo: [
+      'Enter your current age and planned retirement age.',
+      'Enter your current salary and existing 401(k) balance.',
+      'Input your contribution percentage and your company match terms (e.g. 50% match up to 6%).',
+      'Review your projected total nest egg, captured company match, and monthly retirement income.'
+    ],
+    examples: [
+      { title: '30-Year-Old Starting with $25k', input: '$75,000 salary, 8% contrib, 50% match to 6%, 7.5% return', result: 'Projected Balance: ~$1.9 Million at Age 65' }
+    ],
+    formula: 'Future Balance = PV(1+r)^n + ∑ [Annual Contribs × (1+r)^(n-t)]',
+    faqs: [
+      { q: 'What is the 401(k) contribution limit?', a: 'For 2026, the IRS employee elective deferral limit is $23,500 ($31,000 for workers aged 50 and older utilizing catch-up contributions).' },
+      { q: 'What is the difference between Traditional and Roth 401(k)?', a: 'Traditional 401(k) contributions are made with pre-tax dollars, lowering your taxable income today and taxing withdrawals in retirement. Roth 401(k) contributions are made with post-tax dollars, allowing completely tax-free withdrawals in retirement.' }
+    ]
+  },
+  'debt-snowball-calculator': {
+    presets: [
+      {
+        label: 'Standard Consumer Debt ($15k)',
+        values: {
+          extra_payment: 200,
+          strategy: 'snowball',
+          debt1_name: 'Credit Card',
+          debt1_balance: 2500,
+          debt1_rate: 24.99,
+          debt1_min: 75,
+          debt2_name: 'Auto Loan',
+          debt2_balance: 8000,
+          debt2_rate: 6.5,
+          debt2_min: 200,
+          debt3_name: 'Personal Loan',
+          debt3_balance: 4500,
+          debt3_rate: 12.0,
+          debt3_min: 125
+        }
+      },
+      {
+        label: 'High-Interest Revolving Mix ($22k)',
+        values: {
+          extra_payment: 350,
+          strategy: 'avalanche',
+          debt1_name: 'Store Card',
+          debt1_balance: 1800,
+          debt1_rate: 29.99,
+          debt1_min: 60,
+          debt2_name: 'Major Credit Card',
+          debt2_balance: 7500,
+          debt2_rate: 22.49,
+          debt2_min: 220,
+          debt3_name: 'Consolidated Loan',
+          debt3_balance: 12700,
+          debt3_rate: 9.99,
+          debt3_min: 310
+        }
+      },
+      {
+        label: 'Aggressive Debt Elimination ($10k)',
+        values: {
+          extra_payment: 500,
+          strategy: 'snowball',
+          debt1_name: 'Medical Note',
+          debt1_balance: 1200,
+          debt1_rate: 0.0,
+          debt1_min: 50,
+          debt2_name: 'Credit Card',
+          debt2_balance: 3800,
+          debt2_rate: 21.99,
+          debt2_min: 110,
+          debt3_name: 'Student Line',
+          debt3_balance: 5000,
+          debt3_rate: 7.25,
+          debt3_min: 140
+        }
+      }
+    ],
+    name: 'Debt Payoff & Snowball Calculator',
+    description: 'Model Debt Snowball and Debt Avalanche repayment schedules, quantify interest savings, and project your exact debt-free horizon.',
+    metaTitle: 'Debt Payoff Calculator — Snowball vs. Avalanche Strategies | GetCalcu',
+    metaDescription: 'Free debt payoff calculator. Compare Debt Snowball vs. Debt Avalanche strategies, determine optimal repayment order, and calculate total interest saved.',
+    category: 'Finance',
+    icon: 'fa-arrow-trend-down',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    fields: [
+      { id: 'extra_payment', label: 'Additional Monthly Contribution ($)', type: 'number', default: 200, min: 0, step: 25, hint: 'Extra cash allocated toward principal reduction each month beyond required minimums.' },
+      { id: 'strategy', label: 'Repayment Strategy', type: 'select', default: 'snowball', options: [
+        { value: 'snowball', label: 'Debt Snowball (Lowest Balance First — Behavioral Momentum)' },
+        { value: 'avalanche', label: 'Debt Avalanche (Highest APR First — Mathematical Optimization)' }
+      ], hint: 'Choose between behavioral momentum (Snowball) or maximum financing interest savings (Avalanche).' },
+      { id: 'debt1_name', label: 'Debt 1 Account Name', type: 'text', default: 'Credit Card', hint: 'Creditor or loan designation.' },
+      { id: 'debt1_balance', label: 'Debt 1 Balance ($)', type: 'number', default: 2500, min: 0, step: 50, hint: 'Current unpaid principal balance.' },
+      { id: 'debt1_rate', label: 'Debt 1 Interest Rate (APR %)', type: 'number', default: 24.99, min: 0, max: 99, step: 0.1, hint: 'Annual percentage rate assessed on revolving balances.' },
+      { id: 'debt1_min', label: 'Debt 1 Minimum Monthly Payment ($)', type: 'number', default: 75, min: 1, step: 5, hint: 'Required scheduled minimum installment.' },
+
+      { id: 'debt2_name', label: 'Debt 2 Account Name', type: 'text', default: 'Car Loan', hint: 'Creditor or loan designation.' },
+      { id: 'debt2_balance', label: 'Debt 2 Balance ($)', type: 'number', default: 8000, min: 0, step: 100, hint: 'Current unpaid principal balance.' },
+      { id: 'debt2_rate', label: 'Debt 2 Interest Rate (APR %)', type: 'number', default: 6.5, min: 0, max: 99, step: 0.1, hint: 'Annual percentage rate assessed on revolving balances.' },
+      { id: 'debt2_min', label: 'Debt 2 Minimum Monthly Payment ($)', type: 'number', default: 200, min: 1, step: 5, hint: 'Required scheduled minimum installment.' },
+
+      { id: 'debt3_name', label: 'Debt 3 Account Name', type: 'text', default: 'Personal Loan', hint: 'Creditor or loan designation.' },
+      { id: 'debt3_balance', label: 'Debt 3 Balance ($)', type: 'number', default: 4500, min: 0, step: 50, hint: 'Current unpaid principal balance.' },
+      { id: 'debt3_rate', label: 'Debt 3 Interest Rate (APR %)', type: 'number', default: 12.0, min: 0, max: 99, step: 0.1, hint: 'Annual percentage rate assessed on revolving balances.' },
+      { id: 'debt3_min', label: 'Debt 3 Minimum Monthly Payment ($)', type: 'number', default: 125, min: 1, step: 5, hint: 'Required scheduled minimum installment.' }
+    ],
+    calculate(v) {
+      const extra = Math.max(0, safeNum(v.extra_payment, 0));
+      const strategy = safeStr(v.strategy) || 'snowball';
+
+      const rawDebts = [
+        { id: 1, name: safeStr(v.debt1_name) || 'Debt 1', balance: safeNum(v.debt1_balance, 0), apr: safeNum(v.debt1_rate, 0), min: safeNum(v.debt1_min, 0) },
+        { id: 2, name: safeStr(v.debt2_name) || 'Debt 2', balance: safeNum(v.debt2_balance, 0), apr: safeNum(v.debt2_rate, 0), min: safeNum(v.debt2_min, 0) },
+        { id: 3, name: safeStr(v.debt3_name) || 'Debt 3', balance: safeNum(v.debt3_balance, 0), apr: safeNum(v.debt3_rate, 0), min: safeNum(v.debt3_min, 0) },
+      ].filter(d => d.balance > 0);
+
+      if (rawDebts.length === 0) {
+        return errorResult('Please enter at least one debt with an outstanding balance greater than $0.');
+      }
+
+      for (const d of rawDebts) {
+        if (d.min <= 0) {
+          return errorResult(`Please specify a required minimum monthly payment greater than $0 for ${d.name}.`);
+        }
+        const monthlyInterest = (d.balance * (d.apr / 100)) / 12;
+        if (d.min <= monthlyInterest && extra === 0) {
+          return errorResult(`The scheduled minimum payment for ${d.name} (${fmt(d.min)}) does not cover monthly accrued interest (${fmt(monthlyInterest)}). Increase the payment or allocate additional funds.`);
+        }
+      }
+
+      const totalInitialDebt = rawDebts.reduce((sum, d) => sum + d.balance, 0);
+      const totalInitialMin = rawDebts.reduce((sum, d) => sum + d.min, 0);
+
+      // 1. Simulate Baseline (Minimum payments only without rollover)
+      let baselineDebts = rawDebts.map(d => ({ ...d }));
+      let baselineTotalInterest = 0;
+      let baselineMonths = 0;
+      const MAX_MONTHS = 360;
+
+      while (baselineMonths < MAX_MONTHS && baselineDebts.some(d => d.balance > 0.01)) {
+        baselineMonths++;
+        for (const d of baselineDebts) {
+          if (d.balance <= 0.01) continue;
+          const monthlyRate = (d.apr / 100) / 12;
+          const interest = d.balance * monthlyRate;
+          baselineTotalInterest += interest;
+          const pay = Math.min(d.balance + interest, d.min);
+          d.balance = Math.max(0, d.balance + interest - pay);
+        }
+      }
+
+      // 2. Simulate Active Strategy (Snowball or Avalanche with rollover)
+      let activeDebts = rawDebts.map(d => ({
+        ...d,
+        startBalance: d.balance,
+        paidOffMonth: null,
+        interestPaid: 0
+      }));
+
+      if (strategy === 'snowball') {
+        activeDebts.sort((a, b) => a.balance - b.balance);
+      } else {
+        activeDebts.sort((a, b) => b.apr - a.apr);
+      }
+
+      let activeMonths = 0;
+      let activeTotalInterest = 0;
+      const monthlyPayoffBudget = totalInitialMin + extra;
+
+      while (activeMonths < MAX_MONTHS && activeDebts.some(d => d.balance > 0.01)) {
+        activeMonths++;
+        let availableExtra = extra;
+
+        for (const d of activeDebts) {
+          if (d.balance <= 0.01) {
+            availableExtra += d.min;
+            continue;
+          }
+          const monthlyRate = (d.apr / 100) / 12;
+          const interest = d.balance * monthlyRate;
+          d.interestPaid += interest;
+          activeTotalInterest += interest;
+          d.balance += interest;
+
+          const minPay = Math.min(d.balance, d.min);
+          d.balance -= minPay;
+          if (d.balance < 0.01 && !d.paidOffMonth) {
+            d.paidOffMonth = activeMonths;
+            d.balance = 0;
+            availableExtra += (d.min - minPay);
+          }
+        }
+
+        for (const d of activeDebts) {
+          if (d.balance <= 0.01) continue;
+          const lumpPay = Math.min(d.balance, availableExtra);
+          d.balance -= lumpPay;
+          availableExtra -= lumpPay;
+
+          if (d.balance < 0.01 && !d.paidOffMonth) {
+            d.paidOffMonth = activeMonths;
+            d.balance = 0;
+          }
+          if (availableExtra <= 0.001) break;
+        }
+      }
+
+      for (const d of activeDebts) {
+        if (!d.paidOffMonth) d.paidOffMonth = activeMonths;
+      }
+
+      const monthsSaved = Math.max(0, baselineMonths - activeMonths);
+      const interestSaved = Math.max(0, roundTo(baselineTotalInterest - activeTotalInterest, 2));
+      const firstPaidDebt = activeDebts[0];
+
+      const table = makeTableSpec({
+        mode: 'schedule',
+        title: `${strategy === 'snowball' ? 'Debt Snowball' : 'Debt Avalanche'} Payoff Sequencing & Timelines`,
+        columns: [
+          { key: 'target', label: 'Priority / Debt Account', emphasis: true },
+          { key: 'startBalance', label: 'Starting Balance', format: 'currency' },
+          { key: 'apr', label: 'Interest Rate' },
+          { key: 'interestPaid', label: 'Total Interest Paid', format: 'currency' },
+          { key: 'payoffTimeline', label: 'Projected Payoff', emphasis: true }
+        ],
+        rows: activeDebts.map((d, idx) => ({
+          target: `Target #${idx + 1}: ${d.name}`,
+          startBalance: roundTo(d.startBalance, 2),
+          apr: `${d.apr}% APR`,
+          interestPaid: roundTo(d.interestPaid, 2),
+          payoffTimeline: `Month ${d.paidOffMonth} (${(d.paidOffMonth / 12).toFixed(1)} yrs)`
+        })),
+        footer: {
+          target: 'Total Debt Portfolio',
+          startBalance: totalInitialDebt,
+          apr: 'Weighted Avg',
+          interestPaid: activeTotalInterest,
+          payoffTimeline: `Debt-Free in Month ${activeMonths}`
+        }
+      });
+
+      const yearsSaved = (monthsSaved / 12).toFixed(1);
+      const activeYears = (activeMonths / 12).toFixed(1);
+
+      return {
+        stats: [
+          { label: 'Time Until Debt-Free', value: `${activeMonths} Months (${activeYears} yrs)`, highlight: true },
+          { label: 'Total Interest Saved', value: fmt(interestSaved), highlight: true },
+          { label: 'Months Cut Off Debt', value: `${monthsSaved} Months (${yearsSaved} yrs)` },
+          { label: 'First Debt to Knock Out', value: `${firstPaidDebt.name} (Month ${firstPaidDebt.paidOffMonth})`, highlight: true },
+          { label: 'Total Monthly Debt Budget', value: fmt(monthlyPayoffBudget) },
+          { label: 'Total Debt Balance Paid', value: fmt(totalInitialDebt) },
+          { label: 'Total Interest Paid', value: fmt(activeTotalInterest) },
+          { label: 'Payoff Strategy Chosen', value: strategy === 'snowball' ? 'Snowball (Lowest Balance First)' : 'Avalanche (Highest APR First)' }
+        ],
+        chart: {
+          type: 'bar',
+          labels: ['Total Principal Repaid', 'Strategy Total Interest', 'Baseline Min Pay Interest'],
+          datasets: [{
+            label: 'Total Cost ($)',
+            data: [totalInitialDebt, activeTotalInterest, baselineTotalInterest],
+            colors: ['#6366F1', '#10B981', '#EF4444'],
+            backgroundColor: ['#6366F1', '#10B981', '#EF4444']
+          }]
+        },
+        table,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-award',
+          headline: `Debt-free status projected in ${activeMonths} months with ${fmt(interestSaved)} in interest savings.`,
+          detail: `By rolling satisfied installments forward into subsequent obligations, you eliminate ${fmt(totalInitialDebt)} in principal and avoid ${fmt(interestSaved)} in financing charges. Focus accelerated contributions on ${firstPaidDebt.name} to establish initial payoff momentum.`
+        }
+      };
+    },
+    article: {
+      heading: 'Accelerated Debt Repayment: Snowball vs. Avalanche Frameworks',
+      intro: 'Consumer debt reduction requires balancing mathematical optimization against psychological persistence. Choosing between the Debt Snowball and Debt Avalanche methods dictates your total interest expenditure and repayment velocity.',
+      sections: [
+        {
+          heading: 'The Debt Snowball: Behavioral Momentum',
+          body: 'The Debt Snowball methodology ranks obligations in ascending order of outstanding principal balance. By maintaining minimum payments across all accounts and channeling surplus capital toward the smallest balance, borrowers experience rapid behavioral milestones. Empirical research from Northwestern University and Harvard Business School confirms that early account elimination increases sustained adherence to multi-year debt elimination plans.'
+        },
+        {
+          heading: 'The Debt Avalanche: Mathematical Optimization',
+          body: 'The Debt Avalanche methodology prioritizes obligations strictly by annual percentage rate (APR). Capital is concentrated against the highest-rate liabilities (such as revolving credit lines carrying 20% to 29% APR) prior to lower-rate installment loans. This approach mathematically minimizes aggregate interest accrual over the lifetime of the portfolio.'
+        },
+        {
+          heading: 'Strategic Decision Framework',
+          body: 'Borrowers experiencing fatigue or requiring immediate positive feedback benefit most from the Snowball framework. Conversely, analytical borrowers seeking minimal lifetime financing costs should implement the Avalanche framework.'
+        }
+      ]
+    },
+    howTo: [
+      'Enter the supplemental monthly cash available for accelerated debt reduction.',
+      'Select your preferred methodology (Debt Snowball or Debt Avalanche).',
+      'Input outstanding balances, annual percentage rates (APR), and required minimum payments for each liability.',
+      'Review your consolidated payoff timeline, repayment sequencing, and aggregate interest savings.'
+    ],
+    examples: [
+      {
+        title: '$15,000 Multi-Account Portfolio ($200 Supplemental)',
+        input: '$2,500 credit card (24.99%), $4,500 personal note (12%), $8,000 vehicle loan (6.5%), +$200/mo',
+        result: 'Full payoff achieved in 28 months; eliminates $2,400+ in financing charges'
+      }
+    ],
+    formula: 'M_{interest} = B \times \left(\frac{APR}{12}\right); \quad C_{target} = C_{extra} + \sum M_{retired}',
+    faqs: [
+      {
+        q: 'Which repayment methodology minimizes total interest cost?',
+        a: 'The Debt Avalanche methodology strictly minimizes total financing costs by targeting the highest annual percentage rate (APR) first, preventing expensive revolving compound charges.'
+      },
+      {
+        q: 'How does payment rollover accelerate amortization?',
+        a: 'When an account is satisfied, its minimum required payment is not absorbed into discretionary spending. Instead, the full cash flow is redirected toward the subsequent target balance, creating an expanding repayment allocation over time.'
+      },
+      {
+        q: 'Should an emergency reserve be established prior to accelerated debt reduction?',
+        a: 'Yes. Maintaining a liquid starter emergency reserve ($1,000 to $2,000) prevents unexpected operating expenses from forcing renewed reliance on high-interest revolving credit during debt payoff.'
+      }
+    ]
+  },
+
+  'refinance-calculator': {
+    presets: [
+      {
+        label: 'Rate Reduction (1.50% Drop)',
+        values: {
+          current_balance: 320000,
+          current_rate: 6.75,
+          current_years_remaining: 26,
+          new_rate: 5.25,
+          new_term_years: 30,
+          closing_costs: 4500,
+          years_in_home: 7
+        }
+      },
+      {
+        label: 'Term Reduction (30-Yr to 15-Yr)',
+        values: {
+          current_balance: 275000,
+          current_rate: 6.50,
+          current_years_remaining: 24,
+          new_rate: 4.85,
+          new_term_years: 15,
+          closing_costs: 3800,
+          years_in_home: 10
+        }
+      },
+      {
+        label: 'Short-Horizon Evaluation (3 Years Stay)',
+        values: {
+          current_balance: 400000,
+          current_rate: 7.125,
+          current_years_remaining: 28,
+          new_rate: 6.25,
+          new_term_years: 30,
+          closing_costs: 5500,
+          years_in_home: 3
+        }
+      }
+    ],
+    name: 'Mortgage Refinance Break-Even Calculator',
+    description: 'Evaluate mortgage refinancing viability by calculating payment reductions, upfront closing cost break-even horizons, and net cash savings.',
+    metaTitle: 'Mortgage Refinance Calculator — Break-Even Horizon & Net Savings | GetCalcu',
+    metaDescription: 'Free mortgage refinance calculator. Calculate monthly payment reduction, exact break-even timeline in months, and cumulative net savings after closing costs.',
+    category: 'Finance',
+    icon: 'fa-house-chimney',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    fields: [
+      { id: 'current_balance', label: 'Current Mortgage Balance ($)', type: 'number', default: 320000, min: 1000, step: 5000, hint: 'The remaining unpaid principal balance on your existing mortgage note.' },
+      { id: 'current_rate', label: 'Current Interest Rate (%)', type: 'number', default: 6.75, min: 0.1, max: 20, step: 0.125, hint: 'The annual note rate currently charged on your existing mortgage.' },
+      { id: 'current_years_remaining', label: 'Remaining Amortization Term (Years)', type: 'number', default: 26, min: 1, max: 40, step: 1, hint: 'Number of remaining years until your existing mortgage is fully retired.' },
+      { id: 'new_rate', label: 'Proposed Interest Rate (%)', type: 'number', default: 5.25, min: 0.1, max: 20, step: 0.125, hint: 'The lower interest rate offered by the refinancing lender.' },
+      { id: 'new_term_years', label: 'New Loan Term (Years)', type: 'number', default: 30, min: 5, max: 40, step: 5, hint: 'Standard amortization term for the replacement loan (e.g. 15, 20, or 30 years).' },
+      { id: 'closing_costs', label: 'Estimated Refinance Closing Costs ($)', type: 'number', default: 4500, min: 0, step: 250, hint: 'Total origination, appraisal, title, escrow, and recording fees required at settlement.' },
+      { id: 'years_in_home', label: 'Anticipated Occupancy Horizon (Years)', type: 'number', default: 7, min: 1, max: 40, step: 1, hint: 'Expected duration you plan to retain and occupy the mortgaged property.' }
+    ],
+    calculate(v) {
+      const balance = safeNum(v.current_balance, 0);
+      const currentRate = safeNum(v.current_rate, 0);
+      const currentYears = safeNum(v.current_years_remaining, 0);
+      const newRate = safeNum(v.new_rate, 0);
+      const newTermYears = safeNum(v.new_term_years, 0);
+      const closingCosts = Math.max(0, safeNum(v.closing_costs, 0));
+      const yearsInHome = Math.max(1, safeNum(v.years_in_home, 5));
+
+      if (balance <= 0) return errorResult('Please specify an outstanding principal balance greater than $0.');
+      if (currentYears <= 0) return errorResult('Please enter remaining years on your current loan term.');
+      if (newTermYears <= 0) return errorResult('Please select a valid term for the proposed loan.');
+
+      const calcMonthlyPI = (P, annualRate, years) => {
+        const r = (annualRate / 100) / 12;
+        const n = years * 12;
+        if (r <= 0) return P / n;
+        return (P * (r * Math.pow(1 + r, n))) / (Math.pow(1 + r, n) - 1);
+      };
+
+      const currentPI = calcMonthlyPI(balance, currentRate, currentYears);
+      const newPI = calcMonthlyPI(balance, newRate, newTermYears);
+      const monthlySavings = currentPI - newPI;
+
+      const totalMonthsInHome = yearsInHome * 12;
+      const breakEvenMonths = monthlySavings > 0 ? Math.ceil(closingCosts / monthlySavings) : null;
+      const netSavingsInHome = monthlySavings > 0
+        ? roundTo((monthlySavings * totalMonthsInHome) - closingCosts, 2)
+        : roundTo(-closingCosts, 2);
+
+      const oldRemainingTotalPayments = currentPI * (currentYears * 12);
+      const oldRemainingInterest = Math.max(0, oldRemainingTotalPayments - balance);
+
+      const newTotalPayments = newPI * (newTermYears * 12);
+      const newTotalInterest = Math.max(0, newTotalPayments - balance);
+      const lifetimeInterestDiff = roundTo(oldRemainingInterest - (newTotalInterest + closingCosts), 2);
+
+      const isWorthIt = monthlySavings > 0 && breakEvenMonths !== null && breakEvenMonths <= totalMonthsInHome;
+
+      const table = makeTableSpec({
+        mode: 'comparison',
+        title: 'Year-by-Year Cumulative Refinance Savings & Cost Recovery',
+        columns: [
+          { key: 'period', label: 'Timeline' },
+          { key: 'currentOutflow', label: 'Current Loan Outflow', format: 'currency' },
+          { key: 'newOutflow', label: 'Refinanced Outflow', format: 'currency' },
+          { key: 'grossSavings', label: 'Cumulative Gross Savings', format: 'currency' },
+          { key: 'netSavings', label: 'Net Savings (After Fees)', format: 'currency', emphasis: true }
+        ],
+        rows: []
+      });
+      const yearsToProject = Math.min(yearsInHome + 3, 15);
+      for (let y = 1; y <= yearsToProject; y++) {
+        const months = y * 12;
+        const cumulativeGrossSavings = roundTo(monthlySavings * months, 2);
+        const netPosition = roundTo(cumulativeGrossSavings - closingCosts, 2);
+        table.rows.push({
+          period: `Year ${y} (${months} mo)`,
+          currentOutflow: roundTo(currentPI * months, 2),
+          newOutflow: roundTo(newPI * months, 2),
+          grossSavings: cumulativeGrossSavings,
+          netSavings: netPosition
+        });
+      }
+
+      let insightHeadline = '';
+      let insightDetail = '';
+      let insightTone = 'positive';
+
+      if (monthlySavings <= 0) {
+        insightTone = 'warning';
+        insightHeadline = 'Proposed terms result in higher monthly financing obligations.';
+        insightDetail = `With a note rate of ${newRate}% over ${newTermYears} years, your required principal and interest payment increases by ${fmt(Math.abs(monthlySavings))}/month relative to your current schedule.`;
+      } else if (!isWorthIt) {
+        insightTone = 'warning';
+        insightHeadline = `Unfavorable horizon: Occupancy of ${yearsInHome} years precedes full fee recovery.`;
+        insightDetail = `While monthly payments decrease by ${fmt(monthlySavings)}, recouping ${fmt(closingCosts)} in settlement fees requires ${breakEvenMonths} months. Vacating in ${totalMonthsInHome} months incurs a net loss of ${fmt(Math.abs(netSavingsInHome))}.`;
+      } else {
+        insightHeadline = `Refinancing is financially advantageous: Break-even attained in ${breakEvenMonths} months.`;
+        insightDetail = `Monthly payment decreases by ${fmt(monthlySavings)}. Over your ${yearsInHome}-year occupancy horizon, you recover ${fmt(closingCosts)} in closing fees and generate ${fmt(netSavingsInHome)} in net cumulative cash savings.`;
+      }
+
+      return {
+        stats: [
+          { label: 'Monthly Payment Savings', value: monthlySavings > 0 ? `+${fmt(monthlySavings)} / mo` : `-${fmt(Math.abs(monthlySavings))} / mo`, highlight: true },
+          { label: 'Break-Even Point', value: breakEvenMonths ? `${breakEvenMonths} Months (${(breakEvenMonths / 12).toFixed(1)} yrs)` : 'Never', highlight: true },
+          { label: `Net Profit Over ${yearsInHome} Years`, value: fmt(netSavingsInHome), highlight: true },
+          { label: 'Refinance Verdict', value: isWorthIt ? 'YES — Worth Refinancing' : 'NO — Costs Outweigh Savings' },
+          { label: 'Current Monthly Payment (P&I)', value: fmt(roundTo(currentPI, 2)) },
+          { label: 'New Monthly Payment (P&I)', value: fmt(roundTo(newPI, 2)) },
+          { label: 'Upfront Closing Costs', value: fmt(closingCosts) },
+          { label: 'Total Lifetime Interest Saved', value: fmt(lifetimeInterestDiff) }
+        ],
+        chart: {
+          principal: balance,
+          totalInterest: newTotalInterest
+        },
+        table,
+        insight: {
+          tone: insightTone,
+          icon: isWorthIt ? 'fa-circle-check' : 'fa-triangle-exclamation',
+          headline: insightHeadline,
+          detail: insightDetail
+        }
+      };
+    },
+    article: {
+      heading: 'Mortgage Refinance Break-Even Analysis & Capital Recovery',
+      intro: 'Refinancing replaces an existing residential lien with a new debt instrument under modified rate and term covenants. Evaluating transaction viability requires quantifying the break-even horizon against projected homeownership tenure.',
+      sections: [
+        {
+          heading: 'Quantifying the Break-Even Horizon',
+          body: 'The break-even point defines the exact operational duration required for cumulative monthly payment reductions to offset non-refundable closing expenditures. For example, incurring $4,500 in settlement fees to achieve a $300 monthly savings generates a 15-month break-even horizon. Relocating prior to month 15 produces a negative net present value.'
+        },
+        {
+          heading: 'Amortization Horizon Reset Considerations',
+          body: 'Refinancing a seasoned 30-year note into a new 30-year instrument resets the amortization curve, extending total financing duration and back-loading principal retirement. Borrowers should consider 15-year or 20-year term options to avoid increasing lifetime financing obligations.'
+        },
+        {
+          heading: 'Evaluating Zero-Closing-Cost Loan Structures',
+          body: 'Zero-closing-cost transactions do not eliminate lender overhead. Transaction costs are either absorbed via a higher note coupon (lender credit) or capitalized into the principal balance, increasing long-term carrying costs.'
+        }
+      ]
+    },
+    howTo: [
+      'Enter current principal balance and existing note coupon rate.',
+      'Specify remaining amortization duration on current obligation.',
+      'Input proposed replacement note rate and loan term.',
+      'Specify total closing fees and anticipated occupancy horizon in years.',
+      'Evaluate monthly payment reduction, break-even timeline, and projected net savings.'
+    ],
+    examples: [
+      {
+        title: '$320,000 Note Rate Reduction (6.75% to 5.25%)',
+        input: '$320,000 balance, 26 yrs remaining, 5.25% 30-yr new rate, $4,500 closing fees, 7 yrs stay',
+        result: 'Reduces payment by $312/mo; breaks even at month 15; generates $21,700+ net savings'
+      }
+    ],
+    formula: 'T_{break\\text{-}even} = \\left\\lceil \\frac{\\text{Closing Costs}}{M_{current} - M_{new}} \\right\\rceil',
+    faqs: [
+      {
+        q: 'What rate reduction benchmark typically justifies refinancing?',
+        a: 'Generally, a rate reduction of 0.75% to 1.00% offers sufficient debt service reduction to recover transaction costs within 24 to 36 months, provided the homeowner retains the asset past the break-even date.'
+      },
+      {
+        q: 'What fees constitute closing expenditures in a mortgage refinance?',
+        a: 'Standard closing expenditures include loan origination fees, appraisal fees, lender title insurance, settlement/attorney fees, recording taxes, and prepaid escrow reserves.'
+      },
+      {
+        q: 'How does refinancing impact credit scoring models?',
+        a: 'Lender pre-approval generates a temporary hard credit inquiry (typically 5 to 10 points). Following regular payment seasoning on the new note, credit scoring models rebound rapidly.'
+      }
+    ]
+  },
+
+  'self-employment-tax-calculator': {
+    presets: [
+      {
+        label: 'Solo Professional ($85k)',
+        values: {
+          gross_income: 85000,
+          business_expenses: 12000,
+          filing_status: 'single',
+          state_tax_rate: 4.5,
+          other_w2_income: 0
+        }
+      },
+      {
+        label: 'Consultant / Agency ($160k)',
+        values: {
+          gross_income: 160000,
+          business_expenses: 24000,
+          filing_status: 'married_joint',
+          state_tax_rate: 5.0,
+          other_w2_income: 0
+        }
+      },
+      {
+        label: 'Side-Hustle ($30k with W-2)',
+        values: {
+          gross_income: 30000,
+          business_expenses: 4500,
+          filing_status: 'single',
+          state_tax_rate: 4.0,
+          other_w2_income: 75000
+        }
+      }
+    ],
+    name: '1099 Self-Employment Tax Calculator',
+    description: 'Calculate federal self-employment tax (SECA), effective tax brackets, and quarterly estimated IRS 1040-ES payments for independent contractors and sole proprietors.',
+    metaTitle: '1099 Tax Calculator — Self-Employment Tax & Estimated Quarterly Payments | GetCalcu',
+    metaDescription: 'Free 1099 self-employment tax calculator. Calculate 15.3% SECA tax, progressive federal and state income taxes, Schedule SE deductions, and quarterly 1040-ES payments.',
+    category: 'Finance',
+    icon: 'fa-receipt',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    fields: [
+      { id: 'gross_income', label: 'Annual 1099 Gross Revenue ($)', type: 'number', default: 85000, min: 0, step: 1000, hint: 'Total gross revenue or client receipts prior to business expenses and tax deductions.' },
+      { id: 'business_expenses', label: 'Ordinary & Necessary Business Deductions ($)', type: 'number', default: 12000, min: 0, step: 500, hint: 'Allowable Schedule C business write-offs (mileage, software, hardware, professional services).' },
+      { id: 'filing_status', label: 'Tax Filing Status', type: 'select', default: 'single', options: [
+        { value: 'single', label: 'Single Filer' },
+        { value: 'married_joint', label: 'Married Filing Jointly' },
+        { value: 'head_household', label: 'Head of Household' }
+      ], hint: 'IRS tax filing status determining progressive bracket thresholds and standard deductions.' },
+      { id: 'state_tax_rate', label: 'Applicable State Income Tax Rate (%)', type: 'number', default: 4.5, min: 0, max: 15, step: 0.5, hint: 'State income tax rate (0% for states without individual income tax including TX, FL, WA, TN).' },
+      { id: 'other_w2_income', label: 'Concurrent W-2 Compensation ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'W-2 wage earnings subject to mandatory FICA withholding (adjusts Social Security wage cap).' }
+    ],
+    calculate(v) {
+      const gross = Math.max(0, safeNum(v.gross_income, 0));
+      const expenses = Math.max(0, safeNum(v.business_expenses, 0));
+      const filingStatus = safeStr(v.filing_status) || 'single';
+      const stateRate = Math.max(0, safeNum(v.state_tax_rate, 0));
+      const w2Income = Math.max(0, safeNum(v.other_w2_income, 0));
+
+      if (gross <= 0 && w2Income <= 0) {
+        return errorResult('Please specify gross freelance revenue or employment compensation.');
+      }
+
+      // 1. Net Schedule C Business Profit
+      const netProfit = Math.max(0, gross - expenses);
+
+      // 2. Schedule SE Net Earnings (IRS 92.35% statutory rule)
+      const seEarnings = netProfit * 0.9235;
+
+      // 3. Social Security Tax (12.4% up to 2026 cap of $176,100)
+      const SS_CAP_2026 = 176100;
+      const ssCapRemaining = Math.max(0, SS_CAP_2026 - w2Income);
+      const ssTaxableIncome = Math.min(seEarnings, ssCapRemaining);
+      const ssTax = roundTo(ssTaxableIncome * 0.124, 2);
+
+      // 4. Medicare Tax (2.9% uncapped)
+      const medicareTax = roundTo(seEarnings * 0.029, 2);
+
+      // 5. Additional Medicare Tax (0.9% above statutory thresholds)
+      const addlThreshold = filingStatus === 'married_joint' ? 250000 : 200000;
+      const totalCombinedEarned = netProfit + w2Income;
+      let addlMedicareTax = 0;
+      if (totalCombinedEarned > addlThreshold) {
+        const seSubjectToAddl = Math.min(netProfit, totalCombinedEarned - addlThreshold);
+        addlMedicareTax = roundTo(seSubjectToAddl * 0.009, 2);
+      }
+
+      const totalSETax = roundTo(ssTax + medicareTax + addlMedicareTax, 2);
+
+      // 6. Above-the-line deduction for 50% of self-employment tax
+      const seDeduction = roundTo(totalSETax * 0.5, 2);
+
+      // 7. Standard Deductions (IRS 2026 baseline)
+      const standardDeductions = {
+        single: 15000,
+        married_joint: 30000,
+        head_household: 22500
+      };
+      const standardDeduction = standardDeductions[filingStatus] || 15000;
+
+      // 8. Federal Taxable Income
+      const adjustedGrossIncome = Math.max(0, (netProfit + w2Income) - seDeduction);
+      const federalTaxableIncome = Math.max(0, adjustedGrossIncome - standardDeduction);
+
+      // 9. Progressive Federal Income Tax Calculation (2026 baseline brackets)
+      const calcFederalTax = (taxable, status) => {
+        if (taxable <= 0) return 0;
+        let brackets;
+        if (status === 'married_joint') {
+          brackets = [
+            { limit: 23850, rate: 0.10 },
+            { limit: 96950, rate: 0.12 },
+            { limit: 206700, rate: 0.22 },
+            { limit: 394600, rate: 0.24 },
+            { limit: 501050, rate: 0.32 },
+            { limit: 751600, rate: 0.35 },
+            { limit: Infinity, rate: 0.37 }
+          ];
+        } else if (status === 'head_household') {
+          brackets = [
+            { limit: 17000, rate: 0.10 },
+            { limit: 64850, rate: 0.12 },
+            { limit: 103350, rate: 0.22 },
+            { limit: 197300, rate: 0.24 },
+            { limit: 250500, rate: 0.32 },
+            { limit: 626350, rate: 0.35 },
+            { limit: Infinity, rate: 0.37 }
+          ];
+        } else {
+          brackets = [
+            { limit: 11925, rate: 0.10 },
+            { limit: 48475, rate: 0.12 },
+            { limit: 103350, rate: 0.22 },
+            { limit: 197300, rate: 0.24 },
+            { limit: 250525, rate: 0.32 },
+            { limit: 626350, rate: 0.35 },
+            { limit: Infinity, rate: 0.37 }
+          ];
+        }
+
+        let tax = 0;
+        let prev = 0;
+        for (const b of brackets) {
+          if (taxable > prev) {
+            const chunk = Math.min(taxable - prev, b.limit - prev);
+            tax += chunk * b.rate;
+            prev = b.limit;
+          } else {
+            break;
+          }
+        }
+        return tax;
+      };
+
+      const federalTaxTotal = calcFederalTax(federalTaxableIncome, filingStatus);
+
+      // Attribute tax to 1099 proportion
+      const totalEarned = netProfit + w2Income;
+      const seShareOfIncome = totalEarned > 0 ? (netProfit / totalEarned) : 1;
+      const federalTaxFor1099 = roundTo(federalTaxTotal * seShareOfIncome, 2);
+
+      // 10. State Income Tax
+      const stateTax = roundTo(federalTaxableIncome * seShareOfIncome * (stateRate / 100), 2);
+
+      // 11. Grand Total Tax & Allocation Metrics
+      const totalAnnualTax = roundTo(totalSETax + federalTaxFor1099 + stateTax, 2);
+      const quarterlyPayment = roundTo(totalAnnualTax / 4, 2);
+      const recommendedSavePercent = gross > 0 ? roundTo((totalAnnualTax / gross) * 100, 1) : 0;
+      const takeHomeCash = roundTo(gross - expenses - totalAnnualTax, 2);
+
+      const table = makeTableSpec({
+        mode: 'breakdown',
+        title: 'Tax Breakdown & Quarterly Withholding Schedule',
+        columns: [
+          { key: 'component', label: 'Tax Component', emphasis: true },
+          { key: 'taxableBase', label: 'Taxable Base', format: 'currency' },
+          { key: 'rate', label: 'Statutory Rate' },
+          { key: 'authority', label: 'Tax Authority' },
+          { key: 'amount', label: 'Estimated Tax', format: 'currency', emphasis: true }
+        ],
+        rows: [
+          { component: 'Social Security (SECA)', taxableBase: ssTaxableIncome, rate: '12.4%', authority: 'IRS Schedule SE', amount: ssTax },
+          { component: 'Medicare (SECA)', taxableBase: seEarnings, rate: '2.9%', authority: 'IRS Schedule SE', amount: medicareTax },
+          { component: 'Estimated Federal Income Tax', taxableBase: federalTaxableIncome, rate: 'Progressive (10-37%)', authority: 'IRS Form 1040-ES', amount: federalTaxFor1099 },
+          { component: `State Income Tax (${stateRate}%)`, taxableBase: federalTaxableIncome, rate: `${stateRate}%`, authority: 'State Dept of Revenue', amount: stateTax }
+        ],
+        footer: {
+          component: 'Total Annual Tax Obligation',
+          taxableBase: gross,
+          rate: `${recommendedSavePercent}% effective`,
+          authority: 'Consolidated',
+          amount: totalAnnualTax
+        }
+      });
+
+      return {
+        stats: [
+          { label: 'Save From Every Check', value: `Save ${recommendedSavePercent}% of Gross`, highlight: true },
+          { label: 'Quarterly Estimated Payment', value: fmt(quarterlyPayment), highlight: true },
+          { label: 'Total Estimated Annual Tax', value: fmt(totalAnnualTax), highlight: true },
+          { label: 'Self-Employment Tax (SECA)', value: fmt(totalSETax) },
+          { label: 'Federal Income Tax', value: fmt(federalTaxFor1099) },
+          { label: 'State Income Tax', value: fmt(stateTax) },
+          { label: 'Net Take-Home Cash in Pocket', value: fmt(takeHomeCash) },
+          { label: 'Deductible Business Expenses', value: fmt(expenses) }
+        ],
+        chart: {
+          type: 'doughnut',
+          labels: ['Net Take-Home Cash', 'Self-Employment Tax (SECA)', 'Federal Income Tax', 'State Income Tax'],
+          datasets: [{
+            data: [takeHomeCash, totalSETax, federalTaxFor1099, stateTax],
+            colors: ['#10B981', '#EF4444', '#F59E0B', '#6366F1'],
+            backgroundColor: ['#10B981', '#EF4444', '#F59E0B', '#6366F1']
+          }]
+        },
+        table,
+        insight: {
+          tone: 'info',
+          icon: 'fa-file-invoice-dollar',
+          headline: `Allocate ${recommendedSavePercent}% (${fmt(quarterlyPayment)} quarterly) for tax liability.`,
+          detail: `Self-employed professionals remit both employer and employee portions of Social Security and Medicare (15.3% SECA). Reserving ${recommendedSavePercent}% of each invoice into an earmarked liquid account ensures full compliance across IRS quarterly deadlines.`
+        }
+      };
+    },
+    article: {
+      heading: 'Self-Employment Tax (SECA) & Estimated Tax Compliance',
+      intro: 'Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.',
+      sections: [
+        {
+          heading: 'Structure of the Self-Employment (SECA) Tax',
+          body: 'The Self-Employment Contributions Act imposes a 15.3% tax on net self-employment earnings, comprising 12.4% for Old-Age, Survivors, and Disability Insurance (Social Security) up to the statutory wage threshold and 2.9% for Hospital Insurance (Medicare). Net business earnings are adjusted by 92.35% pursuant to Schedule SE prior to tax computation.'
+        },
+        {
+          heading: 'Above-the-Line FICA Deduction',
+          body: 'Taxpayers receive an above-the-line adjustment to income equal to 50% of total calculated self-employment tax. This deduction reduces Adjusted Gross Income (AGI) prior to standard or itemized deduction calculations.'
+        },
+        {
+          heading: 'IRS Form 1040-ES Quarterly Deadlines',
+          body: 'Taxpayers anticipating tax liabilities exceeding $1,000 must remit estimated quarterly payments across four statutory deadlines: April 15, June 15, September 15, and January 15. Underpayment penalties can be prevented via statutory Safe Harbor provisions (paying 90% of current year tax or 100% of prior year tax, 110% for high earners).'
+        }
+      ]
+    },
+    howTo: [
+      'Enter projected annual gross 1099 revenue and client billings.',
+      'Specify qualified deductible operating expenses to determine Schedule C net profit.',
+      'Select applicable IRS tax filing status and individual state income tax rate.',
+      'Input concurrent W-2 compensation to calibrate Social Security statutory wage base limits.',
+      'Review total tax allocation percentages and exact quarterly installment obligations.'
+    ],
+    examples: [
+      {
+        title: 'Independent Consultant ($85,000 Revenue, $12,000 Deductions)',
+        input: '$85,000 gross revenue, $12,000 expenses, Single filer, 4.5% state rate',
+        result: 'Allocate ~27.8% of invoice revenue; quarterly installments of ~$5,065 to IRS and state'
+      }
+    ],
+    formula: 'T_{SECA} = (R_{gross} - E_{exp}) \times 0.9235 \times 0.153; \quad P_{quarterly} = \frac{T_{total}}{4}',
+    faqs: [
+      {
+        q: 'Why does self-employment tax apply at a 15.3% rate?',
+        a: 'W-2 employees share FICA liabilities equally with employers (7.65% each). Self-employed individuals represent both enterprise and employee, requiring remittance of both halves under SECA statutory guidelines.'
+      },
+      {
+        q: 'What criteria govern IRS Safe Harbor underpayment rules?',
+        a: 'To avoid underpayment penalties, taxpayers must remit at least 90% of current year liabilities or 100% of prior year tax (110% if prior year Adjusted Gross Income exceeded $150,000).'
+      },
+      {
+        q: 'How do ordinary business expenses decrease tax liabilities?',
+        a: 'Self-employment and income taxes apply solely to net profit (gross revenue minus allowable ordinary business expenses). Each legitimate deduction directly reduces the taxable base.'
+      }
+    ]
+  },
+
+  // ── 15-Year Mortgage Calculator Decision Engine ────────────────────────
+  '15-year-mortgage-calculator': {
+    name: '15-Year vs. 30-Year Mortgage Calculator',
+    category: 'Finance',
+    icon: 'fa-house-chimney',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Compare 15-year and 30-year fixed mortgages side-by-side. Calculate exact monthly payment differences, lifetime interest saved, and investment opportunity costs to find the smartest mortgage strategy for your goals.',
+    metaTitle: '15-Year vs 30-Year Mortgage Calculator | Payments & Interest Savings — GetCalcu',
+    metaDescription: 'Free 15-Year vs 30-Year Mortgage Calculator. Compare monthly payments, total interest savings, amortization, and S&P 500 investment opportunity costs side-by-side.',
+    keywords: [
+      '15 year mortgage calculator',
+      '15 vs 30 year mortgage calculator',
+      '15 year fixed mortgage payment',
+      '15 year mortgage interest savings',
+      '15 year vs 30 year mortgage comparison',
+      'should i get a 15 or 30 year mortgage'
+    ],
+    presets: [
+      { label: '$400k Home (20% Down, Current Rates)', values: { home_price: 400000, down_payment: 80000, rate_15: 5.85, rate_30: 6.75, property_tax: 4800, insurance: 1200, sp500_return: 8.0, compare_years: 15 } },
+      { label: '$250k Starter Home (10% Down)', values: { home_price: 250000, down_payment: 25000, rate_15: 5.75, rate_30: 6.60, property_tax: 3000, insurance: 900, sp500_return: 8.0, compare_years: 15 } },
+      { label: '$600k Luxury Home (20% Down)', values: { home_price: 600000, down_payment: 120000, rate_15: 5.95, rate_30: 6.85, property_tax: 7200, insurance: 1800, sp500_return: 8.0, compare_years: 15 } }
+    ],
+    fields: [
+      // ── Basic Inputs ──
+      { id: 'basic_section', type: 'section', label: 'Basic Inputs', icon: 'fa-sliders' },
+      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'number', default: 400000, min: 10000, step: 5000, hint: 'Total negotiated purchase price of the property.' },
+      { id: 'down_payment', label: 'Down Payment ($)', type: 'number', default: 80000, min: 0, step: 5000, hint: 'Upfront cash down payment (20% down avoids private mortgage insurance).' },
+      { id: 'rate_15', label: '15-Year Fixed Interest Rate (%)', type: 'number', default: 5.85, min: 0.1, max: 20, step: 0.05, hint: 'Current market rate for a 15-year fixed loan (historically 0.5% to 1.0% lower than 30-year).' },
+      { id: 'rate_30', label: '30-Year Fixed Interest Rate (%)', type: 'number', default: 6.75, min: 0.1, max: 20, step: 0.05, hint: 'Current market rate for a 30-year fixed loan.' },
+      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 4800, min: 0, step: 100, hint: 'Local annual property tax divided into 12 escrow payments.' },
+      { id: 'insurance', label: 'Annual Homeowners Insurance ($)', type: 'number', default: 1200, min: 0, step: 100, hint: 'Yearly hazard/homeowners insurance premium.' },
+
+      // ── Advanced Options: Opportunity Cost & Wealth Projections ──
+      { id: 'advanced_section', type: 'section', label: 'Opportunity Cost & Wealth Projections', icon: 'fa-gear', collapsible: true },
+      { id: 'sp500_return', label: 'Expected S&P 500 Investment Return (%)', type: 'number', default: 8.0, min: 0, max: 18, step: 0.5, hint: 'Historical annualized nominal stock market index return (long-term average is ~8-10%).' },
+      { id: 'compare_years', label: 'Comparison Time Horizon (Years)', type: 'select', default: 15, options: [{ value: 5, label: '5 Years' }, { value: 10, label: '10 Years' }, { value: 15, label: '15 Years (15-Yr Payoff)' }, { value: 30, label: '30 Years (Full Term)' }], hint: 'Analyze your net wealth at the 15-year mark when the 15-year loan is fully paid off.' },
+      { id: 'home_appreciation', label: 'Annual Home Appreciation (%)', type: 'number', default: 3.5, min: 0, max: 12, step: 0.1, hint: 'Expected annual increase in property value (national historical average is ~3-4%).' }
+    ],
+    calculate(v) {
+      const price = safeNum(v.home_price, 400000);
+      const down = safeNum(v.down_payment, 80000);
+      const loan = price - down;
+      if (loan <= 0) return errorResult('Down payment must be less than home purchase price.');
+
+      const r15 = safeNum(v.rate_15, 5.85) / 100 / 12;
+      const n15 = 15 * 12;
+      const pi15 = r15 === 0 ? loan / n15 : loan * (r15 * Math.pow(1 + r15, n15)) / (Math.pow(1 + r15, n15) - 1);
+      const totalInterest15 = roundTo(pi15 * n15 - loan, 2);
+
+      const r30 = safeNum(v.rate_30, 6.75) / 100 / 12;
+      const n30 = 30 * 12;
+      const pi30 = r30 === 0 ? loan / n30 : loan * (r30 * Math.pow(1 + r30, n30)) / (Math.pow(1 + r30, n30) - 1);
+      const totalInterest30 = roundTo(pi30 * n30 - loan, 2);
+
+      const monthlyTax = safeNum(v.property_tax, 4800) / 12;
+      const monthlyIns = safeNum(v.insurance, 1200) / 12;
+      const totalMonthly15 = roundTo(pi15 + monthlyTax + monthlyIns, 2);
+      const totalMonthly30 = roundTo(pi30 + monthlyTax + monthlyIns, 2);
+
+      const monthlyDiff = roundTo(pi15 - pi30, 2);
+      const interestSaved = roundTo(totalInterest30 - totalInterest15, 2);
+
+      // Wealth projection: Compare at specified horizon
+      const compareYears = safeNum(v.compare_years, 15);
+      const appRate = safeNum(v.home_appreciation, 3.5) / 100;
+      const futureHomeValue = roundTo(price * Math.pow(1 + appRate, compareYears), 2);
+
+      const rInvestMonthly = safeNum(v.sp500_return, 8.0) / 100 / 12;
+      
+      // Amortize 15-year and 30-year to compareYears
+      let bal15 = loan;
+      let bal30 = loan;
+      for (let m = 1; m <= compareYears * 12; m++) {
+        if (bal15 > 0) {
+          const int15 = bal15 * r15;
+          const prin15 = Math.min(bal15, pi15 - int15);
+          bal15 = Math.max(0, bal15 - prin15);
+        }
+        if (bal30 > 0) {
+          const int30 = bal30 * r30;
+          const prin30 = Math.min(bal30, pi30 - int30);
+          bal30 = Math.max(0, bal30 - prin30);
+        }
+      }
+
+      const equity15 = futureHomeValue - bal15;
+      const equity30 = futureHomeValue - bal30;
+
+      // If choosing 30-year, invest monthlyDiff into stock market at rInvestMonthly
+      let investmentPortfolio30 = 0;
+      for (let m = 1; m <= compareYears * 12; m++) {
+        investmentPortfolio30 = (investmentPortfolio30 + monthlyDiff) * (1 + rInvestMonthly);
+      }
+      investmentPortfolio30 = roundTo(investmentPortfolio30, 2);
+
+      const totalWealth15 = roundTo(equity15, 2);
+      const totalWealth30 = roundTo(equity30 + investmentPortfolio30, 2);
+      const wealthDifference = roundTo(totalWealth30 - totalWealth15, 2);
+
+      return {
+        stats: [
+          { label: 'Total Interest Saved (15-Yr)', value: fmt(interestSaved), highlight: true },
+          { label: '15-Year Monthly Payment', value: fmt(totalMonthly15) },
+          { label: '30-Year Monthly Payment', value: fmt(totalMonthly30) },
+          { label: 'Monthly Payment Difference', value: '+ ' + fmt(monthlyDiff) + ' / mo', warn: true },
+          { label: 'Invested Difference at ' + compareYears + ' Yrs', value: fmt(investmentPortfolio30) },
+          { label: 'Net Wealth with 15-Yr Loan', value: fmt(totalWealth15) },
+          { label: 'Net Wealth with 30-Yr + Investing', value: fmt(totalWealth30), highlight: wealthDifference > 0 },
+          { label: 'Principal Loan Balance', value: fmt(loan) }
+        ],
+        chart: {
+          type: 'bar',
+          labels: ['15-Year Payoff Path', '30-Year + Invest Difference'],
+          datasets: [
+            { label: 'Home Equity', data: [roundTo(equity15, 2), roundTo(equity30, 2)], color: '#6366F1', backgroundColor: '#6366F1', stack: 'wealth' },
+            { label: 'Investment Portfolio', data: [0, investmentPortfolio30], color: '#10B981', backgroundColor: '#10B981', stack: 'wealth' }
+          ]
+        },
+        insight: {
+          tone: wealthDifference > 0 ? 'positive' : 'neutral',
+          icon: 'fa-circle-check',
+          headline: wealthDifference > 0 ? 'Investing the Monthly Difference Yields Greater Net Worth' : 'Guaranteed Debt Payoff Wins',
+          detail: 'The 15-year mortgage saves ' + fmt(interestSaved) + ' in guaranteed interest. However, choosing the 30-year mortgage and consistently investing the ' + fmt(monthlyDiff) + '/month difference at ' + v.sp500_return + '% annual return can build an investment portfolio of ' + fmt(investmentPortfolio30) + ' in ' + compareYears + ' years — producing ' + fmt(Math.abs(wealthDifference)) + ' ' + (wealthDifference > 0 ? 'more' : 'less') + ' overall wealth.'
+        }
+      };
+    },
+    article: {
+      heading: '15-Year vs. 30-Year Mortgage: The Comprehensive Decision Guide',
+      intro: 'Deciding between a 15-year and 30-year mortgage is not just about monthly payments — it is a foundational strategic choice between guaranteed debt elimination and stock market wealth building.',
+      sections: [
+        {
+          heading: 'Guaranteed Return vs. Market Opportunity Cost',
+          body: 'Paying off a 15-year mortgage at 5.85% is equivalent to earning a guaranteed, risk-free 5.85% return on your money. Choosing a 30-year loan and investing the monthly cashflow difference in diversified index funds (averaging 7% to 10% historically) has higher expected long-term wealth, but comes with market volatility.'
+        },
+        {
+          heading: 'Cash Flow Flexibility: The Sleep-at-Night Factor',
+          body: 'A 30-year mortgage provides a lower mandatory monthly payment. If you face unexpected job loss or medical expenses, your required commitment is lower. If you have extra cash in good months, you can always prepay principal at your own pace.'
+        }
+      ]
+    },
+    howTo: [
+      'Enter the property purchase price and cash down payment (20% down avoids PMI).',
+      'Input the current 15-year and 30-year fixed interest rates quoted by your lender.',
+      'Set your property tax, insurance, and expected index fund return in Advanced Options.',
+      'Compare total interest saved, monthly payment differences, and the multi-year investment opportunity cost.'
+    ],
+    faqs: [
+      { q: 'Is a 15-year mortgage always better than a 30-year mortgage?', a: 'No. While a 15-year mortgage saves massive interest, the higher mandatory payment restricts cash flow. If investing the monthly difference in tax-advantaged retirement accounts (401k/IRA), a 30-year mortgage can actually yield a higher overall net worth.' },
+      { q: 'Can I pay off a 30-year mortgage in 15 years?', a: 'Yes! Standard mortgages in the US have no prepayment penalties. You can take a 30-year loan for safety and make extra principal payments each month to retire the loan in 15 years.' },
+      { q: 'How much lower is the interest rate on a 15-year mortgage?', a: 'Typically, 15-year fixed mortgage rates are 0.50% to 1.00% lower than 30-year fixed rates because lenders take on less duration risk.' },
+      { q: 'What happens to my payment when the 15-year loan is paid off?', a: 'Your principal and interest payment drops to $0. You only pay property taxes, hazard insurance, and maintenance costs going forward.' }
+    ]
+  },
+
+  // ── FHA Loan Decision Engine ───────────────────────────────────────────
+  'fha-loan-calculator': {
+    name: 'FHA Loan Calculator with Upfront & Monthly MIP',
+    category: 'Finance',
+    icon: 'fa-shield-halved',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate your complete monthly FHA mortgage payment including 3.5% down payment, 1.75% Upfront MIP, annual monthly mortgage insurance, property taxes, and homeowners insurance.',
+    metaTitle: 'FHA Loan Calculator with MIP & 3.5% Down Payment — GetCalcu',
+    metaDescription: 'Free FHA Loan Calculator. Calculate exact monthly payments with 3.5% down, 1.75% upfront MIP, monthly mortgage insurance, taxes, and interest with side-by-side conventional comparison.',
+    keywords: [
+      'fha loan calculator with mip',
+      'fha mortgage payment calculator 3.5 down',
+      'fha monthly mip calculation',
+      'fha loan down payment calculator',
+      'fha loan upfront mortgage insurance',
+      'fha vs conventional loan calculator'
+    ],
+    presets: [
+      { label: '$300k Home (3.5% Down, Standard FHA)', values: { home_price: 300000, down_payment: 10500, interest_rate: 6.5, loan_term: 30, annual_mip_rate: 0.55, property_tax: 3600, insurance: 1100, conv_rate: 6.85, conv_pmi_rate: 0.85, home_appreciation: 3.5 } },
+      { label: '$220k Starter Home (3.5% Down)', values: { home_price: 220000, down_payment: 7700, interest_rate: 6.25, loan_term: 30, annual_mip_rate: 0.55, property_tax: 2600, insurance: 900, conv_rate: 6.60, conv_pmi_rate: 0.85, home_appreciation: 3.5 } },
+      { label: '$450k Move-Up (5% Down)', values: { home_price: 450000, down_payment: 22500, interest_rate: 6.75, loan_term: 30, annual_mip_rate: 0.50, property_tax: 5400, insurance: 1400, conv_rate: 7.00, conv_pmi_rate: 0.75, home_appreciation: 3.5 } }
+    ],
+    fields: [
+      // ── Basic Inputs ──
+      { id: 'basic_section', type: 'section', label: 'FHA Purchase Details', icon: 'fa-sliders' },
+      { id: 'home_price', label: 'Home Purchase Price ($)', type: 'number', default: 300000, min: 10000, step: 5000, hint: 'Total negotiated property purchase price.' },
+      { id: 'down_payment', label: 'Down Payment ($)', type: 'number', default: 10500, min: 0, step: 500, hint: 'Minimum FHA down payment is 3.5% ($10,500 on a $300k home) with a 580+ credit score.' },
+      { id: 'interest_rate', label: 'Annual FHA Interest Rate (%)', type: 'number', default: 6.5, min: 0.1, max: 20, step: 0.05, hint: 'Your quoted FHA fixed interest rate (FHA rates are often 0.25% lower than conventional).' },
+      { id: 'loan_term', label: 'Loan Term (Years)', type: 'select', default: 30, options: [{ value: 30, label: '30 Years' }, { value: 15, label: '15 Years' }], hint: 'Most FHA borrowers select a 30-year fixed loan.' },
+      { id: 'property_tax', label: 'Annual Property Tax ($)', type: 'number', default: 3600, min: 0, step: 100, hint: 'Local annual property tax divided into 12 monthly payments.' },
+      { id: 'insurance', label: 'Annual Homeowners Insurance ($)', type: 'number', default: 1100, min: 0, step: 100, hint: 'Yearly hazard insurance premium.' },
+
+      // ── Advanced Options & Conventional Comparison ──
+      { id: 'advanced_section', type: 'section', label: 'MIP Settings & Conventional 3% Down Comparison', icon: 'fa-gear', collapsible: true },
+      { id: 'annual_mip_rate', label: 'FHA Annual MIP Rate (%)', type: 'number', default: 0.55, min: 0.15, max: 1.5, step: 0.05, hint: 'Standard HUD annual MIP is 0.55% for 30-year loans with 3.5% down.' },
+      { id: 'conv_rate', label: 'Conventional Loan Interest Rate (%)', type: 'number', default: 6.85, min: 0.1, max: 20, step: 0.05, hint: 'Market interest rate for a conventional loan with 3% down.' },
+      { id: 'conv_pmi_rate', label: 'Conventional Annual PMI Rate (%)', type: 'number', default: 0.85, min: 0.2, max: 2.0, step: 0.05, hint: 'Conventional Private Mortgage Insurance rate based on credit score (typically 0.5% to 1.2%).' },
+      { id: 'home_appreciation', label: 'Expected Home Appreciation (%)', type: 'number', default: 3.5, min: 0, max: 12, step: 0.1, hint: 'Annual home value growth, used to calculate when conventional PMI drops at 20% equity.' }
+    ],
+    calculate(v) {
+      const price = safeNum(v.home_price, 300000);
+      const down = safeNum(v.down_payment, 10500);
+      const baseLoan = price - down;
+      if (baseLoan <= 0) return errorResult('Down payment must be less than home purchase price.');
+
+      // FHA Upfront MIP is 1.75% of base loan, financed into total loan
+      const upfrontMIP = roundTo(baseLoan * 0.0175, 2);
+      const totalFinancedLoan = baseLoan + upfrontMIP;
+
+      const rate = safeNum(v.interest_rate, 6.5);
+      const r = rate / 100 / 12;
+      const n = safeNum(v.loan_term, 30) * 12;
+
+      const piMonthly = r === 0 ? totalFinancedLoan / n : totalFinancedLoan * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      
+      const mipAnnualRate = safeNum(v.annual_mip_rate, 0.55) / 100;
+      const monthlyMIP = roundTo((baseLoan * mipAnnualRate) / 12, 2);
+      const monthlyTax = safeNum(v.property_tax, 3600) / 12;
+      const monthlyIns = safeNum(v.insurance, 1100) / 12;
+
+      const totalFhaMonthly = roundTo(piMonthly + monthlyMIP + monthlyTax + monthlyIns, 2);
+
+      // Conventional Comparison (3% down, no upfront fee, cancelable PMI at 80% LTV)
+      const convRate = safeNum(v.conv_rate, 6.85) / 100 / 12;
+      const convPI = convRate === 0 ? baseLoan / n : baseLoan * (convRate * Math.pow(1 + convRate, n)) / (Math.pow(1 + convRate, n) - 1);
+      const convMonthlyPMI = roundTo((baseLoan * (safeNum(v.conv_pmi_rate, 0.85) / 100)) / 12, 2);
+      const totalConvMonthlyInitial = roundTo(convPI + convMonthlyPMI + monthlyTax + monthlyIns, 2);
+      const totalConvMonthlyAfterPMI = roundTo(convPI + monthlyTax + monthlyIns, 2);
+
+      // Estimate month conventional PMI cancels based on 3.5% appreciation + principal reduction
+      const appreciationMonthly = Math.pow(1 + (safeNum(v.home_appreciation, 3.5) / 100), 1/12) - 1;
+      let convBal = baseLoan;
+      let currHomeVal = price;
+      let pmiDropMonth = n;
+      for (let m = 1; m <= n; m++) {
+        const intP = convBal * convRate;
+        const prinP = Math.min(convBal, convPI - intP);
+        convBal -= prinP;
+        currHomeVal *= (1 + appreciationMonthly);
+        if (convBal / currHomeVal <= 0.80 && pmiDropMonth === n) {
+          pmiDropMonth = m;
+          break;
+        }
+      }
+      const pmiDropYears = roundTo(pmiDropMonth / 12, 1);
+
+      return {
+        stats: [
+          { label: 'Total Monthly FHA Payment', value: fmt(totalFhaMonthly), highlight: true },
+          { label: 'Principal & Interest', value: fmt(piMonthly) },
+          { label: 'Monthly Mortgage Insurance (MIP)', value: fmt(monthlyMIP), warn: true },
+          { label: 'Upfront MIP Financed (1.75%)', value: fmt(upfrontMIP) },
+          { label: 'Total Financed Loan Amount', value: fmt(totalFinancedLoan) },
+          { label: 'Initial Conventional Payment', value: fmt(totalConvMonthlyInitial) },
+          { label: 'Conventional PMI Drop Horizon', value: '~' + pmiDropYears + ' Years (' + pmiDropMonth + ' mo)' },
+          { label: 'Conventional Payment After PMI', value: fmt(totalConvMonthlyAfterPMI), highlight: true }
+        ],
+        chart: {
+          type: 'bar',
+          labels: ['FHA Monthly (PITI+MIP)', 'Conventional 3% (Initial)', 'Conventional (After PMI Drops)'],
+          datasets: [{
+            label: 'Monthly Housing Payment ($)',
+            data: [totalFhaMonthly, totalConvMonthlyInitial, totalConvMonthlyAfterPMI],
+            colors: ['#6366F1', '#EC4899', '#10B981'],
+            backgroundColor: ['#6366F1', '#EC4899', '#10B981']
+          }]
+        },
+        insight: {
+          tone: totalFhaMonthly < totalConvMonthlyInitial ? 'positive' : 'neutral',
+          icon: 'fa-circle-check',
+          headline: totalFhaMonthly < totalConvMonthlyInitial ? 'FHA Provides Lower Initial Cash Flow' : 'Conventional Loan Saves Long-Term',
+          detail: 'FHA starts at ' + fmt(totalFhaMonthly) + '/month, compared to ' + fmt(totalConvMonthlyInitial) + ' for a conventional loan. However, conventional PMI cancels after ~' + pmiDropYears + ' years, dropping your payment to ' + fmt(totalConvMonthlyAfterPMI) + ', whereas FHA monthly MIP stays for the entire loan life unless you refinance.'
+        }
+      };
+    },
+    article: {
+      heading: 'FHA vs. Conventional Mortgage: Complete 2026 Comparison',
+      intro: 'FHA loans backed by the Federal Housing Administration allow borrowers with credit scores as low as 580 to purchase a home with only 3.5% down, but come with unique insurance rules.',
+      sections: [
+        {
+          heading: 'The True Cost of FHA Mortgage Insurance (MIP)',
+          body: 'FHA loans carry two mandatory fees: a 1.75% upfront fee financed directly into your loan balance, plus an annual 0.55% monthly premium. On a $300,000 purchase, upfront MIP adds $5,066 to your balance and $133/month to your payment.'
+        },
+        {
+          heading: 'When to Choose Conventional Over FHA',
+          body: 'If your credit score is 700 or higher, a Conventional 97 (3% down) loan often wins because conventional PMI cancels automatically once your equity hits 20%, saving thousands in your 30s and 40s.'
+        }
+      ]
+    },
+    howTo: [
+      'Enter the property purchase price and cash down payment (minimum 3.5% for FHA).',
+      'Input the quoted FHA fixed interest rate and loan term.',
+      'Review your property tax and hazard insurance estimates.',
+      'Check the side-by-side Conventional comparison in Advanced Options to see when PMI cancels.'
+    ],
+    faqs: [
+      { q: 'How is the 1.75% Upfront MIP paid?', a: 'The 1.75% upfront mortgage insurance premium (UFMIP) is automatically financed into your total loan balance at closing, so you do not need to bring extra cash to the table.' },
+      { q: 'Does FHA mortgage insurance ever go away?', a: 'For FHA loans with less than 10% down, monthly MIP remains for the entire 30-year life of the loan. Most homeowners refinance into a conventional loan once their equity exceeds 20% to eliminate MIP.' },
+      { q: 'What is the minimum credit score for an FHA loan?', a: 'A credit score of 580 qualifies for the minimum 3.5% down payment. Borrowers with scores between 500 and 579 are required to put down at least 10%.' },
+      { q: 'Can I use gift funds for the 3.5% FHA down payment?', a: 'Yes! HUD guidelines permit 100% of the FHA down payment and closing costs to come from family gift funds with a standard gift letter.' }
+    ]
+  },
+
+  // ── Auto Refinance Decision Engine ─────────────────────────────────────
+  'auto-refinance-calculator': {
+    name: 'Auto Loan Refinance & Break-Even Calculator',
+    category: 'Finance',
+    icon: 'fa-rotate-left',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate how much you can save every month and over the life of your car loan by refinancing to a lower interest rate, with instant break-even horizon analysis.',
+    metaTitle: 'Auto Loan Refinance Calculator | Monthly & Lifetime Savings — GetCalcu',
+    metaDescription: 'Free Auto Refinance Calculator. Calculate monthly payment savings, total interest reduction, loan-to-value equity, and exact break-even timeline in months.',
+    keywords: [
+      'auto loan refinance calculator',
+      'car refinance savings calculator',
+      'auto refinance break even calculator',
+      'should i refinance my car loan',
+      'car loan interest reduction calculator',
+      'refinance auto loan monthly payment'
+    ],
+    presets: [
+      { label: '$25k Balance (9.5% to 5.5%, 48 Mos)', values: { current_balance: 25000, current_rate: 9.5, months_remaining: 48, new_rate: 5.5, new_term_months: 48, refi_fees: 150, vehicle_val: 28000 } },
+      { label: '$15k Balance (12% to 6%, 36 Mos)', values: { current_balance: 15000, current_rate: 12.0, months_remaining: 36, new_rate: 6.0, new_term_months: 36, refi_fees: 100, vehicle_val: 17000 } },
+      { label: '$35k SUV (8.0% to 5.0%, 60 Mos)', values: { current_balance: 35000, current_rate: 8.0, months_remaining: 60, new_rate: 5.0, new_term_months: 60, refi_fees: 200, vehicle_val: 36000 } }
+    ],
+    fields: [
+      // ── Basic Inputs ──
+      { id: 'basic_section', type: 'section', label: 'Current & New Loan Details', icon: 'fa-sliders' },
+      { id: 'current_balance', label: 'Current Auto Loan Payoff Balance ($)', type: 'number', default: 25000, min: 1000, step: 500, hint: 'The exact 10-day payoff amount from your current lender.' },
+      { id: 'current_rate', label: 'Current Interest Rate (%)', type: 'number', default: 9.5, min: 0.1, max: 35, step: 0.1, hint: 'Your existing auto loan APR.' },
+      { id: 'months_remaining', label: 'Months Remaining on Current Loan', type: 'number', default: 48, min: 1, max: 96, step: 1, hint: 'Number of monthly payments left on your current auto note.' },
+      { id: 'new_rate', label: 'New Refinance Interest Rate (%)', type: 'number', default: 5.5, min: 0.1, max: 25, step: 0.1, hint: 'The lower APR quoted by a bank, credit union, or online lender.' },
+      { id: 'new_term_months', label: 'New Loan Term (Months)', type: 'select', default: 48, options: [{ value: 24, label: '24 Months' }, { value: 36, label: '36 Months' }, { value: 48, label: '48 Months' }, { value: 60, label: '60 Months' }, { value: 72, label: '72 Months' }], hint: 'Keep the term matching or shorter than remaining months to maximize interest savings.' },
+
+      // ── Advanced Options: Fees & Loan-to-Value ──
+      { id: 'advanced_section', type: 'section', label: 'Refinancing Fees & Vehicle Equity', icon: 'fa-gear', collapsible: true },
+      { id: 'refi_fees', label: 'Refinancing Transfer Fees ($)', type: 'number', default: 150, min: 0, max: 1000, step: 25, hint: 'State title transfer and lien recording fees (typically $50 to $200).' },
+      { id: 'vehicle_val', label: 'Estimated Vehicle Market Value ($)', type: 'number', default: 28000, min: 1000, step: 500, hint: 'Current Kelley Blue Book or Edmunds private party / trade-in market value.' }
+    ],
+    calculate(v) {
+      const balance = safeNum(v.current_balance, 25000);
+      if (balance <= 0) return errorResult('Loan balance must be greater than zero.');
+
+      const rOld = safeNum(v.current_rate, 9.5) / 100 / 12;
+      const nOld = safeNum(v.months_remaining, 48);
+      const oldPayment = rOld === 0 ? balance / nOld : balance * (rOld * Math.pow(1 + rOld, nOld)) / (Math.pow(1 + rOld, nOld) - 1);
+      const totalOldInterest = roundTo(oldPayment * nOld - balance, 2);
+
+      const rNew = safeNum(v.new_rate, 5.5) / 100 / 12;
+      const nNew = safeNum(v.new_term_months, 48);
+      const refiFees = safeNum(v.refi_fees, 150);
+      const newPrincipal = balance + refiFees;
+
+      const newPayment = rNew === 0 ? newPrincipal / nNew : newPrincipal * (rNew * Math.pow(1 + rNew, nNew)) / (Math.pow(1 + rNew, nNew) - 1);
+      const totalNewInterest = roundTo(newPayment * nNew - newPrincipal, 2);
+
+      const monthlySavings = roundTo(oldPayment - newPayment, 2);
+      const lifetimeInterestSavings = roundTo(totalOldInterest - totalNewInterest - refiFees, 2);
+
+      // Break-even months: fee / monthlySavings
+      const breakEvenMonths = monthlySavings > 0 ? Math.max(1, Math.ceil(refiFees / monthlySavings)) : null;
+
+      // LTV ratio
+      const vehVal = safeNum(v.vehicle_val, balance * 1.1);
+      const ltvPct = roundTo((balance / vehVal) * 100, 1);
+
+      return {
+        stats: [
+          { label: 'Monthly Payment Savings', value: (monthlySavings >= 0 ? '+ ' : '- ') + fmt(Math.abs(monthlySavings)) + ' / mo', highlight: monthlySavings > 0 },
+          { label: 'Net Lifetime Savings', value: fmt(lifetimeInterestSavings), highlight: lifetimeInterestSavings > 0 },
+          { label: 'Break-Even Horizon', value: breakEvenMonths ? breakEvenMonths + ' Months' : 'N/A' },
+          { label: 'New Monthly Payment', value: fmt(newPayment) },
+          { label: 'Current Monthly Payment', value: fmt(oldPayment) },
+          { label: 'Loan-to-Value (LTV)', value: ltvPct + '% ' + (ltvPct <= 100 ? '(Positive Equity)' : '(Underwater)') },
+          { label: 'Total Current Remaining Cost', value: fmt(balance + totalOldInterest) },
+          { label: 'Total Refinanced Cost', value: fmt(newPrincipal + totalNewInterest) }
+        ],
+        chart: {
+          type: 'bar',
+          labels: ['Current Auto Loan', 'Refinanced Auto Loan'],
+          datasets: [
+            { label: 'Loan Principal', data: [balance, newPrincipal], color: '#6366F1', backgroundColor: '#6366F1', stack: 'cost' },
+            { label: 'Total Interest Paid', data: [totalOldInterest, totalNewInterest], color: '#F59E0B', backgroundColor: '#F59E0B', stack: 'cost' }
+          ]
+        },
+        insight: {
+          tone: lifetimeInterestSavings > 0 ? 'positive' : 'warning',
+          icon: lifetimeInterestSavings > 0 ? 'fa-circle-check' : 'fa-triangle-exclamation',
+          headline: lifetimeInterestSavings > 0 ? 'Refinancing Saves Substantial Money' : 'Caution: Term Extension Increases Cost',
+          detail: lifetimeInterestSavings > 0
+            ? 'Refinancing reduces your payment by ' + fmt(monthlySavings) + '/mo, covers your ' + fmt(refiFees) + ' fees in ' + (breakEvenMonths || 1) + ' months, and saves a net ' + fmt(lifetimeInterestSavings) + ' overall.'
+            : 'Extending your loan term lowers monthly payments, but increases total finance charges by ' + fmt(Math.abs(lifetimeInterestSavings)) + '.'
+        }
+      };
+    },
+    article: {
+      heading: 'How to Refinance a Car Loan: Timing & Break-Even Rules',
+      intro: 'Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.',
+      sections: [
+        {
+          heading: 'When Does Car Loan Refinancing Make Sense?',
+          body: 'Refinancing makes the most sense if your credit score has increased by 30+ points since buying the car, or if dealer financing initially locked you into a high APR (8% to 15%).'
+        },
+        {
+          heading: 'Understanding Loan-to-Value (LTV) Requirements',
+          body: 'Lenders check your vehicle value against your payoff amount. If your car is worth $25,000 and you owe $20,000, your LTV is 80%, qualifying you for prime rates.'
+        }
+      ]
+    },
+    howTo: [
+      'Check your current 10-day payoff balance and APR from your current lender.',
+      'Enter the new interest rate and repayment term from your prospective refinancing lender.',
+      'Include transfer and title fees ($50-$200) to compute the exact break-even timeline.',
+      'Verify that your vehicle Loan-to-Value (LTV) is below 100% for the lowest rates.'
+    ],
+    faqs: [
+      { q: 'How much does it cost to refinance a car loan?', a: 'Auto refinancing fees are very low — typically just $50 to $200 for state title re-registration and lien transfer.' },
+      { q: 'Can I refinance a car with negative equity?', a: 'Some lenders allow refinancing up to 125% LTV, but you will get the best interest rates if your vehicle value exceeds the loan balance.' },
+      { q: 'Will refinancing hurt my credit score?', a: 'You will see a small, temporary dip of 2 to 5 points from the hard inquiry, but the lower debt service quickly improves your debt-to-income ratio.' },
+      { q: 'Can I refinance with my existing bank?', a: 'Most banks do not refinance their own auto loans. You will generally apply through a new credit union, regional bank, or online auto refinancing marketplace.' }
+    ]
+  },
+
+  // ── Freelance & Consultant Pricing Decision Engine ────────────────────
+  'freelance-hourly-rate-calculator': {
+    name: 'Freelance & Consultant Hourly Rate Calculator',
+    category: 'Business',
+    icon: 'fa-briefcase',
+    iconClass: 'icon-business',
+    tagClass: 'tag-business',
+    description: 'Calculate the exact hourly, daily, and project billing rates you must charge clients to achieve your target take-home salary after accounting for 1099 taxes, health insurance, retirement, and business expenses.',
+    metaTitle: 'Freelance Hourly Rate Calculator | Convert Salary to 1099 Rate — GetCalcu',
+    metaDescription: 'Free Freelance Hourly Rate Calculator. Convert your desired annual salary into accurate client billing rates accounting for 1099 taxes, health insurance, retirement, and time off.',
+    keywords: [
+      'freelance hourly rate calculator',
+      'how to calculate freelance hourly rate from salary',
+      'consulting rate calculator taxes expenses',
+      'billable hours rate calculator',
+      '1099 freelance pricing formula',
+      'contractor daily rate calculator'
+    ],
+    presets: [
+      { label: '$100k Take-Home (25 Billable Hrs/Wk, Solo)', values: { target_take_home: 100000, billable_hours_per_week: 25, weeks_off: 4, annual_expenses: 12000, fed_tax_rate: 22, state_tax_rate: 5, health_insurance_monthly: 450, retirement_annual: 10000, uncollectible_buffer: 5 } },
+      { label: '$75k Starter Freelancer (20 Billable Hrs/Wk)', values: { target_take_home: 75000, billable_hours_per_week: 20, weeks_off: 3, annual_expenses: 6000, fed_tax_rate: 18, state_tax_rate: 4, health_insurance_monthly: 350, retirement_annual: 6000, uncollectible_buffer: 5 } },
+      { label: '$160k Senior Consultant (28 Billable Hrs/Wk)', values: { target_take_home: 160000, billable_hours_per_week: 28, weeks_off: 5, annual_expenses: 24000, fed_tax_rate: 26, state_tax_rate: 6, health_insurance_monthly: 600, retirement_annual: 20000, uncollectible_buffer: 8 } }
+    ],
+    fields: [
+      // ── Basic Inputs ──
+      { id: 'basic_section', type: 'section', label: 'Salary & Capacity Targets', icon: 'fa-sliders' },
+      { id: 'target_take_home', label: 'Desired Net Take-Home Salary ($)', type: 'number', default: 100000, min: 10000, step: 5000, hint: 'The actual annual money you want in your personal checking account for living expenses.' },
+      { id: 'billable_hours_per_week', label: 'Billable Client Hours Per Week', type: 'number', default: 25, min: 5, max: 50, step: 1, hint: 'Realistic client work hours (typically 20-28 hrs/wk, as admin, sales, and proposals take the rest).' },
+      { id: 'weeks_off', label: 'Vacation, Sick & Holiday Weeks Off', type: 'number', default: 4, min: 0, max: 20, step: 1, hint: 'Freelancers do not get paid time off. Budget 4 to 6 weeks for vacations and sick days.' },
+      { id: 'annual_expenses', label: 'Annual Business Overhead ($)', type: 'number', default: 12000, min: 0, step: 1000, hint: 'Software licenses, computer hardware, accounting, marketing, co-working.' },
+
+      // ── Advanced Options: Taxes, Health & Retirement ──
+      { id: 'advanced_section', type: 'section', label: 'Taxes, Benefits & Safety Buffers', icon: 'fa-gear', collapsible: true },
+      { id: 'fed_tax_rate', label: 'Estimated Federal Income Tax Rate (%)', type: 'number', default: 22, min: 0, max: 45, step: 1, hint: 'Effective federal income tax bracket.' },
+      { id: 'state_tax_rate', label: 'State / Local Income Tax Rate (%)', type: 'number', default: 5, min: 0, max: 15, step: 0.5, hint: 'State income tax (0% in TX, FL, WA, etc.; 5-10% in CA, NY, etc.).' },
+      { id: 'health_insurance_monthly', label: 'Monthly Health Insurance ($)', type: 'number', default: 450, min: 0, step: 50, hint: 'Self-employed health, dental, and vision insurance premiums.' },
+      { id: 'retirement_annual', label: 'Target Annual Retirement Savings ($)', type: 'number', default: 10000, min: 0, step: 1000, hint: 'Annual contributions to a Solo 401(k), SEP IRA, or Roth IRA.' },
+      { id: 'uncollectible_buffer', label: 'Slow Season & Unpaid Invoice Buffer (%)', type: 'number', default: 5, min: 0, max: 20, step: 1, hint: 'Safety margin for delayed client payments or pipeline gaps.' }
+    ],
+    calculate(v) {
+      const netSalary = safeNum(v.target_take_home, 100000);
+      const overhead = safeNum(v.annual_expenses, 12000);
+      const healthAnnual = safeNum(v.health_insurance_monthly, 450) * 12;
+      const retirementAnnual = safeNum(v.retirement_annual, 10000);
+      const bufferPct = safeNum(v.uncollectible_buffer, 5) / 100;
+
+      // Self-Employment Tax SECA (15.3% on 92.35% of profit = ~14.13%)
+      const secaRate = 0.1413;
+      const fedRate = safeNum(v.fed_tax_rate, 22) / 100;
+      const stateRate = safeNum(v.state_tax_rate, 5) / 100;
+      const totalEffectiveTaxRate = Math.min(0.55, secaRate + fedRate + stateRate);
+
+      // Pre-tax personal needs = (Net Salary + Retirement) / (1 - Tax Rate)
+      const preTaxPersonal = (netSalary + retirementAnnual) / (1 - totalEffectiveTaxRate);
+      const grossRevenueNeeded = roundTo((preTaxPersonal + overhead + healthAnnual) / (1 - bufferPct), 2);
+      const totalTaxes = roundTo(preTaxPersonal * totalEffectiveTaxRate, 2);
+
+      const weeksOff = safeNum(v.weeks_off, 4);
+      const workingWeeks = Math.max(1, 52 - weeksOff);
+      const billableHoursPerWeek = safeNum(v.billable_hours_per_week, 25);
+      const totalBillableHours = workingWeeks * billableHoursPerWeek;
+
+      if (totalBillableHours <= 0) return errorResult('Total annual billable hours must be greater than zero.');
+
+      // Rate Ladder
+      const targetHourlyRate = roundTo(grossRevenueNeeded / totalBillableHours, 2);
+      const floorHourlyRate = roundTo((netSalary / (1 - totalEffectiveTaxRate) + overhead) / totalBillableHours, 2);
+      const premiumHourlyRate = roundTo(targetHourlyRate * 1.25, 2);
+
+      const standardDayRate = roundTo(targetHourlyRate * 8, 2);
+      const standardMonthlyRetainer = roundTo(grossRevenueNeeded / 12, 2);
+
+      return {
+        stats: [
+          { label: 'Target Hourly Rate', value: '$' + targetHourlyRate + ' / hr', highlight: true },
+          { label: 'Standard Day Rate (8 hrs)', value: fmt(standardDayRate) },
+          { label: 'Monthly Retainer Target', value: fmt(standardMonthlyRetainer) },
+          { label: 'Minimum Survival Floor Rate', value: '$' + floorHourlyRate + ' / hr', warn: true },
+          { label: 'Premium Value-Based Rate', value: '$' + premiumHourlyRate + ' / hr', highlight: true },
+          { label: 'Gross Annual Revenue Needed', value: fmt(grossRevenueNeeded) },
+          { label: 'Total Tax Reserve Needed', value: fmt(totalTaxes), warn: true },
+          { label: 'Annual Billable Hours', value: totalBillableHours + ' hrs (' + workingWeeks + ' wks)' }
+        ],
+        chart: {
+          labels: ['Net Take-Home', 'Taxes (SECA + Inc)', 'Benefits & Retirement', 'Business Overhead'],
+          datasets: [{
+            data: [netSalary, totalTaxes, (healthAnnual + retirementAnnual), overhead],
+            backgroundColor: ['#10B981', '#EF4444', '#F59E0B', '#6366F1']
+          }]
+        },
+        insight: {
+          tone: 'positive',
+          icon: 'fa-circle-check',
+          headline: 'Your 3-Tier Pricing Blueprint',
+          detail: 'To take home ' + fmt(netSalary) + ' clean after taxes (' + fmt(totalTaxes) + '), retirement (' + fmt(retirementAnnual) + '), and health insurance, quote $' + targetHourlyRate + '/hr (or ' + fmt(standardDayRate) + '/day). Never accept project work below your survival floor of $' + floorHourlyRate + '/hr.'
+        }
+      };
+    },
+    article: {
+      heading: 'The 1099 Freelance Pricing Guide: How to Bill What You Are Worth',
+      intro: 'Freelancing without accounting for self-employment tax, unpaid vacations, and non-billable time is the #1 reason solo contractors burn out.',
+      sections: [
+        {
+          heading: 'Why Salary ÷ 2,000 Guarantees Undercharging',
+          body: 'A corporate employee getting $100k works 2,000 hours with employer-paid taxes, healthcare, and 401(k) matches. A freelancer only has 1,000 to 1,300 true billable hours after accounting for client proposals and marketing.'
+        },
+        {
+          heading: 'Setting Up Your Quarterly Tax Escrow',
+          body: 'Always transfer 28% to 35% of every incoming client payment into a separate high-yield business savings account so you can easily pay IRS Form 1040-ES quarterly vouchers on time.'
+        }
+      ]
+    },
+    howTo: [
+      'Input the annual take-home salary you want to pocket into your personal checking account.',
+      'Estimate realistic billable hours per week (typically 20 to 28 hours) and planned weeks off.',
+      'Account for business software overhead, health insurance, and Solo 401(k) retirement contributions in Advanced Options.',
+      'Quote your Target Hourly Rate or Premium Rate on all incoming client proposals.'
+    ],
+    examples: [
+      { title: '$100k Take-Home Solo Contractor', input: 'Net Salary: $100,000, 25 billable hrs/wk, 4 wks off, Overhead: $12k/yr', result: 'Target Rate: $138.89/hr | Day Rate: $1,111/day | Gross Revenue: $166,667' },
+      { title: '$75k Starter Freelancer', input: 'Net Salary: $75,000, 20 billable hrs/wk, 3 wks off, Overhead: $6k/yr', result: 'Target Rate: $122.45/hr | Day Rate: $980/day | Gross Revenue: $120,000' }
+    ],
+    formula: 'Gross Revenue Target = [(Target Net Salary + Retirement) / (1 - Effective Tax Rate) + Overhead + Health] / (1 - Buffer) | Target Hourly Rate = Gross Revenue Target / (Working Weeks × Billable Hours/Week)',
+    faqs: [
+      { q: 'What is the standard rule of thumb for freelance pricing?', a: 'Take the equivalent corporate W-2 salary and divide by 1,000 (rather than 2,000). A $100k full-time job translates to a $100/hour freelance baseline.' },
+      { q: 'Should I quote hourly or flat project rates?', a: 'Always calculate your internal quote using hourly rates, but present flat project packages to clients to capture value without trading time for money.' },
+      { q: 'Why do I need a buffer for uncollectible invoices?', a: 'Client payment delays and slow pipeline periods occur regularly in freelance work. A 5% to 10% buffer prevents cashflow crunches.' },
+      { q: 'How do I pay taxes as a 1099 contractor?', a: 'You make four quarterly estimated tax payments per year to the IRS and your state department of revenue using IRS Form 1040-ES.' }
+    ]
+  },
+
+  // ── Body Fat & Composition Goal Engine ─────────────────────────────────
+  'body-fat-percentage-calculator': {
+    name: 'Body Fat Percentage Calculator (US Navy Method)',
+    category: 'Health',
+    icon: 'fa-ruler-combined',
+    iconClass: 'icon-health',
+    tagClass: 'tag-health',
+    description: 'Estimate your body fat percentage, lean body mass, fat mass, and target timeline to reach your ideal body composition using standard tape measurements and the validated US Navy fitness formula.',
+    metaTitle: 'Body Fat Percentage Calculator | US Navy Tape Measure Formula — GetCalcu',
+    metaDescription: 'Free US Navy Body Fat Calculator. Calculate body fat percentage, lean mass, fat mass, and goal fat loss timelines instantly using at-home tape measurements.',
+    keywords: [
+      'navy body fat calculator',
+      'body fat percentage calculator tape measure',
+      'us navy body fat formula calculator',
+      'how to calculate body fat percentage at home',
+      'lean body mass calculator',
+      'body fat loss timeline calculator'
+    ],
+    presets: [
+      { label: 'Male Fitness (5ft 10in, 32in Waist)', values: { gender: 'male', unit: 'imperial', height: 70, neck: 15, waist: 32, hip: 38, weight: 175, activity: 'moderate', target_bf: 12, weekly_loss_rate: 1.0 } },
+      { label: 'Female Fit (5ft 5in, 27in Waist)', values: { gender: 'female', unit: 'imperial', height: 65, neck: 13, waist: 27, hip: 36, weight: 135, activity: 'moderate', target_bf: 20, weekly_loss_rate: 1.0 } },
+      { label: 'Male Fat Loss Goal (6ft 0in, 38in Waist)', values: { gender: 'male', unit: 'imperial', height: 72, neck: 16, waist: 38, hip: 42, weight: 215, activity: 'light', target_bf: 15, weekly_loss_rate: 1.0 } }
+    ],
+    fields: [
+      // ── Basic Inputs ──
+      { id: 'basic_section', type: 'section', label: 'Body Measurements', icon: 'fa-sliders' },
+      { id: 'gender', label: 'Gender', type: 'select', default: 'male', options: [{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }], hint: 'Biological sex dictates anatomical body fat distribution formulas.' },
+      { id: 'unit', label: 'Measurement Units', type: 'select', default: 'imperial', options: [{ value: 'imperial', label: 'Inches / Pounds' }, { value: 'metric', label: 'Centimeters / Kilograms' }], hint: 'Choose your preferred measurement system.' },
+      { id: 'height', label: 'Height (inches or cm)', type: 'number', default: 70, min: 36, max: 250, step: 0.5, hint: 'Total standing height.' },
+      { id: 'neck', label: 'Neck Circumference (inches or cm)', type: 'number', default: 15, min: 5, max: 100, step: 0.25, hint: "Measure around the neck just below the larynx (Adam's apple)." },
+      { id: 'waist', label: 'Waist Circumference (inches or cm)', type: 'number', default: 32, min: 10, max: 200, step: 0.25, hint: 'Men: measure at the navel. Women: measure at narrowest natural waist.' },
+      { id: 'hip', label: 'Hip Circumference (women only)', type: 'number', default: 36, min: 10, max: 200, step: 0.25, condition: v => v.gender === 'female', hint: 'Measure around the widest point of the hips and buttocks.' },
+      { id: 'weight', label: 'Body Weight (lbs or kg)', type: 'number', default: 175, min: 40, max: 500, step: 0.5, hint: 'Current morning body weight.' },
+
+      // ── Advanced Options: Goal Planning & Caloric Targets ──
+      { id: 'advanced_section', type: 'section', label: 'Target Fat Loss & Calorie Projections', icon: 'fa-gear', collapsible: true },
+      { id: 'target_bf', label: 'Target Goal Body Fat (%)', type: 'number', default: 12, min: 4, max: 50, step: 0.5, hint: 'Men: 10-14% (lean/athletic). Women: 18-22% (lean/fit).' },
+      { id: 'weekly_loss_rate', label: 'Target Weekly Fat Loss Rate (lbs or kg/wk)', type: 'select', default: 1.0, options: [{ value: 0.5, label: '0.5 / wk (Conservative, 250 kcal deficit)' }, { value: 1.0, label: '1.0 / wk (Standard, 500 kcal deficit)' }, { value: 1.5, label: '1.5 / wk (Aggressive, 750 kcal deficit)' }], hint: '1.0 lb/week fat loss preserves lean muscle and energy levels.' },
+      { id: 'activity', label: 'Daily Activity Level', type: 'select', default: 'moderate', options: [{ value: 'sedentary', label: 'Sedentary (desk job, little exercise)' }, { value: 'light', label: 'Lightly Active (exercise 1-3 days/wk)' }, { value: 'moderate', label: 'Moderately Active (exercise 3-5 days/wk)' }, { value: 'very', label: 'Very Active (hard exercise 6-7 days/wk)' }], hint: 'Used to calculate maintenance TDEE and cutting calorie roadmap.' }
+    ],
+    calculate(v) {
+      const isMetric = v.unit === 'metric';
+      let h = safeNum(v.height, isMetric ? 178 : 70);
+      let neck = safeNum(v.neck, isMetric ? 38 : 15);
+      let waist = safeNum(v.waist, isMetric ? 81 : 32);
+      let hip = safeNum(v.hip, isMetric ? 91 : 36);
+      let wt = safeNum(v.weight, isMetric ? 80 : 175);
+
+      if (h <= 0 || neck <= 0 || waist <= 0 || wt <= 0) {
+        return errorResult('Please enter positive numbers for height, neck, waist, and weight.');
+      }
+
+      if (!isMetric) {
+        h = h * 2.54;
+        neck = neck * 2.54;
+        waist = waist * 2.54;
+        hip = hip * 2.54;
+      }
+
+      let bf = 0;
+      if (v.gender === 'female') {
+        const factor = waist + hip - neck;
+        if (factor <= 0) return errorResult('Waist + Hip must be greater than neck circumference.');
+        bf = 495 / (1.29579 - 0.35004 * Math.log10(factor) + 0.22100 * Math.log10(h)) - 450;
+      } else {
+        const factor = waist - neck;
+        if (factor <= 0) return errorResult('Waist circumference must be greater than neck.');
+        bf = 495 / (1.0324 - 0.19077 * Math.log10(factor) + 0.15456 * Math.log10(h)) - 450;
+      }
+
+      bf = Math.max(2, Math.min(65, roundTo(bf, 1)));
+      const fatMass = roundTo(wt * (bf / 100), 1);
+      const leanMass = roundTo(wt - fatMass, 1);
+      const unitLabel = isMetric ? 'kg' : 'lbs';
+
+      let category = 'Average';
+      if (v.gender === 'male') {
+        if (bf < 6) category = 'Essential Fat';
+        else if (bf < 14) category = 'Athletes / Lean';
+        else if (bf < 18) category = 'Fitness';
+        else if (bf < 25) category = 'Average';
+        else category = 'Above Average / Obese';
+      } else {
+        if (bf < 14) category = 'Essential Fat';
+        else if (bf < 21) category = 'Athletes / Lean';
+        else if (bf < 25) category = 'Fitness';
+        else if (bf < 32) category = 'Average';
+        else category = 'Above Average / Obese';
+      }
+
+      // Katch-McArdle BMR based on Lean Body Mass
+      const leanMassKg = isMetric ? leanMass : leanMass * 0.453592;
+      const bmr = roundTo(370 + (21.6 * leanMassKg), 0);
+
+      const actMultipliers = { sedentary: 1.2, light: 1.375, moderate: 1.55, very: 1.725 };
+      const tdee = roundTo(bmr * (actMultipliers[v.activity] || 1.55), 0);
+
+      // Target Goal Projections with guard against division by zero
+      const targetBfRaw = safeNum(v.target_bf, v.gender === 'male' ? 12 : 20);
+      const targetBfPct = Math.min(0.60, Math.max(0.04, targetBfRaw / 100));
+      // Target weight assuming lean mass is preserved: Lean Mass / (1 - Target BF)
+      const targetWeight = roundTo(leanMass / (1 - targetBfPct), 1);
+      const fatToLose = roundTo(Math.max(0, wt - targetWeight), 1);
+
+      const weeklyRate = safeNum(v.weekly_loss_rate, 1.0);
+      const weeksToGoal = fatToLose > 0 ? Math.ceil(fatToLose / weeklyRate) : 0;
+      const dailyCalorieDeficit = roundTo((weeklyRate * 3500) / 7, 0);
+      const cuttingCalories = Math.max(1200, tdee - dailyCalorieDeficit);
+
+      return {
+        stats: [
+          { label: 'Body Fat Percentage', value: bf + '%', highlight: true },
+          { label: 'Fitness Classification', value: category },
+          { label: 'Lean Body Mass', value: leanMass + ' ' + unitLabel, highlight: true },
+          { label: 'Fat Mass', value: fatMass + ' ' + unitLabel },
+          { label: 'Maintenance Calories (TDEE)', value: tdee + ' kcal / day' },
+          { label: 'Target Goal Weight (at ' + targetBfRaw + '% BF)', value: targetWeight + ' ' + unitLabel },
+          { label: 'Fat to Lose to Reach Goal', value: fatToLose + ' ' + unitLabel, warn: fatToLose > 0 },
+          { label: 'Estimated Timeline to Goal', value: weeksToGoal > 0 ? weeksToGoal + ' Weeks (' + cuttingCalories + ' kcal/day)' : 'Goal Reached!' }
+        ],
+        chart: {
+          labels: ['Lean Muscle & Bone', 'Body Fat Mass'],
+          datasets: [{
+            data: [leanMass, fatMass],
+            backgroundColor: ['#10B981', '#EC4899']
+          }]
+        },
+        insight: {
+          tone: 'positive',
+          icon: 'fa-circle-check',
+          headline: 'Your Personalized Body Composition Roadmap',
+          detail: 'You are carrying ' + leanMass + ' ' + unitLabel + ' of lean tissue and ' + fatMass + ' ' + unitLabel + ' of fat (' + category + '). To reach your goal of ' + targetBfRaw + '% body fat while preserving lean muscle, aim for ' + cuttingCalories + ' kcal/day (a ' + dailyCalorieDeficit + ' kcal deficit) to reach your target weight of ' + targetWeight + ' ' + unitLabel + ' in approximately ' + weeksToGoal + ' weeks.'
+        }
+      };
+    },
+    article: {
+      heading: 'How the US Navy Body Fat Formula Works & How to Set Goals',
+      intro: 'The US Navy body fat calculation is one of the most accurate circumference-based body composition methods, validated by clinical exercise physiology studies.',
+      sections: [
+        {
+          heading: 'Why Lean Mass is the Key to Metabolism',
+          body: 'Basal Metabolic Rate (BMR) is determined almost entirely by your lean body mass (muscle, bone, organs). Preserving lean muscle with sufficient dietary protein (0.8-1.0g per lb of body weight) ensures your metabolism stays high while losing body fat.'
+        },
+        {
+          heading: 'Setting a Safe, Sustainable Calorie Deficit',
+          body: 'A moderate 500-calorie daily deficit produces exactly 1.0 lb of pure fat loss per week without triggering muscle loss, hormonal fatigue, or metabolic adaptation.'
+        }
+      ]
+    },
+    howTo: [
+      'Measure your standing height, neck, and waist circumference first thing in the morning before eating.',
+      'For women, measure around the widest point of the hips and buttocks.',
+      'Open Advanced Options to set your target goal body fat percentage and weekly deficit rate.',
+      'Follow your personalized maintenance TDEE and cutting calorie targets.'
+    ],
+    faqs: [
+      { q: 'How accurate is the US Navy formula compared to DEXA?', a: 'When measured accurately, the US Navy formula typically correlates within 3% to 4% of clinical DEXA scans and hydrostatic underwater weighing.' },
+      { q: 'What is a realistic body fat percentage for natural athletes?', a: 'For men, 10% to 15% is athletic and sustainable year-round. For women, 18% to 24% provides a lean, defined physique while supporting healthy endocrine and reproductive function.' },
+      { q: 'Where should I measure my waist circumference?', a: 'Men should measure horizontally across the navel (belly button). Women should measure at the narrowest natural waistline between the ribs and hips.' },
+      { q: 'How often should I recalculate my body fat percentage?', a: 'Measure once every 2 to 4 weeks under identical conditions (morning, fasted) to track true fat loss and prevent daily water weight fluctuations from misleading you.' }
+    ]
+  },
+
 };
 
 if (typeof window !== 'undefined') {
   window.TOOLS = TOOLS;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { TOOLS, tools: TOOLS };
 }
 function roundTo(n, decimals) { if (!isFinite(n)) return 0; const factor = Math.pow(10, decimals); return Math.round((n + Number.EPSILON) * factor) / factor; }
 function safeNum(val, fallback) { if (val === null || val === undefined) return fallback; const num = Number(val); return isFinite(num) ? num : fallback; }
@@ -4791,6 +9954,15 @@ function fmt(n) { const num = safeNum(n, 0); return "$" + num.toLocaleString("en
 function fmtN(n) { const num = safeNum(n, 0); return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function pct(n) { const num = safeNum(n, 0); return (num * 100).toFixed(2) + "%"; }
 function errorResult(message) { return { error: true, stats: [{ label: "Error", value: message, warn: true }] }; }
+function makeTableSpec(spec) {
+  const arr = Array.isArray(spec.rows) ? [...spec.rows] : [];
+  arr.mode = spec.mode || 'table';
+  arr.title = spec.title || '';
+  arr.columns = spec.columns || [];
+  arr.rows = arr;
+  if (spec.footer) arr.footer = spec.footer;
+  return arr;
+}
 function bmiCategory(bmi) { if (!isFinite(bmi)) return { label: "—", color: "#64748B" }; if (bmi < 18.5) return { label: "Underweight", color: "#3B82F6" }; if (bmi < 25) return { label: "Normal Weight", color: "#10B981" }; if (bmi < 30) return { label: "Overweight", color: "#F59E0B" }; return { label: "Obese", color: "#EF4444" }; }
 function buildAmortization(principal, r, n, payment) {
   const rows = [];

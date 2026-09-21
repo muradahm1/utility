@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileNav();
     initAuthUI();
     initFooterYear();
-    initQuickNav();
+    initCategoryFilter();
     initBackToTop();
 });
 
@@ -17,32 +17,64 @@ function initFooterYear() {
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 }
 
-// Quick navigation: home shortcut for non-home pages
-function initQuickNav() {
-    const header = document.querySelector('.top-header');
-    if (!header) return;
+// Real-time filter and search for category pages
+function initCategoryFilter() {
+    const filterInput = document.getElementById('category-filter-input');
+    if (!filterInput) return;
 
-    const isHomePage = window.location.pathname === '/' || window.location.pathname === '/index.html';
-    if (isHomePage) return;
+    const cards = document.querySelectorAll('.tools-grid .tool-card');
+    const emptyMsg = document.getElementById('category-empty-filter');
+    const countEl = document.getElementById('category-filtered-count');
+    const searchBtn = document.getElementById('category-search-btn');
+    const clearBtn = document.getElementById('category-search-clear');
 
-    let btn = document.getElementById('home-nav-btn');
-    if (!btn) {
-        btn = document.createElement('button');
-        btn.id = 'home-nav-btn';
-        btn.className = 'home-nav-btn';
-        btn.type = 'button';
-        btn.setAttribute('aria-label', 'Go to home');
-        btn.innerHTML = '<i class="fa-solid fa-house"></i><span>Home</span>';
-        btn.addEventListener('click', () => {
-            window.location.href = '/';
+    function performFilter() {
+        const query = filterInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = (card.querySelector('h3')?.textContent || '').toLowerCase();
+            const desc = (card.querySelector('p')?.textContent || '').toLowerCase();
+            const tag = (card.querySelector('.tag')?.textContent || '').toLowerCase();
+            const matches = !query || title.includes(query) || desc.includes(query) || tag.includes(query);
+            card.style.display = matches ? '' : 'none';
+            if (matches) visibleCount++;
         });
 
-        const hamburger = header.querySelector('.hamburger-btn');
-        if (hamburger) {
-            header.insertBefore(btn, hamburger);
-        } else {
-            header.prepend(btn);
+        if (emptyMsg) {
+            emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
         }
+        if (countEl) {
+            countEl.textContent = visibleCount;
+        }
+        if (clearBtn) {
+            clearBtn.classList.toggle('hidden', !query);
+        }
+    }
+
+    filterInput.addEventListener('input', performFilter);
+    filterInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performFilter();
+        }
+    });
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            performFilter();
+            filterInput.focus();
+        });
+    }
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterInput.value = '';
+            performFilter();
+            filterInput.focus();
+        });
     }
 }
 
@@ -70,13 +102,15 @@ function initBackToTop() {
     window.addEventListener('scroll', toggleVisibility, { passive: true });
 }
 
-// Category Page Rendering
+// Category Page Rendering (supports /category/:slug and ?category=:slug)
 function initCategoryPage() {
+    const path = window.location.pathname;
+    const catMatch = path.match(/^\/category\/([a-z0-9-]+)\/?$/);
     const params = new URLSearchParams(window.location.search);
-    const category = params.get('category');
+    const category = catMatch ? catMatch[1] : params.get('category');
     if (!category) return;
 
-    // Hide homepage-only sections
+    // Hide homepage-only sections if rendered dynamically on index
     const hero = document.getElementById('hero-section');
     const categoriesSection = document.getElementById('all-categories');
     if (hero) hero.style.display = 'none';
@@ -93,18 +127,19 @@ function initCategoryPage() {
     const viewLink = toolsSection.querySelector('.view-link');
     if (viewLink) viewLink.style.display = 'none';
 
+    // If pre-rendered content is already present, don't overwrite unless empty
+    const grid = toolsSection.querySelector('.tools-grid');
+    if (!grid) return;
+
     // Filter tools by category (case-insensitive)
     let filteredTools = [];
     if (typeof TOOLS !== 'undefined') {
         filteredTools = Object.entries(TOOLS)
-            .filter(([slug, tool]) => tool.category.toLowerCase() === category.toLowerCase())
+            .filter(([slug, tool]) => (tool.category || '').toLowerCase() === category.toLowerCase())
             .map(([slug, tool]) => ({ slug, ...tool }));
     }
 
-    const grid = toolsSection.querySelector('.tools-grid');
-    if (!grid) return;
-
-    if (filteredTools.length === 0) {
+    if (filteredTools.length === 0 && !grid.children.length) {
         grid.innerHTML = `
             <div class="tool-not-found" style="grid-column: 1 / -1;">
                 <div class="not-found-icon" style="background:rgba(99,102,241,0.1); color:var(--primary-color);">
@@ -114,9 +149,9 @@ function initCategoryPage() {
                 <p>Check back soon.</p>
             </div>
         `;
-    } else {
+    } else if (filteredTools.length > 0 && !grid.querySelector('.tool-card')) {
         grid.innerHTML = filteredTools.map(tool => `
-            <a href="/tool?slug=${tool.slug}" class="tool-card">
+            <a href="/tool/${tool.slug}" class="tool-card">
                 <div class="tool-icon ${tool.iconClass || ''}"><i class="fa-solid ${tool.icon || 'fa-calculator'}"></i></div>
                 <h3>${tool.name}</h3>
                 <p>${tool.description || ''}</p>
@@ -130,6 +165,7 @@ function initCategoryPage() {
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeColor(savedTheme);
 
     const themeSwitch = document.getElementById('theme-toggle-switch');
     if (themeSwitch) {
@@ -138,6 +174,7 @@ function initTheme() {
             const theme = e.target.checked ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
+            updateThemeColor(theme);
         });
     }
 
@@ -150,7 +187,15 @@ function initTheme() {
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('theme', next);
             updateThemeIcon(themeBtn, next);
+            updateThemeColor(next);
         });
+    }
+}
+
+function updateThemeColor(theme) {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', theme === 'dark' ? '#0F172A' : '#6366F1');
     }
 }
 
@@ -182,35 +227,38 @@ function initHeroSearch() {
 
 // Active Nav State
 function initActiveNav() {
-    const path = window.location.pathname; // e.g., '/', '/tool', '/history'
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
     const params = new URLSearchParams(window.location.search);
-    const category = params.get('category');
-    const slug = params.get('slug');
-
-    // On tool pages, resolve the category from the TOOLS registry
-    let activeCategory = category;
-    if (path === '/tool' && slug && typeof TOOLS !== 'undefined' && TOOLS[slug]) {
-        activeCategory = TOOLS[slug].category.toLowerCase();
+    const categoryParam = params.get('category');
+    
+    // Resolve active category
+    let activeCategory = categoryParam;
+    const catMatch = path.match(/^\/category\/([a-z0-9-]+)$/);
+    if (catMatch) {
+        activeCategory = catMatch[1];
+    } else {
+        const toolMatch = path.match(/^\/tool\/([a-z0-9-]+)$/);
+        const slug = toolMatch ? toolMatch[1] : params.get('slug');
+        if (slug && typeof TOOLS !== 'undefined' && TOOLS[slug]) {
+            activeCategory = (TOOLS[slug].category || '').toLowerCase();
+        }
     }
 
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
         const href = item.getAttribute('href');
-        if (!href) return; // Should not happen
+        if (!href) return;
+        
         const itemUrl = new URL(href, window.location.origin);
-        const itemPath = itemUrl.pathname;
-        const itemQuery = itemUrl.search;
-        const itemCategory = new URLSearchParams(itemQuery || '').get('category');
+        const itemPath = itemUrl.pathname.replace(/\/$/, '') || '/';
+        const itemCategory = itemPath.match(/^\/category\/([a-z0-9-]+)$/)?.[1] 
+            || new URLSearchParams(itemUrl.search).get('category');
 
-        if (path === '/tool') {
-            if (itemPath === '/' && itemCategory && itemCategory === activeCategory) {
-                item.classList.add('active');
-            }
-            return;
-        }
-        const pathMatch = (itemPath === path);
-        // Explicit parentheses to avoid operator precedence ambiguity
-        if ((pathMatch && itemCategory === category) || (path === '/' && itemPath === '/' && !category)) {
+        if (activeCategory && itemCategory && itemCategory.toLowerCase() === activeCategory.toLowerCase()) {
+            item.classList.add('active');
+        } else if (!activeCategory && path === '/' && itemPath === '/') {
+            item.classList.add('active');
+        } else if (path === itemPath && !activeCategory) {
             item.classList.add('active');
         }
     });
@@ -281,28 +329,82 @@ function initSearchModal() {
     const searchField = document.getElementById('modal-search-field');
     const resultsContainer = document.getElementById('search-results');
 
-    // Build search list from TOOLS registry if available, otherwise use fallback
+    const SYNONYMS = {
+        'mortgage-calculator': ['piti', 'home loan', 'house payment', 'housing loan', 'property tax', 'down payment'],
+        'auto-loan-calculator': ['car payment', 'car loan', 'vehicle financing', 'auto financing', 'trade in', 'car interest'],
+        'salary-calculator': ['paycheck', 'take home pay', 'net salary', 'gross to net', 'income tax', 'fica', 'w2', 'hourly to salary', 'wage'],
+        'tdee-calculator': ['bmr', 'daily calories', 'calorie deficit', 'macros', 'weight loss calories', 'macro split', 'maintenance calories'],
+        'unit-converter': ['convert units', 'metric to imperial', 'inches to cm', 'kg to lbs', 'celsius to fahrenheit', 'gallons to liters', 'miles to km', 'grams to ounces', 'mb to gb'],
+        'bmi-calculator': ['body mass index', 'weight category', 'overweight', 'healthy weight', 'obese'],
+        'percentage-calculator': ['percent change', 'discount', 'percent of', 'percentage increase', 'percentage decrease'],
+        'compound-interest-calculator': ['compound growth', 'interest growth', 'savings interest', 'hysa', 'future value'],
+        'investment-calculator': ['stock growth', 'portfolio return', 'compound return', 'roth ira', 'reach 1m'],
+        'retirement-calculator': ['nest egg', 'pension', '401k target', '4 percent rule', 'retirement age'],
+        'credit-card-payoff-calculator': ['debt snowball', 'debt avalanche', 'credit card interest', 'payoff date', 'debt free'],
+        'rent-vs-buy-calculator': ['buying vs renting', 'rent or buy', 'home equity vs rent', 'homeownership'],
+        'tip-calculator': ['split bill', 'gratuity', 'restaurant tip', 'bill per person'],
+        'concrete-calculator': ['cement', 'slab volume', 'concrete yards', 'bags of concrete'],
+        'paint-calculator': ['paint gallons', 'room paint', 'wall area paint', 'coats of paint'],
+        'tile-calculator': ['floor tile', 'bathroom tile', 'tile boxes', 'tile square feet'],
+        'ohms-law-calculator': ['voltage', 'current', 'resistance', 'amperes', 'watts'],
+        'beam-deflection-calculator': ['structural beam', 'bending stress', 'moment of inertia'],
+        'true-home-buying-system': ['home buying cost', 'cash to close', 'total cost of buying house', 'pitia', 'maintenance reserve', 'rent vs buy break even', 'true home buying'],
+        'freelance-true-rate-system': ['freelance hourly rate', 'freelance true rate', 'billable utilization', 'reverse income', 'freelance day rate', 'freelancer pricing'],
+        'net-worth-calculator': ['assets liabilities', 'wealth tracker', 'financial net worth'],
+        'fire-calculator': ['financial independence', 'retire early', 'fire number', 'lean fire', 'fat fire'],
+        'amortization-calculator': ['loan schedule', 'principal interest split', 'amortization table'],
+        'house-affordability-calculator': ['how much house can i afford', 'max home price', 'debt to income', 'dti'],
+        'inflation-calculator': ['purchasing power', 'inflation rate', 'future cost of living'],
+        'date-calculator': ['days between dates', 'time duration', 'business days'],
+        'loan-calculator': ['personal loan', 'bank loan', 'loan payments']
+    };
+
+    // Build search list from TOOLS registry
     const toolList = typeof TOOLS !== 'undefined'
-        ? Object.entries(TOOLS).map(([slug, t]) => ({ name: t.name, slug, cat: t.category }))
-        : [
-            { name: 'Mortgage Calculator',          slug: 'mortgage-calculator',   cat: 'Finance' },
-            { name: 'BMI Calculator',               slug: 'bmi-calculator',         cat: 'Health'  },
-            { name: 'Percentage Calculator',        slug: 'percentage-calculator',  cat: 'Math'    },
-            { name: 'Investment Calculator',        slug: 'investment-calculator',            cat: 'Finance' },
-            { name: 'Loan Calculator',              slug: 'loan-calculator',        cat: 'Finance' },
-            { name: 'Compound Interest Calculator', slug: 'compound-interest-calculator',      cat: 'Finance' },
-            { name: 'Date Calculator',              slug: 'date-calculator',        cat: 'Math'    },
-            { name: 'Budget Planner & Expense Tracker', slug: 'budget-planner',     cat: 'Finance' },
-            { name: 'Retirement Calculator',        slug: 'retirement-calculator',           cat: 'Finance' },
-            { name: 'Rent vs. Buy Calculator',      slug: 'rent-vs-buy-calculator',          cat: 'Finance' },
+        ? Object.entries(TOOLS).map(([slug, t]) => ({
+            name: t.name,
+            slug,
+            cat: t.category,
+            desc: t.description || '',
+            synonyms: SYNONYMS[slug] || []
+        }))
+        : [];
+
+    let selectedIndex = -1;
+
+    function renderDefaultState() {
+        if (!resultsContainer) return;
+        const popular = [
+            { name: 'Mortgage Calculator', slug: 'mortgage-calculator', cat: 'Finance' },
+            { name: 'Auto Loan Calculator', slug: 'auto-loan-calculator', cat: 'Finance' },
+            { name: 'Salary & Paycheck Calculator', slug: 'salary-calculator', cat: 'Finance' },
+            { name: 'TDEE & Calorie Calculator', slug: 'tdee-calculator', cat: 'Health' },
+            { name: 'Universal Unit Converter', slug: 'unit-converter', cat: 'Math' },
+            { name: 'BMI Calculator', slug: 'bmi-calculator', cat: 'Health' },
+            { name: 'Compound Interest Calculator', slug: 'compound-interest-calculator', cat: 'Finance' }
         ];
+
+        resultsContainer.innerHTML = `
+            <div style="padding:10px 14px;font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">Popular Calculators</div>
+            ${popular.map(p => `
+                <a href="/tool/${p.slug}" class="search-item">
+                    <strong>${p.name}</strong>
+                    <span style="font-size:12px;color:var(--text-secondary);float:right;">${p.cat}</span>
+                </a>
+            `).join('')}
+        `;
+    }
 
     function openModal() {
         if (!modal) return;
         modal.classList.remove('hidden');
         modal.setAttribute('aria-modal', 'true');
         searchField.focus();
-        // Focus trap
+        selectedIndex = -1;
+        if (!searchField.value.trim()) {
+            renderDefaultState();
+        }
+        
         const trap = (e) => {
             if (e.key !== 'Tab') return;
             const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
@@ -327,20 +429,18 @@ function initSearchModal() {
             modal.removeEventListener('keydown', modal._focusTrap);
             modal._focusTrap = null;
         }
-        trigger.focus();
+        trigger && trigger.focus();
     }
 
     if (trigger) trigger.addEventListener('click', openModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
-    // Close modal on click outside the card
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) closeModal();
         });
     }
 
-    // Only add Cmd+K shortcut on non-touch devices
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (!isTouchDevice) {
         document.addEventListener('keydown', (e) => {
@@ -352,17 +452,53 @@ function initSearchModal() {
     }
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
+    function updateHighlight(items) {
+        items.forEach((it, idx) => {
+            if (idx === selectedIndex) {
+                it.classList.add('search-item--selected');
+                it.style.backgroundColor = 'var(--bg-card-hover, rgba(99,102,241,0.12))';
+                it.scrollIntoView({ block: 'nearest' });
+            } else {
+                it.classList.remove('search-item--selected');
+                it.style.backgroundColor = '';
+            }
+        });
+    }
+
     if (searchField) {
         searchField.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             resultsContainer.innerHTML = '';
-            if (!query) return;
+            selectedIndex = -1;
 
-            const filtered = toolList.filter(t => t.name.toLowerCase().includes(query) || t.cat.toLowerCase().includes(query));
+            if (!query) {
+                renderDefaultState();
+                return;
+            }
+
+            const filtered = toolList.filter(t => {
+                if (t.name.toLowerCase().includes(query)) return true;
+                if (t.cat.toLowerCase().includes(query)) return true;
+                if (t.desc.toLowerCase().includes(query)) return true;
+                if (t.synonyms.some(s => s.toLowerCase().includes(query))) return true;
+                return false;
+            });
+
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="padding:24px 16px;text-align:center;color:var(--text-secondary);">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size:24px;margin-bottom:8px;opacity:0.5;"></i>
+                        <p>No calculators matching "<strong>${escapeHtml(query)}</strong>"</p>
+                        <p style="font-size:12px;margin-top:4px;">Try searching for mortgage, salary, auto loan, tdee, or units.</p>
+                    </div>
+                `;
+                return;
+            }
+
             filtered.forEach(tool => {
                 const item = document.createElement('a');
                 item.className = 'search-item';
-                item.href = `/tool?slug=${encodeURIComponent(tool.slug)}`;
+                item.href = `/tool/${tool.slug}`;
                 const strong = document.createElement('strong');
                 strong.textContent = tool.name;
                 const span = document.createElement('span');
@@ -372,6 +508,27 @@ function initSearchModal() {
                 item.appendChild(span);
                 resultsContainer.appendChild(item);
             });
+        });
+
+        searchField.addEventListener('keydown', (e) => {
+            const items = resultsContainer.querySelectorAll('.search-item');
+            if (!items.length) return;
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = (selectedIndex + 1) % items.length;
+                updateHighlight(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = selectedIndex <= 0 ? items.length - 1 : selectedIndex - 1;
+                updateHighlight(items);
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                e.preventDefault();
+                const target = items[selectedIndex];
+                if (target && target.href) {
+                    window.location.href = target.href;
+                }
+            }
         });
     }
 }

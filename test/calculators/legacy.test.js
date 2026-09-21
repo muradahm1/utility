@@ -196,3 +196,68 @@ describe('Percentage Calculator (regression)', () => {
         expect(r.stats.length).toBeGreaterThan(0);
     });
 });
+
+describe('True Home Buying System (Finance)', () => {
+    const calc = () => TOOLS()['true-home-buying-system'];
+
+    it('exists and has calculate method', () => {
+        expect(calc()).toBeDefined();
+        expect(typeof calc().calculate).toBe('function');
+    });
+
+    it('calculates total liquid cash and PITIA monthly ownership costs', () => {
+        const r = calc().calculate({
+            country: 'US',
+            home_price: 450000,
+            down_payment_pct: 20,
+            closing_costs_pct: 3.0,
+            prepaids_reserve_pct: 1.0,
+            interest_rate: 6.8,
+            loan_term: 30,
+            property_tax_rate: 1.2,
+            home_insurance: 1500,
+            hoa_fees: 0,
+            enable_maintenance: 'yes',
+            maintenance_pct: 1.0
+        });
+        expect(r.error).toBeFalsy();
+        expect(r.stats).toBeDefined();
+        expect(r.stats.some(s => s.label === 'Total Liquid Cash Required to Close')).toBe(true);
+        expect(r.table).toBeDefined();
+        expect(r.chart).toBeDefined();
+    });
+
+    it('handles zero or negative home price with errorResult', () => {
+        const r = calc().calculate({ home_price: 0 });
+        expect(r.error).toBe(true);
+    });
+});
+
+describe('Beam Deflection Calculator (Engineering)', () => {
+    const calc = () => TOOLS()['beam-deflection-calculator'];
+
+    it('exists and has calculate method', () => {
+        expect(calc()).toBeDefined();
+        expect(typeof calc().calculate).toBe('function');
+    });
+
+    it('calculates simply supported beam deflection', () => {
+        const r = calc().calculate({ beamType: 'simply', length: 10, load: 1000, moi: 100 });
+        expect(r.error).toBeFalsy();
+        expect(r.stats).toBeDefined();
+        expect(r.stats.some(s => s.label === 'Beam Type')).toBe(true);
+        expect(r.stats.some(s => s.label === 'Max Deflection')).toBe(true);
+    });
+
+    it('calculates cantilever beam deflection', () => {
+        const r = calc().calculate({ beamType: 'cantilever', length: 8, load: 500, moi: 200 });
+        expect(r.error).toBeFalsy();
+        expect(r.stats).toBeDefined();
+    });
+
+    it('returns error on invalid inputs', () => {
+        const r = calc().calculate({ beamType: 'simply', length: 0, load: 1000, moi: 100 });
+        expect(r.error).toBe(true);
+    });
+});
+

@@ -12,6 +12,13 @@ import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml, buildTableSpecHtml } from './core/calculator-engine.js';
 import { ChartManager } from './modules/charts.js';
 import { initErrorBoundary } from './modules/error-boundary.js';
+import { exportToCSV, exportToJSON } from './modules/export.js';
+import { generateResultsPDF } from './modules/pdf.js';
+import { printResults } from './modules/print.js';
+import { share } from './modules/sharing.js';
+import { buildCalculatorFAQ } from './modules/faq.js';
+import { getRelatedTools } from './modules/related-tools.js';
+import { getPersonalizedRecommendations } from './modules/recommendations.js';
 
 // Initialize global error boundary (Phase 5.4)
 initErrorBoundary();
@@ -56,6 +63,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             slug = pathMatch[1];
         }
     }
+
+    const SLUG_ALIASES = {
+        'true-home-buying-cost-calculator': 'true-home-buying-system',
+        'freelance-true-hourly-rate-calculator': 'freelance-true-rate-system'
+    };
+    if (slug && SLUG_ALIASES[slug]) slug = SLUG_ALIASES[slug];
 
     const TOOLS = window.TOOLS || {};
     // Prefer the legacy window.TOOLS registry, but also resolve against the
@@ -212,6 +225,11 @@ function initLegacyRunner(tool, slug, container) {
         values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
     });
 
+    let isCompareMode = false;
+    let activeScenario = 'A';
+    let valuesA = { ...values };
+    let valuesB = JSON.parse(JSON.stringify(values));
+
     // ── Phase 5.3: Debounce recalculation (~200ms) ─────────────
     let debounceTimer = null;
     function debouncedUpdate() {
@@ -226,49 +244,90 @@ function initLegacyRunner(tool, slug, container) {
     const skeleton = document.getElementById('tool-loading-skeleton');
     if (skeleton) skeleton.style.display = 'none';
 
-    // ── Phase 5.9: Load values from shareable URL (?input=...) ─
-    const urlInput = new URLSearchParams(window.location.search).get('input');
-    if (urlInput) {
-        try {
-            const inputParams = new URLSearchParams(decodeURIComponent(urlInput));
-            tool.fields.forEach(f => {
-                if (inputParams.has(f.id)) {
-                    const raw = inputParams.get(f.id);
-                    if (f.type === 'number' || f.type === 'range') {
-                        const n = parseFloat(raw);
-                        if (!isNaN(n)) values[f.id] = n;
-                    } else if (f.type === 'select') {
-                        values[f.id] = raw;
-                    }
-                }
-            });
-        } catch (e) {
-            console.warn('Failed to parse input URL params:', e);
-        }
+    // ── Phase 5.9: Load values from shareable URL (?input=... or direct ?field=...) ─
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('embed') === '1' || searchParams.get('embed') === 'true') {
+        document.body.classList.add('is-embedded');
     }
 
-    // ── Phase 5.9: Shareable result URLs (#input=...) ──────────
+    const urlInput = searchParams.get('input');
+    const inputParams = urlInput ? new URLSearchParams(decodeURIComponent(urlInput)) : searchParams;
+
+    let hasUrlParams = false;
+    tool.fields.forEach(f => {
+        if (inputParams.has(f.id)) {
+            const raw = inputParams.get(f.id);
+            if (f.type === 'number' || f.type === 'range') {
+                const n = parseFloat(raw);
+                if (!isNaN(n)) { values[f.id] = n; hasUrlParams = true; }
+            } else if (f.type === 'select') {
+                values[f.id] = raw;
+                hasUrlParams = true;
+            }
+        }
+    });
+    if (hasUrlParams) {
+        valuesA = { ...values };
+        valuesB = JSON.parse(JSON.stringify(values));
+    }
+
+    // ── Phase 5.9: Shareable result URLs (?input=...) ──────────
     function updateShareUrl() {
+        const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
         const params = new URLSearchParams();
         tool.fields.forEach(f => {
             if (f.type === 'number' || f.type === 'range' || f.type === 'select') {
-                params.set(f.id, values[f.id]);
+                params.set(f.id, currentVals[f.id]);
             }
         });
         const hash = params.toString();
         const url = window.location.pathname + (hash ? '?input=' + encodeURIComponent(hash) : '');
-        if (window.location.search !== url) {
+        if (window.location.search !== url && !searchParams.get('embed')) {
             history.replaceState(null, '', url);
         }
     }
 
+    function buildPresetsHtml() {
+        if (!tool.presets || !tool.presets.length) return '';
+        return `
+            <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
+                <div class="preset-chips-header">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Quick Scenarios</span>
+                </div>
+                <div class="preset-chips-list">
+                    ${tool.presets.map((p, idx) => `
+                        <button type="button" class="preset-chip" data-preset-idx="${idx}">
+                            <i class="fa-solid fa-sliders"></i> <span>${escapeHtml(p.label)}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function buildScenarioTabsHtml() {
+        if (!isCompareMode) return '';
+        return `
+            <div class="scenario-tabs" role="tablist">
+                <button type="button" class="scenario-tab ${activeScenario === 'A' ? 'active' : ''}" data-scenario="A">
+                    <i class="fa-solid fa-layer-group"></i> <span>Scenario A ${activeScenario === 'A' ? '(Editing)' : ''}</span>
+                </button>
+                <button type="button" class="scenario-tab ${activeScenario === 'B' ? 'active' : ''}" data-scenario="B">
+                    <i class="fa-solid fa-code-compare"></i> <span>Scenario B ${activeScenario === 'B' ? '(Editing)' : ''}</span>
+                </button>
+            </div>
+        `;
+    }
+
     function buildFormHtml() {
-        let html = '';
+        const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+        let html = buildScenarioTabsHtml() + buildPresetsHtml();
         let inCollapsible = false;
         for (const field of tool.fields) {
-            const labels = tool.fieldLabels ? tool.fieldLabels(values) : {};
+            const labels = tool.fieldLabels ? tool.fieldLabels(currentVals) : {};
             const label = labels[field.id] || field.label;
-            const hidden = field.condition && !field.condition(values);
+            const hidden = field.condition && !field.condition(currentVals);
             const attrs = [
                 field.min !== undefined ? `min="${field.min}"` : '',
                 field.max !== undefined ? `max="${field.max}"` : '',
@@ -286,25 +345,108 @@ function initLegacyRunner(tool, slug, container) {
                 continue;
             }
             if (field.type === 'select') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}">${field.options.map(o => `<option value="${o.value}" ${values[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${currentVals[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
                 continue;
             }
             if (field.type === 'range') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${attrs}><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${values[field.id]}" ${attrs}></div><span class="field-error hidden" data-error="${field.id}"></span></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${currentVals[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
                 continue;
             }
-            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${values[field.id]}" ${attrs}><span class="field-error hidden" data-error="${field.id}"></span></div>`;
+            const inputModeAttr = (field.type === 'number' || field.type === 'currency' || field.type === 'percentage') ? 'inputmode="decimal"' : '';
+            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
         }
         if (inCollapsible) html += '</div></details>';
         return html;
     }
 
+    function buildComparisonCardHtml(resA, resB) {
+        if (!resA || !resB || resA.error || resB.error) {
+            return `<div class="comparison-card"><p style="color:#EF4444;">Could not calculate comparison. Please check input parameters in both scenarios.</p></div>`;
+        }
+
+        const statsA = resA.stats || [];
+        const statsB = resB.stats || [];
+
+        const deltaBoxes = statsA.map((sA, idx) => {
+            const sB = statsB[idx] || { label: sA.label, value: '—' };
+            const parseVal = (str) => {
+                if (typeof str !== 'string') return NaN;
+                const clean = str.replace(/[$,% ]/g, '');
+                return parseFloat(clean);
+            };
+
+            const numA = parseVal(sA.value);
+            const numB = parseVal(sB.value);
+            let diffHtml = '';
+
+            if (!isNaN(numA) && !isNaN(numB) && numA !== numB) {
+                const diff = numB - numA;
+                const diffFormatted = Math.abs(diff) < 0.01 ? '' : (diff > 0 ? '+' : '-') + Math.abs(diff).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+                const isLowerBetter = sA.label.toLowerCase().includes('interest') || sA.label.toLowerCase().includes('cost') || sA.label.toLowerCase().includes('payment') || sA.label.toLowerCase().includes('tax') || sA.label.toLowerCase().includes('fee');
+                const isBetter = isLowerBetter ? diff < 0 : diff > 0;
+                diffHtml = `<span class="delta-diff ${isBetter ? 'better' : 'worse'}">${diffFormatted}</span>`;
+            } else {
+                diffHtml = `<span class="delta-diff neutral">No change</span>`;
+            }
+
+            return `
+                <div class="comparison-delta-box">
+                    <span class="delta-label">${escapeHtml(sA.label)}</span>
+                    <div class="delta-values">
+                        <span>A: <strong>${escapeHtml(sA.value)}</strong></span>
+                        <span>B: <strong>${escapeHtml(sB.value)}</strong></span>
+                    </div>
+                    <div>${diffHtml}</div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="comparison-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="font-size:16px; font-weight:700; color:var(--text-primary);">
+                        <i class="fa-solid fa-code-compare" style="color:var(--primary-color);"></i> Side-by-Side Scenario Comparison
+                    </h3>
+                    <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">Scenario A vs Scenario B</span>
+                </div>
+                <div class="comparison-delta-grid">
+                    ${deltaBoxes}
+                </div>
+            </div>
+        `;
+    }
+
     function updateResults() {
-        let result;
-        try { result = tool.calculate(values); } 
-        catch (err) { console.error('Calculation error:', err); return; }
         const card = document.querySelector('.calculator-results-card');
         if (!card) return;
+
+        if (isCompareMode) {
+            let resA, resB;
+            try {
+                resA = tool.calculate(valuesA);
+                resB = tool.calculate(valuesB);
+            } catch (err) {
+                console.error('Calculation error during comparison:', err);
+                return;
+            }
+
+            card.innerHTML =
+                buildComparisonCardHtml(resA, resB) +
+                buildStatsHtml(activeScenario === 'A' ? resA.stats : resB.stats) +
+                (resA.bars ? buildBarsHtml(activeScenario === 'A' ? resA.bars : resB.bars) : '') +
+                buildChartsHtml(activeScenario === 'A' ? resA : resB) +
+                buildBreakdownTablesHtml(activeScenario === 'A' ? resA : resB) +
+                buildResultsToolbarHtml(activeScenario === 'A' ? resA : resB);
+
+            if (resA.chart && activeScenario === 'A') renderChart(resA.chart);
+            if (resB.chart && activeScenario === 'B') renderChart(resB.chart);
+            bindResultsToolbar(activeScenario === 'A' ? resA : resB);
+            return;
+        }
+
+        let result;
+        try { result = tool.calculate(valuesA); } 
+        catch (err) { console.error('Calculation error:', err); return; }
 
         card.innerHTML =
             (result.error ? '' : buildInsightHtml(result.insight)) +
@@ -316,101 +458,227 @@ function initLegacyRunner(tool, slug, container) {
             buildChartsHtml(result) +
             buildBreakdownTablesHtml(result) +
             buildInsightsHtml(result.insights) +
-            buildCopyBtn();
+            buildResultsToolbarHtml(result);
 
+        const tableContainer = document.querySelector('.calc-data-table');
         if (result.table) {
-            const tableContainer = document.querySelector('.calc-data-table');
+            const newTableHtml = renderTableHtml(result.table, slug);
             if (tableContainer) {
-                if (result.table.mode) {
-                    tableContainer.outerHTML = buildTableSpecHtml(result.table);
-                } else {
-                    const tbody = tableContainer.querySelector('tbody');
-                    if (tbody) tbody.innerHTML = buildTableRowsHtml(result.table);
+                tableContainer.outerHTML = newTableHtml;
+            } else {
+                const saveBar = document.getElementById('save-result-bar') || document.querySelector('.save-result-bar');
+                if (saveBar && newTableHtml) {
+                    saveBar.insertAdjacentHTML('beforebegin', newTableHtml);
                 }
             }
+        } else if (tableContainer) {
+            tableContainer.remove();
         }
 
         if (result.chart) renderChart(result.chart);
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
         if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
         if (result.chart3) renderChart(result.chart3, 'result-chart-4');
-        bindCopyBtn(result.stats);
+        bindResultsToolbar(result);
 
+        const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
         tool.fields.forEach(field => {
             const group = document.querySelector(`.form-group[data-field="${field.id}"]`);
             if (group) {
-                if (field.condition) group.style.display = field.condition(values) ? '' : 'none';
+                if (field.condition) group.style.display = field.condition(currentVals) ? '' : 'none';
                 if (tool.fieldLabels) {
-                    const lbl = tool.fieldLabels(values)[field.id];
+                    const lbl = tool.fieldLabels(currentVals)[field.id];
                     if (lbl) group.querySelector('label').textContent = lbl;
                 }
                 return;
             }
             if (field.type === 'section') {
                 const section = document.querySelector(`.form-section-header[data-field="${field.id}"]`);
-                if (section && field.condition) section.style.display = field.condition(values) ? '' : 'none';
+                if (section && field.condition) section.style.display = field.condition(currentVals) ? '' : 'none';
             }
         });
     }
 
-    function buildCopyBtn() {
-        return `<button class="btn btn-outline btn-sm copy-results-btn" id="copy-results-btn" style="margin-top:16px;"><i class="fa-regular fa-copy"></i> Copy Results</button>`;
+    function buildResultsToolbarHtml(result) {
+        return `
+            <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+                <button class="btn btn-outline btn-sm action-btn ${isCompareMode ? 'active' : ''}" id="action-compare-btn" title="Compare Side-by-Side Scenarios"><i class="fa-solid fa-code-compare"></i> <span>${isCompareMode ? 'Close Compare' : 'Compare A vs B'}</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-share-btn" title="Share calculation with current inputs"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn" title="Download PDF Report"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn" title="Export CSV Data"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+                <button class="btn btn-outline btn-sm action-btn" id="action-print-btn" title="Print results"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+                <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn" title="Copy results text"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+            </div>
+        `;
     }
 
-    function bindCopyBtn(stats) {
-        const btn = document.getElementById('copy-results-btn');
-        if (!btn) return;
-        btn.addEventListener('click', async () => {
-            const text = stats.map(s => `${s.label}: ${s.value}`).join('\n');
-            try {
-                await navigator.clipboard.writeText(text);
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                btn.style.color = '#10B981';
-                btn.style.borderColor = '#10B981';
-                setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
-            } catch {
-                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Copy failed';
-                btn.style.color = '#EF4444';
-                btn.style.borderColor = '#EF4444';
-                setTimeout(() => { btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Results'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
-            }
-        });
+    function showActionToast(message, isError = false) {
+        const existing = document.querySelector('.action-toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'action-toast';
+        if (isError) toast.style.background = '#EF4444';
+        toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-triangle-exclamation' : 'fa-check'}"></i> <span>${escapeHtml(message)}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 2500);
+    }
+
+    function bindResultsToolbar(result) {
+        const compareBtn = document.getElementById('action-compare-btn');
+        if (compareBtn) {
+            compareBtn.addEventListener('click', () => {
+                isCompareMode = !isCompareMode;
+                if (isCompareMode && !valuesB) {
+                    valuesB = JSON.parse(JSON.stringify(valuesA));
+                }
+                const formInputs = document.querySelector('.calculator-form-inputs');
+                if (formInputs) formInputs.innerHTML = buildFormHtml();
+                updateResults();
+                trackEvent('calculator_action', { action_type: isCompareMode ? 'compare_enabled' : 'compare_disabled' });
+                showActionToast(isCompareMode ? 'Comparison Mode activated (Scenario A vs B)' : 'Exited Comparison Mode');
+            });
+        }
+
+        const shareBtn = document.getElementById('action-share-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', async () => {
+                const currentUrl = window.location.href;
+                const shareData = {
+                    title: `${tool.name} — GetCalcu`,
+                    text: `Check out this ${tool.name} calculation on GetCalcu`,
+                    url: currentUrl
+                };
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                        trackEvent('calculator_action', { action_type: 'share' });
+                        return;
+                    } catch (e) {
+                        // User dismissed or unsupported
+                    }
+                }
+                try {
+                    await navigator.clipboard.writeText(currentUrl);
+                    showActionToast('Scenario link copied to clipboard!');
+                    trackEvent('calculator_action', { action_type: 'share' });
+                } catch {
+                    showActionToast('Link copied!');
+                }
+            });
+        }
+
+        const pdfBtn = document.getElementById('action-pdf-btn');
+        if (pdfBtn) {
+            pdfBtn.addEventListener('click', async () => {
+                pdfBtn.disabled = true;
+                pdfBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Generating...</span>';
+                try {
+                    const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                    await generateResultsPDF(tool, result, currentVals);
+                    showActionToast('PDF report downloaded!');
+                    trackEvent('calculator_action', { action_type: 'pdf_download' });
+                } catch (e) {
+                    console.error('PDF error:', e);
+                    showActionToast('PDF generation failed. You can use Print.', true);
+                } finally {
+                    pdfBtn.disabled = false;
+                    pdfBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> <span>PDF</span>';
+                }
+            });
+        }
+
+        const csvBtn = document.getElementById('action-csv-btn');
+        if (csvBtn) {
+            csvBtn.addEventListener('click', () => {
+                if (result.table && Array.isArray(result.table) && result.table.length > 0) {
+                    exportToCSV(result.table, { filename: `${slug}-schedule.csv` });
+                    showActionToast('Schedule exported as CSV!');
+                    trackEvent('calculator_action', { action_type: 'csv_export' });
+                } else if (result.table && result.table.rows && Array.isArray(result.table.rows)) {
+                    exportToCSV(result.table.rows, { filename: `${slug}-data.csv` });
+                    showActionToast('Data exported as CSV!');
+                    trackEvent('calculator_action', { action_type: 'csv_export' });
+                } else if (result.stats && Array.isArray(result.stats)) {
+                    const exportRows = result.stats.map(s => ({ Metric: s.label, Value: s.value }));
+                    exportToCSV(exportRows, { filename: `${slug}-summary.csv` });
+                    showActionToast('Summary exported as CSV!');
+                    trackEvent('calculator_action', { action_type: 'csv_export' });
+                } else {
+                    showActionToast('No exportable data available.', true);
+                }
+            });
+        }
+
+        const printBtn = document.getElementById('action-print-btn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                printResults({ title: `${tool.name} Results` });
+                trackEvent('calculator_action', { action_type: 'print' });
+            });
+        }
+
+        const copyBtn = document.getElementById('copy-results-btn');
+        if (copyBtn && result && result.stats) {
+            copyBtn.addEventListener('click', async () => {
+                const text = result.stats.map(s => `${s.label}: ${s.value}`).join('\n');
+                try {
+                    await navigator.clipboard.writeText(text);
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
+                    copyBtn.style.color = '#10B981';
+                    copyBtn.style.borderColor = '#10B981';
+                    trackEvent('calculator_action', { action_type: 'copy' });
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy</span>';
+                        copyBtn.style.color = '';
+                        copyBtn.style.borderColor = '';
+                    }, 2000);
+                } catch {
+                    copyBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span>Failed</span>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> <span>Copy</span>';
+                    }, 2000);
+                }
+            });
+        }
+    }
+
+    function trackEvent(eventName, eventParams = {}) {
+        if (typeof window !== 'undefined' && window.dataLayer && Array.isArray(window.dataLayer)) {
+            window.dataLayer.push({
+                event: eventName,
+                calculator_slug: slug,
+                calculator_name: tool?.name,
+                ...eventParams
+            });
+        }
     }
 
     function render() {
-        // Defensive check (ISSUE-106): only invoke customRenderer if it is
-        // actually a function. A boolean `true` (legacy budget-planner) would
-        // throw "TypeError: tool.customRenderer is not a function".
         if (typeof tool.customRenderer === 'function') {
             tool.customRenderer(container);
             return;
         }
 
         let result;
-        try { result = tool.calculate(values); } 
+        try { result = tool.calculate(valuesA); } 
         catch (err) {
             console.error('Initial render calculation error:', err);
             container.innerHTML = `<div class="tool-runner-card"><div class="tool-header"><h1>${escapeHtml(tool.name)}</h1><p>${escapeHtml(tool.description)}</p></div><div class="calculator-results-card"><p style="color:#EF4444;">An error occurred while calculating. Please check your inputs.</p></div></div>`;
             return;
         }
 
-        const periodLabel = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year' : 'Month';
-        const scheduleTitle = (slug === 'compound-interest-calculator' || slug === 'investment-calculator' || slug === 'retirement-calculator') ? 'Year-by-Year Schedule' : 'Amortization Schedule';
-        let tableHtml = '';
-        if (result.table) {
-            if (result.table.mode) {
-                tableHtml = buildTableSpecHtml(result.table);
-            } else {
-                tableHtml = `<div class="result-table-container calc-data-table amortization-result-table"><h4>${scheduleTitle}</h4><div class="table-wrapper"><table><thead><tr><th>${periodLabel}</th><th>Payment</th><th>Principal</th><th>Interest</th><th>Balance</th></tr></thead><tbody>${buildTableRowsHtml(result.table)}</tbody></table></div></div>`;
-            }
-        }
+        const tableHtml = renderTableHtml(result.table, slug);
 
         container.innerHTML = `
             <div class="tool-runner-card">
                 <div class="tool-header"><h1>${escapeHtml(tool.name)}</h1><p>${escapeHtml(tool.description)}</p></div>
                 <div class="tool-grid-workspace">
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
-                    <div class="calculator-results-card">
+                    <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
                         ${result.error ? '' : buildInsightHtml(result.insight)}
                         ${buildRecommendationHtml(result.recommendation)}
                         ${buildSummaryHtml(result.summary)}
@@ -420,7 +688,7 @@ function initLegacyRunner(tool, slug, container) {
                         ${buildChartsHtml(result)}
                         ${buildBreakdownTablesHtml(result)}
                         ${buildInsightsHtml(result.insights)}
-                        ${buildCopyBtn()}
+                        ${buildResultsToolbarHtml(result)}
                     </div>
                 </div>
                 ${tableHtml}
@@ -437,9 +705,10 @@ function initLegacyRunner(tool, slug, container) {
         if (result.chart2) renderChart(result.chart2, 'result-chart-2');
         if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
         if (result.chart3) renderChart(result.chart3, 'result-chart-4');
-        bindCopyBtn(result.stats);
+        bindResultsToolbar(result);
         initSaveButton();
         initResetButton();
+        trackEvent('calculator_viewed');
     }
 
     function validateField(field, rawValue) {
@@ -454,9 +723,19 @@ function initLegacyRunner(tool, slug, container) {
 
     function showFieldError(fieldId, message) {
         const input = document.getElementById(fieldId);
-        const errEl = document.querySelector(`[data-error="${fieldId}"]`);
-        if (input) input.classList.toggle('input-error', !!message);
-        if (errEl) { errEl.textContent = message || ''; errEl.classList.toggle('hidden', !message); }
+        const errEl = document.getElementById(`error-${fieldId}`) || document.querySelector(`[data-error="${fieldId}"]`);
+        if (input) {
+            input.classList.toggle('input-error', !!message);
+            if (message) {
+                input.setAttribute('aria-invalid', 'true');
+            } else {
+                input.removeAttribute('aria-invalid');
+            }
+        }
+        if (errEl) {
+            errEl.textContent = message || '';
+            errEl.classList.toggle('hidden', !message);
+        }
     }
 
     function handleInputChange(e) {
@@ -471,7 +750,12 @@ function initLegacyRunner(tool, slug, container) {
             if (err) return;
             value = parseFloat(value);
         }
-        values[id] = value;
+        if (isCompareMode && activeScenario === 'B') {
+            valuesB[id] = value;
+        } else {
+            valuesA[id] = value;
+            values[id] = value;
+        }
         debouncedUpdate();
     }
 
@@ -480,11 +764,44 @@ function initLegacyRunner(tool, slug, container) {
         if (!rangeFor) return;
         const numInput = document.getElementById(rangeFor);
         if (numInput) numInput.value = e.target.value;
-        values[rangeFor] = parseFloat(e.target.value);
+        const numVal = parseFloat(e.target.value);
+        if (isCompareMode && activeScenario === 'B') {
+            valuesB[rangeFor] = numVal;
+        } else {
+            valuesA[rangeFor] = numVal;
+            values[rangeFor] = numVal;
+        }
         debouncedUpdate();
     }
 
-    // ── Phase 5.8: Enter-to-recalculate on number inputs ──────
+    function handleScenarioTabClick(e) {
+        const tab = e.target.closest('.scenario-tab');
+        if (!tab) return;
+        const scenario = tab.dataset.scenario;
+        if (!scenario || scenario === activeScenario) return;
+        activeScenario = scenario;
+        const formInputs = document.querySelector('.calculator-form-inputs');
+        if (formInputs) formInputs.innerHTML = buildFormHtml();
+        updateResults();
+    }
+
+    function handlePresetClick(e) {
+        const chip = e.target.closest('.preset-chip');
+        if (!chip) return;
+        const idx = parseInt(chip.dataset.presetIdx, 10);
+        if (isNaN(idx) || !tool.presets || !tool.presets[idx]) return;
+        const preset = tool.presets[idx];
+        const targetVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+        Object.assign(targetVals, preset.values);
+        if (!isCompareMode || activeScenario === 'A') {
+            Object.assign(values, preset.values);
+        }
+        const formInputs = document.querySelector('.calculator-form-inputs');
+        if (formInputs) formInputs.innerHTML = buildFormHtml();
+        debouncedUpdate();
+        showActionToast(`Preset applied: ${preset.label}`);
+    }
+
     function handleKeyDown(e) {
         if (e.key === 'Enter' && e.target.dataset.id) {
             e.preventDefault();
@@ -496,6 +813,8 @@ function initLegacyRunner(tool, slug, container) {
     container.addEventListener('change', handleInputChange);
     container.addEventListener('input', handleRangeInput);
     container.addEventListener('change', handleRangeInput);
+    container.addEventListener('click', handleScenarioTabClick);
+    container.addEventListener('click', handlePresetClick);
     container.addEventListener('keydown', handleKeyDown);
 
     function initSaveButton() {
@@ -513,8 +832,9 @@ function initLegacyRunner(tool, slug, container) {
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
             try {
-                const result = tool.calculate(values);
-                const { error } = await saveCalculation(slug, tool.name, values, { stats: result.stats });
+                const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                const result = tool.calculate(currentVals);
+                const { error } = await saveCalculation(slug, tool.name, currentVals, { stats: result.stats });
                 msg.classList.remove('hidden');
                 msg.textContent = error ? 'Failed to save. Please try again.' : 'Saved to history!';
                 msg.style.color = error ? '#EF4444' : '#10B981';
@@ -530,25 +850,24 @@ function initLegacyRunner(tool, slug, container) {
         });
     }
 
-    // ── Phase 5.8: Reset button — restore defaults ────────────
     function initResetButton() {
         const resetBtn = document.getElementById('reset-btn');
         if (!resetBtn) return;
         resetBtn.addEventListener('click', () => {
             tool.fields.forEach(f => {
-                values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
+                const def = typeof f.default === 'function' ? f.default() : f.default;
+                values[f.id] = def;
+                valuesA[f.id] = def;
+                valuesB[f.id] = def;
             });
-            // Clear any field errors
             tool.fields.forEach(f => {
                 const input = document.getElementById(f.id);
                 const errEl = document.querySelector(`[data-error="${f.id}"]`);
                 if (input) input.classList.remove('input-error');
                 if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
             });
-            // Re-render form with default values
             const formContainer = document.querySelector('.calculator-form-inputs');
             if (formContainer) formContainer.innerHTML = buildFormHtml();
-            // Recalculate and update URL
             updateResults();
             updateShareUrl();
         });
@@ -564,7 +883,10 @@ function initLegacyRunner(tool, slug, container) {
             html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2><p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>${sectionsHtml}</div>`;
         }
         if (tool.howTo && tool.howTo.length) {
-            const steps = tool.howTo.map((step, i) => `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${escapeHtml(step)}</li>`).join('');
+            const steps = tool.howTo.map((step, i) => {
+                const text = typeof step === 'string' ? escapeHtml(step) : (step.name ? `<strong>${escapeHtml(step.name)}:</strong> ${escapeHtml(step.text || '')}` : escapeHtml(step.text || ''));
+                return `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${text}</li>`;
+            }).join('');
             html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2><ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}</div>`;
         }
         if (tool.examples && tool.examples.length) {
@@ -572,16 +894,15 @@ function initLegacyRunner(tool, slug, container) {
             html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Examples</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">${exHtml}</div></div>`;
         }
         if (tool.faqs && tool.faqs.length) {
-            const faqHtml = tool.faqs.map(f => `<details style="border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:8px;"><summary style="font-size:14px;font-weight:700;cursor:pointer;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;">${escapeHtml(f.q)} <i class="fa-solid fa-chevron-down" style="font-size:12px;color:var(--text-secondary);"></i></summary><p style="font-size:13px;color:var(--text-secondary);margin-top:10px;line-height:1.7;">${escapeHtml(f.a)}</p></details>`).join('');
-            html += `<div class="tool-runner-card" style="margin-top:24px;"><h2 id="faqs" style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>${faqHtml}</div>`;
+            html += `<div class="tool-runner-card" style="margin-top:24px;">${buildCalculatorFAQ(tool, { searchable: false })}</div>`;
         }
         return html;
     }
 
     function buildRelatedToolsHtml() {
-        const related = Object.entries(TOOLS).filter(([s, t]) => s !== slug && (t.category === tool.category || (tool.related && tool.related.includes(s)))).slice(0, 4);
+        const related = getRelatedTools(slug, { limit: 4 });
         if (!related.length) return '';
-        const cards = related.map(([s, t]) => `<a href="/tool/${encodeURIComponent(s)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass)}"><i class="fa-solid ${escapeHtml(t.icon)}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description)}</p><span class="tag ${escapeHtml(t.tagClass)}">${escapeHtml(t.category)}</span></a>`).join('');
+        const cards = related.map(t => `<a href="/tool/${encodeURIComponent(t.slug)}" class="tool-card"><div class="tool-icon ${escapeHtml(t.iconClass || 'icon-finance')}"><i class="fa-solid ${escapeHtml(t.icon || 'fa-calculator')}"></i></div><h3 style="font-size:14px;margin-bottom:4px;">${escapeHtml(t.name)}</h3><p style="font-size:12px;color:var(--text-secondary);">${escapeHtml(t.description || '')}</p><span class="tag ${escapeHtml(t.tagClass || 'tag-finance')}">${escapeHtml(t.category || '')}</span></a>`).join('');
         return `<div class="tool-runner-card" style="margin-top:24px;"><h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Related Calculators</h2><div class="tools-grid">${cards}</div></div>`;
     }
 
@@ -592,41 +913,58 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function renderChart(chartData, canvasId) {
+        if (!chartData) return;
         const id = canvasId || 'result-chart';
         const canvas = document.getElementById(id);
         if (!canvas) return;
         
-        // Map legacy chart data to ChartManager format
-        const type = chartData.type || 'doughnut';
+        let datasets;
+        if (Array.isArray(chartData.datasets) && chartData.datasets.length > 0) {
+            datasets = chartData.datasets.map(ds => ({
+                label: ds.label || '',
+                data: ds.data || [],
+                color: ds.color || ds.borderColor,
+                colors: ds.colors || (Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined),
+                backgroundColor: ds.backgroundColor,
+                borderColor: ds.borderColor,
+                fill: ds.fill,
+                format: ds.format,
+                stack: ds.stack
+            }));
+        } else if (Array.isArray(chartData.data)) {
+            datasets = [{
+                data: chartData.data,
+                colors: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
+                backgroundColor: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
+            }];
+        } else if (chartData.principal !== undefined || chartData.totalInterest !== undefined) {
+            datasets = [{
+                data: [safeNum(chartData.principal, 0), safeNum(chartData.totalInterest, 0)],
+                colors: ['#6366F1', '#F59E0B'],
+                backgroundColor: ['#6366F1', '#F59E0B']
+            }];
+        } else {
+            return;
+        }
+
+        let type = chartData.type;
+        if (!type) {
+            if (datasets.length > 1 || (datasets[0] && datasets[0].label)) {
+                type = 'bar';
+            } else {
+                type = 'doughnut';
+            }
+        }
+        
         const isHBar = type === 'horizontalBar';
         const normalizedType = isHBar ? 'bar' : type;
         
-        // Build datasets for ChartManager
-        let datasets;
-        if (type === 'doughnut' || !type) {
-            datasets = [{
-                data: chartData.data || [chartData.principal, chartData.totalInterest],
-                colors: chartData.colors || ['#6366F1', '#F59E0B'],
-                backgroundColor: chartData.colors || ['#6366F1', '#F59E0B']
-            }];
-        } else {
-            datasets = (chartData.datasets || []).map(ds => ({
-                label: ds.label,
-                data: ds.data,
-                color: ds.color || '#6366F1',
-                backgroundColor: ds.backgroundColor,
-                fill: ds.fill,
-                format: ds.format
-            }));
-        }
-        
-        // Create chart via ChartManager
         ChartManager.create({
             id,
             type: normalizedType,
             container: canvas.parentElement || canvas,
             data: {
-                labels: chartData.labels || [],
+                labels: chartData.labels || ['Principal', 'Interest'],
                 datasets
             },
             format: chartData.format || 'currency',
@@ -635,8 +973,67 @@ function initLegacyRunner(tool, slug, container) {
         });
     }
 
+    function renderTableHtml(tableData, currentSlug) {
+        if (!tableData) return '';
+        if (tableData.mode) {
+            return buildTableSpecHtml(tableData);
+        }
+        if (!Array.isArray(tableData) || tableData.length === 0) return '';
+
+        const firstRow = tableData[0];
+        if (firstRow && ('month' in firstRow || 'payment' in firstRow || 'principal' in firstRow)) {
+            const isInvestment = (currentSlug === 'compound-interest-calculator' || currentSlug === 'investment-calculator' || currentSlug === 'retirement-calculator');
+            const periodLabel = isInvestment ? 'Year' : 'Month';
+            const scheduleTitle = isInvestment ? 'Year-by-Year Growth Schedule' : 'Amortization Schedule';
+            const principalLabel = isInvestment ? 'Total Principal' : 'Principal';
+            const interestLabel = isInvestment ? 'Total Growth / Return' : 'Interest';
+
+            return `
+                <div class="result-table-container calc-data-table amortization-result-table">
+                    <h4>${escapeHtml(scheduleTitle)}</h4>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>${periodLabel}</th><th>Payment</th><th>${principalLabel}</th><th>${interestLabel}</th><th>Balance</th></tr></thead>
+                            <tbody>${buildTableRowsHtml(tableData)}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generic object rows (dynamic key-value table)
+        const keys = Object.keys(firstRow);
+        const headers = keys.map(k => `<th>${escapeHtml(k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()))}</th>`).join('');
+        const rows = tableData.map(row => {
+            const cells = keys.map(k => {
+                const val = row[k];
+                const strVal = (typeof val === 'number') ? fmtN(val) : String(val ?? '');
+                return `<td>${escapeHtml(strVal)}</td>`;
+            }).join('');
+            return `<tr>${cells}</tr>`;
+        }).join('');
+
+        return `
+            <div class="result-table-container calc-data-table">
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr>${headers}</tr></thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
     function buildTableRowsHtml(table) {
-        return table.map(row => `<tr><td>${escapeHtml(row.month)}</td><td>${escapeHtml(fmt(row.payment))}</td><td>${escapeHtml(fmt(row.principal))}</td><td>${escapeHtml(fmt(row.interest))}</td><td>${escapeHtml(fmt(row.balance))}</td></tr>`).join('');
+        return table.map(row => {
+            const m = row.month !== undefined ? row.month : (row.year !== undefined ? row.year : '');
+            const p = typeof row.payment === 'number' ? fmt(row.payment) : (row.payment ?? '');
+            const pr = typeof row.principal === 'number' ? fmt(row.principal) : (row.principal ?? '');
+            const i = typeof row.interest === 'number' ? fmt(row.interest) : (row.interest ?? '');
+            const b = typeof row.balance === 'number' ? fmt(row.balance) : (row.balance ?? '');
+            return `<tr><td>${escapeHtml(String(m))}</td><td>${escapeHtml(String(p))}</td><td>${escapeHtml(String(pr))}</td><td>${escapeHtml(String(i))}</td><td>${escapeHtml(String(b))}</td></tr>`;
+        }).join('');
     }
 
     function buildTableSpecHtml(tbl) {
