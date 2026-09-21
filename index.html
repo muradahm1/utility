@@ -191,25 +191,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </header>
 
             <div class="content-body">
-                <!-- Hero Section -->
-                <section class="hero-section">
+                <!-- 1. Hero Section -->
+                <section class="hero-section" id="hero-section">
                     <div class="hero-text">
                         <h1>Precision Calculators for<br>Life's Big Decisions</h1>
-                        <p class="hero-subtitle">Fast, accurate financial, health, and everyday calculators designed to give you clarity in seconds — completely free and private.</p>
+                        <p class="hero-subtitle">Free, transparent calculators and converters for personal finance, health, business, and everyday math. Built to deliver clear, validated answers in seconds without sign-ups or tracking.</p>
 
                         <div class="hero-search-box" id="hero-search-box">
                             <i class="fa-solid fa-magnifying-glass search-icon"></i>
                             <input type="text" id="hero-search-input" placeholder="Search 47+ calculators, converters, and tools..." aria-label="Search calculators, converters, tools">
-                            <button class="btn btn-primary" id="hero-search-btn">Search</button>
+                            <button class="btn btn-primary" id="hero-search-btn" type="button">Search</button>
                         </div>
 
                         <div class="popular-searches">
-                            <span>Popular searches:</span>
+                            <span>Popular:</span>
                             <a href="/tool/mortgage-calculator" class="search-chip">Mortgage Calculator</a>
                             <a href="/tool/loan-calculator" class="search-chip">Loan Calculator</a>
-                            <a href="/tool/bmi-calculator" class="search-chip">BMI Calculator</a>
                             <a href="/tool/compound-interest-calculator" class="search-chip">Compound Interest</a>
+                            <a href="/tool/salary-calculator" class="search-chip">Salary Calculator</a>
+                            <a href="/tool/bmi-calculator" class="search-chip">BMI Calculator</a>
                             <a href="/tool/percentage-calculator" class="search-chip">Percentage Calculator</a>
+                        </div>
+
+                        <div class="trust-strip">
+                            <span class="trust-item"><i class="fa-solid fa-check"></i> Free to use</span>
+                            <span class="trust-divider">·</span>
+                            <span class="trust-item"><i class="fa-solid fa-check"></i> No account required</span>
+                            <span class="trust-divider">·</span>
+                            <span class="trust-item"><i class="fa-solid fa-check"></i> Privacy-first (in-browser math)</span>
+                            <span class="trust-divider">·</span>
+                            <span class="trust-item"><i class="fa-solid fa-check"></i> Transparent formulas</span>
                         </div>
                     </div>
 
@@ -229,157 +240,461 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </section>
 
-                <!-- Popular Categories -->
-                <section class="section-container" id="all-categories">
+                <!-- 2. Popular Calculators -->
+                <section class="section-container" id="popular-tools">
                     <div class="section-header">
-                        <h2>Popular Categories</h2>
-                        <a href="#all-categories" class="view-link">View all categories <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="categories-grid">
-                        <a href="/category/finance" class="category-card">
-                            <div class="icon-wrapper cat-finance"><i class="fa-solid fa-dollar-sign"></i></div>
-                            <div class="cat-details"><h3>Finance</h3><p id="count-finance">26 tools</p></div>
-                        </a>
-                        <a href="/category/health" class="category-card">
-                            <div class="icon-wrapper cat-health"><i class="fa-solid fa-heart"></i></div>
-                            <div class="cat-details"><h3>Health</h3><p id="count-health">3 tools</p></div>
-                        </a>
-                        <a href="/category/business" class="category-card">
-                            <div class="icon-wrapper cat-business"><i class="fa-solid fa-briefcase"></i></div>
-                            <div class="cat-details"><h3>Business</h3><p id="count-business">5 tools</p></div>
-                        </a>
-                        <a href="/category/education" class="category-card">
-                            <div class="icon-wrapper cat-education"><i class="fa-solid fa-graduation-cap"></i></div>
-                            <div class="cat-details"><h3>Education</h3><p id="count-education">3 tools</p></div>
-                        </a>
-                        <a href="/category/construction" class="category-card">
-                            <div class="icon-wrapper cat-construction"><i class="fa-solid fa-helmet-safety"></i></div>
-                            <div class="cat-details"><h3>Construction</h3><p id="count-construction">3 tools</p></div>
-                        </a>
-                        <a href="/category/engineering" class="category-card">
-                            <div class="icon-wrapper cat-engineering"><i class="fa-solid fa-gear"></i></div>
-                            <div class="cat-details"><h3>Engineering</h3><p id="count-engineering">3 tools</p></div>
-                        </a>
-                        <a href="/category/math" class="category-card">
-                            <div class="icon-wrapper cat-math"><i class="fa-solid fa-percent"></i></div>
-                            <div class="cat-details"><h3>Math</h3><p id="count-math">4 tools</p></div>
-                        </a>
-                    </div>
-                </section>
-
-                <!-- Popular Tools -->
-                <section class="section-container" id="all-tools">
-                    <div class="section-header">
-                        <h2>Popular Tools</h2>
-                        <a href="#all-tools" class="view-link">View all tools <i class="fa-solid fa-arrow-right"></i></a>
+                        <div>
+                            <h2>Popular Calculators</h2>
+                            <p class="section-subtitle-text">Direct access to our most frequently used calculation tools across finance, health, and mathematics.</p>
+                        </div>
+                        <a href="#explore-by-need" class="view-link">Explore by need <i class="fa-solid fa-arrow-down"></i></a>
                     </div>
                     <div class="tools-grid">
                         <a href="/tool/mortgage-calculator" class="tool-card">
-                            <div class="tool-icon icon-home"><i class="fa-solid fa-house"></i></div>
-                            <h3>Mortgage Calculator</h3>
-                            <p>Calculate exact monthly payments including principal, interest, taxes, and home insurance.</p>
-                            <span class="tag tag-finance">Finance</span>
-                        </a>
-                        <a href="/tool/bmi-calculator" class="tool-card">
-                            <div class="tool-icon icon-health"><i class="fa-solid fa-heart"></i></div>
-                            <h3>BMI Calculator</h3>
-                            <p>Check your Body Mass Index and find your healthy weight range in seconds.</p>
-                            <span class="tag tag-health">Health</span>
-                        </a>
-                        <a href="/tool/percentage-calculator" class="tool-card">
-                            <div class="tool-icon icon-math"><i class="fa-solid fa-percent"></i></div>
-                            <h3>Percentage Calculator</h3>
-                            <p>Calculate discounts, price increases, margins, and percent changes effortlessly.</p>
-                            <span class="tag tag-math">Math</span>
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-home"><i class="fa-solid fa-house"></i></div>
+                                </div>
+                                <h3>Mortgage Calculator</h3>
+                                <p>Calculate monthly principal and interest, property taxes, insurance, and full amortization schedules.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-finance">Finance</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
                         <a href="/tool/loan-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                            <h3>Loan Calculator</h3>
-                            <p>Break down total repayment amounts, monthly installments, and interest costs.</p>
-                            <span class="tag tag-finance">Finance</span>
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-finance"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                                </div>
+                                <h3>Loan Calculator</h3>
+                                <p>Break down total repayment amounts, installment payments, and lifetime interest costs for any loan.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-finance">Finance</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
                         <a href="/tool/compound-interest-calculator" class="tool-card">
-                            <div class="tool-icon icon-chart"><i class="fa-solid fa-chart-line"></i></div>
-                            <h3>Compound Interest Calculator</h3>
-                            <p>See how regular savings and compound interest grow your wealth over time.</p>
-                            <span class="tag tag-finance">Finance</span>
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-chart"><i class="fa-solid fa-chart-line"></i></div>
+                                </div>
+                                <h3>Compound Interest Calculator</h3>
+                                <p>Forecast portfolio growth with regular deposits, compounding frequencies, and growth curves.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-finance">Finance</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
-                        <a href="/tool/investment-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
-                            <h3>Investment Calculator</h3>
-                            <p>Forecast portfolio growth, project milestones ($100k, $1M), and plan financial freedom.</p>
-                            <span class="tag tag-finance">Finance</span>
+                        <a href="/tool/salary-calculator" class="tool-card">
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-business"><i class="fa-solid fa-money-bill-wave"></i></div>
+                                </div>
+                                <h3>Salary & Take-Home Calculator</h3>
+                                <p>Convert hourly wages to annual salaries and estimate net paycheck amounts after standard deductions.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-business">Business</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
-                        <a href="/tool/retirement-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
-                            <h3>Retirement Calculator</h3>
-                            <p>Calculate your retirement nest egg, safe withdrawal rates, and inflation-adjusted timeline.</p>
-                            <span class="tag tag-finance">Finance</span>
-                        </a>
-                        <a href="/tool/date-calculator" class="tool-card">
-                            <div class="tool-icon icon-math"><i class="fa-solid fa-calendar-days"></i></div>
-                            <h3>Date Calculator</h3>
-                            <p>Calculate exact calendar durations between dates or add and subtract days.</p>
-                            <span class="tag tag-math">Math</span>
+                        <a href="/tool/bmi-calculator" class="tool-card">
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-health"><i class="fa-solid fa-heart"></i></div>
+                                </div>
+                                <h3>BMI Calculator</h3>
+                                <p>Calculate Body Mass Index, identify healthy weight boundaries, and review standard BMI categories.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-health">Health</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
                         <a href="/tool/budget-planner" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
-                            <h3>Budget Planner &amp; Expense Tracker</h3>
-                            <p>Track income, categorize expenses, and balance your monthly budget using the 50/30/20 rule.</p>
-                            <span class="tag tag-finance">Finance</span>
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+                                </div>
+                                <h3>50/30/20 Budget Planner</h3>
+                                <p>Allocate net monthly income across essentials (needs), flexible spending (wants), and debt savings.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-finance">Finance</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
                         <a href="/tool/credit-card-payoff-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-credit-card"></i></div>
-                            <h3>Credit Card Payoff & Strategy Calculator</h3>
-                            <p>Build an aggressive debt payoff strategy and compare Avalanche vs. Snowball methods.</p>
-                            <span class="tag tag-finance">Finance</span>
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-finance"><i class="fa-solid fa-credit-card"></i></div>
+                                </div>
+                                <h3>Credit Card Payoff Calculator</h3>
+                                <p>Compare Avalanche vs. Snowball payoff methods to see exact debt-free dates and interest savings.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-finance">Finance</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
-                        <a href="/tool/rent-vs-buy-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
-                            <h3>Rent vs. Buy Calculator</h3>
-                            <p>Compare the true lifetime cost of renting versus buying a home with break-even analysis.</p>
-                            <span class="tag tag-finance">Finance</span>
-                        </a>
-                        <a href="/tool/net-worth-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-scale-balanced"></i></div>
-                            <h3>Net Worth Calculator</h3>
-                            <p>Tally your assets and debts to get a clear, honest snapshot of your personal net worth.</p>
-                            <span class="tag tag-finance">Finance</span>
-                        </a>
-                        <a href="/tool/fire-calculator" class="tool-card">
-                            <div class="tool-icon icon-finance"><i class="fa-solid fa-fire"></i></div>
-                            <h3>FIRE Calculator</h3>
-                            <p>Determine your Financial Independence number and how many years until work becomes optional.</p>
-                            <span class="tag tag-finance">Finance</span>
-                        </a>
-                        <a href="/tool/stair-calculator" class="tool-card">
-                            <div class="tool-icon icon-construction"><i class="fa-solid fa-route"></i></div>
-                            <h3>Stair Calculator</h3>
-                            <p>Design a staircase with the right number of risers and treads — even riser heights, comfortable treads, total run, and stringer length.</p>
-                            <span class="tag tag-construction">Construction</span>
+                        <a href="/tool/percentage-calculator" class="tool-card">
+                            <div>
+                                <div class="tool-card-header">
+                                    <div class="tool-icon icon-math"><i class="fa-solid fa-percent"></i></div>
+                                </div>
+                                <h3>Percentage Calculator</h3>
+                                <p>Compute percentage increases, discounts, markups, margins, and proportion calculations instantly.</p>
+                            </div>
+                            <div class="tool-card-footer">
+                                <span class="tag tag-math">Math</span>
+                                <span class="tool-card-cta">Calculate <i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </a>
                     </div>
                 </section>
 
-                <!-- Why Choose Us -->
-                <section class="why-us-banner">
-                    <h3>Why Millions Choose GetCalcu</h3>
-                    <div class="features-grid">
-                        <div class="feature-item">
-                            <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                            <div><h4>Bank-Grade Formulas</h4><p>Every calculator uses verified math and standard financial formulas you can trust.</p></div>
+                <!-- 3. Explore by Need -->
+                <section class="section-container" id="explore-by-need">
+                    <div class="section-header">
+                        <div>
+                            <h2>Explore by Need</h2>
+                            <p class="section-subtitle-text">Find the right calculation tool tailored to the specific financial, health, or practical problem you are solving.</p>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon"><i class="fa-solid fa-bolt"></i></div>
-                            <div><h4>Instant In-Browser Math</h4><p>Calculations happen live on your device as you type — zero wait time, zero lag.</p></div>
+                    </div>
+                    <div class="needs-grid">
+                        <div class="need-card">
+                            <div>
+                                <div class="need-header">
+                                    <div class="need-icon-wrap cat-finance"><i class="fa-solid fa-house"></i></div>
+                                    <div class="need-title-wrap">
+                                        <h3>Buying a Home</h3>
+                                        <p>Estimate monthly payments, verify affordability thresholds, and analyze ownership costs.</p>
+                                    </div>
+                                </div>
+                                <ul class="need-tool-links">
+                                    <li><a href="/tool/mortgage-calculator" class="need-tool-link"><span>Mortgage Payment Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/house-affordability-calculator" class="need-tool-link"><span>House Affordability Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/rent-vs-buy-calculator" class="need-tool-link"><span>Rent vs. Buy Analysis</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/amortization-calculator" class="need-tool-link"><span>Loan Amortization Schedule</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon"><i class="fa-solid fa-user-shield"></i></div>
-                            <div><h4>Strictly Private</h4><p>Your financial numbers and personal inputs never leave your browser.</p></div>
+
+                        <div class="need-card">
+                            <div>
+                                <div class="need-header">
+                                    <div class="need-icon-wrap cat-finance"><i class="fa-solid fa-wallet"></i></div>
+                                    <div class="need-title-wrap">
+                                        <h3>Managing Money & Debt</h3>
+                                        <p>Structure monthly cash flows, plan systematic debt elimination, and size cash reserves.</p>
+                                    </div>
+                                </div>
+                                <ul class="need-tool-links">
+                                    <li><a href="/tool/budget-planner" class="need-tool-link"><span>50/30/20 Budget Planner</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/credit-card-payoff-calculator" class="need-tool-link"><span>Credit Card Payoff Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/debt-snowball-calculator" class="need-tool-link"><span>Debt Snowball & Avalanche Plan</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/emergency-fund-calculator" class="need-tool-link"><span>Emergency Fund Sizing Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="feature-item">
-                            <div class="feature-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
-                            <div><h4>100% Free &amp; Open</h4><p>No paywalls, no forced sign-ups, and no hidden subscriptions — ever.</p></div>
+
+                        <div class="need-card">
+                            <div>
+                                <div class="need-header">
+                                    <div class="need-icon-wrap cat-business"><i class="fa-solid fa-briefcase"></i></div>
+                                    <div class="need-title-wrap">
+                                        <h3>Income, Career & Business</h3>
+                                        <p>Calculate take-home pay, set profitable client bill rates, and project break-even points.</p>
+                                    </div>
+                                </div>
+                                <ul class="need-tool-links">
+                                    <li><a href="/tool/salary-calculator" class="need-tool-link"><span>Salary & Take-Home Pay</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/freelance-hourly-rate-calculator" class="need-tool-link"><span>Freelance Hourly Rate System</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/self-employment-tax-calculator" class="need-tool-link"><span>Self-Employment Tax Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/break-even-calculator" class="need-tool-link"><span>Break-Even Analysis Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="need-card">
+                            <div>
+                                <div class="need-header">
+                                    <div class="need-icon-wrap cat-health"><i class="fa-solid fa-heart-pulse"></i></div>
+                                    <div class="need-title-wrap">
+                                        <h3>Health, Body & Fitness</h3>
+                                        <p>Assess body mass metrics, calculate body fat percentages, and estimate caloric maintenance.</p>
+                                    </div>
+                                </div>
+                                <ul class="need-tool-links">
+                                    <li><a href="/tool/bmi-calculator" class="need-tool-link"><span>BMI & Healthy Weight Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/body-fat-percentage-calculator" class="need-tool-link"><span>US Navy Body Fat % Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/tdee-calculator" class="need-tool-link"><span>TDEE Caloric Expenditure</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="need-card">
+                            <div>
+                                <div class="need-header">
+                                    <div class="need-icon-wrap cat-finance"><i class="fa-solid fa-chart-line"></i></div>
+                                    <div class="need-title-wrap">
+                                        <h3>Investing & Retirement</h3>
+                                        <p>Model compound returns, estimate retirement readiness, and calculate financial independence numbers.</p>
+                                    </div>
+                                </div>
+                                <ul class="need-tool-links">
+                                    <li><a href="/tool/compound-interest-calculator" class="need-tool-link"><span>Compound Interest Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/retirement-calculator" class="need-tool-link"><span>Retirement Nest Egg Planner</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/fire-calculator" class="need-tool-link"><span>FIRE Horizon & Target Number</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/401k-calculator" class="need-tool-link"><span>401(k) Growth & Employer Match</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="need-card">
+                            <div>
+                                <div class="need-header">
+                                    <div class="need-icon-wrap cat-math"><i class="fa-solid fa-calculator"></i></div>
+                                    <div class="need-title-wrap">
+                                        <h3>Math & Everyday Utilities</h3>
+                                        <p>Solve percent variations, compute exact calendar intervals, and convert practical units.</p>
+                                    </div>
+                                </div>
+                                <ul class="need-tool-links">
+                                    <li><a href="/tool/percentage-calculator" class="need-tool-link"><span>Percentage Calculator</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/date-calculator" class="need-tool-link"><span>Date Interval & Duration</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/unit-converter" class="need-tool-link"><span>Multi-Unit Converter</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/concrete-calculator" class="need-tool-link"><span>Concrete & Material Sizing</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Why GetCalcu -->
+                <section class="section-container" id="why-getcalcu">
+                    <div class="section-header">
+                        <div>
+                            <h2>Why GetCalcu</h2>
+                            <p class="section-subtitle-text">We built GetCalcu to provide a calm, dependable utility for serious calculations without clutter or tracking.</p>
+                        </div>
+                    </div>
+                    <div class="why-grid">
+                        <div class="why-card">
+                            <div class="why-card-icon"><i class="fa-solid fa-user-shield"></i></div>
+                            <h3>100% In-Browser Privacy</h3>
+                            <p>Calculations execute locally inside your web browser using client-side JavaScript. Your inputs, income, and personal parameters are never sent to our servers, logged, or sold.</p>
+                        </div>
+                        <div class="why-card">
+                            <div class="why-card-icon"><i class="fa-solid fa-square-root-variable"></i></div>
+                            <h3>Transparent Formulas</h3>
+                            <p>Every calculator publishes its underlying mathematical equations, variable definitions, and standard assumptions directly on the page so you can verify the results.</p>
+                        </div>
+                        <div class="why-card">
+                            <div class="why-card-icon"><i class="fa-solid fa-table-list"></i></div>
+                            <h3>Results Explained, Not Just Displayed</h3>
+                            <p>Rather than outputting a single number, our tools provide complete amortization schedules, cash-flow breakdowns, and contextual guidance explaining how the result was derived.</p>
+                        </div>
+                        <div class="why-card">
+                            <div class="why-card-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <h3>Fast, Lightweight & Free</h3>
+                            <p>No paywalls, subscriptions, or forced account creation. Built with lean, optimized assets designed to load and become interactive almost instantly on mobile and desktop.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. How We Build Calculators -->
+                <section class="section-container" id="how-we-build">
+                    <div class="section-header">
+                        <div>
+                            <h2>How We Build Calculators</h2>
+                            <p class="section-subtitle-text">Every tool follows a disciplined four-stage engineering and review lifecycle to guarantee accuracy and usability.</p>
+                        </div>
+                    </div>
+                    <div class="process-grid">
+                        <div class="process-card">
+                            <span class="process-step-num">STEP 01</span>
+                            <h3>Research</h3>
+                            <p>Formulas and parameters are sourced from authoritative government bodies (IRS, CFPB, CDC, US Navy, ASTM) and peer-reviewed financial math standards.</p>
+                        </div>
+                        <div class="process-card">
+                            <span class="process-step-num">STEP 02</span>
+                            <h3>Validate</h3>
+                            <p>Every calculator is tested against an automated test suite containing over 320 unit tests to verify boundary conditions, rounding rules, and decimal precision.</p>
+                        </div>
+                        <div class="process-card">
+                            <span class="process-step-num">STEP 03</span>
+                            <h3>Explain</h3>
+                            <p>Each calculator is paired with plain-English methodology guides, worked examples, and variable hints so users understand the mechanics behind every output.</p>
+                        </div>
+                        <div class="process-card">
+                            <span class="process-step-num">STEP 04</span>
+                            <h3>Maintain</h3>
+                            <p>Models are maintained and audited regularly to reflect updated tax deduction brackets, contribution limits, and prevailing lending conventions.</p>
+                        </div>
+                    </div>
+                    <a href="/about" class="methodology-banner-link">Read our full calculation methodology & editorial standards <i class="fa-solid fa-arrow-right"></i></a>
+                </section>
+
+                <!-- 6. Featured Decision Journeys -->
+                <section class="section-container" id="decision-journeys">
+                    <div class="section-header">
+                        <div>
+                            <h2>Featured Decision Journeys</h2>
+                            <p class="section-subtitle-text">Multi-step calculation workflows designed to guide complex, connected financial and lifestyle decisions.</p>
+                        </div>
+                    </div>
+                    <div class="journeys-grid">
+                        <div class="journey-card">
+                            <div>
+                                <h3>Planning a Home Purchase</h3>
+                                <p>Follow a logical progression from budget qualification to long-term interest analysis.</p>
+                                <ol class="journey-steps-flow">
+                                    <li><a href="/tool/house-affordability-calculator" class="journey-step-item"><span class="journey-step-badge">1</span><span class="journey-step-name">House Affordability Check</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/mortgage-calculator" class="journey-step-item"><span class="journey-step-badge">2</span><span class="journey-step-name">Monthly Mortgage Payment</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/amortization-calculator" class="journey-step-item"><span class="journey-step-badge">3</span><span class="journey-step-name">30-Year Amortization Schedule</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/rent-vs-buy-calculator" class="journey-step-item"><span class="journey-step-badge">4</span><span class="journey-step-name">Rent vs. Buy Comparison</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="journey-card">
+                            <div>
+                                <h3>Accelerating Debt Freedom</h3>
+                                <p>Build a disciplined strategy to systematically eliminate revolving balances and protect cash flow.</p>
+                                <ol class="journey-steps-flow">
+                                    <li><a href="/tool/budget-planner" class="journey-step-item"><span class="journey-step-badge">1</span><span class="journey-step-name">50/30/20 Budget Allocation</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/credit-card-payoff-calculator" class="journey-step-item"><span class="journey-step-badge">2</span><span class="journey-step-name">Credit Card Payoff Schedule</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/debt-snowball-calculator" class="journey-step-item"><span class="journey-step-badge">3</span><span class="journey-step-name">Debt Snowball Strategy</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/emergency-fund-calculator" class="journey-step-item"><span class="journey-step-badge">4</span><span class="journey-step-name">Emergency Fund Safety Sizing</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="journey-card">
+                            <div>
+                                <h3>Building Long-Term Wealth</h3>
+                                <p>Model compounding returns and map out your roadmap toward financial independence.</p>
+                                <ol class="journey-steps-flow">
+                                    <li><a href="/tool/savings-calculator" class="journey-step-item"><span class="journey-step-badge">1</span><span class="journey-step-name">Savings Goal Horizon</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/compound-interest-calculator" class="journey-step-item"><span class="journey-step-badge">2</span><span class="journey-step-name">Compound Interest Growth</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/401k-calculator" class="journey-step-item"><span class="journey-step-badge">3</span><span class="journey-step-name">401(k) Employer Match Plan</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                    <li><a href="/tool/fire-calculator" class="journey-step-item"><span class="journey-step-badge">4</span><span class="journey-step-name">FIRE Target Date & Number</span><i class="fa-solid fa-arrow-right"></i></a></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. Educational Guides & References -->
+                <section class="section-container" id="educational-guides">
+                    <div class="section-header">
+                        <div>
+                            <h2>Educational Guides & References</h2>
+                            <p class="section-subtitle-text">Practical reference guides explaining the core mathematical and financial principles behind key calculations.</p>
+                        </div>
+                    </div>
+                    <div class="guides-grid">
+                        <a href="/tool/amortization-calculator#how-it-works" class="guide-card">
+                            <div>
+                                <span class="guide-category-tag">Finance</span>
+                                <h3>How Mortgage Amortization Actually Works</h3>
+                                <p>Learn why early mortgage payments consist almost entirely of interest and how additional principal payments accelerate loan payoff.</p>
+                            </div>
+                            <span class="guide-read-link">Read guide <i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                        <a href="/tool/debt-snowball-calculator#how-it-works" class="guide-card">
+                            <div>
+                                <span class="guide-category-tag">Finance</span>
+                                <h3>Debt Snowball vs. Debt Avalanche</h3>
+                                <p>A direct comparison of behavioral momentum versus interest minimization to help you select the most effective debt payoff method.</p>
+                            </div>
+                            <span class="guide-read-link">Read guide <i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                        <a href="/tool/body-fat-percentage-calculator#how-it-works" class="guide-card">
+                            <div>
+                                <span class="guide-category-tag">Health</span>
+                                <h3>The US Navy Body Fat Circumference Method</h3>
+                                <p>Understand the physiological basis behind circumference-based body fat equations and how to take accurate morning measurements.</p>
+                            </div>
+                            <span class="guide-read-link">Read guide <i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                        <a href="/tool/budget-planner#how-it-works" class="guide-card">
+                            <div>
+                                <span class="guide-category-tag">Finance</span>
+                                <h3>The 50/30/20 Budgeting Rule Explained</h3>
+                                <p>How to balance essential living expenses, discretionary spending, and long-term financial security using structured cash-flow buckets.</p>
+                            </div>
+                            <span class="guide-read-link">Read guide <i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- 8. Frequently Asked Questions -->
+                <section class="section-container" id="faq-section">
+                    <div class="section-header">
+                        <div>
+                            <h2>Frequently Asked Questions</h2>
+                            <p class="section-subtitle-text">Direct answers to common questions about using GetCalcu calculators and privacy policies.</p>
+                        </div>
+                    </div>
+                    <div class="faq-accordion-list">
+                        <details class="faq-item-details">
+                            <summary class="faq-item-summary">Do I need an account to use GetCalcu?</summary>
+                            <div class="faq-item-content">
+                                <p>No. All calculators and utilities on GetCalcu are 100% free and immediately accessible without signing up, entering an email address, or creating an account.</p>
+                            </div>
+                        </details>
+                        <details class="faq-item-details">
+                            <summary class="faq-item-summary">Are my calculations and inputs private?</summary>
+                            <div class="faq-item-content">
+                                <p>Yes. All calculations are executed locally inside your web browser using client-side JavaScript. Your financial figures, income data, and personal health measurements are never transmitted to our servers or stored in any database.</p>
+                            </div>
+                        </details>
+                        <details class="faq-item-details">
+                            <summary class="faq-item-summary">How do you ensure calculation accuracy?</summary>
+                            <div class="faq-item-content">
+                                <p>Every calculator is implemented using standard mathematical formulas and published benchmarks from authoritative institutions (such as standard amortization formulas and government agency benchmarks). We maintain a suite of over 320 automated unit tests that continuously verify calculation outputs against reference standards.</p>
+                            </div>
+                        </details>
+                        <details class="faq-item-details">
+                            <summary class="faq-item-summary">Can I save, share, or print my results?</summary>
+                            <div class="faq-item-content">
+                                <p>Yes. You can copy the browser URL with your inputs to share or bookmark your calculation, or use your browser's Print function (Ctrl+P / Cmd+P) to create a clean, formatted PDF summary.</p>
+                            </div>
+                        </details>
+                        <details class="faq-item-details">
+                            <summary class="faq-item-summary">Are there any hidden fees or paid calculators?</summary>
+                            <div class="faq-item-content">
+                                <p>None. Every calculator, converter, and utility across all 7 categories on GetCalcu is completely free to use without restrictions.</p>
+                            </div>
+                        </details>
+                    </div>
+                </section>
+
+                <!-- 9. Final Calculator Search -->
+                <section class="final-search-banner">
+                    <h2>What do you want to calculate?</h2>
+                    <p>Search across 47+ free, validated calculators and utilities for instant, private answers.</p>
+                    <div class="final-search-box-wrap">
+                        <div class="hero-search-box" style="margin-bottom: 14px;">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="final-search-input" placeholder="Search calculators, converters, tools..." aria-label="Search all calculators">
+                            <button class="btn btn-primary" id="final-search-btn" type="button">Search</button>
+                        </div>
+                        <div class="popular-searches" style="justify-content: center;">
+                            <span>Quick jump:</span>
+                            <a href="/category/finance" class="search-chip">Finance (<span id="count-finance">26</span>)</a>
+                            <a href="/category/health" class="search-chip">Health (<span id="count-health">3</span>)</a>
+                            <a href="/category/business" class="search-chip">Business (<span id="count-business">5</span>)</a>
+                            <a href="/category/math" class="search-chip">Math (<span id="count-math">4</span>)</a>
+                            <a href="/category/education" class="search-chip">Education (<span id="count-education">3</span>)</a>
+                            <a href="/category/construction" class="search-chip">Construction (<span id="count-construction">3</span>)</a>
+                            <a href="/category/engineering" class="search-chip">Engineering (<span id="count-engineering">3</span>)</a>
                         </div>
                     </div>
                 </section>

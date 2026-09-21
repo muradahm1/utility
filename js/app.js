@@ -224,24 +224,29 @@ function updateThemeIcon(btn, theme) {
     icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
 }
 
-// Hero Search — opens modal and pre-fills query
+// Hero & Final Search — opens modal and pre-fills query
 function initHeroSearch() {
-    const input = document.getElementById('hero-search-input');
-    const btn = document.getElementById('hero-search-btn');
-    if (!input && !btn) return;
+    function setupSearch(inputId, btnId) {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (!input && !btn) return;
 
-    function triggerSearch() {
-        const modal = document.getElementById('search-modal');
-        const searchField = document.getElementById('modal-search-field');
-        if (!modal || !searchField) return;
-        modal.classList.remove('hidden');
-        searchField.value = input ? input.value : '';
-        searchField.dispatchEvent(new Event('input'));
-        searchField.focus();
+        function triggerSearch() {
+            const modal = document.getElementById('search-modal');
+            const searchField = document.getElementById('modal-search-field');
+            if (!modal || !searchField) return;
+            modal.classList.remove('hidden');
+            searchField.value = input ? input.value : '';
+            searchField.dispatchEvent(new Event('input'));
+            searchField.focus();
+        }
+
+        if (btn) btn.addEventListener('click', triggerSearch);
+        if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') triggerSearch(); });
     }
 
-    if (btn) btn.addEventListener('click', triggerSearch);
-    if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') triggerSearch(); });
+    setupSearch('hero-search-input', 'hero-search-btn');
+    setupSearch('final-search-input', 'final-search-btn');
 }
 
 // Active Nav State
