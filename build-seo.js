@@ -1002,7 +1002,7 @@ const toolPageTemplate = (tool) => {
         </div>
     </div>
 
-    <script src="/js/tools-core.js"></script>
+    <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>
     <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.js"></script>
@@ -1386,7 +1386,7 @@ const categoryPageTemplate = (cat, catTools) => {
         </div>
     </div>
 
-    <script src="/js/tools-core.js" defer></script>
+    <script src="/js/tools.js" defer></script>
     <script src="/js/app.js"></script>
     <script src="/js/cookie-consent.js" defer></script>
     <script src="/js/maintenance-banner.js" defer></script>
