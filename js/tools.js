@@ -53,6 +53,14 @@ const TOOLS = {
           }
     ],
     name: 'Mortgage Calculator',
+    related: [
+      'true-home-buying-system',
+      '15-year-mortgage-calculator',
+      'fha-loan-calculator',
+      'house-affordability-calculator',
+      'refinance-calculator',
+      'rent-vs-buy-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house',
     iconClass: 'icon-home',
@@ -281,6 +289,10 @@ const TOOLS = {
 
   'bmi-calculator': {
     name: 'BMI Calculator',
+    related: [
+      'body-fat-percentage-calculator',
+      'tdee-calculator'
+    ],
     category: 'Health',
     icon: 'fa-heart',
     iconClass: 'icon-health',
@@ -490,6 +502,12 @@ const TOOLS = {
 
   'percentage-calculator': {
     name: 'Percentage Calculator',
+    related: [
+      'unit-converter',
+      'tip-calculator',
+      'date-calculator',
+      'profit-margin-calculator'
+    ],
     category: 'Math',
     icon: 'fa-percent',
     iconClass: 'icon-math',
@@ -668,6 +686,12 @@ const TOOLS = {
 
   'loan-calculator': {
     name: 'Loan Calculator',
+    related: [
+      'loan-interest-calculator',
+      'auto-loan-calculator',
+      'credit-card-payoff-calculator',
+      'amortization-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-sack-dollar',
     iconClass: 'icon-finance',
@@ -802,6 +826,11 @@ const TOOLS = {
 
   'date-calculator': {
     name: 'Date Calculator',
+    related: [
+      'percentage-calculator',
+      'tip-calculator',
+      'loan-calculator'
+    ],
     category: 'Math',
     icon: 'fa-calendar',
     iconClass: 'icon-math',
@@ -934,6 +963,12 @@ const TOOLS = {
 
   'loan-interest-calculator': {
     name: 'Loan Interest Calculator',
+    related: [
+      'loan-calculator',
+      'auto-loan-calculator',
+      'credit-card-payoff-calculator',
+      'amortization-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-percent',
     iconClass: 'icon-finance',
@@ -1046,6 +1081,12 @@ const TOOLS = {
           }
     ],
     name: 'Compound Interest Calculator',
+    related: [
+      'investment-calculator',
+      'savings-calculator',
+      'retirement-calculator',
+      '401k-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-chart-line',
     iconClass: 'icon-finance',
@@ -1236,6 +1277,13 @@ const TOOLS = {
   // ── Investment Calculator ─────────────────────────────────────
   'investment-calculator': {
     name: 'Investment Calculator',
+    related: [
+      'compound-interest-calculator',
+      'retirement-calculator',
+      'fire-calculator',
+      '401k-calculator',
+      'net-worth-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-chart-line',
     iconClass: 'icon-finance',
@@ -1390,6 +1438,12 @@ const TOOLS = {
   // ── Budget Planner & Expense Tracker ──────────────────────────
   'budget-planner': {
     name: 'Budget Planner & Expense Tracker',
+    related: [
+      'emergency-fund-calculator',
+      'credit-card-payoff-calculator',
+      'savings-calculator',
+      'salary-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-wallet',
     iconClass: 'icon-finance',
@@ -1432,6 +1486,13 @@ const TOOLS = {
   'retirement-calculator': {
     id: 'retirement-calculator',
     name: 'Retirement Calculator',
+    related: [
+      '401k-calculator',
+      'fire-calculator',
+      'investment-calculator',
+      'compound-interest-calculator',
+      'savings-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-umbrella',
     iconClass: 'icon-finance',
@@ -1702,6 +1763,12 @@ const TOOLS = {
           }
     ],
     name: 'Savings & Strategy Calculator',
+    related: [
+      'emergency-fund-calculator',
+      'compound-interest-calculator',
+      'investment-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-piggy-bank',
     iconClass: 'icon-finance',
@@ -1958,6 +2025,12 @@ const TOOLS = {
           }
     ],
     name: 'Credit Card Payoff & Strategy Calculator',
+    related: [
+      'debt-snowball-calculator',
+      'emergency-fund-calculator',
+      'budget-planner',
+      'loan-interest-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-credit-card',
     iconClass: 'icon-finance',
@@ -2329,6 +2402,12 @@ const TOOLS = {
 
   'rent-vs-buy-calculator': {
     name: 'Rent vs. Buy Calculator',
+    related: [
+      'true-home-buying-system',
+      'mortgage-calculator',
+      'house-affordability-calculator',
+      'investment-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house-chimney',
     iconClass: 'icon-finance',
@@ -3134,6 +3213,12 @@ const TOOLS = {
   // ── House Affordability Calculator ─────────────────────────────────────
   'house-affordability-calculator': {
     name: 'House Affordability Calculator',
+    related: [
+      'mortgage-calculator',
+      'true-home-buying-system',
+      'fha-loan-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-house',
     iconClass: 'icon-finance',
@@ -3563,6 +3648,12 @@ const TOOLS = {
   'inflation-calculator': {
     id: 'inflation-calculator',
     name: 'Inflation Calculator',
+    related: [
+      'investment-calculator',
+      'retirement-calculator',
+      'savings-calculator',
+      'salary-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-arrow-trend-up',
     iconClass: 'icon-finance',
@@ -3744,6 +3835,12 @@ const TOOLS = {
   // ── Net Worth Calculator ─────────────────────────────────────
   'net-worth-calculator': {
     name: 'Net Worth Calculator',
+    related: [
+      'investment-calculator',
+      'budget-planner',
+      'fire-calculator',
+      'retirement-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-scale-balanced',
     iconClass: 'icon-finance',
@@ -3891,6 +3988,12 @@ const TOOLS = {
   'fire-calculator': {
     id: 'fire-calculator',
     name: 'FIRE Calculator',
+    related: [
+      'retirement-calculator',
+      'investment-calculator',
+      'savings-calculator',
+      'net-worth-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-fire',
     iconClass: 'icon-finance',
@@ -4298,6 +4401,12 @@ const TOOLS = {
   'amortization-calculator': {
     id: 'amortization-calculator',
     name: 'Amortization Calculator',
+    related: [
+      'mortgage-calculator',
+      'refinance-calculator',
+      'loan-calculator',
+      'loan-interest-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-chart-simple',
     iconClass: 'icon-finance',
@@ -4845,6 +4954,11 @@ const TOOLS = {
   // ── Tip Calculator ───────────────────────────────────────────────
   'tip-calculator': {
     name: 'Tip Calculator',
+    related: [
+      'percentage-calculator',
+      'budget-planner',
+      'date-calculator'
+    ],
     category: 'Math',
     icon: 'fa-receipt',
     iconClass: 'icon-math',
@@ -4909,6 +5023,13 @@ const TOOLS = {
   'true-home-buying-system': {
     id: 'true-home-buying-system',
     name: 'True Home Buying System',
+    related: [
+      'mortgage-calculator',
+      'rent-vs-buy-calculator',
+      'house-affordability-calculator',
+      'fha-loan-calculator',
+      '15-year-mortgage-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house-circle-check',
     iconClass: 'icon-finance',
@@ -5714,7 +5835,7 @@ const TOOLS = {
     iconClass: 'icon-business',
     tagClass: 'tag-business',
     description: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
-    metaTitle: 'True Freelance Hourly Rate Calculator (After Taxes & Expenses)',
+    metaTitle: 'Freelance True Rate System | Platform Fees & Billable Utilization Calculator — GetCalcu',
     metaDescription: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
     keywords: [
       'freelance true hourly rate calculator',
@@ -5733,8 +5854,7 @@ const TOOLS = {
       'self-employment-tax-calculator',
       'salary-calculator',
       'break-even-calculator',
-      'profit-margin-calculator',
-      'budget-planner'
+      'profit-margin-calculator'
     ],
     presets: [
       {
@@ -6118,6 +6238,11 @@ const TOOLS = {
   'beam-deflection-calculator': {
     id: 'beam-deflection-calculator',
     name: 'Beam Deflection Calculator',
+    related: [
+      'ohms-law-calculator',
+      'pressure-calculator',
+      'concrete-calculator'
+    ],
     category: 'Engineering',
     icon: 'fa-ruler-combined',
     iconClass: 'icon-engineering',
@@ -6178,6 +6303,11 @@ const TOOLS = {
     id: 'ohms-law-calculator',
     name: "Ohm's Law Calculator",
     category: 'Engineering',
+    related: [
+      'beam-deflection-calculator',
+      'pressure-calculator',
+      'unit-converter'
+    ],
     icon: 'fa-bolt',
     iconClass: 'icon-engineering',
     tagClass: 'tag-engineering',
@@ -6238,6 +6368,11 @@ const TOOLS = {
   'pressure-calculator': {
     id: 'pressure-calculator',
     name: 'Pressure Calculator',
+    related: [
+      'ohms-law-calculator',
+      'beam-deflection-calculator',
+      'unit-converter'
+    ],
     category: 'Engineering',
     icon: 'fa-gauge-high',
     iconClass: 'icon-engineering',
@@ -6302,6 +6437,11 @@ const TOOLS = {
   'concrete-calculator': {
     id: 'concrete-calculator',
     name: 'Concrete Calculator',
+    related: [
+      'paint-calculator',
+      'tile-calculator',
+      'unit-converter'
+    ],
     category: 'Construction',
     icon: 'fa-truck-ramp-box',
     iconClass: 'icon-construction',
@@ -6374,6 +6514,11 @@ const TOOLS = {
   'paint-calculator': {
     id: 'paint-calculator',
     name: 'Paint Calculator',
+    related: [
+      'concrete-calculator',
+      'tile-calculator',
+      'unit-converter'
+    ],
     category: 'Construction',
     icon: 'fa-paint-roller',
     iconClass: 'icon-construction',
@@ -6439,6 +6584,11 @@ const TOOLS = {
   'tile-calculator': {
     id: 'tile-calculator',
     name: 'Tile Calculator',
+    related: [
+      'concrete-calculator',
+      'paint-calculator',
+      'unit-converter'
+    ],
     category: 'Construction',
     icon: 'fa-table-cells-large',
     iconClass: 'icon-construction',
@@ -6507,6 +6657,12 @@ const TOOLS = {
   },
 
   'auto-loan-calculator': {
+    related: [
+      'auto-refinance-calculator',
+      'loan-calculator',
+      'loan-interest-calculator',
+      'budget-planner'
+    ],
     presets: [
           {
                 "label": "New Vehicle (60 Mo @ 6.5%)",
@@ -6707,6 +6863,12 @@ const TOOLS = {
           }
     ],
     name: 'Salary & Paycheck Calculator',
+    related: [
+      'self-employment-tax-calculator',
+      'freelance-hourly-rate-calculator',
+      '401k-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-wallet',
     iconClass: 'icon-finance',
@@ -6903,6 +7065,10 @@ const TOOLS = {
           }
     ],
     name: 'TDEE & Daily Calorie Calculator',
+    related: [
+      'bmi-calculator',
+      'body-fat-percentage-calculator'
+    ],
     category: 'Health',
     icon: 'fa-fire',
     iconClass: 'icon-health',
@@ -7036,6 +7202,11 @@ const TOOLS = {
 
   'unit-converter': {
     name: 'Universal Unit Converter',
+    related: [
+      'percentage-calculator',
+      'pressure-calculator',
+      'concrete-calculator'
+    ],
     category: 'Math',
     icon: 'fa-scale-balanced',
     iconClass: 'icon-math',
@@ -7375,6 +7546,12 @@ const TOOLS = {
   // ── Business: Profit Margin Calculator ──────────────────────────────────
   'profit-margin-calculator': {
     name: 'Profit Margin Calculator',
+    related: [
+      'break-even-calculator',
+      'customer-lifetime-value-calculator',
+      'freelance-hourly-rate-calculator',
+      'freelance-true-rate-system'
+    ],
     category: 'Business',
     icon: 'fa-chart-line',
     iconClass: 'icon-business',
@@ -7501,6 +7678,12 @@ const TOOLS = {
   // ── Business: Break-Even Calculator ─────────────────────────────────────
   'break-even-calculator': {
     name: 'Break-Even Calculator',
+    related: [
+      'profit-margin-calculator',
+      'customer-lifetime-value-calculator',
+      'freelance-true-rate-system',
+      'freelance-hourly-rate-calculator'
+    ],
     category: 'Business',
     icon: 'fa-scale-balanced',
     iconClass: 'icon-business',
@@ -7632,6 +7815,11 @@ const TOOLS = {
   // ── Business: Customer Lifetime Value Calculator ────────────────────────
   'customer-lifetime-value-calculator': {
     name: 'Customer Lifetime Value (LTV / CAC) Calculator',
+    related: [
+      'profit-margin-calculator',
+      'break-even-calculator',
+      'freelance-true-rate-system'
+    ],
     category: 'Business',
     icon: 'fa-chart-line',
     iconClass: 'icon-business',
@@ -7732,6 +7920,10 @@ const TOOLS = {
   // ── Education: GPA Calculator ───────────────────────────────────────────
   'gpa-calculator': {
     name: 'College & High School GPA Calculator',
+    related: [
+      'final-grade-calculator',
+      'student-loan-calculator'
+    ],
     category: 'Education',
     icon: 'fa-graduation-cap',
     iconClass: 'icon-education',
@@ -7910,6 +8102,10 @@ const TOOLS = {
   // ── Education: Final Grade Calculator ───────────────────────────────────
   'final-grade-calculator': {
     name: 'Final Grade Calculator',
+    related: [
+      'gpa-calculator',
+      'student-loan-calculator'
+    ],
     category: 'Education',
     icon: 'fa-graduation-cap',
     iconClass: 'icon-education',
@@ -8024,6 +8220,12 @@ const TOOLS = {
   // ── Education: Student Loan Calculator ──────────────────────────────────
   'student-loan-calculator': {
     name: 'Student Loan Calculator',
+    related: [
+      'loan-calculator',
+      'budget-planner',
+      'salary-calculator',
+      'gpa-calculator'
+    ],
     category: 'Education',
     icon: 'fa-bookmark',
     iconClass: 'icon-education',
@@ -8152,6 +8354,12 @@ const TOOLS = {
   'emergency-fund-calculator': {
     id: 'emergency-fund-calculator',
     name: 'Emergency Fund Calculator',
+    related: [
+      'savings-calculator',
+      'budget-planner',
+      'credit-card-payoff-calculator',
+      'debt-snowball-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-shield-halved',
     iconClass: 'icon-finance',
@@ -8299,6 +8507,12 @@ const TOOLS = {
   '401k-calculator': {
     id: '401k-calculator',
     name: '401(k) Retirement Growth Calculator',
+    related: [
+      'retirement-calculator',
+      'salary-calculator',
+      'investment-calculator',
+      'compound-interest-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-piggy-bank',
     iconClass: 'icon-finance',
@@ -8437,6 +8651,17 @@ const TOOLS = {
     ]
   },
   'debt-snowball-calculator': {
+    name: 'Debt Payoff & Snowball Calculator',
+    category: 'Finance',
+    icon: 'fa-arrow-trend-down',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    related: [
+      'credit-card-payoff-calculator',
+      'budget-planner',
+      'emergency-fund-calculator',
+      'savings-calculator'
+    ],
     presets: [
       {
         label: 'Standard Consumer Debt ($15k)',
@@ -8781,6 +9006,12 @@ const TOOLS = {
       }
     ],
     name: 'Mortgage Refinance Break-Even Calculator',
+    related: [
+      'mortgage-calculator',
+      '15-year-mortgage-calculator',
+      'amortization-calculator',
+      'house-affordability-calculator'
+    ],
     description: 'Evaluate mortgage refinancing viability by calculating payment reductions, upfront closing cost break-even horizons, and net cash savings.',
     metaTitle: 'Mortgage Refinance Calculator — Break-Even Horizon & Net Savings | GetCalcu',
     metaDescription: 'Free mortgage refinance calculator. Calculate monthly payment reduction, exact break-even timeline in months, and cumulative net savings after closing costs.',
@@ -8986,6 +9217,12 @@ const TOOLS = {
       }
     ],
     name: '1099 Self-Employment Tax Calculator',
+    related: [
+      'freelance-hourly-rate-calculator',
+      'freelance-true-rate-system',
+      'salary-calculator',
+      'profit-margin-calculator'
+    ],
     description: 'Calculate federal self-employment tax (SECA), effective tax brackets, and quarterly estimated IRS 1040-ES payments for independent contractors and sole proprietors.',
     metaTitle: '1099 Tax Calculator — Self-Employment Tax & Estimated Quarterly Payments | GetCalcu',
     metaDescription: 'Free 1099 self-employment tax calculator. Calculate 15.3% SECA tax, progressive federal and state income taxes, Schedule SE deductions, and quarterly 1040-ES payments.',
@@ -9228,6 +9465,12 @@ const TOOLS = {
   // ── 15-Year Mortgage Calculator Decision Engine ────────────────────────
   '15-year-mortgage-calculator': {
     name: '15-Year vs. 30-Year Mortgage Calculator',
+    related: [
+      'mortgage-calculator',
+      'refinance-calculator',
+      'amortization-calculator',
+      'house-affordability-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house-chimney',
     iconClass: 'icon-finance',
@@ -9383,6 +9626,12 @@ const TOOLS = {
   // ── FHA Loan Decision Engine ───────────────────────────────────────────
   'fha-loan-calculator': {
     name: 'FHA Loan Calculator with Upfront & Monthly MIP',
+    related: [
+      'mortgage-calculator',
+      '15-year-mortgage-calculator',
+      'house-affordability-calculator',
+      'true-home-buying-system'
+    ],
     category: 'Finance',
     icon: 'fa-shield-halved',
     iconClass: 'icon-finance',
@@ -9527,6 +9776,12 @@ const TOOLS = {
   // ── Auto Refinance Decision Engine ─────────────────────────────────────
   'auto-refinance-calculator': {
     name: 'Auto Loan Refinance & Break-Even Calculator',
+    related: [
+      'auto-loan-calculator',
+      'loan-calculator',
+      'loan-interest-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-rotate-left',
     iconClass: 'icon-finance',
@@ -9648,6 +9903,13 @@ const TOOLS = {
   // ── Freelance & Consultant Pricing Decision Engine ────────────────────
   'freelance-hourly-rate-calculator': {
     name: 'Freelance & Consultant Hourly Rate Calculator',
+    related: [
+      'freelance-true-rate-system',
+      'self-employment-tax-calculator',
+      'salary-calculator',
+      'profit-margin-calculator',
+      'emergency-fund-calculator'
+    ],
     category: 'Business',
     icon: 'fa-briefcase',
     iconClass: 'icon-business',
@@ -9779,6 +10041,10 @@ const TOOLS = {
   // ── Body Fat & Composition Goal Engine ─────────────────────────────────
   'body-fat-percentage-calculator': {
     name: 'Body Fat Percentage Calculator (US Navy Method)',
+    related: [
+      'bmi-calculator',
+      'tdee-calculator'
+    ],
     category: 'Health',
     icon: 'fa-ruler-combined',
     iconClass: 'icon-health',

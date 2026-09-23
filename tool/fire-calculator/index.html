@@ -313,108 +313,287 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Fisher Real Rate of Return Equation &amp; SEC / FINRA compound interest modeling guidelines (4% Safe Withdrawal Framework).
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Quantitative Finance &amp; Wealth Planning Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic real purchasing-power projection</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=FIRE%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">The FIRE model determines the capital reserve required to sustain perpetual living expenditures based on safe withdrawal rates, calculating the exact timeline to financial independence via monthly compound growth simulations.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>The standard 4% withdrawal rate assumes a balanced portfolio (50–75% equities, remainder fixed income) across a 30-year retirement horizon.</li><li>Accumulation phase assumes recurring monthly investments compounding continuously at constant nominal rates.</li><li>Inflation projections escalate nominal target expenses to reflect future purchasing power requirements.</li>
+        </ul>
       </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">Trinity University — Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable (1998) • Journal of Financial Planning — William Bengen: Determining Withdrawal Rates Using Historical Data • Center for Retirement Research at Boston College — Financial Independence &amp; Decumulation Models</span>
+      </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">The Complete Guide to FIRE: Financial Independence, Retire Early</h2>
+        <div class="article-intro-text"><p>The FIRE (Financial Independence, Retire Early) movement centers on achieving financial freedom through intentional living, aggressive saving, and disciplined investing in income-generating assets. Rather than retiring at traditional milestones, FIRE allows individuals to fund their living expenses indefinitely through investment returns.</p></div>
+        
+          <div class="article-subsection" id="how-fire-works">
+            <h3 class="article-subheading">How FIRE Works: The Savings Rate Engine</h3>
+            <div class="article-body-text"><p>The core lever of financial independence is your savings rate—the percentage of after-tax income retained and invested rather than consumed.</p><p>While traditional retirement plans assume a 10–15% savings rate over 40+ working years, saving 50% of income allows you to fund one year of living expenses for every year worked. At a 70% savings rate, financial independence can be achieved in under a decade.</p></div>
+          </div>
+          <div class="article-subsection" id="safe-withdrawal-rate-trinity">
+            <h3 class="article-subheading">The 4% Rule and the Trinity Study</h3>
+            <div class="article-body-text"><p>The 4% rule originated from the 1998 Trinity Study, which backtested historical US market returns across various asset allocations. It concluded that an initial 4% withdrawal from a diversified stock/bond portfolio, adjusted annually for inflation, sustained a 95%+ success rate over a 30-year horizon.</p><p>Mathematically, a 4% withdrawal rate requires a portfolio equal to 25 times your annual living expenses (FIRE Number = Annual Expenses × 25). For longer retirement spans (40–50 years), many planners recommend a conservative 3.25–3.5% withdrawal rate (28.5x to 30.7x expenses).</p></div>
+          </div>
+          <div class="article-subsection" id="fire-strategies-compared">
+            <h3 class="article-subheading">Understanding FIRE Variations: Lean, Fat, Coast, and Barista</h3>
+            <div class="article-body-text"><p>Standard FIRE: Targets your existing lifestyle with a 4% withdrawal rate (typically 25x current expenses).</p><p>Lean FIRE: Targets a minimalist lifestyle with expenses typically 25–40% below average (under $40,000/year), requiring a lower target portfolio.</p><p>Fat FIRE: Targets an abundant retirement with higher spending (often $100,000+/year) to support extensive travel and luxury.</p><p>Coast FIRE: The milestone where your existing investment portfolio will compound to your full retirement number by age 65 without requiring further contributions; you only need to earn enough to cover current living costs.</p><p>Barista FIRE: A hybrid model where part-time or freelance work covers a portion of living expenses and health insurance, significantly reducing the portfolio size needed.</p></div>
+          </div>
+          <div class="article-subsection" id="sequence-of-returns-risk">
+            <h3 class="article-subheading">Sequence of Returns Risk in Early Retirement</h3>
+            <div class="article-body-text"><p>Sequence of returns risk refers to the danger of experiencing a major market downturn in the first 3 to 5 years of retirement. Selling depreciated assets to fund living expenses permanently depletes the portfolio base.</p><p>Mitigation strategies include maintaining a 1- to 2-year cash buffer, utilizing a dynamic withdrawal strategy (reducing withdrawals during market corrections), or implementing a bond tent during the retirement transition.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the FIRE Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter your annual after-tax income and annual living expenses to determine your current savings rate.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Specify your current investment portfolio balance and recurring monthly contribution.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Set your expected annual investment return rate (7–8% nominal long-term average) and inflation rate.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Select your target Safe Withdrawal Rate (4% is standard; 3.5% for extended early retirement).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Choose your preferred FIRE strategy mode (Standard, Lean, Fat, Coast, or Barista) and spending adjustment.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">6</span>
+          <div class="step-content">Review your calculated FIRE number, years to financial independence, estimated retirement date, and readiness score.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">7</span>
+          <div class="step-content">Compare your current trajectory against the optimized scenario table to discover how minor adjustments accelerate your timeline.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">FIRE Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>[object Object]</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Standard FIRE Trajectory</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50.0%</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Lean FIRE Minimalist Plan</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%, Lean FIRE</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">FIRE Number: $468,750 | Years to FIRE: ~14.0 years | Savings Rate: 58.3%</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Aggressive Early Retirement</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8.0%, Inflation: 2.5%, Withdrawal: 4.0%</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">FIRE Number: $1,125,000 | Years to FIRE: ~12.0 years | Savings Rate: 62.5%</span></div>
+        
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a good FIRE number?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A standard FIRE number is 25 times your expected annual retirement expenses, derived from the 4% safe withdrawal rule. For example, spending $40,000 per year requires a $1,000,000 portfolio ($40,000 ÷ 0.04). If you want greater safety or plan to retire before age 40, using a 3.3% withdrawal rate requires 30 times annual expenses ($1,200,000).</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is the 4% rule still valid for early retirement?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The 4% rule was modeled on a 30-year horizon. For an early retirement spanning 40 to 50 years, academic research suggests aiming for a 3.25% to 3.75% withdrawal rate to account for longer market exposure and potential low-return decades. Combining a 3.5% initial rate with flexible spending in down markets provides high longevity confidence.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much should I save each month to retire early?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Your savings rate matters more than absolute dollar amounts. Saving 50% of your take-home pay puts you on track to retire in roughly 15–17 years; saving 65% cuts the timeline to approximately 10 years. Our calculator projects your exact timeline based on your starting portfolio, return rate, and monthly contribution.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is Coast FIRE vs Barista FIRE?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Coast FIRE means your existing portfolio is large enough that, without another dollar contributed, it will grow via compound interest to your full retirement number by age 65. You only need to work enough to cover immediate expenses. Barista FIRE means you work part-time or in low-stress employment to cover part of your living costs and health insurance, supplementing your income with smaller portfolio withdrawals.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does inflation affect my FIRE target?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Inflation raises the nominal cost of living over time. If your annual expenses are $40,000 today, at 2.5% inflation you will need approximately $61,700 in nominal dollars in 17.5 years to maintain the same purchasing power. Our calculator displays both your real baseline FIRE number and your inflation-adjusted future target.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/retirement-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Retirement Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Retirement Savings Calculator for early career professionals. Estimate your target retirement nest egg, monthly savings requirements, compound returns, and inflation impact. Start planning at 25.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/investment-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Investment Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free investment calculator — project future value with compound returns and monthly contributions. See how long to save $100k, when you can retire early, and how much to invest each month to reach $1M.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/savings-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-piggy-bank"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Savings &amp; Strategy Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Savings Calculator. Compare biweekly vs monthly deposits, estimate real HYSA returns after tax and inflation, and pinpoint your exact goal completion timeline.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/net-worth-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-scale-balanced"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Net Worth Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Net Worth Calculator — instantly calculate your total net worth, asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights. Track cash, investments, property, retirement, and debts.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">The Complete Guide to FIRE: Financial Independence, Retire Early</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the FIRE Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">FIRE Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">The Complete Guide to FIRE: Financial Independence, Retire Early</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The FIRE (Financial Independence, Retire Early) movement centers on achieving financial freedom through intentional living, aggressive saving, and disciplined investing in income-generating assets. Rather than retiring at traditional milestones, FIRE allows individuals to fund their living expenses indefinitely through investment returns.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How FIRE Works: The Savings Rate Engine</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The core lever of financial independence is your savings rate—the percentage of after-tax income retained and invested rather than consumed.,While traditional retirement plans assume a 10–15% savings rate over 40+ working years, saving 50% of income allows you to fund one year of living expenses for every year worked. At a 70% savings rate, financial independence can be achieved in under a decade.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The 4% Rule and the Trinity Study</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The 4% rule originated from the 1998 Trinity Study, which backtested historical US market returns across various asset allocations. It concluded that an initial 4% withdrawal from a diversified stock/bond portfolio, adjusted annually for inflation, sustained a 95%+ success rate over a 30-year horizon.,Mathematically, a 4% withdrawal rate requires a portfolio equal to 25 times your annual living expenses (FIRE Number = Annual Expenses × 25). For longer retirement spans (40–50 years), many planners recommend a conservative 3.25–3.5% withdrawal rate (28.5x to 30.7x expenses).</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Understanding FIRE Variations: Lean, Fat, Coast, and Barista</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Standard FIRE: Targets your existing lifestyle with a 4% withdrawal rate (typically 25x current expenses).,Lean FIRE: Targets a minimalist lifestyle with expenses typically 25–40% below average (under $40,000/year), requiring a lower target portfolio.,Fat FIRE: Targets an abundant retirement with higher spending (often $100,000+/year) to support extensive travel and luxury.,Coast FIRE: The milestone where your existing investment portfolio will compound to your full retirement number by age 65 without requiring further contributions; you only need to earn enough to cover current living costs.,Barista FIRE: A hybrid model where part-time or freelance work covers a portion of living expenses and health insurance, significantly reducing the portfolio size needed.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Sequence of Returns Risk in Early Retirement</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Sequence of returns risk refers to the danger of experiencing a major market downturn in the first 3 to 5 years of retirement. Selling depreciated assets to fund living expenses permanently depletes the portfolio base.,Mitigation strategies include maintaining a 1- to 2-year cash buffer, utilizing a dynamic withdrawal strategy (reducing withdrawals during market corrections), or implementing a bond tent during the retirement transition.</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the FIRE Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter your annual after-tax income and annual living expenses to determine your current savings rate.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Specify your current investment portfolio balance and recurring monthly contribution.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Set your expected annual investment return rate (7–8% nominal long-term average) and inflation rate.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Select your target Safe Withdrawal Rate (4% is standard; 3.5% for extended early retirement).</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Choose your preferred FIRE strategy mode (Standard, Lean, Fat, Coast, or Barista) and spending adjustment.</li><li style="margin-bottom:10px;"><strong>Step 6:</strong> Review your calculated FIRE number, years to financial independence, estimated retirement date, and readiness score.</li><li style="margin-bottom:10px;"><strong>Step 7:</strong> Compare your current trajectory against the optimized scenario table to discover how minor adjustments accelerate your timeline.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> [object Object]</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Standard FIRE Trajectory</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50.0%</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Lean FIRE Minimalist Plan</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%, Lean FIRE</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">FIRE Number: $468,750 | Years to FIRE: ~14.0 years | Savings Rate: 58.3%</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Aggressive Early Retirement</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8.0%, Inflation: 2.5%, Withdrawal: 4.0%</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">FIRE Number: $1,125,000 | Years to FIRE: ~12.0 years | Savings Rate: 62.5%</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a good FIRE number?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A standard FIRE number is 25 times your expected annual retirement expenses, derived from the 4% safe withdrawal rule. For example, spending $40,000 per year requires a $1,000,000 portfolio ($40,000 ÷ 0.04). If you want greater safety or plan to retire before age 40, using a 3.3% withdrawal rate requires 30 times annual expenses ($1,200,000).</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is the 4% rule still valid for early retirement?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The 4% rule was modeled on a 30-year horizon. For an early retirement spanning 40 to 50 years, academic research suggests aiming for a 3.25% to 3.75% withdrawal rate to account for longer market exposure and potential low-return decades. Combining a 3.5% initial rate with flexible spending in down markets provides high longevity confidence.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much should I save each month to retire early?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Your savings rate matters more than absolute dollar amounts. Saving 50% of your take-home pay puts you on track to retire in roughly 15–17 years; saving 65% cuts the timeline to approximately 10 years. Our calculator projects your exact timeline based on your starting portfolio, return rate, and monthly contribution.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is Coast FIRE vs Barista FIRE?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Coast FIRE means your existing portfolio is large enough that, without another dollar contributed, it will grow via compound interest to your full retirement number by age 65. You only need to work enough to cover immediate expenses. Barista FIRE means you work part-time or in low-stress employment to cover part of your living costs and health insurance, supplementing your income with smaller portfolio withdrawals.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does inflation affect my FIRE target?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Inflation raises the nominal cost of living over time. If your annual expenses are $40,000 today, at 2.5% inflation you will need approximately $61,700 in nominal dollars in 17.5 years to maintain the same purchasing power. Our calculator displays both your real baseline FIRE number and your inflation-adjusted future target.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

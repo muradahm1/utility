@@ -208,105 +208,273 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) &amp; Truth in Lending Act (TILA) amortization standards.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Consumer Credit &amp; Lending Review Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic in-browser amortization</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Loan%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Monthly loan payments are calculated using standard fixed-rate amortization mathematics, which amortizes principal over a set number of monthly installments while computing monthly interest on the remaining unpaid balance.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Interest is compounded monthly on the remaining unpaid principal balance.</li><li>Payments are made monthly on equal installment dates without late fees or payment deferrals.</li><li>Quoted APR is converted to monthly periodic rate as r = APR ÷ 12.</li>
+        </ul>
       </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">Consumer Financial Protection Bureau (CFPB) — Loan Repayment Rules &amp; Regulations • Federal Reserve Board — Regulation Z (Truth in Lending Act, 12 CFR Part 1026) • Federal Trade Commission (FTC) — Understanding Vehicle Financing &amp; Personal Loans</span>
+      </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate Loan Payments, Total Interest, and Total Cost</h2>
+        <div class="article-intro-text"><p>Whether you are financing a vehicle, consolidating credit cards with a personal loan, or evaluating student debt, understanding your exact monthly commitment and lifetime interest expense is crucial for financial health.</p></div>
+        
+          <div class="article-subsection" id="amortization-mechanics">
+            <h3 class="article-subheading">How Loan Amortization Functions</h3>
+            <div class="article-body-text"><p>Fixed-rate installment loans amortize each monthly payment between accrued interest and principal reduction. Because interest is charged on the declining loan balance, early payments are interest-heavy, while later payments rapidly pay down principal.</p><p>By the final scheduled installment, the loan balance reaches exactly zero.</p></div>
+          </div>
+          <div class="article-subsection" id="apr-vs-interest-rate">
+            <h3 class="article-subheading">Interest Rate vs. Annual Percentage Rate (APR)</h3>
+            <div class="article-body-text"><p>The interest rate represents the nominal cost of borrowing principal. The APR includes both the interest rate and mandatory lender origination fees, document fees, or points.</p><p>When evaluating competing loan quotes, always compare APR rather than nominal rate to gauge true borrowing cost.</p></div>
+          </div>
+          <div class="article-subsection" id="loan-term-tradeoffs">
+            <h3 class="article-subheading">Loan Term Trade-Offs: Monthly Payment vs. Total Cost</h3>
+            <div class="article-body-text"><p>Extending your loan term (e.g., from 3 years to 5 or 7 years) lowers your required monthly payment, improving immediate cash flow flexibility.</p><p>However, longer terms cause interest to accumulate over significantly more billing cycles, dramatically increasing total lifetime borrowing cost.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Loan Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter the loan amount you plan to borrow (the principal).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Add the quoted Annual Percentage Rate (APR) from your lender.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Select your desired loan term in years.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Review your calculated monthly payment, total interest expense, and total repayment amount.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Inspect the full amortization schedule to see the exact principal and interest split for every monthly installment.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Loan Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>[object Object]</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">5-Year Auto Loan ($30,000 at 6.5%)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Loan Amount: $30,000, APR: 6.5%, Term: 5 years (60 months)</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Monthly Payment: $586.98 | Total Interest: $5,218.80 | Total Repayment: $35,218.80</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">3-Year Personal Consolidation Loan ($15,000 at 9.0%)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Loan Amount: $15,000, APR: 9.0%, Term: 3 years (36 months)</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Monthly Payment: $477.00 | Total Interest: $2,172.00 | Total Repayment: $17,172.00</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">4-Year Used Car Loan ($20,000 at 7.0%)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Loan Amount: $20,000, APR: 7.0%, Term: 4 years (48 months)</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Monthly Payment: $478.92 | Total Interest: $2,988.16 | Total Repayment: $22,988.16</span></div>
+        
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is a loan payment calculated?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Fixed loan installments are calculated using standard amortization: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is principal, r is monthly interest (APR ÷ 12), and n is total monthly payments. This ensures equal payments throughout the term that amortize principal to zero.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between APR and interest rate?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The interest rate represents the direct fee for borrowing principal, while APR (Annual Percentage Rate) incorporates the interest rate plus lender origination fees, processing charges, and closing costs. APR is the true metric for comparing loan offers.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does loan term affect total interest?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A longer term lowers monthly payments by spreading principal across more months, but increases total interest paid because balance declines more slowly. For example, a $30,000 loan at 6.5% costs $3,114 in interest over 3 years versus $5,216 over 5 years.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I pay off my loan early without penalty?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Most modern auto and personal loans permit prepayment without penalty, allowing extra principal payments to reduce total interest. However, always review your loan agreement for prepayment penalties or rule-of-78s interest calculation terms before making extra payments.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does credit score affect loan interest rates?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Credit scores directly determine lender risk tiers. Borrowers with excellent credit (740+) typically secure APRs several percentage points lower than borrowers in fair or poor tiers, saving thousands in interest over the life of a loan.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/loan-interest-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-percent"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Loan Interest Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free loan interest calculator — see total interest, monthly payments, and full amortization with flexible payment frequencies.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/auto-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-route"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Auto Loan Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free auto loan calculator — calculate monthly car payments, interest, dealer fees, sales tax, and amortization schedule with trade-in equity.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/credit-card-payoff-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-credit-card"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Credit Card Payoff &amp; Strategy Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Credit Card Payoff Calculator. Calculate exact debt-free dates, compare minimum payment costs vs extra monthly deposits, and analyze 0% APR balance transfer savings.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/amortization-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-simple"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Amortization Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Amortization Calculator with interactive charts, payment schedule, extra payment analysis, and downloadable loan repayment tables. Compare scenarios and see how extra payments save interest.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Calculate Loan Payments, Total Interest, and Total Cost</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Loan Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Loan Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Loan Payments, Total Interest, and Total Cost</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Whether you are financing a vehicle, consolidating credit cards with a personal loan, or evaluating student debt, understanding your exact monthly commitment and lifetime interest expense is crucial for financial health.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Loan Amortization Functions</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Fixed-rate installment loans amortize each monthly payment between accrued interest and principal reduction. Because interest is charged on the declining loan balance, early payments are interest-heavy, while later payments rapidly pay down principal.,By the final scheduled installment, the loan balance reaches exactly zero.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Interest Rate vs. Annual Percentage Rate (APR)</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The interest rate represents the nominal cost of borrowing principal. The APR includes both the interest rate and mandatory lender origination fees, document fees, or points.,When evaluating competing loan quotes, always compare APR rather than nominal rate to gauge true borrowing cost.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Loan Term Trade-Offs: Monthly Payment vs. Total Cost</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Extending your loan term (e.g., from 3 years to 5 or 7 years) lowers your required monthly payment, improving immediate cash flow flexibility.,However, longer terms cause interest to accumulate over significantly more billing cycles, dramatically increasing total lifetime borrowing cost.</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Loan Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter the loan amount you plan to borrow (the principal).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Add the quoted Annual Percentage Rate (APR) from your lender.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Select your desired loan term in years.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Review your calculated monthly payment, total interest expense, and total repayment amount.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Inspect the full amortization schedule to see the exact principal and interest split for every monthly installment.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> [object Object]</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">5-Year Auto Loan ($30,000 at 6.5%)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Loan Amount: $30,000, APR: 6.5%, Term: 5 years (60 months)</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly Payment: $586.98 | Total Interest: $5,218.80 | Total Repayment: $35,218.80</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">3-Year Personal Consolidation Loan ($15,000 at 9.0%)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Loan Amount: $15,000, APR: 9.0%, Term: 3 years (36 months)</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly Payment: $477.00 | Total Interest: $2,172.00 | Total Repayment: $17,172.00</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">4-Year Used Car Loan ($20,000 at 7.0%)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Loan Amount: $20,000, APR: 7.0%, Term: 4 years (48 months)</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly Payment: $478.92 | Total Interest: $2,988.16 | Total Repayment: $22,988.16</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is a loan payment calculated?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Fixed loan installments are calculated using standard amortization: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is principal, r is monthly interest (APR ÷ 12), and n is total monthly payments. This ensures equal payments throughout the term that amortize principal to zero.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between APR and interest rate?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The interest rate represents the direct fee for borrowing principal, while APR (Annual Percentage Rate) incorporates the interest rate plus lender origination fees, processing charges, and closing costs. APR is the true metric for comparing loan offers.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does loan term affect total interest?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A longer term lowers monthly payments by spreading principal across more months, but increases total interest paid because balance declines more slowly. For example, a $30,000 loan at 6.5% costs $3,114 in interest over 3 years versus $5,216 over 5 years.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I pay off my loan early without penalty?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Most modern auto and personal loans permit prepayment without penalty, allowing extra principal payments to reduce total interest. However, always review your loan agreement for prepayment penalties or rule-of-78s interest calculation terms before making extra payments.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does credit score affect loan interest rates?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Credit scores directly determine lender risk tiers. Borrowers with excellent credit (740+) typically secure APRs several percentage points lower than borrowers in fair or poor tiers, saving thousands in interest over the life of a loan.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

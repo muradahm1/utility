@@ -231,108 +231,282 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Fisher Real Rate of Return Equation &amp; SEC / FINRA compound interest modeling guidelines (4% Safe Withdrawal Framework).
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Quantitative Finance &amp; Wealth Planning Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic real purchasing-power projection</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Compound%20Interest%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Compound interest computes future investment accumulation by capitalizing interest back into the principal balance at discrete recurring compounding intervals, combined with ordinary annuity contribution mechanics.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Contributions are added at the conclusion of each period (ordinary annuity model).</li><li>Nominal annual interest rate is assumed uniform across the entire compounding horizon without tax drag or management fee subtractions.</li><li>Daily compounding utilizes a standard 365-day calendar year convention.</li>
+        </ul>
       </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">Federal Reserve Board — Regulation DD (Truth in Savings Act, 12 CFR Part 1030) • Financial Industry Regulatory Authority (FINRA) — Savings &amp; Compound Growth Mathematics • U.S. Securities and Exchange Commission (SEC) — Compound Interest Calculations Guide</span>
+      </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How Compound Interest Works and How to Calculate Future Investment Growth</h2>
+        <div class="article-intro-text"><p>Compound interest is the foundational mathematical engine behind long-term wealth accumulation. Unlike simple interest—which generates yields solely on initial principal—compound interest accrues on both the initial capital and all previously accumulated interest. Over multi-decade investment horizons, the exponential return curve overtakes direct contributions as the primary driver of balance growth.</p></div>
+        
+          <div class="article-subsection" id="compounding-frequency-mechanics">
+            <h3 class="article-subheading">How Compounding Frequency Affects Effective Annual Yield (APY)</h3>
+            <div class="article-body-text"><p>Compounding frequency specifies how many times each year accrued interest is capitalized into your principal balance. The more frequently interest is credited, the faster that new interest begins generating its own return.</p><p>The exact conversion between nominal annual interest rate (APR) and effective annual percentage yield (APY) is: APY = (1 + r / n)^n - 1, where r is the nominal APR and n is compounding periods per year.</p><p>For a $10,000 balance at 8.0% APR: Annual compounding yields $800.00 (8.00% APY); Monthly compounding yields $830.00 (8.30% APY); Daily compounding yields $832.78 (8.33% APY). Over 30 years, monthly compounding produces $109,357.30 compared to $100,626.57 for annual compounding—a $8,730.73 difference purely from frequency.</p></div>
+          </div>
+          <div class="article-subsection" id="rule-of-72-doubling-time">
+            <h3 class="article-subheading">The Rule of 72: Estimating Doubling Timelines</h3>
+            <div class="article-body-text"><p>The Rule of 72 provides a rapid mathematical approximation for how many years it will take an investment balance to double at a fixed annual return: Doubling Years ≈ 72 / Annual Return Rate (%).</p><p>At a 6% annual return, capital doubles in approximately 12 years (72 / 6). At 8%, it doubles in approximately 9 years (72 / 8). At 10%, it doubles in approximately 7.2 years.</p><p>Over a 36-year horizon: at 6%, an initial sum doubles 3 times (8x); at 8%, it doubles 4 times (16x); at 10%, it doubles 5 times (32x). This demonstrates how small differences in average annual return create exponential divergence in final net worth.</p></div>
+          </div>
+          <div class="article-subsection" id="contribution-timing-and-annuities">
+            <h3 class="article-subheading">Contribution Timing: Ordinary Annuities vs. Annuities Due</h3>
+            <div class="article-body-text"><p>Our calculator utilizes the standard ordinary annuity formula, assuming recurring monthly contributions are deposited at the end of each payment period.</p><p>Depositing contributions at the beginning of each period (annuity due) generates one additional compounding period of interest for each deposit. Over a 30-year timeframe, beginning-of-period deposits generate roughly 0.6–0.8% higher total ending value.</p></div>
+          </div>
+          <div class="article-subsection" id="inflation-impact-real-vs-nominal">
+            <h3 class="article-subheading">Nominal vs. Real Returns: Factoring in Inflation</h3>
+            <div class="article-body-text"><p>Nominal future value represents the raw dollar amount in your future account, but does not reflect future purchasing power.</p><p>To project real purchasing power in today&#39;s dollars, subtract estimated annual inflation from your nominal expected rate (e.g., 8.0% nominal return minus 2.5% inflation equals a 5.5% real return), or apply the exact Fisher equation: Real Return = (1 + Nominal Rate) / (1 + Inflation Rate) - 1.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Compound Interest Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter your starting principal balance (lump sum or existing portfolio balance).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Input your anticipated annual interest rate or long-term investment return percentage.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Select your compounding frequency (Monthly is standard for investment accounts; Daily for high-yield cash).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Specify your recurring monthly contribution amount and target investment horizon in years.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Review your projected future balance, total out-of-pocket contributions, and cumulative interest earned.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">6</span>
+          <div class="step-content">Inspect the year-by-year schedule and growth breakdown chart to track the tipping point where interest overtakes principal deposits.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Compound Interest Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>[object Object]</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">30-Year Wealth Accumulation (Default)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Principal: $10,000, Annual Rate: 8.0%, Monthly compounding, $500/mo contribution, 30 years</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Future Balance: $854,537.02 | Total Contributions: $190,000.00 | Total Interest Earned: $664,537.02</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">20-Year Pure Lump-Sum Growth</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Principal: $25,000, Annual Rate: 7.0%, Monthly compounding, $0/mo contribution, 20 years</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Future Balance: $100,968.47 | Total Contributions: $25,000.00 | Total Interest Earned: $75,968.47</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">5-Year High-Yield Cash Savings</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Principal: $15,000, Annual Rate: 4.5%, Daily compounding (365/yr), $200/mo contribution, 5 years</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Future Balance: $32,240.26 | Total Contributions: $27,000.00 | Total Interest Earned: $5,240.26</span></div>
+        
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is compound interest calculated?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Compound interest is calculated with the compound annuity formula FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P is initial principal, r is the annual rate, n is compounding frequency per year, t is time in years, and PMT is the periodic contribution. Our calculator computes both lump-sum growth and periodic contributions simultaneously.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between simple and compound interest?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Simple interest is calculated solely on original principal (Interest = P × r × t), meaning annual growth remains flat. Compound interest calculates returns on both initial principal and previously accumulated interest. Over 30 years at 8%, a $10,000 deposit produces $24,000 in simple interest ($34,000 total) versus $99,357.30 in monthly compound interest ($109,357.30 total).</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does compounding frequency affect growth?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">More frequent compounding capitalizes interest sooner, slightly accelerating the compounding curve. At 8% APR over 30 years, a $10,000 lump sum grows to $100,626.57 with annual compounding, $107,370.26 with quarterly compounding, $109,357.30 with monthly compounding, and $110,344.60 with daily compounding.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much will I accumulate saving $500 a month for 30 years?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">At an 8.0% average annual return compounded monthly with a $10,000 starting deposit, saving $500 per month for 30 years yields a future balance of $854,537.02. Your direct out-of-pocket contributions total $190,000 ($10,000 initial + $180,000 monthly), while total compound interest earned equals $664,537.02.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a realistic rate of return to assume?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">For long-term index fund equity investments (15+ years), historical US stock market returns average roughly 7–10% before inflation (or 5–7% after inflation). For diversified bond portfolios, expect 4–6%. For high-yield savings accounts or money market funds, expect 3–5%. Using conservative estimates provides a safer financial margin of error.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/investment-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Investment Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free investment calculator — project future value with compound returns and monthly contributions. See how long to save $100k, when you can retire early, and how much to invest each month to reach $1M.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/savings-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-piggy-bank"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Savings &amp; Strategy Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Savings Calculator. Compare biweekly vs monthly deposits, estimate real HYSA returns after tax and inflation, and pinpoint your exact goal completion timeline.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/retirement-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-umbrella"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Retirement Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Retirement Savings Calculator for early career professionals. Estimate your target retirement nest egg, monthly savings requirements, compound returns, and inflation impact. Start planning at 25.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/401k-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-piggy-bank"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">401(k) Retirement Growth Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate your 401(k) balance at retirement. Account for employee contributions, employer company match, annual salary growth, and compound interest.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How Compound Interest Works and How to Calculate Future Investment Growth</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Compound Interest Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Compound Interest Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How Compound Interest Works and How to Calculate Future Investment Growth</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Compound interest is the foundational mathematical engine behind long-term wealth accumulation. Unlike simple interest—which generates yields solely on initial principal—compound interest accrues on both the initial capital and all previously accumulated interest. Over multi-decade investment horizons, the exponential return curve overtakes direct contributions as the primary driver of balance growth.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Compounding Frequency Affects Effective Annual Yield (APY)</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Compounding frequency specifies how many times each year accrued interest is capitalized into your principal balance. The more frequently interest is credited, the faster that new interest begins generating its own return.,The exact conversion between nominal annual interest rate (APR) and effective annual percentage yield (APY) is: APY = (1 + r / n)^n - 1, where r is the nominal APR and n is compounding periods per year.,For a $10,000 balance at 8.0% APR: Annual compounding yields $800.00 (8.00% APY); Monthly compounding yields $830.00 (8.30% APY); Daily compounding yields $832.78 (8.33% APY). Over 30 years, monthly compounding produces $109,357.30 compared to $100,626.57 for annual compounding—a $8,730.73 difference purely from frequency.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Rule of 72: Estimating Doubling Timelines</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The Rule of 72 provides a rapid mathematical approximation for how many years it will take an investment balance to double at a fixed annual return: Doubling Years ≈ 72 / Annual Return Rate (%).,At a 6% annual return, capital doubles in approximately 12 years (72 / 6). At 8%, it doubles in approximately 9 years (72 / 8). At 10%, it doubles in approximately 7.2 years.,Over a 36-year horizon: at 6%, an initial sum doubles 3 times (8x); at 8%, it doubles 4 times (16x); at 10%, it doubles 5 times (32x). This demonstrates how small differences in average annual return create exponential divergence in final net worth.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Contribution Timing: Ordinary Annuities vs. Annuities Due</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Our calculator utilizes the standard ordinary annuity formula, assuming recurring monthly contributions are deposited at the end of each payment period.,Depositing contributions at the beginning of each period (annuity due) generates one additional compounding period of interest for each deposit. Over a 30-year timeframe, beginning-of-period deposits generate roughly 0.6–0.8% higher total ending value.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Nominal vs. Real Returns: Factoring in Inflation</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Nominal future value represents the raw dollar amount in your future account, but does not reflect future purchasing power.,To project real purchasing power in today&#39;s dollars, subtract estimated annual inflation from your nominal expected rate (e.g., 8.0% nominal return minus 2.5% inflation equals a 5.5% real return), or apply the exact Fisher equation: Real Return = (1 + Nominal Rate) / (1 + Inflation Rate) - 1.</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Compound Interest Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter your starting principal balance (lump sum or existing portfolio balance).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Input your anticipated annual interest rate or long-term investment return percentage.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Select your compounding frequency (Monthly is standard for investment accounts; Daily for high-yield cash).</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Specify your recurring monthly contribution amount and target investment horizon in years.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Review your projected future balance, total out-of-pocket contributions, and cumulative interest earned.</li><li style="margin-bottom:10px;"><strong>Step 6:</strong> Inspect the year-by-year schedule and growth breakdown chart to track the tipping point where interest overtakes principal deposits.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> [object Object]</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">30-Year Wealth Accumulation (Default)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Principal: $10,000, Annual Rate: 8.0%, Monthly compounding, $500/mo contribution, 30 years</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Future Balance: $854,537.02 | Total Contributions: $190,000.00 | Total Interest Earned: $664,537.02</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">20-Year Pure Lump-Sum Growth</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Principal: $25,000, Annual Rate: 7.0%, Monthly compounding, $0/mo contribution, 20 years</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Future Balance: $100,968.47 | Total Contributions: $25,000.00 | Total Interest Earned: $75,968.47</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">5-Year High-Yield Cash Savings</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Principal: $15,000, Annual Rate: 4.5%, Daily compounding (365/yr), $200/mo contribution, 5 years</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Future Balance: $32,240.26 | Total Contributions: $27,000.00 | Total Interest Earned: $5,240.26</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is compound interest calculated?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Compound interest is calculated with the compound annuity formula FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P is initial principal, r is the annual rate, n is compounding frequency per year, t is time in years, and PMT is the periodic contribution. Our calculator computes both lump-sum growth and periodic contributions simultaneously.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between simple and compound interest?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Simple interest is calculated solely on original principal (Interest = P × r × t), meaning annual growth remains flat. Compound interest calculates returns on both initial principal and previously accumulated interest. Over 30 years at 8%, a $10,000 deposit produces $24,000 in simple interest ($34,000 total) versus $99,357.30 in monthly compound interest ($109,357.30 total).</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does compounding frequency affect growth?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">More frequent compounding capitalizes interest sooner, slightly accelerating the compounding curve. At 8% APR over 30 years, a $10,000 lump sum grows to $100,626.57 with annual compounding, $107,370.26 with quarterly compounding, $109,357.30 with monthly compounding, and $110,344.60 with daily compounding.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much will I accumulate saving $500 a month for 30 years?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">At an 8.0% average annual return compounded monthly with a $10,000 starting deposit, saving $500 per month for 30 years yields a future balance of $854,537.02. Your direct out-of-pocket contributions total $190,000 ($10,000 initial + $180,000 monthly), while total compound interest earned equals $664,537.02.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a realistic rate of return to assume?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">For long-term index fund equity investments (15+ years), historical US stock market returns average roughly 7–10% before inflation (or 5–7% after inflation). For diversified bond portfolios, expect 4–6%. For high-yield savings accounts or money market funds, expect 3–5%. Using conservative estimates provides a safer financial margin of error.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

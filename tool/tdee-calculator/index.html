@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Health","item":"https://www.getcalcu.com/category/health"},{"@type":"ListItem","position":3,"name":"TDEE & Daily Calorie Calculator","item":"https://www.getcalcu.com/tool/tdee-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is TDEE?","acceptedAnswer":{"@type":"Answer","text":"TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn each day through basal metabolism, daily movement, digestion, and exercise."}},{"@type":"Question","name":"How accurate is the Mifflin-St Jeor formula?","acceptedAnswer":{"@type":"Answer","text":"The Mifflin-St Jeor formula is widely recognized in clinical dietetics as one of the most reliable equations for estimating BMR in healthy individuals within 5-10% of metabolic chamber tests."}},{"@type":"Question","name":"How many calories should I cut to lose 1 pound per week?","acceptedAnswer":{"@type":"Answer","text":"A caloric deficit of 500 calories per day equals 3,500 calories per week, which corresponds to approximately 1 pound of fat loss per week."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the TDEE & Daily Calorie Calculator","description":"Calculate your Total Daily Energy Expenditure (TDEE), Basal Metabolic Rate (BMR), and daily macro calorie targets.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Select Metric (kg/cm) or Imperial (lbs/in) units."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Enter your age, gender, weight, and height."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Select your weekly activity level and primary fitness goal."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Read your BMR, TDEE, target daily calories, and suggested macronutrient split."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Understanding TDEE, BMR, and Macro Calorie Targets","description":"Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a 24-hour period, encompassing your resting metabolic rate, physical activity, and food digestion.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"TDEE & Daily Calorie Calculator","url":"https://www.getcalcu.com/tool/tdee-calculator","dateModified":"2026-09-21"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Understanding TDEE, BMR, and Macro Calorie Targets","description":"Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a 24-hour period, encompassing your resting metabolic rate, physical activity, and food digestion.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"TDEE & Daily Calorie Calculator","url":"https://www.getcalcu.com/tool/tdee-calculator","dateModified":"2026-09-23"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -286,116 +286,209 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Mifflin-St Jeor Energy Expenditure Equations (validated by the Academy of Nutrition and Dietetics).
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Health &amp; Nutrition Advisory Group</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic metabolic computation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=TDEE%20%26%20Daily%20Calorie%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Mifflin-St Jeor Energy Expenditure Equations (validated by the Academy of Nutrition and Dietetics).</p>
+      
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">GetCalcu Health &amp; Nutrition Advisory Group</span>
       </div>
-    </div>
+    </section>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">Understanding TDEE, BMR, and Macro Calorie Targets</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a 24-hour period, encompassing your resting metabolic rate, physical activity, and food digestion.</p>
+    <div class="educational-layout">
+      <div class="educational-main-content">
         
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">BMR vs TDEE</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Basal Metabolic Rate (BMR) represents the energy expended simply to keep your vital organs functioning at complete rest. TDEE multiplies BMR by your activity level to establish your true maintenance calories.</p>
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">Understanding TDEE, BMR, and Macro Calorie Targets</h2>
+        <div class="article-intro-text"><p>Total Daily Energy Expenditure (TDEE) is the total number of calories your body burns in a 24-hour period, encompassing your resting metabolic rate, physical activity, and food digestion.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">BMR vs TDEE</h3>
+            <div class="article-body-text"><p>Basal Metabolic Rate (BMR) represents the energy expended simply to keep your vital organs functioning at complete rest. TDEE multiplies BMR by your activity level to establish your true maintenance calories.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">How to Adjust Calories for Weight Loss or Muscle Gain</h3>
+            <div class="article-body-text"><p>Consuming 500 calories below your TDEE creates a deficit leading to approximately 1 pound of weight loss per week (3,500 kcal deficit = 1 lb fat). Conversely, a 250-500 calorie surplus supports muscle hypertrophy with minimal fat gain.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the TDEE &amp; Daily Calorie Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Select Metric (kg/cm) or Imperial (lbs/in) units.</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How to Adjust Calories for Weight Loss or Muscle Gain</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Consuming 500 calories below your TDEE creates a deficit leading to approximately 1 pound of weight loss per week (3,500 kcal deficit = 1 lb fat). Conversely, a 250-500 calorie surplus supports muscle hypertrophy with minimal fat gain.</p>
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Enter your age, gender, weight, and height.</div>
+        </li>
       
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Select your weekly activity level and primary fitness goal.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Read your BMR, TDEE, target daily calories, and suggested macronutrient split.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">TDEE &amp; Daily Calorie Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>BMR (Mifflin-St Jeor) = (10 × kg) + (6.25 × cm) − (5 × age) + (5 or −161) | TDEE = BMR × Activity</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Moderate Active Male (Weight Loss)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Age: 28, Male, 75kg, 178cm, Moderate Activity, -500 kcal Goal</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">TDEE: ~2,580 kcal | Target: 2,080 kcal/day (156g Protein, 208g Carbs, 69g Fat)</span></div>
+        
       </div>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the TDEE &amp; Daily Calorie Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Select Metric (kg/cm) or Imperial (lbs/in) units.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Enter your age, gender, weight, and height.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Select your weekly activity level and primary fitness goal.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Read your BMR, TDEE, target daily calories, and suggested macronutrient split.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> BMR (Mifflin-St Jeor) = (10 × kg) + (6.25 × cm) − (5 × age) + (5 or −161) | TDEE = BMR × Activity</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Moderate Active Male (Weight Loss)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Age: 28, Male, 75kg, 178cm, Moderate Activity, -500 kcal Goal</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">TDEE: ~2,580 kcal | Target: 2,080 kcal/day (156g Protein, 208g Carbs, 69g Fat)</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Sedentary Female (Maintenance)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Age: 32, Female, 65kg, 165cm, Sedentary, Maintain Goal</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">TDEE: ~1,650 kcal | BMR: ~1,375 kcal</span></p>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Sedentary Female (Maintenance)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Age: 32, Female, 65kg, 165cm, Sedentary, Maintain Goal</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">TDEE: ~1,650 kcal | BMR: ~1,375 kcal</span></div>
+        
       </div>
     </div>
-      </div>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is TDEE?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn each day through basal metabolism, daily movement, digestion, and exercise.</p>
-      </details>
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is TDEE?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">TDEE stands for Total Daily Energy Expenditure — the total number of calories you burn each day through basal metabolism, daily movement, digestion, and exercise.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How accurate is the Mifflin-St Jeor formula?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The Mifflin-St Jeor formula is widely recognized in clinical dietetics as one of the most reliable equations for estimating BMR in healthy individuals within 5-10% of metabolic chamber tests.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How many calories should I cut to lose 1 pound per week?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A caloric deficit of 500 calories per day equals 3,500 calories per week, which corresponds to approximately 1 pound of fat loss per week.</p>
+        </details>
+      
+      </section>
     
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How accurate is the Mifflin-St Jeor formula?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The Mifflin-St Jeor formula is widely recognized in clinical dietetics as one of the most reliable equations for estimating BMR in healthy individuals within 5-10% of metabolic chamber tests.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How many calories should I cut to lose 1 pound per week?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A caloric deficit of 500 calories per day equals 3,500 calories per week, which corresponds to approximately 1 pound of fat loss per week.</p>
-      </details>
-    
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/body-fat-percentage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Body Fat Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate fat mass and lean body mass to fine-tune macros.</p>
+        <a href="/tool/bmi-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-health"><i class="fa-solid fa-heart"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">BMI Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free BMI calculator — instantly calculate your Body Mass Index, health category, and ideal weight range.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-health">Health</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/body-fat-percentage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-health"><i class="fa-solid fa-ruler-combined"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Body Fat Percentage Calculator (US Navy Method)</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free US Navy Body Fat Calculator. Calculate body fat percentage, lean mass, fat mass, and goal fat loss timelines instantly using at-home tape measurements.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-health">Health</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-      <a href="/tool/bmi-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">BMI Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Check your current Body Mass Index and healthy weight category.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">Understanding TDEE, BMR, and Macro Calorie Targets</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the TDEE &amp; Daily Calorie Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">TDEE &amp; Daily Calorie Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>

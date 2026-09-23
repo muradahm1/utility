@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"1099 Self-Employment Tax Calculator","item":"https://www.getcalcu.com/tool/self-employment-tax-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does self-employment tax apply at a 15.3% rate?","acceptedAnswer":{"@type":"Answer","text":"W-2 employees share FICA liabilities equally with employers (7.65% each). Self-employed individuals represent both enterprise and employee, requiring remittance of both halves under SECA statutory guidelines."}},{"@type":"Question","name":"What criteria govern IRS Safe Harbor underpayment rules?","acceptedAnswer":{"@type":"Answer","text":"To avoid underpayment penalties, taxpayers must remit at least 90% of current year liabilities or 100% of prior year tax (110% if prior year Adjusted Gross Income exceeded $150,000)."}},{"@type":"Question","name":"How do ordinary business expenses decrease tax liabilities?","acceptedAnswer":{"@type":"Answer","text":"Self-employment and income taxes apply solely to net profit (gross revenue minus allowable ordinary business expenses). Each legitimate deduction directly reduces the taxable base."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the 1099 Self-Employment Tax Calculator","description":"Calculate federal self-employment tax (SECA), effective tax brackets, and quarterly estimated IRS 1040-ES payments for independent contractors and sole proprietors.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter projected annual gross 1099 revenue and client billings."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Specify qualified deductible operating expenses to determine Schedule C net profit."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Select applicable IRS tax filing status and individual state income tax rate."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Input concurrent W-2 compensation to calibrate Social Security statutory wage base limits."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Review total tax allocation percentages and exact quarterly installment obligations."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Self-Employment Tax (SECA) & Estimated Tax Compliance","description":"Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"1099 Self-Employment Tax Calculator","url":"https://www.getcalcu.com/tool/self-employment-tax-calculator","dateModified":"2026-09-21"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Self-Employment Tax (SECA) & Estimated Tax Compliance","description":"Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"1099 Self-Employment Tax Calculator","url":"https://www.getcalcu.com/tool/self-employment-tax-calculator","dateModified":"2026-09-23"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -260,123 +260,243 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            IRS Schedule SE (Form 1040) statutory 92.35% SECA rules &amp; Social Security Administration statutory wage limits.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Small Business &amp; Tax Planning Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic progressive tax modeling</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=1099%20Self-Employment%20Tax%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">IRS Schedule SE (Form 1040) statutory 92.35% SECA rules &amp; Social Security Administration statutory wage limits.</p>
+      
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">GetCalcu Small Business &amp; Tax Planning Board</span>
       </div>
-    </div>
+    </section>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">Self-Employment Tax (SECA) &amp; Estimated Tax Compliance</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.</p>
+    <div class="educational-layout">
+      <div class="educational-main-content">
         
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Structure of the Self-Employment (SECA) Tax</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The Self-Employment Contributions Act imposes a 15.3% tax on net self-employment earnings, comprising 12.4% for Old-Age, Survivors, and Disability Insurance (Social Security) up to the statutory wage threshold and 2.9% for Hospital Insurance (Medicare). Net business earnings are adjusted by 92.35% pursuant to Schedule SE prior to tax computation.</p>
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">Self-Employment Tax (SECA) &amp; Estimated Tax Compliance</h2>
+        <div class="article-intro-text"><p>Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Structure of the Self-Employment (SECA) Tax</h3>
+            <div class="article-body-text"><p>The Self-Employment Contributions Act imposes a 15.3% tax on net self-employment earnings, comprising 12.4% for Old-Age, Survivors, and Disability Insurance (Social Security) up to the statutory wage threshold and 2.9% for Hospital Insurance (Medicare). Net business earnings are adjusted by 92.35% pursuant to Schedule SE prior to tax computation.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Above-the-Line FICA Deduction</h3>
+            <div class="article-body-text"><p>Taxpayers receive an above-the-line adjustment to income equal to 50% of total calculated self-employment tax. This deduction reduces Adjusted Gross Income (AGI) prior to standard or itemized deduction calculations.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">IRS Form 1040-ES Quarterly Deadlines</h3>
+            <div class="article-body-text"><p>Taxpayers anticipating tax liabilities exceeding $1,000 must remit estimated quarterly payments across four statutory deadlines: April 15, June 15, September 15, and January 15. Underpayment penalties can be prevented via statutory Safe Harbor provisions (paying 90% of current year tax or 100% of prior year tax, 110% for high earners).</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the 1099 Self-Employment Tax Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter projected annual gross 1099 revenue and client billings.</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Above-the-Line FICA Deduction</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Taxpayers receive an above-the-line adjustment to income equal to 50% of total calculated self-employment tax. This deduction reduces Adjusted Gross Income (AGI) prior to standard or itemized deduction calculations.</p>
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Specify qualified deductible operating expenses to determine Schedule C net profit.</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">IRS Form 1040-ES Quarterly Deadlines</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Taxpayers anticipating tax liabilities exceeding $1,000 must remit estimated quarterly payments across four statutory deadlines: April 15, June 15, September 15, and January 15. Underpayment penalties can be prevented via statutory Safe Harbor provisions (paying 90% of current year tax or 100% of prior year tax, 110% for high earners).</p>
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Select applicable IRS tax filing status and individual state income tax rate.</div>
+        </li>
       
-      </div>
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Input concurrent W-2 compensation to calibrate Social Security statutory wage base limits.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Review total tax allocation percentages and exact quarterly installment obligations.</div>
+        </li>
+      </ol>
+      </section>
     
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">1099 Self-Employment Tax Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>T_{SECA} = (R_{gross} - E_{exp}) 	imes 0.9235 	imes 0.153; quad P_{quarterly} = rac{T_{total}}{4}</code>
+        </div>
+        
+        
+      </section>
     
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the 1099 Self-Employment Tax Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter projected annual gross 1099 revenue and client billings.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Specify qualified deductible operating expenses to determine Schedule C net profit.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Select applicable IRS tax filing status and individual state income tax rate.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Input concurrent W-2 compensation to calibrate Social Security statutory wage base limits.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Review total tax allocation percentages and exact quarterly installment obligations.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> T_{SECA} = (R_{gross} - E_{exp}) 	imes 0.9235 	imes 0.153; quad P_{quarterly} = rac{T_{total}}{4}</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Independent Consultant ($85,000 Revenue, $12,000 Deductions)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> $85,000 gross revenue, $12,000 expenses, Single filer, 4.5% state rate</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Allocate ~27.8% of invoice revenue; quarterly installments of ~$5,065 to IRS and state</span></p>
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Independent Consultant ($85,000 Revenue, $12,000 Deductions)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">$85,000 gross revenue, $12,000 expenses, Single filer, 4.5% state rate</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Allocate ~27.8% of invoice revenue; quarterly installments of ~$5,065 to IRS and state</span></div>
+        
       </div>
     </div>
-      </div>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why does self-employment tax apply at a 15.3% rate?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">W-2 employees share FICA liabilities equally with employers (7.65% each). Self-employed individuals represent both enterprise and employee, requiring remittance of both halves under SECA statutory guidelines.</p>
-      </details>
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why does self-employment tax apply at a 15.3% rate?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">W-2 employees share FICA liabilities equally with employers (7.65% each). Self-employed individuals represent both enterprise and employee, requiring remittance of both halves under SECA statutory guidelines.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What criteria govern IRS Safe Harbor underpayment rules?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">To avoid underpayment penalties, taxpayers must remit at least 90% of current year liabilities or 100% of prior year tax (110% if prior year Adjusted Gross Income exceeded $150,000).</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do ordinary business expenses decrease tax liabilities?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Self-employment and income taxes apply solely to net profit (gross revenue minus allowable ordinary business expenses). Each legitimate deduction directly reduces the taxable base.</p>
+        </details>
+      
+      </section>
     
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What criteria govern IRS Safe Harbor underpayment rules?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">To avoid underpayment penalties, taxpayers must remit at least 90% of current year liabilities or 100% of prior year tax (110% if prior year Adjusted Gross Income exceeded $150,000).</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do ordinary business expenses decrease tax liabilities?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Self-employment and income taxes apply solely to net profit (gross revenue minus allowable ordinary business expenses). Each legitimate deduction directly reduces the taxable base.</p>
-      </details>
-    
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/freelance-hourly-rate-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Freelance Hourly Rate Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate client billing rates to hit your target personal take-home salary.</p>
+        <a href="/tool/freelance-hourly-rate-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-business"><i class="fa-solid fa-briefcase"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Freelance &amp; Consultant Hourly Rate Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Freelance Hourly Rate Calculator. Convert your desired annual salary into accurate client billing rates accounting for 1099 taxes, health insurance, retirement, and time off.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-business">Business</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/freelance-true-rate-system" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-business"><i class="fa-solid fa-briefcase"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Freelance True Rate System</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-business">Business</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/salary-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Salary &amp; Paycheck Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free paycheck &amp; salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security &amp; Medicare), and deductions.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/profit-margin-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-business"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Profit Margin Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Profit Margin Calculator. Calculate gross margin %, markup %, net profit, and revenue pricing targets with cost breakdown charts.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-business">Business</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-      <a href="/tool/salary-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Salary Paycheck Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Compare your 1099 freelance net income against equivalent W-2 corporate salaries.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/profit-margin-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Profit Margin Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Price your client work with healthy gross margins after accounting for taxes.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">Self-Employment Tax (SECA) &amp; Estimated Tax Compliance</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the 1099 Self-Employment Tax Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">1099 Self-Employment Tax Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>

@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Engineering","item":"https://www.getcalcu.com/category/engineering"},{"@type":"ListItem","position":3,"name":"Beam Deflection Calculator","item":"https://www.getcalcu.com/tool/beam-deflection-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is moment of inertia?","acceptedAnswer":{"@type":"Answer","text":"Moment of inertia (I) measures a beam resistance to bending. It depends on the cross-section shape. Deeper beams have much higher I than wider beams of the same area."}},{"@type":"Question","name":"What is the modulus of elasticity?","acceptedAnswer":{"@type":"Answer","text":"E (modulus of elasticity) measures material stiffness. Steel is about 29,000,000 psi. Wood is about 1,500,000–1,800,000 psi depending on grade."}},{"@type":"Question","name":"What is L/360?","acceptedAnswer":{"@type":"Answer","text":"L/360 is a common deflection limit. It means the maximum deflection should not exceed the span length divided by 360. For a 10 ft span, that is 0.33 inches."}},{"@type":"Question","name":"Can I use this for steel beams?","acceptedAnswer":{"@type":"Answer","text":"Yes, but ensure you use the correct moment of inertia for the steel section. This calculator uses E = 29,000,000 psi, which is standard for steel."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Beam Deflection Calculator","description":"Calculate maximum deflection for simply supported and cantilever beams under point load.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Select beam type."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Enter beam length, load, and moment of inertia."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Review maximum deflection and L/Δ ratio."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Understanding Beam Deflection in Structural Engineering","description":"Beam deflection is the degree to which a beam bends under load. Excessive deflection can damage finishes and affect structural integrity.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Beam Deflection Calculator","url":"https://www.getcalcu.com/tool/beam-deflection-calculator","dateModified":"2026-09-21"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Understanding Beam Deflection in Structural Engineering","description":"Beam deflection is the degree to which a beam bends under load. Excessive deflection can damage finishes and affect structural integrity.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Beam Deflection Calculator","url":"https://www.getcalcu.com/tool/beam-deflection-calculator","dateModified":"2026-09-23"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -202,94 +202,229 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            American Institute of Steel Construction (AISC) &amp; classical Euler-Bernoulli beam theory deflection formulations.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Structural Engineering Review Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic structural mechanics calculation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Beam%20Deflection%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">American Institute of Steel Construction (AISC) &amp; classical Euler-Bernoulli beam theory deflection formulations.</p>
+      
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">GetCalcu Structural Engineering Review Board</span>
       </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">Understanding Beam Deflection in Structural Engineering</h2>
+        <div class="article-intro-text"><p>Beam deflection is the degree to which a beam bends under load. Excessive deflection can damage finishes and affect structural integrity.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">The Deflection Formula</h3>
+            <div class="article-body-text"><p>Deflection depends on load, span length, material stiffness (E), and cross-section shape (I). The formulas differ for simply supported and cantilever beams.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Allowable Deflection Limits</h3>
+            <div class="article-body-text"><p>Building codes typically limit deflection to L/360 for live loads and L/240 for dead loads. For a 10 ft beam, that is about 0.33 inches for live load.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Increasing Stiffness</h3>
+            <div class="article-body-text"><p>To reduce deflection, increase the moment of inertia (deeper beam), use a stiffer material (steel vs wood), add supports, or reduce the span.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Beam Deflection Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Select beam type.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Enter beam length, load, and moment of inertia.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Review maximum deflection and L/Δ ratio.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Beam Deflection Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Wood Beam</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Simply supported, 10 ft, 1000 lbs, I = 100 in⁴</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">δ ≈ 0.0106 in, L/δ ≈ 11320</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Steel Cantilever</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Cantilever, 8 ft, 500 lbs, I = 200 in⁴</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">δ ≈ 0.0030 in, L/δ ≈ 31900</span></div>
+        
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is moment of inertia?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Moment of inertia (I) measures a beam resistance to bending. It depends on the cross-section shape. Deeper beams have much higher I than wider beams of the same area.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the modulus of elasticity?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">E (modulus of elasticity) measures material stiffness. Steel is about 29,000,000 psi. Wood is about 1,500,000–1,800,000 psi depending on grade.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is L/360?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">L/360 is a common deflection limit. It means the maximum deflection should not exceed the span length divided by 360. For a 10 ft span, that is 0.33 inches.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I use this for steel beams?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes, but ensure you use the correct moment of inertia for the steel section. This calculator uses E = 29,000,000 psi, which is standard for steel.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/ohms-law-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-engineering"><i class="fa-solid fa-bolt"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Ohm&#39;s Law Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Ohm&#39;s Law calculator — calculate voltage (V), current (I), resistance (R), and electric power (P) instantly.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-engineering">Engineering</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/pressure-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-engineering"><i class="fa-solid fa-gauge-high"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Pressure Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free pressure calculator — convert between PSI, Bar, kPa, MPa, and atmospheres, or calculate pressure from force and area.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-engineering">Engineering</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/concrete-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-construction"><i class="fa-solid fa-truck-ramp-box"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Concrete Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free concrete calculator — estimate concrete volume in cubic yards, cubic feet, and bags needed for slabs, footings, and columns.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-construction">Construction</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">Understanding Beam Deflection in Structural Engineering</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Beam Deflection Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Beam Deflection Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">Understanding Beam Deflection in Structural Engineering</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Beam deflection is the degree to which a beam bends under load. Excessive deflection can damage finishes and affect structural integrity.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Deflection Formula</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Deflection depends on load, span length, material stiffness (E), and cross-section shape (I). The formulas differ for simply supported and cantilever beams.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Allowable Deflection Limits</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Building codes typically limit deflection to L/360 for live loads and L/240 for dead loads. For a 10 ft beam, that is about 0.33 inches for live load.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Increasing Stiffness</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">To reduce deflection, increase the moment of inertia (deeper beam), use a stiffer material (steel vs wood), add supports, or reduce the span.</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Beam Deflection Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Select beam type.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Enter beam length, load, and moment of inertia.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Review maximum deflection and L/Δ ratio.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Wood Beam</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Simply supported, 10 ft, 1000 lbs, I = 100 in⁴</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">δ ≈ 0.0106 in, L/δ ≈ 11320</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Steel Cantilever</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Cantilever, 8 ft, 500 lbs, I = 200 in⁴</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">δ ≈ 0.0030 in, L/δ ≈ 31900</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is moment of inertia?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Moment of inertia (I) measures a beam resistance to bending. It depends on the cross-section shape. Deeper beams have much higher I than wider beams of the same area.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the modulus of elasticity?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">E (modulus of elasticity) measures material stiffness. Steel is about 29,000,000 psi. Wood is about 1,500,000–1,800,000 psi depending on grade.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is L/360?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">L/360 is a common deflection limit. It means the maximum deflection should not exceed the span length divided by 360. For a 10 ft span, that is 0.33 inches.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I use this for steel beams?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes, but ensure you use the correct moment of inertia for the steel section. This calculator uses E = 29,000,000 psi, which is standard for steel.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

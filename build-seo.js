@@ -318,203 +318,6 @@ function renderSidebarNav(activeSlug = null, isHome = false) {
         </aside>`;
 }
 
-// ── 3. Build Pre-Rendered Full Static HTML for Non-JS Crawlers & Humans ─
-function renderPreRenderedToolContent(tool, slug) {
-  // Compute default values
-  const defaultVals = {};
-  if (tool.fields && Array.isArray(tool.fields)) {
-    tool.fields.forEach(f => {
-      defaultVals[f.id] = typeof f.default === 'function' ? f.default() : f.default;
-    });
-  }
-
-  let result = null;
-  if (typeof tool.calculate === 'function') {
-    try {
-      result = tool.calculate(defaultVals);
-    } catch (e) {
-      // fallback
-    }
-  }
-
-  // 1. Presets HTML
-  let presetsHtml = '';
-  if (tool.presets && tool.presets.length > 0) {
-    presetsHtml = `
-      <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
-        <div class="preset-chips-header">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span>Quick Scenarios</span>
-        </div>
-        <div class="preset-chips-list">
-          ${tool.presets.map((p, idx) => `
-            <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" data-preset-idx="${idx}">
-              <i class="fa-solid fa-sliders"></i> <span>${escapeHtml(p.label)}</span>
-            </button>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-
-  // 2. Form HTML
-  let formHtml = presetsHtml;
-  if (tool.fields && Array.isArray(tool.fields)) {
-    for (const field of tool.fields) {
-      const label = field.label || field.id;
-      const val = defaultVals[field.id] !== undefined ? defaultVals[field.id] : '';
-      if (field.type === 'select') {
-        const optionsHtml = (field.options || []).map(o => `
-          <option value="${escapeHtml(o.value)}" ${o.value === val ? 'selected' : ''}>${escapeHtml(o.label)}</option>
-        `).join('');
-        formHtml += `
-          <div class="form-group" data-field="${field.id}">
-            <label for="${field.id}">${escapeHtml(label)}</label>
-            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
-            <select id="${field.id}" data-id="${field.id}">${optionsHtml}</select>
-          </div>
-        `;
-      } else if (field.type === 'range') {
-        formHtml += `
-          <div class="form-group" data-field="${field.id}">
-            <label for="${field.id}">${escapeHtml(label)}</label>
-            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
-            <div class="range-input-wrap">
-              <input type="number" id="${field.id}" data-id="${field.id}" value="${val}" inputmode="decimal">
-              <input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${val}">
-            </div>
-          </div>
-        `;
-      } else if (field.type !== 'section') {
-        formHtml += `
-          <div class="form-group" data-field="${field.id}">
-            <label for="${field.id}">${escapeHtml(label)}</label>
-            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
-            <input type="${field.type || 'number'}" id="${field.id}" data-id="${field.id}" value="${val}" inputmode="decimal">
-          </div>
-        `;
-      }
-    }
-  }
-
-  // 3. Stats & Result Cards HTML
-  let statsHtml = '';
-  if (result && result.stats && Array.isArray(result.stats)) {
-    statsHtml = `
-      <div class="stats-grid">
-        ${result.stats.map(s => `
-          <div class="stat-card ${s.highlight ? 'stat-card--highlight' : ''} ${s.warn ? 'stat-card--warn' : ''}">
-            <span class="stat-label">${escapeHtml(s.label)}</span>
-            <span class="stat-value">${escapeHtml(s.value)}</span>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  let insightHtml = '';
-  if (result && result.insight) {
-    const icon = result.insight.icon || (result.insight.tone === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check');
-    const headline = result.insight.headline || result.insight.title || '';
-    const detail = result.insight.detail || result.insight.text || '';
-    const tone = result.insight.tone || 'positive';
-    insightHtml = `
-      <div class="insight-banner insight-banner--${tone}">
-        <i class="fa-solid ${icon}"></i>
-        <div class="insight-content">
-          <h4>${escapeHtml(headline)}</h4>
-          <p>${escapeHtml(detail)}</p>
-        </div>
-      </div>
-    `;
-  }
-
-  // 4. Action Toolbar
-  const toolbarHtml = `
-    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
-      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
-      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
-      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
-      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
-      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
-      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
-    </div>
-  `;
-
-  // 5. Article & Educational Sections
-  let articleHtml = '';
-  if (tool.article) {
-    const a = tool.article;
-    const sectionsHtml = (a.sections && a.sections.length)
-      ? a.sections.map(s => `
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">${escapeHtml(s.heading)}</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body || s.content || '')}</p>
-      `).join('')
-      : '';
-    articleHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>
-        ${sectionsHtml}
-      </div>
-    `;
-  }
-
-  // 6. How To & Formula
-  let howToHtml = '';
-  if (tool.howTo && tool.howTo.length) {
-    const steps = tool.howTo.map((step, i) => {
-      const stepText = typeof step === 'string' ? escapeHtml(step) : (step.name ? `<strong>${escapeHtml(step.name)}:</strong> ${escapeHtml(step.text)}` : escapeHtml(step.text || ''));
-      return `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${stepText}</li>`;
-    }).join('');
-    howToHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>
-        ${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}
-      </div>
-    `;
-  }
-
-  // 7. Examples
-  let examplesHtml = '';
-  if (tool.examples && tool.examples.length) {
-    const exCards = tool.examples.map(ex => `
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(ex.title)}</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> ${escapeHtml(ex.input)}</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">${escapeHtml(ex.result)}</span></p>
-      </div>
-    `).join('');
-    examplesHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">${exCards}</div>
-      </div>
-    `;
-  }
-
-  // 8. FAQs
-  let faqsHtml = '';
-  if (tool.faqs && tool.faqs.length) {
-    const faqItems = tool.faqs.map(f => {
-      const q = f.q || f.question || '';
-      const a = f.a || f.answer || '';
-      return `
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(q)}</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(a)}</p>
-      </details>
-    `;
-    }).join('');
-    faqsHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        ${faqItems}
-      </div>
-    `;
-  }
-
 // ── Contextual Trust Standards & Authority Scoping ─────────────────
 function getToolTrustInfo(tool, slug) {
   const cat = (tool.category || '').toLowerCase();
@@ -644,180 +447,436 @@ function getToolTrustInfo(tool, slug) {
   };
 }
 
-const CONTEXTUAL_LINKS = {
-  'true-home-buying-system': [
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Standard 30-year mortgage calculation with taxes and insurance.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Detailed rent vs buy wealth and cash-flow comparisons.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Find the maximum home price you qualify for based on debt-to-income ratios.' },
-    { slug: 'fha-loan-calculator', name: 'FHA Loan Calculator', desc: 'Calculate 3.5% down payments and FHA monthly mortgage insurance.' },
-    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payment difference and interest savings.' }
-  ],
-  'freelance-true-rate-system': [
-    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Hourly Rate Calculator', desc: 'Simple freelance rate estimator.' },
-    { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against equivalent corporate W-2 salaries.' },
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price client project proposals with healthy profit margins.' },
-    { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the minimum billable revenue required to cover business fixed overhead.' }
-  ],
-  'mortgage-calculator': [
-    { slug: 'true-home-buying-system', name: 'True Home Buying System', desc: 'Calculate total cash to close, loaded PITIA, and 5-yr vs 10-yr break-even matrix.' },
-    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payment difference and interest savings.' },
-    { slug: 'fha-loan-calculator', name: 'FHA Loan Calculator', desc: 'Calculate 3.5% down payments and FHA monthly mortgage insurance.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Find the maximum home price you qualify for based on debt-to-income ratios.' },
-    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'See how extra monthly principal payments reduce total loan interest.' }
-  ],
-  '15-year-mortgage-calculator': [
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Standard 30-year mortgage calculation with taxes and insurance.' },
-    { slug: 'refinance-calculator', name: 'Refinance Calculator', desc: 'Check if refinancing into a 15-year loan saves money.' },
-    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View full month-by-month principal reduction schedules.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability', desc: 'Check maximum loan limits based on debt ratios.' }
-  ],
-  'fha-loan-calculator': [
-    { slug: 'mortgage-calculator', name: 'Conventional Mortgage Calculator', desc: 'Compare conventional loans with 20% down to skip mortgage insurance.' },
-    { slug: '15-year-mortgage-calculator', name: '15-Year Mortgage Calculator', desc: 'Evaluate shorter loan terms for faster equity growth.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Calculate qualifying income for FHA loan limits.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare renting vs purchasing your first home.' }
-  ],
-  'auto-loan-calculator': [
-    { slug: 'auto-refinance-calculator', name: 'Auto Loan Refinance Calculator', desc: 'Calculate how much you save by refinancing your car loan.' },
-    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Compare bank or credit union loan rates against dealership financing.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Check if your car payment stays within 15% of net income.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze total interest across various loan terms.' }
-  ],
-  'auto-refinance-calculator': [
-    { slug: 'auto-loan-calculator', name: 'Auto Loan Calculator', desc: 'Calculate new car loan payments and sales tax.' },
-    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Explore personal loan alternatives for debt consolidation.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Reallocate auto loan savings into emergency reserves.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'See total interest saved across lower interest rates.' }
-  ],
-  'freelance-hourly-rate-calculator': [
-    { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against equivalent corporate W-2 salaries.' },
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price client project proposals with healthy profit margins.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Build a 6-month buffer for unpredictable freelance income months.' }
-  ],
-  'body-fat-percentage-calculator': [
-    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Compare your body fat percentage to standard Body Mass Index categories.' },
-    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find your daily calorie target for fat loss while preserving muscle.' }
-  ],
-  'bmi-calculator': [
-    { slug: 'body-fat-percentage-calculator', name: 'Body Fat Calculator (Navy Method)', desc: 'Measure body composition using simple tape measurements at home.' },
-    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find daily calorie requirements for weight maintenance, cutting, or bulking.' }
-  ],
-  'tdee-calculator': [
-    { slug: 'body-fat-percentage-calculator', name: 'Body Fat Calculator', desc: 'Calculate fat mass and lean body mass to fine-tune macros.' },
-    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Check your current Body Mass Index and healthy weight category.' }
-  ],
-  'retirement-calculator': [
-    { slug: '401k-calculator', name: '401(k) Retirement Calculator', desc: 'Maximize your employer matching contributions and tax-deferred growth.' },
-    { slug: 'fire-calculator', name: 'FIRE Calculator', desc: 'Determine your Financial Independence number and safe withdrawal rate.' },
-    { slug: 'investment-calculator', name: 'Investment Calculator', desc: 'Project long-term compound growth of stocks, bonds, and index funds.' },
-    { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'See how frequent deposits accelerate multi-decade savings.' }
-  ],
-  'emergency-fund-calculator': [
-    { slug: 'savings-calculator', name: 'Savings & HYSA Calculator', desc: 'Model high-yield savings growth while your emergency reserve is parked.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Categorize your monthly essential expenses versus discretionary spending.' },
-    { slug: 'credit-card-payoff-calculator', name: 'Credit Card Payoff Calculator', desc: 'Pay down high-interest debt alongside building your safety fund.' }
-  ],
-  '401k-calculator': [
-    { slug: 'retirement-calculator', name: 'Retirement Calculator', desc: 'Combine your 401(k), IRA, and Social Security for a total retirement projection.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'See how pre-tax 401(k) deductions lower your take-home tax burden today.' },
-    { slug: 'investment-calculator', name: 'Investment Calculator', desc: 'Simulate taxable brokerage investments alongside your 401(k).' }
-  ],
-  'savings-calculator': [
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Calculate your target savings cushion for 3, 6, or 12 months of expenses.' },
-    { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'Calculate how interest compounds daily, monthly, or annually.' }
-  ],
-  'profit-margin-calculator': [
-    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Rate Calculator', desc: 'Calculate client billing rates from desired take-home salary.' },
-    { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the exact unit sales volume needed to cover overhead costs.' },
-    { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Assess unit economics and customer acquisition payback periods.' }
-  ],
-  'break-even-calculator': [
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Optimize pricing markup and target gross margin percentages.' },
-    { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Evaluate marketing profitability and customer retention impact.' }
-  ],
-  'gpa-calculator': [
-    { slug: 'final-grade-calculator', name: 'Final Grade Calculator', desc: 'Calculate the exact exam score required to achieve your target semester grade.' }
-  ],
-  'final-grade-calculator': [
-    { slug: 'gpa-calculator', name: 'GPA Calculator', desc: 'Calculate your cumulative semester GPA across all course credits.' }
-  ],
-  'debt-snowball-calculator': [
-    { slug: 'credit-card-payoff-calculator', name: 'Credit Card Payoff Calculator', desc: 'Focus specifically on high-interest revolving credit cards and repayment months.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Save your starter emergency fund cushion so you never fall back into debt.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Use the 50/30/20 rule to find extra cash to throw into your debt snowball.' },
-    { slug: 'savings-calculator', name: 'High-Yield Savings Calculator', desc: 'Grow your cash cushion while staying completely debt-free.' }
-  ],
-  'refinance-calculator': [
-    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payments and interest savings.' },
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Recalculate your principal and interest payments with new interest rates.' },
-    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View complete year-by-year principal reduction schedules.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Check debt-to-income limits and maximum borrowing capacity.' }
-  ],
-  'self-employment-tax-calculator': [
-    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Hourly Rate Calculator', desc: 'Calculate client billing rates to hit your target personal take-home salary.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare your 1099 freelance net income against equivalent W-2 corporate salaries.' },
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price your client work with healthy gross margins after accounting for taxes.' }
-  ],
-  'credit-card-payoff-calculator': [
-    { slug: 'debt-snowball-calculator', name: 'Debt Snowball Calculator', desc: 'Roll multiple credit card balances together into an accelerated payoff plan.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Build a safety buffer to stop unexpected expenses from adding to your balance.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze how much bank interest you save with larger payments.' }
-  ]
-};
-
-  // 9. Authoritative E-E-A-T Editorial & Trust Block (Scoped Authority)
+function buildMethodologyHtml(tool, slug) {
+  if (!tool.methodology && !tool.formula) return '';
+  const m = tool.methodology || {};
   const trustInfo = getToolTrustInfo(tool, slug);
-  const trustBlockHtml = `
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            ${escapeHtml(trustInfo.standard)}
-          </p>
+  const standards = m.standards || trustInfo.standard || 'Calculations are based on recognized financial, mathematical, and scientific models verified against authoritative reference standards.';
+  const reviewer = m.reviewer || trustInfo.reviewer || 'GetCalcu Editorial & Calculation Board';
+  const lastReviewed = tool.lastReviewed || m.lastReviewed || 'September 2026';
+  const assumptions = m.assumptions || [];
+  const sources = m.sources || [reviewer];
+
+  let assumptionsHtml = '';
+  if (assumptions.length > 0) {
+    assumptionsHtml = `
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          ${assumptions.map(a => `<li>${escapeHtml(a)}</li>`).join('')}
+        </ul>
+      </div>`;
+  }
+  let sourcesHtml = '';
+  if (sources.length > 0) {
+    sourcesHtml = `
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">${sources.map(s => escapeHtml(s)).join(' • ')}</span>
+      </div>`;
+  }
+
+  return `
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: ${escapeHtml(lastReviewed)}</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> ${escapeHtml(trustInfo.reviewer)}</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> ${escapeHtml(trustInfo.policy)}</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=${encodeURIComponent(tool.name + ' Correction')}" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
-      </div>
+      <p class="methodology-summary">${escapeHtml(m.summary || standards)}</p>
+      ${assumptionsHtml}
+      ${sourcesHtml}
+    </section>
+  `;
+}
+
+function buildOnThisPageHtml(tocItems) {
+  if (!tocItems || !tocItems.length) return '';
+  return `
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            ${tocItems.map(item => `
+              <li class="on-this-page-item">
+                <a href="#${escapeHtml(item.id)}" class="on-this-page-link">${escapeHtml(item.label)}</a>
+              </li>
+            `).join('')}
+          </ul>
+        </nav>
+      </details>
     </div>
   `;
+}
 
-  // 10. Contextual Cross-Linking Mesh
-  let complementaryMeshHtml = '';
-  const relList = CONTEXTUAL_LINKS[slug] || [];
-  if (relList.length > 0) {
-    const linkCards = relList.map(item => `
-      <a href="/tool/${encodeURIComponent(item.slug)}" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">${escapeHtml(item.name)}</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">${escapeHtml(item.desc)}</p>
+// ── 3. Build Pre-Rendered Full Static HTML for Non-JS Crawlers & Humans ─
+function renderPreRenderedToolContent(tool, slug, allTools = {}) {
+  // Compute default values
+  const defaultVals = {};
+  if (tool.fields && Array.isArray(tool.fields)) {
+    tool.fields.forEach(f => {
+      defaultVals[f.id] = typeof f.default === 'function' ? f.default() : f.default;
+    });
+  }
+
+  let result = null;
+  if (typeof tool.calculate === 'function') {
+    try {
+      result = tool.calculate(defaultVals);
+    } catch (e) {
+      // fallback
+    }
+  }
+
+  // 1. Presets HTML
+  let presetsHtml = '';
+  if (tool.presets && tool.presets.length > 0) {
+    presetsHtml = `
+      <div class="preset-chips-container" role="group" aria-label="Quick Scenario Presets">
+        <div class="preset-chips-header">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Quick Scenarios</span>
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    `).join('');
-    complementaryMeshHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
-          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
-        </h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
-          ${linkCards}
+        <div class="preset-chips-list">
+          ${tool.presets.map((p, idx) => `
+            <button type="button" class="preset-chip ${idx === 0 ? 'active' : ''}" data-preset-idx="${idx}">
+              <i class="fa-solid fa-sliders"></i> <span>${escapeHtml(p.label)}</span>
+            </button>
+          `).join('')}
         </div>
       </div>
     `;
   }
+
+  // 2. Form HTML
+  let formHtml = presetsHtml;
+  if (tool.fields && Array.isArray(tool.fields)) {
+    for (const field of tool.fields) {
+      const label = field.label || field.id;
+      const val = defaultVals[field.id] !== undefined ? defaultVals[field.id] : '';
+      if (field.type === 'select') {
+        const optionsHtml = (field.options || []).map(o => `
+          <option value="${escapeHtml(o.value)}" ${o.value === val ? 'selected' : ''}>${escapeHtml(o.label)}</option>
+        `).join('');
+        formHtml += `
+          <div class="form-group" data-field="${field.id}">
+            <label for="${field.id}">${escapeHtml(label)}</label>
+            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
+            <select id="${field.id}" data-id="${field.id}">${optionsHtml}</select>
+          </div>
+        `;
+      } else if (field.type === 'range') {
+        formHtml += `
+          <div class="form-group" data-field="${field.id}">
+            <label for="${field.id}">${escapeHtml(label)}</label>
+            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
+            <div class="range-input-wrap">
+              <input type="number" id="${field.id}" data-id="${field.id}" value="${val}" inputmode="decimal">
+              <input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${val}">
+            </div>
+          </div>
+        `;
+      } else if (field.type !== 'section') {
+        formHtml += `
+          <div class="form-group" data-field="${field.id}">
+            <label for="${field.id}">${escapeHtml(label)}</label>
+            ${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}
+            <input type="${field.type || 'number'}" id="${field.id}" data-id="${field.id}" value="${val}" inputmode="decimal">
+          </div>
+        `;
+      }
+    }
+  }
+
+  // 3. Stats & Result Cards HTML
+  let statsHtml = '';
+  if (result && result.stats && Array.isArray(result.stats)) {
+    statsHtml = `
+      <div class="stats-grid">
+        ${result.stats.map(s => `
+          <div class="stat-card ${s.highlight ? 'stat-card--highlight' : ''} ${s.warn ? 'stat-card--warn' : ''}">
+            <span class="stat-label">${escapeHtml(s.label)}</span>
+            <span class="stat-value">${escapeHtml(s.value)}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  let insightHtml = '';
+  if (result && result.insight) {
+    const icon = result.insight.icon || (result.insight.tone === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check');
+    const headline = result.insight.headline || result.insight.title || '';
+    const detail = result.insight.detail || result.insight.text || '';
+    const tone = result.insight.tone || 'positive';
+    insightHtml = `
+      <div class="insight-banner insight-banner--${tone}">
+        <i class="fa-solid ${icon}"></i>
+        <div class="insight-content">
+          <h4>${escapeHtml(headline)}</h4>
+          <p>${escapeHtml(detail)}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // 4. Action Toolbar
+  const toolbarHtml = `
+    <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-csv-btn"><i class="fa-solid fa-file-csv"></i> <span>CSV</span></button>
+      <button class="btn btn-outline btn-sm action-btn" id="action-print-btn"><i class="fa-solid fa-print"></i> <span>Print</span></button>
+      <button class="btn btn-outline btn-sm action-btn copy-results-btn" id="copy-results-btn"><i class="fa-regular fa-copy"></i> <span>Copy</span></button>
+    </div>
+  `;
+
+  // TOC Item Accumulator
+  const tocItems = [];
+
+  // 5. Methodology
+  const methodologyHtml = buildMethodologyHtml(tool, slug);
+  if (methodologyHtml) {
+    tocItems.push({ id: 'methodology', label: 'Methodology & Standards' });
+  }
+
+  // 6. Article & Educational Sections
+  let articleHtml = '';
+  if (tool.article) {
+    const a = tool.article;
+    const articleId = a.id || 'how-to-calculate';
+    tocItems.push({ id: articleId, label: a.heading || 'How to Calculate' });
+
+    const sectionsHtml = (a.sections && a.sections.length)
+      ? a.sections.map((s, idx) => {
+        const bodyText = typeof s.body === 'string'
+          ? `<p>${escapeHtml(s.body)}</p>`
+          : (Array.isArray(s.body) ? s.body.map(p => `<p>${escapeHtml(p)}</p>`).join('') : `<p>${escapeHtml(s.body || s.content || '')}</p>`);
+        return `
+          <div class="article-subsection" ${s.id ? `id="${escapeHtml(s.id)}"` : ''}>
+            <h3 class="article-subheading">${escapeHtml(s.heading)}</h3>
+            <div class="article-body-text">${bodyText}</div>
+          </div>`;
+      }).join('')
+      : '';
+
+    articleHtml = `
+      <article class="tool-runner-card educational-card" id="${escapeHtml(articleId)}" aria-labelledby="${escapeHtml(articleId)}-title">
+        <h2 id="${escapeHtml(articleId)}-title" class="educational-section-title">${escapeHtml(a.heading)}</h2>
+        <div class="article-intro-text"><p>${escapeHtml(a.intro)}</p></div>
+        ${sectionsHtml}
+      </article>
+    `;
+  }
+
+  // 7. How To
+  let howToHtml = '';
+  if (tool.howTo && tool.howTo.length) {
+    const howToId = 'how-to-use';
+    const howToTitle = `How to Use the ${tool.name}`;
+    tocItems.push({ id: howToId, label: howToTitle });
+
+    const steps = tool.howTo.map((step, i) => {
+      const stepText = typeof step === 'string' ? escapeHtml(step) : (step.name ? `<strong>${escapeHtml(step.name)}:</strong> ${escapeHtml(step.text)}` : escapeHtml(step.text || ''));
+      return `
+        <li class="how-to-step">
+          <span class="step-num">${i + 1}</span>
+          <div class="step-content">${stepText}</div>
+        </li>
+      `;
+    }).join('');
+
+    howToHtml = `
+      <section class="tool-runner-card educational-card" id="${howToId}" aria-labelledby="${howToId}-title">
+        <h2 id="${howToId}-title" class="educational-section-title">${escapeHtml(howToTitle)}</h2>
+        <ol class="how-to-steps-list">${steps}</ol>
+      </section>
+    `;
+  }
+
+  // 8. Formula
+  let formulaHtml = '';
+  if (tool.formula || tool.formulaBreakdown) {
+    const formulaId = 'formula';
+    const formulaTitle = tool.formulaTitle || `${tool.name} Formula`;
+    tocItems.push({ id: formulaId, label: formulaTitle });
+
+    let variablesHtml = '';
+    if (tool.formulaVariables && tool.formulaVariables.length) {
+      variablesHtml = `
+        <div class="formula-variables-wrap">
+          <h4 class="formula-variables-heading">Variable Definitions:</h4>
+          <ul class="formula-variables-list">
+            ${tool.formulaVariables.map(v => `<li><strong>${escapeHtml(v.name)}</strong>: ${escapeHtml(v.description)}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    let plainEnglishHtml = '';
+    if (tool.formulaExplanation) {
+      plainEnglishHtml = `<div class="article-body-text"><p>${escapeHtml(tool.formulaExplanation)}</p></div>`;
+    }
+
+    formulaHtml = `
+      <section class="tool-runner-card educational-card" id="${formulaId}" aria-labelledby="${formulaId}-title">
+        <h2 id="${formulaId}-title" class="educational-section-title">${escapeHtml(formulaTitle)}</h2>
+        <div class="formula-display-box">
+          <code>${escapeHtml(tool.formula)}</code>
+        </div>
+        ${plainEnglishHtml}
+        ${variablesHtml}
+      </section>
+    `;
+  }
+
+  // 9. Examples
+  let examplesHtml = '';
+  if (tool.examples && tool.examples.length) {
+    const examplesId = 'worked-examples';
+    const examplesTitle = 'Real-World Worked Examples';
+    tocItems.push({ id: examplesId, label: examplesTitle });
+
+    const exCards = tool.examples.map(ex => `
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">${escapeHtml(ex.title)}</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">${escapeHtml(ex.input)}</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">${escapeHtml(ex.result)}</span></div>
+        ${ex.explanation ? `<p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">${escapeHtml(ex.explanation)}</p>` : ''}
+      </div>
+    `).join('');
+
+    examplesHtml = `
+      <section class="tool-runner-card educational-card" id="${examplesId}" aria-labelledby="${examplesId}-title">
+        <h2 id="${examplesId}-title" class="educational-section-title">${escapeHtml(examplesTitle)}</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">${exCards}</div>
+      </section>
+    `;
+  }
+
+  // 10. Additional domain-specific sections
+  let additionalSectionsHtml = '';
+  if (tool.additionalSections && tool.additionalSections.length) {
+    tool.additionalSections.forEach(sec => {
+      const secId = sec.id || 'domain-guide';
+      tocItems.push({ id: secId, label: sec.heading });
+
+      let contentHtml = '';
+      if (sec.items && sec.items.length) {
+        contentHtml = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+            ${sec.items.map(item => `
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(item.title)}</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">${escapeHtml(item.description)}</p>
+                ${item.note ? `<span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">${escapeHtml(item.note)}</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (sec.body) {
+        contentHtml = `<div class="article-body-text">${typeof sec.body === 'string' ? `<p>${escapeHtml(sec.body)}</p>` : sec.body.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</div>`;
+      }
+
+      additionalSectionsHtml += `
+        <section class="tool-runner-card educational-card" id="${escapeHtml(secId)}" aria-labelledby="${escapeHtml(secId)}-title">
+          <h2 id="${escapeHtml(secId)}-title" class="educational-section-title">${escapeHtml(sec.heading)}</h2>
+          ${sec.intro ? `<p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">${escapeHtml(sec.intro)}</p>` : ''}
+          ${contentHtml}
+        </section>
+      `;
+    });
+  }
+
+  // 11. FAQs
+  let faqsHtml = '';
+  if (tool.faqs && tool.faqs.length) {
+    const faqsId = 'faqs';
+    const faqsTitle = 'Frequently Asked Questions';
+    tocItems.push({ id: faqsId, label: faqsTitle });
+
+    const faqItems = tool.faqs.map(f => {
+      const q = f.q || f.question || '';
+      const a = f.a || f.answer || '';
+      return `
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(q)}</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(a)}</p>
+        </details>
+      `;
+    }).join('');
+
+    faqsHtml = `
+      <section class="tool-runner-card educational-card" id="${faqsId}" aria-labelledby="${faqsId}-title">
+        <h2 id="${faqsId}-title" class="educational-section-title">${escapeHtml(faqsTitle)}</h2>
+        ${faqItems}
+      </section>
+    `;
+  }
+
+  // 12. Related Tools Mesh
+  let relatedToolsHtml = '';
+  let relSlugs = tool.related || [];
+  if (!relSlugs.length && allTools) {
+    relSlugs = Object.keys(allTools).filter(s => s !== slug && allTools[s].category === tool.category).slice(0, 4);
+  }
+
+  if (relSlugs.length > 0) {
+    const relatedId = 'related-tools';
+    const relatedTitle = 'Related Calculators';
+    tocItems.push({ id: relatedId, label: relatedTitle });
+
+    const linkCards = relSlugs.map(relSlug => {
+      const relTool = allTools && allTools[relSlug] ? allTools[relSlug] : null;
+      const relName = relTool ? relTool.name : relSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const relDesc = relTool ? (relTool.metaDescription || relTool.description) : 'Calculate and evaluate metrics with precision.';
+      const relCat = relTool ? relTool.category : (tool.category || 'Finance');
+      const relIcon = (relTool && relTool.icon) || 'fa-calculator';
+      const relIconClass = (relTool && relTool.iconClass) || 'icon-finance';
+      const relTagClass = (relTool && relTool.tagClass) || 'tag-finance';
+
+      return `
+        <a href="/tool/${encodeURIComponent(relSlug)}" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon ${escapeHtml(relIconClass)}"><i class="fa-solid ${escapeHtml(relIcon)}"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">${escapeHtml(relName)}</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">${escapeHtml(relDesc)}</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag ${escapeHtml(relTagClass)}">${escapeHtml(relCat)}</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    relatedToolsHtml = `
+      <section class="tool-runner-card educational-card" id="${relatedId}" aria-labelledby="${relatedId}-title">
+        <h2 id="${relatedId}-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          ${escapeHtml(relatedTitle)}
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          ${linkCards}
+        </div>
+      </section>
+    `;
+  }
+
+  // 13. Sidebar TOC HTML
+  const onThisPageHtml = buildOnThisPageHtml(tocItems);
 
   return `
     <div class="tool-runner-card">
@@ -836,12 +895,21 @@ const CONTEXTUAL_LINKS = {
         </div>
       </div>
     </div>
-    ${trustBlockHtml}
-    ${articleHtml}
-    ${howToHtml}
-    ${examplesHtml}
-    ${faqsHtml}
-    ${complementaryMeshHtml}
+    ${methodologyHtml}
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        ${articleHtml}
+        ${howToHtml}
+        ${formulaHtml}
+        ${examplesHtml}
+        ${additionalSectionsHtml}
+        ${faqsHtml}
+        ${relatedToolsHtml}
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        ${onThisPageHtml}
+      </aside>
+    </div>
   `;
 }
 
@@ -849,7 +917,7 @@ const CONTEXTUAL_LINKS = {
 const toolDir = path.join(__dirname, 'tool');
 if (!fs.existsSync(toolDir)) fs.mkdirSync(toolDir, { recursive: true });
 
-const toolPageTemplate = (tool) => {
+const toolPageTemplate = (tool, allTools = {}) => {
   const title = buildTitle(tool);
   const canonical = buildCanonical(tool.slug);
   const desc = escapeHtml(tool.metaDescription || tool.description);
@@ -862,7 +930,7 @@ const toolPageTemplate = (tool) => {
   ].filter(Boolean);
 
   const catSlug = (tool.category || 'finance').toLowerCase();
-  const preRenderedBody = renderPreRenderedToolContent(tool, tool.slug);
+  const preRenderedBody = renderPreRenderedToolContent(tool, tool.slug, allTools);
 
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -1406,7 +1474,7 @@ function build() {
     const toolSubDir = path.join(toolDir, slug);
     if (!fs.existsSync(toolSubDir)) fs.mkdirSync(toolSubDir, { recursive: true });
 
-    const html = toolPageTemplate(tool);
+    const html = toolPageTemplate(tool, tools);
     fs.writeFileSync(path.join(toolSubDir, 'index.html'), html, 'utf8');
   });
 

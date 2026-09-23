@@ -257,183 +257,337 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) &amp; Truth in Lending Act (TILA) amortization standards.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Consumer Credit &amp; Lending Review Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic in-browser amortization</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Mortgage%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Our calculation engine computes monthly principal and interest (P&amp;I) using standard actuarial amortization mathematics. Annual property taxes and homeowners insurance are divided evenly across 12 monthly escrow installments.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Interest compounds monthly on a 360-day or 365-day fixed amortization schedule (12 monthly payments per calendar year).</li><li>Interest rate remains fixed throughout the selected loan term.</li><li>Property taxes and insurance premiums remain constant over time in baseline projections (actual municipal taxes may adjust annually).</li><li>Private Mortgage Insurance (PMI) is not included in baseline P&amp;I and is typically required by lenders when the down payment is below 20%.</li>
+        </ul>
       </div>
-    </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">Consumer Financial Protection Bureau (CFPB) — Loan Estimate &amp; Closing Disclosure Standards • Federal Reserve Board — Consumer Handbook on Adjustable-Rate and Fixed Mortgages • Fannie Mae &amp; Freddie Mac Single-Family Amortization Guidelines</span>
+      </div>
+    </section>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Your Mortgage Payment Accurately</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">When financing a home, your monthly housing expenditure is rarely just the principal and interest on the borrowed amount. Most lenders establish an escrow account that bundles local property taxes and homeowners insurance into a single monthly bill (commonly referred to as PITI). Understanding every component of this payment—and how loan terms and down payments alter your lifetime borrowing costs—is essential for making confident home-buying decisions.</p>
+    <div class="educational-layout">
+      <div class="educational-main-content">
         
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Breaking Down PITI: Principal, Interest, Taxes, and Insurance</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Principal: The actual capital borrowed from the lender to buy the home. Each monthly payment reduces this remaining balance according to the loan amortization schedule.,Interest: The fee charged by the lender for the capital borrowed, calculated as an annualized percentage (APR) of the outstanding principal balance. Early in a long-term mortgage, interest comprises the dominant portion of your monthly payment.,Property Taxes: Levied annually by local county and municipal taxing authorities to fund public schools, roads, emergency services, and civic infrastructure. Your lender divides the estimated yearly tax bill by 12 and collects it into an escrow reserve.,Homeowners Insurance: Casualty and hazard coverage protecting the physical home against damage, fire, and natural disasters. Like property taxes, this premium is escrowed in 12 equal monthly installments.,Private Mortgage Insurance (PMI): On conventional mortgages, lenders usually require PMI if your down payment is less than 20% (Loan-to-Value greater than 80%). PMI protects the lender in case of default and generally adds 0.5% to 1.5% of the loan balance annually until you reach 20% equity.</p>
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate Your Mortgage Payment Accurately</h2>
+        <div class="article-intro-text"><p>When financing a home, your monthly housing expenditure is rarely just the principal and interest on the borrowed amount. Most lenders establish an escrow account that bundles local property taxes and homeowners insurance into a single monthly bill (commonly referred to as PITI). Understanding every component of this payment—and how loan terms and down payments alter your lifetime borrowing costs—is essential for making confident home-buying decisions.</p></div>
+        
+          <div class="article-subsection" id="piti-breakdown">
+            <h3 class="article-subheading">Breaking Down PITI: Principal, Interest, Taxes, and Insurance</h3>
+            <div class="article-body-text"><p>Principal: The actual capital borrowed from the lender to buy the home. Each monthly payment reduces this remaining balance according to the loan amortization schedule.</p><p>Interest: The fee charged by the lender for the capital borrowed, calculated as an annualized percentage (APR) of the outstanding principal balance. Early in a long-term mortgage, interest comprises the dominant portion of your monthly payment.</p><p>Property Taxes: Levied annually by local county and municipal taxing authorities to fund public schools, roads, emergency services, and civic infrastructure. Your lender divides the estimated yearly tax bill by 12 and collects it into an escrow reserve.</p><p>Homeowners Insurance: Casualty and hazard coverage protecting the physical home against damage, fire, and natural disasters. Like property taxes, this premium is escrowed in 12 equal monthly installments.</p><p>Private Mortgage Insurance (PMI): On conventional mortgages, lenders usually require PMI if your down payment is less than 20% (Loan-to-Value greater than 80%). PMI protects the lender in case of default and generally adds 0.5% to 1.5% of the loan balance annually until you reach 20% equity.</p></div>
+          </div>
+          <div class="article-subsection" id="loan-term-comparison">
+            <h3 class="article-subheading">30-Year vs. 15-Year Mortgages: The Lifetime Interest Tradeoff</h3>
+            <div class="article-body-text"><p>A 30-year fixed-rate mortgage spreads your repayment over 360 monthly payments. This keeps your regular monthly obligation lower and more manageable, providing greater monthly cash flow flexibility. However, because the loan balance amortizes slowly, you pay significantly more total interest over 30 years—frequently exceeding the original price of the home.</p><p>A 15-year fixed-rate mortgage requires higher monthly payments (typically 25% to 35% higher for the same loan amount), but because lenders take on less duration risk, 15-year rates are often 0.5% to 0.75% lower. Crucially, you pay off the principal in half the time, saving hundreds of thousands of dollars in lifetime interest and building home equity at an accelerated pace.</p></div>
+          </div>
+          <div class="article-subsection" id="amortization-mechanics">
+            <h3 class="article-subheading">The Mathematical Mechanics of Amortization</h3>
+            <div class="article-body-text"><p>Amortization describes the mathematical process of retiring debt through scheduled, equal periodic payments. Although your total monthly principal and interest payment remains constant throughout a fixed-rate loan, the internal split between principal and interest shifts continuously.</p><p>In Month 1 of a $320,000 30-year loan at 7.00% APR, the monthly interest charge is $1,866.67, meaning only $262.30 goes toward reducing your loan balance. By Year 15, the monthly interest has fallen to approximately $1,340, allowing $789 to go toward principal. By Year 25, the vast majority of each payment directly builds your home equity.</p></div>
+          </div>
+          <div class="article-subsection" id="down-payment-strategy">
+            <h3 class="article-subheading">Down Payment Strategy and Loan-to-Value (LTV)</h3>
+            <div class="article-body-text"><p>Your down payment directly determines your initial Loan-to-Value (LTV) ratio. A larger down payment produces three immediate financial benefits: it reduces the required loan principal, lowers your ongoing monthly payment, and avoids private mortgage insurance (PMI) when you contribute 20% or more.</p><p>Even if you do not have 20% saved upfront, putting down 5% to 10% still lowers your monthly principal balance compared to minimum down payment programs, while allowing you to refinance or request PMI cancellation once your property appreciates or you pay down the balance to 80% LTV.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Mortgage Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter the purchase price of the property you intend to buy.</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">30-Year vs. 15-Year Mortgages: The Lifetime Interest Tradeoff</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">A 30-year fixed-rate mortgage spreads your repayment over 360 monthly payments. This keeps your regular monthly obligation lower and more manageable, providing greater monthly cash flow flexibility. However, because the loan balance amortizes slowly, you pay significantly more total interest over 30 years—frequently exceeding the original price of the home.,A 15-year fixed-rate mortgage requires higher monthly payments (typically 25% to 35% higher for the same loan amount), but because lenders take on less duration risk, 15-year rates are often 0.5% to 0.75% lower. Crucially, you pay off the principal in half the time, saving hundreds of thousands of dollars in lifetime interest and building home equity at an accelerated pace.</p>
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Specify your down payment in dollars (e.g., $80,000 for a 20% down payment on a $400,000 home).</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Mathematical Mechanics of Amortization</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Amortization describes the mathematical process of retiring debt through scheduled, equal periodic payments. Although your total monthly principal and interest payment remains constant throughout a fixed-rate loan, the internal split between principal and interest shifts continuously.,In Month 1 of a $320,000 30-year loan at 7.00% APR, the monthly interest charge is $1,866.67, meaning only $262.30 goes toward reducing your loan balance. By Year 15, the monthly interest has fallen to approximately $1,340, allowing $789 to go toward principal. By Year 25, the vast majority of each payment directly builds your home equity.</p>
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Input your annual mortgage interest rate (APR) and choose your repayment term (such as 15 or 30 years).</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Down Payment Strategy and Loan-to-Value (LTV)</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Your down payment directly determines your initial Loan-to-Value (LTV) ratio. A larger down payment produces three immediate financial benefits: it reduces the required loan principal, lowers your ongoing monthly payment, and avoids private mortgage insurance (PMI) when you contribute 20% or more.,Even if you do not have 20% saved upfront, putting down 5% to 10% still lowers your monthly principal balance compared to minimum down payment programs, while allowing you to refinance or request PMI cancellation once your property appreciates or you pay down the balance to 80% LTV.</p>
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Add your estimated annual property taxes and homeowners insurance premiums to generate a complete PITI monthly payment.</div>
+        </li>
       
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Review your monthly payment breakdown, total interest cost, and the full month-by-month amortization schedule below.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Mortgage Amortization Formula</h2>
+        <div class="formula-display-box">
+          <code>M = P × [r(1 + r)^n] / [(1 + r)^n − 1]</code>
+        </div>
+        <div class="article-body-text"><p>To determine your fixed monthly principal and interest payment (M), the principal loan amount (P) is multiplied by a periodic interest factor derived from your monthly interest rate (r) compounded over the total number of monthly payments (n).</p></div>
+        
+        <div class="formula-variables-wrap">
+          <h4 class="formula-variables-heading">Variable Definitions:</h4>
+          <ul class="formula-variables-list">
+            <li><strong>M</strong>: Monthly principal and interest payment</li><li><strong>P</strong>: Principal loan amount (Home Price − Down Payment)</li><li><strong>r</strong>: Monthly interest rate (Annual Interest Rate ÷ 12 ÷ 100)</li><li><strong>n</strong>: Total number of monthly payments (Loan Term in Years × 12)</li><li><strong>Monthly PITI</strong>: M + (Annual Property Tax ÷ 12) + (Annual Insurance ÷ 12)</li><li><strong>Total Interest</strong>: (M × n) − P</li><li><strong>Total Cost</strong>: Down Payment + (Monthly PITI × n)</li>
+          </ul>
+        </div>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Standard 30-Year Fixed Mortgage (20% Down)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Price: $400,000, Down: $80,000 (20%), Rate: 7.00% APR, Term: 30 Years, Tax: $4,800/yr, Ins: $1,200/yr</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Monthly P&amp;I: $2,128.97 | Total Monthly PITI: $2,628.97 | Total Interest: $446,429.20 | Total Cost: $1,026,429.20</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">Over 30 years, borrowing $320,000 generates $446,429.20 in interest alone—substantially more than the original loan amount.</p>
       </div>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Mortgage Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter the purchase price of the property you intend to buy.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Specify your down payment in dollars (e.g., $80,000 for a 20% down payment on a $400,000 home).</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Input your annual mortgage interest rate (APR) and choose your repayment term (such as 15 or 30 years).</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Add your estimated annual property taxes and homeowners insurance premiums to generate a complete PITI monthly payment.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Review your monthly payment breakdown, total interest cost, and the full month-by-month amortization schedule below.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> M = P × [r(1 + r)^n] / [(1 + r)^n − 1]</div>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">15-Year Accelerated Equity Mortgage (20% Down)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Price: $400,000, Down: $80,000 (20%), Rate: 6.25% APR, Term: 15 Years, Tax: $4,800/yr, Ins: $1,200/yr</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Monthly P&amp;I: $2,743.75 | Total Monthly PITI: $3,243.75 | Total Interest: $173,875.00 | Total Cost: $663,875.00</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">Increasing the monthly payment by $614.78 saves $272,554.20 in lifetime interest and pays off the property 15 years sooner.</p>
       </div>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Standard 30-Year Fixed Mortgage (20% Down)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $400,000, Down: $80,000 (20%), Rate: 7.00% APR, Term: 30 Years, Tax: $4,800/yr, Ins: $1,200/yr</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly P&amp;I: $2,128.97 | Total Monthly PITI: $2,628.97 | Total Interest: $446,429.20 | Total Cost: $1,026,429.20</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">15-Year Accelerated Equity Mortgage (20% Down)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $400,000, Down: $80,000 (20%), Rate: 6.25% APR, Term: 15 Years, Tax: $4,800/yr, Ins: $1,200/yr</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly P&amp;I: $2,743.75 | Total Monthly PITI: $3,243.75 | Total Interest: $173,875.00 | Total Cost: $663,875.00</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Starter Home with 5% Down Payment</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $300,000, Down: $15,000 (5%), Rate: 7.00% APR, Term: 30 Years, Tax: $3,600/yr, Ins: $1,080/yr</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Monthly P&amp;I: $1,896.11 | Total Monthly PITI (excl. PMI): $2,286.11 | Total Interest: $397,599.60</span></p>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Starter Home with 5% Down Payment</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Price: $300,000, Down: $15,000 (5%), Rate: 7.00% APR, Term: 30 Years, Tax: $3,600/yr, Ins: $1,080/yr</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Monthly P&amp;I: $1,896.11 | Total Monthly PITI (excl. PMI): $2,286.11 | Total Interest: $397,599.60</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">Financing $285,000 requires factoring in an estimated $120–$190/mo in private mortgage insurance (PMI) until you reach 20% home equity.</p>
       </div>
     </div>
-      </div>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is a monthly mortgage payment calculated?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A monthly mortgage payment is calculated using the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan principal (home price minus down payment), r is your monthly interest rate (annual APR ÷ 12 ÷ 100), and n is the total number of scheduled monthly payments (years × 12). Monthly property taxes and insurance premiums are then added to establish your total PITI obligation.</p>
-      </details>
+        <section class="tool-runner-card educational-card" id="common-costs" aria-labelledby="common-costs-title">
+          <h2 id="common-costs-title" class="educational-section-title">Common Homeownership Costs People Often Forget</h2>
+          <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">Your monthly mortgage statement is only one part of total homeownership expenses. When planning a purchase budget, consider these recurring and upfront costs:</p>
+          
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Upfront Closing Costs</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Lender origination fees, appraisal, credit checks, title search, and title insurance. These typically range from 2% to 5% of the total loan amount at settlement.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Paid at closing; not included in monthly PITI calculation.</span>
+              </div>
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">HOA / Condo Association Fees</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Monthly or quarterly fees covering common area maintenance, trash, exterior amenities, and building insurance reserves. Typical ranges are $150 to $600/month.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Paid directly to association; lenders count this toward debt-to-income ratios.</span>
+              </div>
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Ongoing Home Maintenance &amp; Capital Repairs</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">General rule of thumb is budgeting 1% to 2% of the home purchase price annually for roof repairs, plumbing, HVAC maintenance, and appliance replacements.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Essential emergency reserve separate from mortgage escrow.</span>
+              </div>
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Escrow Cushion &amp; Property Tax Reassessments</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Municipal property taxes can rise following a reassessment after purchase. Most lenders require an initial 2-month reserve cushion in your escrow account.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">May cause annual adjustments in your total monthly escrow payment.</span>
+              </div>
+            
+          </div>
+        
+        </section>
+      
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is a monthly mortgage payment calculated?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A monthly mortgage payment is calculated using the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan principal (home price minus down payment), r is your monthly interest rate (annual APR ÷ 12 ÷ 100), and n is the total number of scheduled monthly payments (years × 12). Monthly property taxes and insurance premiums are then added to establish your total PITI obligation.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What does PITI stand for and why is it important?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">PITI stands for Principal, Interest, Taxes, and Insurance. While principal and interest go toward repaying your loan, taxes and insurance cover local municipal property levies and hazard insurance. Lenders calculate your debt-to-income (DTI) ratio based on your complete PITI payment rather than principal and interest alone.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much down payment do I need to avoid paying PMI?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">On conventional mortgages, a down payment of at least 20% of the purchase price (80% Loan-to-Value) eliminates the requirement for Private Mortgage Insurance (PMI). If you put down less than 20%, PMI is typically added to your monthly bill until your loan principal reaches 80% of the original purchase price or appraised value.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is a 15-year or 30-year fixed mortgage better for me?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A 30-year fixed mortgage provides lower, more predictable monthly payments, making it easier to qualify and providing cash flow buffer for other savings goals. A 15-year mortgage requires a higher monthly commitment but significantly cuts total interest paid over the life of the loan and builds equity much faster.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is an amortization schedule?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">An amortization schedule is a complete table showing the breakdown of every monthly payment over the entire life of your loan. It specifies exactly how much of each payment goes toward paying down principal balance versus paying accrued interest, as well as your remaining balance after each payment.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I make extra payments to pay off my mortgage early?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes, on standard conventional and government loans without prepayment penalties, making extra principal payments directly reduces your remaining loan balance. Because interest is calculated on your outstanding principal, extra payments shorten your loan term and reduce total lifetime interest.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What closing costs should I anticipate when buying a home?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Beyond your down payment, buyers typically pay 2% to 5% of the loan amount in closing costs. These include loan origination fees, appraisal fees, title searches, title insurance, recording fees, and initial escrow reserves for taxes and insurance.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why does my total mortgage payment change over time?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Even with a fixed-rate mortgage where principal and interest never change, your total monthly payment can fluctuate if your local county adjusts property tax rates or if your homeowners insurance premium changes annually upon policy renewal.</p>
+        </details>
+      
+      </section>
     
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What does PITI stand for and why is it important?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">PITI stands for Principal, Interest, Taxes, and Insurance. While principal and interest go toward repaying your loan, taxes and insurance cover local municipal property levies and hazard insurance. Lenders calculate your debt-to-income (DTI) ratio based on your complete PITI payment rather than principal and interest alone.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much down payment do I need to avoid paying PMI?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">On conventional mortgages, a down payment of at least 20% of the purchase price (80% Loan-to-Value) eliminates the requirement for Private Mortgage Insurance (PMI). If you put down less than 20%, PMI is typically added to your monthly bill until your loan principal reaches 80% of the original purchase price or appraised value.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is a 15-year or 30-year fixed mortgage better for me?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A 30-year fixed mortgage provides lower, more predictable monthly payments, making it easier to qualify and providing cash flow buffer for other savings goals. A 15-year mortgage requires a higher monthly commitment but significantly cuts total interest paid over the life of the loan and builds equity much faster.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is an amortization schedule?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">An amortization schedule is a complete table showing the breakdown of every monthly payment over the entire life of your loan. It specifies exactly how much of each payment goes toward paying down principal balance versus paying accrued interest, as well as your remaining balance after each payment.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I make extra payments to pay off my mortgage early?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes, on standard conventional and government loans without prepayment penalties, making extra principal payments directly reduces your remaining loan balance. Because interest is calculated on your outstanding principal, extra payments shorten your loan term and reduce total lifetime interest.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What closing costs should I anticipate when buying a home?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Beyond your down payment, buyers typically pay 2% to 5% of the loan amount in closing costs. These include loan origination fees, appraisal fees, title searches, title insurance, recording fees, and initial escrow reserves for taxes and insurance.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why does my total mortgage payment change over time?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Even with a fixed-rate mortgage where principal and interest never change, your total monthly payment can fluctuate if your local county adjusts property tax rates or if your homeowners insurance premium changes annually upon policy renewal.</p>
-      </details>
-    
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/true-home-buying-system" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">True Home Buying System</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate total cash to close, loaded PITIA, and 5-yr vs 10-yr break-even matrix.</p>
+        <a href="/tool/loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-sack-dollar"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Loan Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/rent-vs-buy-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Rent vs. Buy Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Rent vs Buy Calculator with break-even analysis, net worth comparison, equity buildup, opportunity cost, and intelligent recommendations. Should you rent or buy?</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/house-affordability-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">House Affordability Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free house affordability calculator — determine your maximum home purchase price based on DTI ratios, income, debt, and down payment.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/amortization-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-simple"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Amortization Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Amortization Calculator with interactive charts, payment schedule, extra payment analysis, and downloadable loan repayment tables. Compare scenarios and see how extra payments save interest.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-      <a href="/tool/15-year-mortgage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">15-Year vs 30-Year Mortgage</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Compare 15-year and 30-year payment difference and interest savings.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/fha-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">FHA Loan Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate 3.5% down payments and FHA monthly mortgage insurance.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/house-affordability-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">House Affordability Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Find the maximum home price you qualify for based on debt-to-income ratios.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/amortization-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Amortization Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">See how extra monthly principal payments reduce total loan interest.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Calculate Your Mortgage Payment Accurately</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Mortgage Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Mortgage Amortization Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#common-costs" class="on-this-page-link">Common Homeownership Costs People Often Forget</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>

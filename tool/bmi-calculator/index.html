@@ -197,145 +197,312 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            CDC Adult &amp; Pediatric Body Mass Index criteria and World Health Organization (WHO) international classification thresholds.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Health &amp; Nutrition Advisory Group</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic anthropometric evaluation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=BMI%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Body Mass Index (BMI) is an anthropometric screening metric defined as body mass divided by the square of body height. It provides an initial population-level estimate of weight categories but is not an individualized medical diagnosis.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Standard adult weight categories apply to individuals aged 20 years and older.</li><li>The calculation assumes uniform body density and does not distinguish between skeletal muscle mass, bone density, and adipose tissue.</li><li>Clinical assessments should incorporate complementary markers including waist circumference, body fat percentage, and metabolic health panels.</li>
+        </ul>
       </div>
-    </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">World Health Organization (WHO) — Body Mass Index Classification Guidelines • Centers for Disease Control and Prevention (CDC) — Defining Adult BMI • National Heart, Lung, and Blood Institute (NIH) — Clinical Guidelines on Obesity Identification</span>
+      </div>
+    </section>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Your BMI and Understand Weight Categories</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Body Mass Index (BMI) is a standardized screening metric used by healthcare providers and public health agencies globally to assess whether an individual falls within an expected weight range for their height. While it serves as a helpful, accessible baseline, understanding what the numbers indicate—and what limitations exist—is critical for interpreting your results responsibly.</p>
+    <div class="educational-layout">
+      <div class="educational-main-content">
         
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Standard Adult BMI Classifications (WHO &amp; CDC)</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Underweight (BMI below 18.5): Indicates body weight is below the expected range for height. May be associated with nutritional deficits, reduced immune function, or underlying conditions.,Normal / Healthy Weight (BMI 18.5–24.9): The statistical range associated with the lowest incidence of weight-related cardiovascular and metabolic health conditions in adult populations.,Overweight (BMI 25.0–29.9): Indicates weight greater than the standard reference range. Healthcare providers generally evaluate lifestyle factors and waist measurements to assess individual risk.,Obesity Class I (BMI 30.0–34.9), Class II (BMI 35.0–39.9), and Class III (BMI 40.0+): Correlated with elevated risk of hypertension, type 2 diabetes, cardiovascular disease, and sleep apnea.</p>
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate Your BMI and Understand Weight Categories</h2>
+        <div class="article-intro-text"><p>Body Mass Index (BMI) is a standardized screening metric used by healthcare providers and public health agencies globally to assess whether an individual falls within an expected weight range for their height. While it serves as a helpful, accessible baseline, understanding what the numbers indicate—and what limitations exist—is critical for interpreting your results responsibly.</p></div>
+        
+          <div class="article-subsection" id="bmi-categories-explained">
+            <h3 class="article-subheading">Standard Adult BMI Classifications (WHO &amp; CDC)</h3>
+            <div class="article-body-text"><p>Underweight (BMI below 18.5): Indicates body weight is below the expected range for height. May be associated with nutritional deficits, reduced immune function, or underlying conditions.</p><p>Normal / Healthy Weight (BMI 18.5–24.9): The statistical range associated with the lowest incidence of weight-related cardiovascular and metabolic health conditions in adult populations.</p><p>Overweight (BMI 25.0–29.9): Indicates weight greater than the standard reference range. Healthcare providers generally evaluate lifestyle factors and waist measurements to assess individual risk.</p><p>Obesity Class I (BMI 30.0–34.9), Class II (BMI 35.0–39.9), and Class III (BMI 40.0+): Correlated with elevated risk of hypertension, type 2 diabetes, cardiovascular disease, and sleep apnea.</p></div>
+          </div>
+          <div class="article-subsection" id="clinical-limitations">
+            <h3 class="article-subheading">Important Clinical Limitations of BMI</h3>
+            <div class="article-body-text"><p>Muscle vs. Fat Composition: Because muscle tissue is denser than adipose fat tissue, athletes, weightlifters, and muscular individuals may register an &quot;overweight&quot; or &quot;obese&quot; BMI despite having low body fat and excellent cardiovascular fitness.</p><p>Age and Gender Differences: Women naturally carry higher essential body fat percentages than men at identical BMI levels. Similarly, older adults often experience sarcopenia (loss of muscle mass) while body fat increases, which may mask health risks at a &quot;normal&quot; BMI.</p><p>Ethnicity Considerations: Research endorsed by the WHO indicates that health risks associated with obesity may begin at lower BMI thresholds (such as 23.0 for overweight and 27.5 for obesity) in certain Asian populations.</p></div>
+          </div>
+          <div class="article-subsection" id="healthy-weight-targets">
+            <h3 class="article-subheading">How Healthy Weight Ranges Are Determined</h3>
+            <div class="article-body-text"><p>Your healthy weight range is calculated by applying the normal BMI boundaries (18.5 to 24.9) to your specific height squared: Healthy Min = 18.5 × Height(m)², and Healthy Max = 24.9 × Height(m)². This gives a realistic span of healthy weights rather than a single rigid number.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the BMI Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Choose your preferred unit system: Metric (kilograms and centimeters) or Imperial (pounds and inches).</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Important Clinical Limitations of BMI</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Muscle vs. Fat Composition: Because muscle tissue is denser than adipose fat tissue, athletes, weightlifters, and muscular individuals may register an &quot;overweight&quot; or &quot;obese&quot; BMI despite having low body fat and excellent cardiovascular fitness.,Age and Gender Differences: Women naturally carry higher essential body fat percentages than men at identical BMI levels. Similarly, older adults often experience sarcopenia (loss of muscle mass) while body fat increases, which may mask health risks at a &quot;normal&quot; BMI.,Ethnicity Considerations: Research endorsed by the WHO indicates that health risks associated with obesity may begin at lower BMI thresholds (such as 23.0 for overweight and 27.5 for obesity) in certain Asian populations.</p>
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Enter your current body weight and height.</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Healthy Weight Ranges Are Determined</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Your healthy weight range is calculated by applying the normal BMI boundaries (18.5 to 24.9) to your specific height squared: Healthy Min = 18.5 × Height(m)², and Healthy Max = 24.9 × Height(m)². This gives a realistic span of healthy weights rather than a single rigid number.</p>
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Optionally specify your age to provide demographic context.</div>
+        </li>
       
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Review your calculated BMI value, color-coded classification, and customized healthy weight span on the visual gauge.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Consult a licensed healthcare professional before initiating significant dietary or fitness modifications.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Body Mass Index Formula</h2>
+        <div class="formula-display-box">
+          <code>BMI = Weight (kg) / [Height (m)]² | Imperial: BMI = 703 × Weight (lb) / [Height (in)]²</code>
+        </div>
+        <div class="article-body-text"><p>BMI divides total body weight by height squared. For imperial measurements, a conversion factor of 703 is applied to reconcile pounds and inches to metric kilograms per square meter.</p></div>
+        
+        <div class="formula-variables-wrap">
+          <h4 class="formula-variables-heading">Variable Definitions:</h4>
+          <ul class="formula-variables-list">
+            <li><strong>BMI</strong>: Body Mass Index (kg/m²)</li><li><strong>Weight (kg)</strong>: Body mass in kilograms (or pounds converted via × 0.453592)</li><li><strong>Height (m)</strong>: Stature in meters (or inches converted via × 0.0254)</li><li><strong>Healthy Min Weight</strong>: 18.5 × [Height in meters]²</li><li><strong>Healthy Max Weight</strong>: 24.9 × [Height in meters]²</li>
+          </ul>
+        </div>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Metric Reference Scenario</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Weight: 70.0 kg, Height: 175.0 cm (1.75 m), Age: 30</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">BMI: 22.9 (Normal Weight) | Healthy Weight Range: 56.7–76.3 kg</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">A 70 kg individual at 175 cm falls comfortably in the center of the normal BMI range.</p>
       </div>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the BMI Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Choose your preferred unit system: Metric (kilograms and centimeters) or Imperial (pounds and inches).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Enter your current body weight and height.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Optionally specify your age to provide demographic context.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Review your calculated BMI value, color-coded classification, and customized healthy weight span on the visual gauge.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Consult a licensed healthcare professional before initiating significant dietary or fitness modifications.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> BMI = Weight (kg) / [Height (m)]² | Imperial: BMI = 703 × Weight (lb) / [Height (in)]²</div>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Imperial Reference Scenario</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Weight: 180.0 lb, Height: 70.0 in (5 ft 10 in), Age: 35</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">BMI: 25.8 (Overweight) | Healthy Weight Range: 128.9–173.5 lb</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">At 180 lb, this individual is slightly above the 24.9 BMI cutoff (173.5 lb), indicating a screening recommendation to evaluate lifestyle and waist circumference.</p>
       </div>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Metric Reference Scenario</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Weight: 70.0 kg, Height: 175.0 cm (1.75 m), Age: 30</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">BMI: 22.9 (Normal Weight) | Healthy Weight Range: 56.7–76.3 kg</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Imperial Reference Scenario</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Weight: 180.0 lb, Height: 70.0 in (5 ft 10 in), Age: 35</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">BMI: 25.8 (Overweight) | Healthy Weight Range: 128.9–173.5 lb</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Underweight Screening Scenario</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Weight: 45.0 kg, Height: 162.0 cm (1.62 m), Age: 25</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">BMI: 17.1 (Underweight) | Healthy Weight Range: 48.5–65.3 kg</span></p>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Underweight Screening Scenario</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Weight: 45.0 kg, Height: 162.0 cm (1.62 m), Age: 25</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">BMI: 17.1 (Underweight) | Healthy Weight Range: 48.5–65.3 kg</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">A BMI of 17.1 is below the 18.5 threshold, suggesting the individual is under the expected healthy weight for 162 cm.</p>
       </div>
     </div>
-      </div>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is Body Mass Index (BMI) calculated?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">BMI is calculated by dividing body weight in kilograms by height in meters squared (kg/m²). For imperial measurements, multiply weight in pounds by 703 and divide by height in inches squared: BMI = (Weight in lb × 703) ÷ (Height in inches)². Our calculator automates these conversions seamlessly.</p>
-      </details>
+        <section class="tool-runner-card educational-card" id="holistic-health-markers" aria-labelledby="holistic-health-markers-title">
+          <h2 id="holistic-health-markers-title" class="educational-section-title">Comprehensive Health Indicators Beyond BMI</h2>
+          <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">To build an accurate assessment of health, clinical professionals typically pair BMI with these complementary metrics:</p>
+          
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Waist-to-Height Ratio (WHtR)</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Keeping your waist circumference under half your height (ratio &lt; 0.50) is strongly correlated with lower cardiovascular and metabolic risk regardless of total weight.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Measures central abdominal fat distribution.</span>
+              </div>
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Body Fat Percentage</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Direct measurement via DEXA scans, bioelectrical impedance, or calipers separates lean muscle mass from fat tissue.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Typical healthy ranges: 14–24% for men, 21–31% for women.</span>
+              </div>
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Cardiorespiratory Fitness</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Aerobic endurance, muscular strength, resting heart rate, and VO2 max often provide more predictive value for longevity than scale weight alone.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Physical activity provides health benefits across all BMI tiers.</span>
+              </div>
+            
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Metabolic &amp; Blood Lipid Panels</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">Fasting blood glucose, HbA1c, triglycerides, HDL/LDL cholesterol, and blood pressure determine metabolic health status.</p>
+                <span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">Essential clinical data from annual medical checkups.</span>
+              </div>
+            
+          </div>
+        
+        </section>
+      
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is Body Mass Index (BMI) calculated?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">BMI is calculated by dividing body weight in kilograms by height in meters squared (kg/m²). For imperial measurements, multiply weight in pounds by 703 and divide by height in inches squared: BMI = (Weight in lb × 703) ÷ (Height in inches)². Our calculator automates these conversions seamlessly.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What are the official adult BMI categories?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">According to the World Health Organization (WHO) and CDC, adult BMI is classified as: Underweight (below 18.5), Normal Weight (18.5 to 24.9), Overweight (25.0 to 29.9), and Obese (30.0 or higher).</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why can BMI be misleading for athletes and bodybuilders?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">BMI does not differentiate between skeletal muscle and body fat. Because muscle is approximately 18% denser than fat by volume, highly trained athletes with substantial muscle mass and low body fat frequently register in the &quot;overweight&quot; or &quot;obese&quot; BMI categories.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is the healthy weight range determined for my height?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The healthy weight range corresponds to the minimum (18.5) and maximum (24.9) normal BMI thresholds applied to your height. For example, for someone 175 cm tall, the range is 18.5 × (1.75)² = 56.7 kg to 24.9 × (1.75)² = 76.3 kg.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Do BMI categories differ for men and women?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Standard clinical BMI classification tables are identical for adult men and women. However, women naturally maintain higher essential body fat levels than men with the same BMI, which is why body composition metrics provide helpful context.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is BMI used the same way for children and teenagers?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">No. For children and adolescents aged 2 to 19, BMI is calculated the same way but interpreted using age-and-sex-specific growth percentiles (CDC Growth Charts) rather than fixed adult category cutoffs.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What should I do if my BMI is in the overweight or underweight category?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Use your BMI as an informative initial screening point rather than a definitive diagnosis. Schedule an evaluation with a primary healthcare provider who can evaluate your blood pressure, metabolic markers, lifestyle, and body composition.</p>
+        </details>
+      
+      </section>
     
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What are the official adult BMI categories?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">According to the World Health Organization (WHO) and CDC, adult BMI is classified as: Underweight (below 18.5), Normal Weight (18.5 to 24.9), Overweight (25.0 to 29.9), and Obese (30.0 or higher).</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why can BMI be misleading for athletes and bodybuilders?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">BMI does not differentiate between skeletal muscle and body fat. Because muscle is approximately 18% denser than fat by volume, highly trained athletes with substantial muscle mass and low body fat frequently register in the &quot;overweight&quot; or &quot;obese&quot; BMI categories.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is the healthy weight range determined for my height?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The healthy weight range corresponds to the minimum (18.5) and maximum (24.9) normal BMI thresholds applied to your height. For example, for someone 175 cm tall, the range is 18.5 × (1.75)² = 56.7 kg to 24.9 × (1.75)² = 76.3 kg.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Do BMI categories differ for men and women?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Standard clinical BMI classification tables are identical for adult men and women. However, women naturally maintain higher essential body fat levels than men with the same BMI, which is why body composition metrics provide helpful context.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Is BMI used the same way for children and teenagers?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">No. For children and adolescents aged 2 to 19, BMI is calculated the same way but interpreted using age-and-sex-specific growth percentiles (CDC Growth Charts) rather than fixed adult category cutoffs.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What should I do if my BMI is in the overweight or underweight category?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Use your BMI as an informative initial screening point rather than a definitive diagnosis. Schedule an evaluation with a primary healthcare provider who can evaluate your blood pressure, metabolic markers, lifestyle, and body composition.</p>
-      </details>
-    
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/body-fat-percentage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Body Fat Calculator (Navy Method)</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Measure body composition using simple tape measurements at home.</p>
+        <a href="/tool/calorie-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-calculator"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Calorie Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate and evaluate metrics with precision.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Health</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/tdee-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-health"><i class="fa-solid fa-fire"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">TDEE &amp; Daily Calorie Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free TDEE calculator — calculate your Total Daily Energy Expenditure, BMR, daily calorie targets for weight loss or muscle gain, and macro splits.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-health">Health</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/percentage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-math"><i class="fa-solid fa-percent"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Percentage Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free percentage calculator — find percentages, percent change, and compute values instantly.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-math">Math</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-      <a href="/tool/tdee-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">TDEE &amp; Calorie Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Find daily calorie requirements for weight maintenance, cutting, or bulking.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Calculate Your BMI and Understand Weight Categories</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the BMI Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Body Mass Index Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#holistic-health-markers" class="on-this-page-link">Comprehensive Health Indicators Beyond BMI</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>

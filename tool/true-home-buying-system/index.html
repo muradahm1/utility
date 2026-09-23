@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"True Home Buying System","item":"https://www.getcalcu.com/tool/true-home-buying-system"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between mortgage payment and true cost of ownership?","acceptedAnswer":{"@type":"Answer","text":"A standard mortgage payment only covers Principal and Interest (P&I). The true cost of homeownership (PITIA+M) also includes local property taxes, homeowners insurance, HOA/condo dues, mortgage insurance (PMI/CMHC), and ongoing structural maintenance reserves (typically 1% of home value annually)."}},{"@type":"Question","name":"How much liquid cash do I really need upfront to buy a house?","acceptedAnswer":{"@type":"Answer","text":"In addition to your down payment (3.5% to 20%), buyers must pay 2% to 5% in closing fees (lender origination, title insurance, appraisal, escrow) and 1% in prepaid property tax and hazard insurance escrows. For a $400,000 home with 10% down, total liquid cash required to close is typically around $56,000."}},{"@type":"Question","name":"Why is the 5-year break-even point critical for home buyers?","acceptedAnswer":{"@type":"Answer","text":"In the first 3 to 5 years of a standard mortgage, roughly 70% of monthly payments go toward interest rather than principal equity. When factoring in upfront closing costs and 6% broker selling fees, moving within 5 years often costs more than renting."}},{"@type":"Question","name":"How does Canadian mortgage compounding differ from the US?","acceptedAnswer":{"@type":"Answer","text":"In the United States, mortgage interest compounds monthly. In Canada, federal law (the Bank Act and Interest Act) mandates that fixed mortgage interest compounds semi-annually, not in advance. This results in a slightly lower effective monthly rate for Canadian mortgages at the same nominal APR."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the True Home Buying System","description":"Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Select your Country (US or Canada) and State/Province to automatically apply statutory compounding rules, local property tax rates, and mortgage insurance rules (PMI or CMHC)."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Input the target home purchase price and your upfront down payment percentage (e.g., 5%, 10%, or 20%)."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Review the Upfront Liquidity breakdown: down payment + closing costs (2-5%) + prepaid escrow reserve to calculate Total Liquid Cash Required to Close."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Calibrate the Loaded Monthly PITIA framework: Principal & Interest, local property tax, hazard insurance, HOA dues, and the 1% annual maintenance reserve."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Analyze the 5-Year vs. 10-Year Opportunity Cost Matrix comparing home equity against investing the down payment capital in S&P 500 index funds to pinpoint your break-even year."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"True Cost of Buying a House: Upfront Cash, PITIA Framework & Break-Even Analysis","description":"When evaluating homeownership, relying solely on bank mortgage estimates creates severe financial blind spots. A rigorous decision model combines total upfront liquidity, the full PITIA monthly framework, maintenance reserves, and a multi-year opportunity cost matrix against index fund investing.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"True Home Buying System","url":"https://www.getcalcu.com/tool/true-home-buying-system","dateModified":"2026-09-21"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"True Cost of Buying a House: Upfront Cash, PITIA Framework & Break-Even Analysis","description":"When evaluating homeownership, relying solely on bank mortgage estimates creates severe financial blind spots. A rigorous decision model combines total upfront liquidity, the full PITIA monthly framework, maintenance reserves, and a multi-year opportunity cost matrix against index fund investing.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"True Home Buying System","url":"https://www.getcalcu.com/tool/true-home-buying-system","dateModified":"2026-09-23"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -531,172 +531,338 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Generally Accepted Accounting Principles (GAAP) &amp; CFPB financial disclosure guidelines.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Financial Editorial Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic client-side computation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=True%20Home%20Buying%20System%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Generally Accepted Accounting Principles (GAAP) &amp; CFPB financial disclosure guidelines.</p>
+      
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">GetCalcu Financial Editorial Board</span>
       </div>
-    </div>
+    </section>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">True Cost of Buying a House: Upfront Cash, PITIA Framework &amp; Break-Even Analysis</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">When evaluating homeownership, relying solely on bank mortgage estimates creates severe financial blind spots. A rigorous decision model combines total upfront liquidity, the full PITIA monthly framework, maintenance reserves, and a multi-year opportunity cost matrix against index fund investing.</p>
+    <div class="educational-layout">
+      <div class="educational-main-content">
         
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Much Cash Do You Really Need Upfront to Buy a House?</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">When calculating how much liquid cash you need to purchase a home, relying solely on your down payment figure is a significant risk. The total cash required to close is a combination of three distinct financial obligations:
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">True Cost of Buying a House: Upfront Cash, PITIA Framework &amp; Break-Even Analysis</h2>
+        <div class="article-intro-text"><p>When evaluating homeownership, relying solely on bank mortgage estimates creates severe financial blind spots. A rigorous decision model combines total upfront liquidity, the full PITIA monthly framework, maintenance reserves, and a multi-year opportunity cost matrix against index fund investing.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">How Much Cash Do You Really Need Upfront to Buy a House?</h3>
+            <div class="article-body-text"><p>When calculating how much liquid cash you need to purchase a home, relying solely on your down payment figure is a significant risk. The total cash required to close is a combination of three distinct financial obligations:
 
 • The Down Payment: Ranging from 3.5% for FHA loans to 20% for conventional loans to avoid private mortgage insurance (PMI).
 • Closing Costs: Transactional fees charged by lenders, title companies, and local government entities. These typically average between 2% and 5% of the total purchase price.
-• Escrow and Prepaids: Upfront cash deposits required to seed your homeowners insurance and property tax escrow accounts.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">What is the True Monthly Cost of Home Ownership?</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">A standard bank mortgage estimate only highlights your Principal and Interest (P&amp;I). To understand the true cash flow impact on your household budget, you must utilize the PITIA framework:
+• Escrow and Prepaids: Upfront cash deposits required to seed your homeowners insurance and property tax escrow accounts.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">What is the True Monthly Cost of Home Ownership?</h3>
+            <div class="article-body-text"><p>A standard bank mortgage estimate only highlights your Principal and Interest (P&amp;I). To understand the true cash flow impact on your household budget, you must utilize the PITIA framework:
 
 • Principal &amp; Interest (P&amp;I): The baseline cost of borrowing the capital.
 • Taxes: Local property taxes, which can adjust annually based on municipal assessments.
 • Insurance: Homeowners insurance policies and structural hazard protections.
 • Association Fees (HOA): Mandatory monthly dues for condominiums or master-planned communities.
 
-Furthermore, a resilient budget must factor in a non-negotiable line item: the annual home maintenance reserve. As a general rule of thumb, homeowners should allocate 1% to 2% of the property&#39;s total market value each year into a liquid savings account to cover structural repairs, roofing, and mechanical updates over time.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Rent vs. Buy: Determining Your Structural Break-Even Point</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Deciding to buy a home based on whether a monthly mortgage payment matches current local rent is a mathematical error. Determining your true break-even point requires analyzing the opportunity cost of capital over specific horizons:
+Furthermore, a resilient budget must factor in a non-negotiable line item: the annual home maintenance reserve. As a general rule of thumb, homeowners should allocate 1% to 2% of the property&#39;s total market value each year into a liquid savings account to cover structural repairs, roofing, and mechanical updates over time.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Rent vs. Buy: Determining Your Structural Break-Even Point</h3>
+            <div class="article-body-text"><p>Deciding to buy a home based on whether a monthly mortgage payment matches current local rent is a mathematical error. Determining your true break-even point requires analyzing the opportunity cost of capital over specific horizons:
 
 • The 5-Year Window: In the first five years of homeownership, the vast majority of your monthly payments go directly toward mortgage interest rather than building principal equity. Amortization schedules show that if you relocate within 5 years, transaction fees and closing costs frequently outpace any property appreciation, making renting more cost-effective.
 • The 10-Year Horizon: Over longer timelines, compounding real estate appreciation and the compounding value of a locked, fixed-rate housing payment outrun rising rental inflation.
-• The Investment Component: A true rent vs. buy analysis evaluates the return on your down payment if it were alternatively invested in low-cost index funds tracking historical market returns, weighed directly against the leveraged returns generated by real estate equity.</p>
+• The Investment Component: A true rent vs. buy analysis evaluates the return on your down payment if it were alternatively invested in low-cost index funds tracking historical market returns, weighed directly against the leveraged returns generated by real estate equity.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">United States &amp; Canadian Mortgage Architecture Differences</h3>
+            <div class="article-body-text"><p>Mortgage calculations differ significantly across national borders. In the United States, 30-year fixed mortgages compound monthly, and private mortgage insurance (PMI) is automatically cancellable at 78% LTV under the Homeowners Protection Act of 1998. In Canada, under the Bank Act and Interest Act, fixed-rate mortgages are legally required to compound semi-annually, not in advance. High-ratio Canadian mortgages (less than 20% down) require statutory CMHC mortgage loan insurance with premiums ranging from 2.80% to 4.00% added directly to the principal balance.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the True Home Buying System</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Select your Country (US or Canada) and State/Province to automatically apply statutory compounding rules, local property tax rates, and mortgage insurance rules (PMI or CMHC).</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">United States &amp; Canadian Mortgage Architecture Differences</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Mortgage calculations differ significantly across national borders. In the United States, 30-year fixed mortgages compound monthly, and private mortgage insurance (PMI) is automatically cancellable at 78% LTV under the Homeowners Protection Act of 1998. In Canada, under the Bank Act and Interest Act, fixed-rate mortgages are legally required to compound semi-annually, not in advance. High-ratio Canadian mortgages (less than 20% down) require statutory CMHC mortgage loan insurance with premiums ranging from 2.80% to 4.00% added directly to the principal balance.</p>
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Input the target home purchase price and your upfront down payment percentage (e.g., 5%, 10%, or 20%).</div>
+        </li>
       
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Review the Upfront Liquidity breakdown: down payment + closing costs (2-5%) + prepaid escrow reserve to calculate Total Liquid Cash Required to Close.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Calibrate the Loaded Monthly PITIA framework: Principal &amp; Interest, local property tax, hazard insurance, HOA dues, and the 1% annual maintenance reserve.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Analyze the 5-Year vs. 10-Year Opportunity Cost Matrix comparing home equity against investing the down payment capital in S&amp;P 500 index funds to pinpoint your break-even year.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">True Home Buying System Formula</h2>
+        <div class="formula-display-box">
+          <code>Total Cash to Close = Down Payment + Closing Costs + Escrow Reserves | True Monthly Cost = Monthly P&amp;I + Property Tax + Hazard Insurance + HOA + (1% × Home Value ÷ 12) | Mortgage P&amp;I (US): M = P × [r(1+r)^n] / [(1+r)^n − 1] | Mortgage P&amp;I (CA Semi-Annual): r_eff = (1 + r/2)^(1/6) − 1</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">US Starter Home ($400k, 10% Down in Texas)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Price: $400,000, Down: 10% ($40,000), Rate: 6.8%, Texas (1.68% Tax)</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Cash-to-Close: $56,000 | True Monthly Cost: $3,618/mo | Break-Even: Year 5</span></div>
+        
       </div>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the True Home Buying System</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Select your Country (US or Canada) and State/Province to automatically apply statutory compounding rules, local property tax rates, and mortgage insurance rules (PMI or CMHC).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Input the target home purchase price and your upfront down payment percentage (e.g., 5%, 10%, or 20%).</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Review the Upfront Liquidity breakdown: down payment + closing costs (2-5%) + prepaid escrow reserve to calculate Total Liquid Cash Required to Close.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Calibrate the Loaded Monthly PITIA framework: Principal &amp; Interest, local property tax, hazard insurance, HOA dues, and the 1% annual maintenance reserve.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Analyze the 5-Year vs. 10-Year Opportunity Cost Matrix comparing home equity against investing the down payment capital in S&amp;P 500 index funds to pinpoint your break-even year.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> Total Cash to Close = Down Payment + Closing Costs + Escrow Reserves | True Monthly Cost = Monthly P&amp;I + Property Tax + Hazard Insurance + HOA + (1% × Home Value ÷ 12) | Mortgage P&amp;I (US): M = P × [r(1+r)^n] / [(1+r)^n − 1] | Mortgage P&amp;I (CA Semi-Annual): r_eff = (1 + r/2)^(1/6) − 1</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">US Starter Home ($400k, 10% Down in Texas)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $400,000, Down: 10% ($40,000), Rate: 6.8%, Texas (1.68% Tax)</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Cash-to-Close: $56,000 | True Monthly Cost: $3,618/mo | Break-Even: Year 5</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Canadian Condo ($650k, 15% Down in Ontario)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Price: $650,000, Down: 15% ($97,500), Rate: 5.5%, Ontario (0.95% Tax)</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Cash-to-Close: $123,500 | True Monthly Cost: $4,580/mo | Break-Even: Year 4</span></p>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Canadian Condo ($650k, 15% Down in Ontario)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Price: $650,000, Down: 15% ($97,500), Rate: 5.5%, Ontario (0.95% Tax)</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Cash-to-Close: $123,500 | True Monthly Cost: $4,580/mo | Break-Even: Year 4</span></div>
+        
       </div>
     </div>
-      </div>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between mortgage payment and true cost of ownership?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A standard mortgage payment only covers Principal and Interest (P&amp;I). The true cost of homeownership (PITIA+M) also includes local property taxes, homeowners insurance, HOA/condo dues, mortgage insurance (PMI/CMHC), and ongoing structural maintenance reserves (typically 1% of home value annually).</p>
-      </details>
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between mortgage payment and true cost of ownership?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">A standard mortgage payment only covers Principal and Interest (P&amp;I). The true cost of homeownership (PITIA+M) also includes local property taxes, homeowners insurance, HOA/condo dues, mortgage insurance (PMI/CMHC), and ongoing structural maintenance reserves (typically 1% of home value annually).</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much liquid cash do I really need upfront to buy a house?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In addition to your down payment (3.5% to 20%), buyers must pay 2% to 5% in closing fees (lender origination, title insurance, appraisal, escrow) and 1% in prepaid property tax and hazard insurance escrows. For a $400,000 home with 10% down, total liquid cash required to close is typically around $56,000.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why is the 5-year break-even point critical for home buyers?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In the first 3 to 5 years of a standard mortgage, roughly 70% of monthly payments go toward interest rather than principal equity. When factoring in upfront closing costs and 6% broker selling fees, moving within 5 years often costs more than renting.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does Canadian mortgage compounding differ from the US?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In the United States, mortgage interest compounds monthly. In Canada, federal law (the Bank Act and Interest Act) mandates that fixed mortgage interest compounds semi-annually, not in advance. This results in a slightly lower effective monthly rate for Canadian mortgages at the same nominal APR.</p>
+        </details>
+      
+      </section>
     
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much liquid cash do I really need upfront to buy a house?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In addition to your down payment (3.5% to 20%), buyers must pay 2% to 5% in closing fees (lender origination, title insurance, appraisal, escrow) and 1% in prepaid property tax and hazard insurance escrows. For a $400,000 home with 10% down, total liquid cash required to close is typically around $56,000.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why is the 5-year break-even point critical for home buyers?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In the first 3 to 5 years of a standard mortgage, roughly 70% of monthly payments go toward interest rather than principal equity. When factoring in upfront closing costs and 6% broker selling fees, moving within 5 years often costs more than renting.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does Canadian mortgage compounding differ from the US?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In the United States, mortgage interest compounds monthly. In Canada, federal law (the Bank Act and Interest Act) mandates that fixed mortgage interest compounds semi-annually, not in advance. This results in a slightly lower effective monthly rate for Canadian mortgages at the same nominal APR.</p>
-      </details>
-    
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/mortgage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Mortgage Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Standard 30-year mortgage calculation with taxes and insurance.</p>
+        <a href="/tool/mortgage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-home"><i class="fa-solid fa-house"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Mortgage Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/rent-vs-buy-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Rent vs. Buy Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Rent vs Buy Calculator with break-even analysis, net worth comparison, equity buildup, opportunity cost, and intelligent recommendations. Should you rent or buy?</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/house-affordability-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">House Affordability Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free house affordability calculator — determine your maximum home purchase price based on DTI ratios, income, debt, and down payment.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/15-year-mortgage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">15-Year vs. 30-Year Mortgage Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free 15-Year vs 30-Year Mortgage Calculator. Compare monthly payments, total interest savings, amortization, and S&amp;P 500 investment opportunity costs side-by-side.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/fha-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-shield-halved"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">FHA Loan Calculator with Upfront &amp; Monthly MIP</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free FHA Loan Calculator. Calculate exact monthly payments with 3.5% down, 1.75% upfront MIP, monthly mortgage insurance, taxes, and interest with side-by-side conventional comparison.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/amortization-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-simple"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Amortization Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Amortization Calculator with interactive charts, payment schedule, extra payment analysis, and downloadable loan repayment tables. Compare scenarios and see how extra payments save interest.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/refinance-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house-chimney"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Mortgage Refinance Break-Even Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free mortgage refinance calculator. Calculate monthly payment reduction, exact break-even timeline in months, and cumulative net savings after closing costs.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/budget-planner" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Budget Planner &amp; Expense Tracker</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-      <a href="/tool/rent-vs-buy-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Rent vs. Buy Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Detailed rent vs buy wealth and cash-flow comparisons.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/house-affordability-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">House Affordability Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Find the maximum home price you qualify for based on debt-to-income ratios.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/fha-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">FHA Loan Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate 3.5% down payments and FHA monthly mortgage insurance.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/15-year-mortgage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">15-Year vs 30-Year Mortgage</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Compare 15-year and 30-year payment difference and interest savings.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">True Cost of Buying a House: Upfront Cash, PITIA Framework &amp; Break-Even Analysis</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the True Home Buying System</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">True Home Buying System Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>

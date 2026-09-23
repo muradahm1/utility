@@ -277,118 +277,297 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) &amp; Truth in Lending Act (TILA) amortization standards.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Consumer Credit &amp; Lending Review Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic in-browser amortization</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=House%20Affordability%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">House affordability is calculated by determining the binding maximum allowable monthly housing expenditure under dual front-end and back-end debt-to-income (DTI) constraints, subtracting taxes, insurance, and HOA dues, and solving for the maximum amortized mortgage loan capacity based on present value formulas.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Gross monthly income serves as the baseline for all qualifying ratio calculations.</li><li>Front-end ratio includes Principal, Interest, Property Taxes, Homeowners Insurance (PITI), and HOA fees.</li><li>Back-end ratio encompasses total housing costs plus recurring monthly minimum debt obligations (auto loans, student debt, credit card minimums).</li><li>Final purchase power equals calculated maximum borrowing capacity plus available cash down payment.</li>
+        </ul>
       </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">Fannie Mae — Selling Guide: B3-6-02, Debt-to-Income Ratios • U.S. Department of Housing and Urban Development (HUD) — FHA Single Family Housing Policy Handbook 4000.1 • Consumer Financial Protection Bureau (CFPB) — Qualified Mortgage Rule &amp; DTI Standards</span>
+      </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate How Much House You Can Afford</h2>
+        <div class="article-intro-text"><p>Determining your home purchasing power requires balancing how much a lender will legally approve against what your monthly budget can comfortably sustain. Mortgage lenders evaluate affordability primarily through Debt-to-Income (DTI) ratios.</p></div>
+        
+          <div class="article-subsection" id="front-end-vs-back-end-dti">
+            <h3 class="article-subheading">Front-End vs. Back-End DTI Ratios</h3>
+            <div class="article-body-text"><p>Front-End DTI (Housing Ratio): The percentage of your gross monthly income dedicated exclusively to housing expenses (Principal, Interest, Property Taxes, Homeowners Insurance, and HOA dues).</p><p>Back-End DTI (Total Debt Ratio): The percentage of gross monthly income required to service all recurring debt obligations combined—including housing, car payments, student loans, and credit card minimums.</p><p>Lenders enforce the more restrictive of the two limits to ensure borrowers do not become house-poor.</p></div>
+          </div>
+          <div class="article-subsection" id="conventional-28-36-rule">
+            <h3 class="article-subheading">The Conventional 28/36 Underwriting Standard</h3>
+            <div class="article-body-text"><p>Conventional conforming loans backed by Fannie Mae and Freddie Mac traditionally cap front-end housing costs at 28% and total back-end debt at 36% of gross monthly income.</p><p>If you carry significant consumer or auto debt, the 36% back-end ceiling will reduce your allowable housing payment even if your front-end ratio is well below 28%.</p></div>
+          </div>
+          <div class="article-subsection" id="fha-va-guidelines">
+            <h3 class="article-subheading">FHA 31/43 and VA Loan Guidelines</h3>
+            <div class="article-body-text"><p>FHA loans allow more generous underwriting thresholds—typically 31% front-end and 43% back-end—allowing buyers with higher existing debt or lower down payments (as low as 3.5%) to qualify.</p><p>VA loans for qualifying military service members and veterans generally evaluate a 41% back-end DTI benchmark combined with a mandatory residual income test to verify sufficient living capital after debt service.</p></div>
+          </div>
+          <div class="article-subsection" id="down-payment-interest-rate-impact">
+            <h3 class="article-subheading">How Down Payments and Interest Rates Shape Buying Power</h3>
+            <div class="article-body-text"><p>Every dollar added to your down payment directly expands your top-line purchase price without increasing your monthly borrowing obligation.</p><p>Conversely, higher interest rates consume a larger share of your qualifying monthly payment in interest, reducing maximum loan size. For example, a 1% rate increase reduces maximum loan affordability by approximately 9–11%.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the House Affordability Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter your annual gross household income (before taxes) and total monthly recurring debt payments.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Input your total cash saved for a down payment.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Specify your loan term in years and estimated mortgage interest rate.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Enter expected property tax rate, homeowners insurance, and monthly HOA or condo fees.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">5</span>
+          <div class="step-content">Choose your lender qualification rule (Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">6</span>
+          <div class="step-content">Review your recommended target home price, maximum loan balance, and itemized monthly PITI payment.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">7</span>
+          <div class="step-content">Examine the purchase capability comparison table to view conservative, target, and aggressive borrowing limits.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">House Affordability Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>[object Object]</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Conventional First-Time Homebuyer (Default)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Gross Income: $105,000/yr ($8,750/mo), Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr, 28/36 Rule</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Affordable Home Price: $354,821 | Max Loan: $294,821 | Monthly PITI: $2,450.00 | Front DTI: 28.0% | Back DTI: 33.7%</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">FHA Buyer with Moderate Debt</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Gross Income: $80,000/yr ($6,667/mo), Debt: $600/mo, Down: $25,000, Rate: 6.50%, 30yr, FHA 31/43 Rule</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Affordable Home Price: $297,419 | Max Loan: $272,419 | Monthly PITI: $2,066.67 | Front DTI: 31.0% | Back DTI: 40.0%</span></div>
+        
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">VA Buyer Zero-Down Purchase</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Gross Income: $90,000/yr ($7,500/mo), Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA 41% Rule</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Affordable Home Price: $419,268 | Max Loan: $419,268 | Monthly PITI: $2,775.00 | Back DTI: 41.0%</span></div>
+        
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I afford a $500k house on $100k income?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the 28/36 rule in home buying?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does monthly debt affect home buying power?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between FHA 31/43 and Conventional 28/36?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much income is needed for a $400k home?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Do HOA fees count toward DTI?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I get a mortgage with a 50% DTI?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/mortgage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-home"><i class="fa-solid fa-house"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Mortgage Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/true-home-buying-system" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-house-circle-check"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">True Home Buying System</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate the total cash required to buy a home. Factor in hidden closing costs, property taxes, maintenance reserves, and a rent vs buy break-even matrix.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/fha-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-shield-halved"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">FHA Loan Calculator with Upfront &amp; Monthly MIP</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free FHA Loan Calculator. Calculate exact monthly payments with 3.5% down, 1.75% upfront MIP, monthly mortgage insurance, taxes, and interest with side-by-side conventional comparison.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/budget-planner" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Budget Planner &amp; Expense Tracker</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Calculate How Much House You Can Afford</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the House Affordability Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">House Affordability Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate How Much House You Can Afford</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Determining your home purchasing power requires balancing how much a lender will legally approve against what your monthly budget can comfortably sustain. Mortgage lenders evaluate affordability primarily through Debt-to-Income (DTI) ratios.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Front-End vs. Back-End DTI Ratios</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Front-End DTI (Housing Ratio): The percentage of your gross monthly income dedicated exclusively to housing expenses (Principal, Interest, Property Taxes, Homeowners Insurance, and HOA dues).,Back-End DTI (Total Debt Ratio): The percentage of gross monthly income required to service all recurring debt obligations combined—including housing, car payments, student loans, and credit card minimums.,Lenders enforce the more restrictive of the two limits to ensure borrowers do not become house-poor.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Conventional 28/36 Underwriting Standard</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Conventional conforming loans backed by Fannie Mae and Freddie Mac traditionally cap front-end housing costs at 28% and total back-end debt at 36% of gross monthly income.,If you carry significant consumer or auto debt, the 36% back-end ceiling will reduce your allowable housing payment even if your front-end ratio is well below 28%.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">FHA 31/43 and VA Loan Guidelines</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">FHA loans allow more generous underwriting thresholds—typically 31% front-end and 43% back-end—allowing buyers with higher existing debt or lower down payments (as low as 3.5%) to qualify.,VA loans for qualifying military service members and veterans generally evaluate a 41% back-end DTI benchmark combined with a mandatory residual income test to verify sufficient living capital after debt service.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">How Down Payments and Interest Rates Shape Buying Power</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Every dollar added to your down payment directly expands your top-line purchase price without increasing your monthly borrowing obligation.,Conversely, higher interest rates consume a larger share of your qualifying monthly payment in interest, reducing maximum loan size. For example, a 1% rate increase reduces maximum loan affordability by approximately 9–11%.</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the House Affordability Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter your annual gross household income (before taxes) and total monthly recurring debt payments.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Input your total cash saved for a down payment.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Specify your loan term in years and estimated mortgage interest rate.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Enter expected property tax rate, homeowners insurance, and monthly HOA or condo fees.</li><li style="margin-bottom:10px;"><strong>Step 5:</strong> Choose your lender qualification rule (Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45).</li><li style="margin-bottom:10px;"><strong>Step 6:</strong> Review your recommended target home price, maximum loan balance, and itemized monthly PITI payment.</li><li style="margin-bottom:10px;"><strong>Step 7:</strong> Examine the purchase capability comparison table to view conservative, target, and aggressive borrowing limits.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> [object Object]</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Conventional First-Time Homebuyer (Default)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Gross Income: $105,000/yr ($8,750/mo), Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr, 28/36 Rule</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Affordable Home Price: $354,821 | Max Loan: $294,821 | Monthly PITI: $2,450.00 | Front DTI: 28.0% | Back DTI: 33.7%</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">FHA Buyer with Moderate Debt</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Gross Income: $80,000/yr ($6,667/mo), Debt: $600/mo, Down: $25,000, Rate: 6.50%, 30yr, FHA 31/43 Rule</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Affordable Home Price: $297,419 | Max Loan: $272,419 | Monthly PITI: $2,066.67 | Front DTI: 31.0% | Back DTI: 40.0%</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">VA Buyer Zero-Down Purchase</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Gross Income: $90,000/yr ($7,500/mo), Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA 41% Rule</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Affordable Home Price: $419,268 | Max Loan: $419,268 | Monthly PITI: $2,775.00 | Back DTI: 41.0%</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I afford a $500k house on $100k income?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the 28/36 rule in home buying?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">The 28/36 rule is the conventional lending standard: your front-end DTI (housing payment ÷ gross monthly income) should not exceed 28%, and your back-end DTI (total monthly debt ÷ gross monthly income) should not exceed 36%. If your existing monthly debt is $500, the back-end ratio becomes the binding constraint because it leaves less room for the new mortgage payment.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How does monthly debt affect home buying power?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Monthly debt payments (car loans, student loans, credit cards) directly reduce the housing payment you can afford under the back-end DTI. For example, with $800/month in existing debt at the 36% back-end limit on a $6,000/month income, only $1,360/month remains for housing (36% of $6,000 = $2,160 total debt capacity minus $800 existing debt). Reducing or paying off debt before applying for a mortgage can significantly increase your home buying power.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between FHA 31/43 and Conventional 28/36?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">FHA loans allow higher DTI ratios: 31% front-end and 43% back-end versus conventional 28/36. This makes FHA accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). However, FHA requires mortgage insurance premiums (MIP) for the life of the loan or at least 11 years, which adds to the monthly cost. Conventional loans typically require 20% down to avoid PMI but offer more flexibility in other areas.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much income is needed for a $400k home?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">For a $400,000 home with 20% down ($80,000), the loan amount is $320,000. At 6.75% over 30 years, the principal and interest is about $2,075/month. Adding property taxes ($400/month) and insurance ($125/month) gives a total PITI of roughly $2,600. Under the 28% front-end rule, you need gross monthly income of at least $9,286 ($111,429 annually). Under the 36% back-end rule with no other debt, the same $2,600 payment requires $7,222/month ($86,666 annually). The higher of the two is the safe benchmark.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Do HOA fees count toward DTI?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Yes. HOA fees, along with property taxes, homeowners insurance, and the principal and interest payment, are all included in the front-end DTI calculation. Lenders review the total monthly housing obligation — often called PITI (Principal, Interest, Taxes, Insurance) plus HOA — to ensure it stays within the front-end ratio limit.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I get a mortgage with a 50% DTI?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Conventional loans almost never exceed 36% back-end DTI, and most automated underwriting systems cap out around 43-45%. FHA allows up to 43% in most cases, and VA allows up to 41% (with compensating factors). Some portfolio or non-QM lenders may go higher, but they charge significantly higher rates and require larger down payments. If your DTI is above 43%, focus on paying down debt before applying for a mortgage.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

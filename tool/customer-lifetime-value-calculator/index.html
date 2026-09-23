@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Business","item":"https://www.getcalcu.com/category/business"},{"@type":"ListItem","position":3,"name":"Customer Lifetime Value (LTV / CAC) Calculator","item":"https://www.getcalcu.com/tool/customer-lifetime-value-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a good CAC payback period?","acceptedAnswer":{"@type":"Answer","text":"For B2B SaaS, under 12 months is considered excellent. For B2C and e-commerce, payback should ideally occur within the first purchase or within 6 months."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Customer Lifetime Value (LTV / CAC) Calculator","description":"Calculate Customer Lifetime Value (LTV), LTV to CAC ratio, payback period, and unit economics health for growth.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter your Average Order Value (AOV) and annual purchase frequency."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Set expected customer retention lifespan in years."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Add gross margin percentage and Customer Acquisition Cost (CAC)."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Analyze your LTV:CAC ratio and payback timeline."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Understanding LTV:CAC and SaaS Unit Economics","description":"Customer Lifetime Value (LTV) measures the net profit a single customer contributes over their entire relationship with your company.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Customer Lifetime Value (LTV / CAC) Calculator","url":"https://www.getcalcu.com/tool/customer-lifetime-value-calculator","dateModified":"2026-09-21"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Understanding LTV:CAC and SaaS Unit Economics","description":"Customer Lifetime Value (LTV) measures the net profit a single customer contributes over their entire relationship with your company.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Customer Lifetime Value (LTV / CAC) Calculator","url":"https://www.getcalcu.com/tool/customer-lifetime-value-calculator","dateModified":"2026-09-23"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -244,70 +244,208 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Corporate Finance Institute (CFI) standard unit economics, GAAP gross margin formulas, and SaaS LTV/CAC metrics.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Commercial Planning &amp; Unit Economics Desk</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic commercial calculation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Customer%20Lifetime%20Value%20(LTV%20%2F%20CAC)%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">Corporate Finance Institute (CFI) standard unit economics, GAAP gross margin formulas, and SaaS LTV/CAC metrics.</p>
+      
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">GetCalcu Commercial Planning &amp; Unit Economics Desk</span>
       </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">Understanding LTV:CAC and SaaS Unit Economics</h2>
+        <div class="article-intro-text"><p>Customer Lifetime Value (LTV) measures the net profit a single customer contributes over their entire relationship with your company.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">The 3:1 Rule for LTV:CAC</h3>
+            <div class="article-body-text"><p>A 3:1 ratio (LTV = 3x CAC) is widely considered the golden benchmark. Below 1:1, you lose money on every customer. Above 5:1, you may be underinvesting in marketing and leaving market share on the table.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">CAC Payback Period</h3>
+            <div class="article-body-text"><p>The payback period tells you how many months of customer revenue are required to recoup the upfront sales and marketing acquisition cost.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Customer Lifetime Value (LTV / CAC) Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter your Average Order Value (AOV) and annual purchase frequency.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Set expected customer retention lifespan in years.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Add gross margin percentage and Customer Acquisition Cost (CAC).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Analyze your LTV:CAC ratio and payback timeline.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Customer Lifetime Value (LTV / CAC) Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>LTV = (AOV × Frequency × Lifespan) × Gross Margin % | LTV:CAC = LTV ÷ CAC | Payback = CAC ÷ Monthly Gross Profit</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">B2B Software SaaS</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">$150/mo, 80% Margin, 3 Yr Lifespan, $1,200 CAC</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">LTV: $4,320 | Ratio: 3.6x | Payback: 10.0 mo</span></div>
+        
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a good CAC payback period?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">For B2B SaaS, under 12 months is considered excellent. For B2C and e-commerce, payback should ideally occur within the first purchase or within 6 months.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/profit-margin-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-business"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Profit Margin Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Profit Margin Calculator. Calculate gross margin %, markup %, net profit, and revenue pricing targets with cost breakdown charts.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-business">Business</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/break-even-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-business"><i class="fa-solid fa-scale-balanced"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Break-Even Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Break-Even Analysis Calculator. Calculate break-even point in units and sales revenue, contribution margin ratio, and target profit volume.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-business">Business</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/freelance-true-rate-system" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-business"><i class="fa-solid fa-briefcase"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Freelance True Rate System</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-business">Business</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">Understanding LTV:CAC and SaaS Unit Economics</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Customer Lifetime Value (LTV / CAC) Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Customer Lifetime Value (LTV / CAC) Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">Understanding LTV:CAC and SaaS Unit Economics</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Customer Lifetime Value (LTV) measures the net profit a single customer contributes over their entire relationship with your company.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The 3:1 Rule for LTV:CAC</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">A 3:1 ratio (LTV = 3x CAC) is widely considered the golden benchmark. Below 1:1, you lose money on every customer. Above 5:1, you may be underinvesting in marketing and leaving market share on the table.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">CAC Payback Period</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">The payback period tells you how many months of customer revenue are required to recoup the upfront sales and marketing acquisition cost.</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Customer Lifetime Value (LTV / CAC) Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter your Average Order Value (AOV) and annual purchase frequency.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Set expected customer retention lifespan in years.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Add gross margin percentage and Customer Acquisition Cost (CAC).</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Analyze your LTV:CAC ratio and payback timeline.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> LTV = (AOV × Frequency × Lifespan) × Gross Margin % | LTV:CAC = LTV ÷ CAC | Payback = CAC ÷ Monthly Gross Profit</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">B2B Software SaaS</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> $150/mo, 80% Margin, 3 Yr Lifespan, $1,200 CAC</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">LTV: $4,320 | Ratio: 3.6x | Payback: 10.0 mo</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is a good CAC payback period?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">For B2B SaaS, under 12 months is considered excellent. For B2C and e-commerce, payback should ideally occur within the first purchase or within 6 months.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

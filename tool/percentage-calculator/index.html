@@ -188,105 +188,259 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            ISO 80000 mathematical sign standards and deterministic algebraic formulas.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: September 2026</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Mathematical Review Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic arithmetic evaluation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Percentage%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
+      <p class="methodology-summary">A percentage represents a dimensionless ratio expressed as a fraction of 100 (per centum). Calculations distinguish between relative proportional parts, multiplicative percentage multipliers, and directional rate of change.</p>
+      
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Divisions by zero are explicitly caught and flagged with informative mathematical guidance.</li><li>Percentage change uses the magnitude of the baseline value (|From|) as the divisor to preserve directional consistency across positive and negative transitions.</li><li>Values are computed in full floating-point precision and formatted to two standard decimal places.</li>
+        </ul>
       </div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">National Institute of Standards and Technology (NIST) — Mathematical and Computational Precision Reference • Mathematical Association of America (MAA) — Foundations of Proportion and Ratio Analysis</span>
+      </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate Percentages Accurately Across Every Scenario</h2>
+        <div class="article-intro-text"><p>Percentages are fundamental across personal finance, retail pricing, data analysis, and academic testing. While the core concept represents parts per hundred, applying percentage formulas correctly depends entirely on whether you are determining a proportional share, calculating a portion of a whole, or analyzing growth over time.</p></div>
+        
+          <div class="article-subsection" id="three-percentage-formulas">
+            <h3 class="article-subheading">The Three Core Percentage Calculation Modes</h3>
+            <div class="article-body-text"><p>Proportion Mode (X is what % of Y?): Used when you know the part (X) and the whole (Y) and need to express the relationship as a percentage. The formula is (X ÷ Y) × 100. Examples include test scores (85 out of 100) or equity ownership.</p><p>Portion Mode (What is X% of Y?): Used when you need to calculate the actual quantitative value of a known percentage of a total. The formula is (X ÷ 100) × Y. Examples include calculating sales tax, retail discounts, or restaurant tips.</p><p>Rate of Change Mode (% Change from X to Y): Used to determine the relative percentage growth or contraction between a baseline starting value (X) and a new final value (Y). The formula is ((Y − X) ÷ |X|) × 100.</p></div>
+          </div>
+          <div class="article-subsection" id="percent-change-vs-percentage-points">
+            <h3 class="article-subheading">Critical Distinction: Percent Change vs. Percentage Points</h3>
+            <div class="article-body-text"><p>One of the most frequent errors in financial and statistical analysis is confusing percentage points with percent change.</p><p>Percentage Points represent the direct arithmetic difference between two percentages (e.g., an interest rate rising from 5.0% to 7.0% is an increase of 2.0 percentage points).</p><p>Percent Change represents the relative proportional increase of that change: ((7.0 − 5.0) ÷ 5.0) × 100 = a 40.0% relative increase. In economic reporting and contract agreements, using the correct metric is vital.</p></div>
+          </div>
+          <div class="article-subsection" id="reverse-percentages">
+            <h3 class="article-subheading">Working Backwards: Reverse Percentage Calculations</h3>
+            <div class="article-body-text"><p>When a price includes sales tax or an item has already been discounted, you cannot simply add or subtract that percentage to return to the original price. For example, if an item with 20% tax costs $120, the pre-tax price is $120 ÷ 1.20 = $100 (not $120 − 20% = $96).</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Percentage Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Select the appropriate calculation mode from the dropdown menu (What % is X of Y, What is X% of Y, or % Change).</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Input Value A and Value B into the respective fields.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">The calculation executes automatically with instant formula transparency.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Switch modes freely to evaluate related calculations without reloading.</div>
+        </li>
+      </ol>
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Percentage Formulas &amp; Derivations</h2>
+        <div class="formula-display-box">
+          <code>Proportion: (X / Y) × 100 | Portion: (X / 100) × Y | % Change: ((New − Old) / |Old|) × 100</code>
+        </div>
+        <div class="article-body-text"><p>Every percentage formula scales a baseline proportion by 100 to convert a dimensionless decimal fraction into the universally recognized percentage format.</p></div>
+        
+        <div class="formula-variables-wrap">
+          <h4 class="formula-variables-heading">Variable Definitions:</h4>
+          <ul class="formula-variables-list">
+            <li><strong>X is what % of Y</strong>: Part (X) divided by Whole (Y) multiplied by 100</li><li><strong>X% of Y</strong>: Percentage rate (X / 100) multiplied by Base Amount (Y)</li><li><strong>Percentage Change</strong>: Difference (New − Old) divided by baseline |Old| multiplied by 100</li>
+          </ul>
+        </div>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Proportion Scenario (Exam Score)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Mode: X is what % of Y? | Value A: 45, Value B: 180</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Result: 25.00% | Calculation: 45 is 25.00% of 180</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">45 divided by 180 equals exactly 0.25, which converts to 25.00%.</p>
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Portion Scenario (Retail Tip Calculation)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Mode: What is X% of Y? | Value A: 15 (%), Value B: 120 ($)</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Result: 18.00 | Calculation: 15% of 120 = 18.00</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">A 15% tip on a $120 bill equals $18.00, resulting in a total payment of $138.00.</p>
+      </div>
+    
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">Rate of Change Scenario (Business Revenue Growth)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Mode: % Change | Value A (From): 50,000, Value B (To): 65,000</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Result: 30.00% increase | Difference: 15,000</span></div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">Revenue grew by $15,000 over a $50,000 baseline, representing a 30.00% relative expansion.</p>
+      </div>
+    </div>
+      </section>
+    
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I calculate what percentage one number is of another?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Divide the specific part (X) by the total whole (Y) and multiply by 100: (X ÷ Y) × 100. For example, 45 is what percent of 180? (45 ÷ 180) × 100 = 25.00%.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I find a percentage of a given number?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Convert the percentage into a decimal by dividing by 100, then multiply by the total number: (X ÷ 100) × Y. For example, 15% of 120 = 0.15 × 120 = 18.00.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is percentage increase or decrease calculated?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Subtract the old starting value from the new value, divide by the absolute value of the old starting value, and multiply by 100: ((New − Old) ÷ |Old|) × 100. A positive result indicates an increase; a negative result indicates a decrease.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between percentage points and percentage change?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Percentage points measure the simple arithmetic subtraction between two percentages (e.g., 10% to 15% is a 5 percentage-point increase). Percentage change measures the relative growth: ((15 − 10) ÷ 10) × 100 = a 50% relative increase.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why can Value B not be zero in proportion mode?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In mathematics, division by zero is undefined. When calculating &quot;X is what % of Y?&quot;, Y serves as the denominator representing the total whole, which cannot be zero.</p>
+        </details>
+      
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
+          <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
+          Related Calculators
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+          
+        <a href="/tool/tip-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-math"><i class="fa-solid fa-receipt"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Tip Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-math">Math</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/inflation-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Inflation Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free interactive Inflation Calculator. See how inflation reduces your money&#39;s buying power over time with dynamic charts and real-time scenario sliders.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/compound-interest-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Compound Interest Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        </div>
+      </section>
+    
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Calculate Percentages Accurately Across Every Scenario</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Percentage Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Percentage Formulas &amp; Derivations</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
     </div>
   
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Percentages Accurately Across Every Scenario</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Percentages are fundamental across personal finance, retail pricing, data analysis, and academic testing. While the core concept represents parts per hundred, applying percentage formulas correctly depends entirely on whether you are determining a proportional share, calculating a portion of a whole, or analyzing growth over time.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">The Three Core Percentage Calculation Modes</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Proportion Mode (X is what % of Y?): Used when you know the part (X) and the whole (Y) and need to express the relationship as a percentage. The formula is (X ÷ Y) × 100. Examples include test scores (85 out of 100) or equity ownership.,Portion Mode (What is X% of Y?): Used when you need to calculate the actual quantitative value of a known percentage of a total. The formula is (X ÷ 100) × Y. Examples include calculating sales tax, retail discounts, or restaurant tips.,Rate of Change Mode (% Change from X to Y): Used to determine the relative percentage growth or contraction between a baseline starting value (X) and a new final value (Y). The formula is ((Y − X) ÷ |X|) × 100.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Critical Distinction: Percent Change vs. Percentage Points</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">One of the most frequent errors in financial and statistical analysis is confusing percentage points with percent change.,Percentage Points represent the direct arithmetic difference between two percentages (e.g., an interest rate rising from 5.0% to 7.0% is an increase of 2.0 percentage points).,Percent Change represents the relative proportional increase of that change: ((7.0 − 5.0) ÷ 5.0) × 100 = a 40.0% relative increase. In economic reporting and contract agreements, using the correct metric is vital.</p>
-      
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Working Backwards: Reverse Percentage Calculations</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">When a price includes sales tax or an item has already been discounted, you cannot simply add or subtract that percentage to return to the original price. For example, if an item with 20% tax costs $120, the pre-tax price is $120 ÷ 1.20 = $100 (not $120 − 20% = $96).</p>
-      
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Percentage Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Select the appropriate calculation mode from the dropdown menu (What % is X of Y, What is X% of Y, or % Change).</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Input Value A and Value B into the respective fields.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> The calculation executes automatically with instant formula transparency.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Switch modes freely to evaluate related calculations without reloading.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> Proportion: (X / Y) × 100 | Portion: (X / 100) × Y | % Change: ((New − Old) / |Old|) × 100</div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Proportion Scenario (Exam Score)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Mode: X is what % of Y? | Value A: 45, Value B: 180</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Result: 25.00% | Calculation: 45 is 25.00% of 180</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Portion Scenario (Retail Tip Calculation)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Mode: What is X% of Y? | Value A: 15 (%), Value B: 120 ($)</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Result: 18.00 | Calculation: 15% of 120 = 18.00</span></p>
-      </div>
-    
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">Rate of Change Scenario (Business Revenue Growth)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Mode: % Change | Value A (From): 50,000, Value B (To): 65,000</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Result: 30.00% increase | Difference: 15,000</span></p>
-      </div>
+      </aside>
     </div>
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
-        
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I calculate what percentage one number is of another?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Divide the specific part (X) by the total whole (Y) and multiply by 100: (X ÷ Y) × 100. For example, 45 is what percent of 180? (45 ÷ 180) × 100 = 25.00%.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I find a percentage of a given number?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Convert the percentage into a decimal by dividing by 100, then multiply by the total number: (X ÷ 100) × Y. For example, 15% of 120 = 0.15 × 120 = 18.00.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How is percentage increase or decrease calculated?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Subtract the old starting value from the new value, divide by the absolute value of the old starting value, and multiply by 100: ((New − Old) ÷ |Old|) × 100. A positive result indicates an increase; a negative result indicates a decrease.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What is the difference between percentage points and percentage change?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Percentage points measure the simple arithmetic subtraction between two percentages (e.g., 10% to 15% is a 5 percentage-point increase). Percentage change measures the relative growth: ((15 − 10) ÷ 10) × 100 = a 50% relative increase.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Why can Value B not be zero in proportion mode?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">In mathematics, division by zero is undefined. When calculating &quot;X is what % of Y?&quot;, Y serves as the denominator representing the total whole, which cannot be zero.</p>
-      </details>
-    
-      </div>
-    
-    
   
             </div>
         </main>

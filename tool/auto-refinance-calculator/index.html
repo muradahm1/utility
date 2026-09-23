@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"Auto Loan Refinance & Break-Even Calculator","item":"https://www.getcalcu.com/tool/auto-refinance-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much does it cost to refinance a car loan?","acceptedAnswer":{"@type":"Answer","text":"Auto refinancing fees are very low — typically just $50 to $200 for state title re-registration and lien transfer."}},{"@type":"Question","name":"Can I refinance a car with negative equity?","acceptedAnswer":{"@type":"Answer","text":"Some lenders allow refinancing up to 125% LTV, but you will get the best interest rates if your vehicle value exceeds the loan balance."}},{"@type":"Question","name":"Will refinancing hurt my credit score?","acceptedAnswer":{"@type":"Answer","text":"You will see a small, temporary dip of 2 to 5 points from the hard inquiry, but the lower debt service quickly improves your debt-to-income ratio."}},{"@type":"Question","name":"Can I refinance with my existing bank?","acceptedAnswer":{"@type":"Answer","text":"Most banks do not refinance their own auto loans. You will generally apply through a new credit union, regional bank, or online auto refinancing marketplace."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Auto Loan Refinance & Break-Even Calculator","description":"Calculate how much you can save every month and over the life of your car loan by refinancing to a lower interest rate, with instant break-even horizon analysis.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Check your current 10-day payoff balance and APR from your current lender."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Enter the new interest rate and repayment term from your prospective refinancing lender."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Include transfer and title fees ($50-$200) to compute the exact break-even timeline."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Verify that your vehicle Loan-to-Value (LTV) is below 100% for the lowest rates."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Refinance a Car Loan: Timing & Break-Even Rules","description":"Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Auto Loan Refinance & Break-Even Calculator","url":"https://www.getcalcu.com/tool/auto-refinance-calculator","dateModified":"2026-09-21"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Refinance a Car Loan: Timing & Break-Even Rules","description":"Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Auto Loan Refinance & Break-Even Calculator","url":"https://www.getcalcu.com/tool/auto-refinance-calculator","dateModified":"2026-09-23"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -276,124 +276,188 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            Generally Accepted Accounting Principles (GAAP) &amp; CFPB financial disclosure guidelines.
-          </p>
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Financial Editorial Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic client-side computation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Auto%20Loan%20Refinance%20%26%20Break-Even%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
-      </div>
-    </div>
-  
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Refinance a Car Loan: Timing &amp; Break-Even Rules</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.</p>
+    <div class="educational-layout">
+      <div class="educational-main-content">
         
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">When Does Car Loan Refinancing Make Sense?</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Refinancing makes the most sense if your credit score has increased by 30+ points since buying the car, or if dealer financing initially locked you into a high APR (8% to 15%).</p>
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Refinance a Car Loan: Timing &amp; Break-Even Rules</h2>
+        <div class="article-intro-text"><p>Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">When Does Car Loan Refinancing Make Sense?</h3>
+            <div class="article-body-text"><p>Refinancing makes the most sense if your credit score has increased by 30+ points since buying the car, or if dealer financing initially locked you into a high APR (8% to 15%).</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Understanding Loan-to-Value (LTV) Requirements</h3>
+            <div class="article-body-text"><p>Lenders check your vehicle value against your payoff amount. If your car is worth $25,000 and you owe $20,000, your LTV is 80%, qualifying you for prime rates.</p></div>
+          </div>
+      </article>
+    
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Auto Loan Refinance &amp; Break-Even Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Check your current 10-day payoff balance and APR from your current lender.</div>
+        </li>
       
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Understanding Loan-to-Value (LTV) Requirements</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Lenders check your vehicle value against your payoff amount. If your car is worth $25,000 and you owe $20,000, your LTV is 80%, qualifying you for prime rates.</p>
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Enter the new interest rate and repayment term from your prospective refinancing lender.</div>
+        </li>
       
-      </div>
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Include transfer and title fees ($50-$200) to compute the exact break-even timeline.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">Verify that your vehicle Loan-to-Value (LTV) is below 100% for the lowest rates.</div>
+        </li>
+      </ol>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Auto Loan Refinance &amp; Break-Even Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Check your current 10-day payoff balance and APR from your current lender.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Enter the new interest rate and repayment term from your prospective refinancing lender.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Include transfer and title fees ($50-$200) to compute the exact break-even timeline.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> Verify that your vehicle Loan-to-Value (LTV) is below 100% for the lowest rates.</li></ol>
         
-      </div>
-    
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much does it cost to refinance a car loan?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Auto refinancing fees are very low — typically just $50 to $200 for state title re-registration and lien transfer.</p>
-      </details>
+        
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How much does it cost to refinance a car loan?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Auto refinancing fees are very low — typically just $50 to $200 for state title re-registration and lien transfer.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I refinance a car with negative equity?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Some lenders allow refinancing up to 125% LTV, but you will get the best interest rates if your vehicle value exceeds the loan balance.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Will refinancing hurt my credit score?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">You will see a small, temporary dip of 2 to 5 points from the hard inquiry, but the lower debt service quickly improves your debt-to-income ratio.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I refinance with my existing bank?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Most banks do not refinance their own auto loans. You will generally apply through a new credit union, regional bank, or online auto refinancing marketplace.</p>
+        </details>
+      
+      </section>
     
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I refinance a car with negative equity?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Some lenders allow refinancing up to 125% LTV, but you will get the best interest rates if your vehicle value exceeds the loan balance.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Will refinancing hurt my credit score?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">You will see a small, temporary dip of 2 to 5 points from the hard inquiry, but the lower debt service quickly improves your debt-to-income ratio.</p>
-      </details>
-    
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">Can I refinance with my existing bank?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">Most banks do not refinance their own auto loans. You will generally apply through a new credit union, regional bank, or online auto refinancing marketplace.</p>
-      </details>
-    
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/auto-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Auto Loan Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate new car loan payments and sales tax.</p>
+        <a href="/tool/auto-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-route"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Auto Loan Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free auto loan calculator — calculate monthly car payments, interest, dealer fees, sales tax, and amortization schedule with trade-in equity.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-sack-dollar"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Loan Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/loan-interest-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-percent"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Loan Interest Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free loan interest calculator — see total interest, monthly payments, and full amortization with flexible payment frequencies.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/budget-planner" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Budget Planner &amp; Expense Tracker</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-finance">Finance</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-      <a href="/tool/loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Personal Loan Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Explore personal loan alternatives for debt consolidation.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/budget-planner" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Budget Planner</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Reallocate auto loan savings into emergency reserves.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-      <a href="/tool/loan-interest-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Loan Interest Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">See total interest saved across lower interest rates.</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Refinance a Car Loan: Timing &amp; Break-Even Rules</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Auto Loan Refinance &amp; Break-Even Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>
