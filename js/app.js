@@ -97,28 +97,37 @@ function initCategoryFilter() {
     }
 }
 
-// Floating back-to-top button
+// Floating back-to-top button (optimized: 0 forced reflows on initial load)
 function initBackToTop() {
     let btn = document.getElementById('back-to-top-btn');
-    if (!btn) {
-        btn = document.createElement('button');
-        btn.id = 'back-to-top-btn';
-        btn.className = 'back-to-top-btn';
-        btn.type = 'button';
-        btn.setAttribute('aria-label', 'Back to top');
-        btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-        btn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        document.body.appendChild(btn);
-    }
+    let ticking = false;
 
-    const toggleVisibility = () => {
-        btn.classList.toggle('visible', window.scrollY > 480);
+    const handleScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrolled = window.scrollY > 480;
+                if (!btn && scrolled) {
+                    btn = document.createElement('button');
+                    btn.id = 'back-to-top-btn';
+                    btn.className = 'back-to-top-btn';
+                    btn.type = 'button';
+                    btn.setAttribute('aria-label', 'Back to top');
+                    btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+                    btn.addEventListener('click', () => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                    document.body.appendChild(btn);
+                }
+                if (btn) {
+                    btn.classList.toggle('visible', scrolled);
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
     };
 
-    toggleVisibility();
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
 // Category Page Rendering (supports /category/:slug and ?category=:slug)

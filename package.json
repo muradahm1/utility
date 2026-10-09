@@ -8,8 +8,9 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "build:css": "node scripts/minify-css.js",
-    "build:seo": "node scripts/minify-css.js && node build-seo.js",
-    "build": "node scripts/minify-css.js && node build-seo.js"
+    "build:js": "node scripts/minify-js.js",
+    "build:seo": "node scripts/minify-css.js && node scripts/minify-js.js && node build-seo.js",
+    "build": "node scripts/minify-css.js && node scripts/minify-js.js && node build-seo.js"
   },
   "devDependencies": {
     "jsdom": "^25.0.0",

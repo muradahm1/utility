@@ -6,26 +6,37 @@
     <meta name="theme-color" content="#6366F1">
     <link rel="manifest" href="/manifest.json">
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
-    <!-- End Google Tag Manager -->
     <title>Sign In &amp; Sign Up | GetCalcu</title>
     <meta name="description" content="Sign in or create a free GetCalcu account to save your calculations and history.">
     <link rel="canonical" href="https://www.getcalcu.com/auth">

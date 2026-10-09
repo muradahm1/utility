@@ -8,9 +8,6 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
     <!-- Google Analytics & Tag Manager DataLayer Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -69,7 +66,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="theme-switch-container">
                 <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
                 <label class="switch">
-                    <input type="checkbox" id="theme-toggle-switch">
+                    <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle dark mode">
                     <span class="slider round"></span>
                 </label>
             </div>
@@ -187,7 +184,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/js/config.js"></script>
 <script src="/js/supabase.js"></script>
-<script src="/js/app.js"></script>
+<script src="/js/app.min.js"></script>
 <script>
 (function () {
     const loadingEl   = document.getElementById('history-loading');
