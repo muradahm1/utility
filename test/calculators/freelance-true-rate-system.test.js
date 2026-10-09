@@ -18,7 +18,7 @@ describe('Freelance True Rate System & True Hourly Rate Calculator', () => {
         expect(calc()).toBeDefined();
         expect(calc().name).toBe('Freelance True Rate System');
         expect(calc().category).toBe('Business');
-        expect(calc().metaTitle).toContain('True Freelance Hourly Rate Calculator');
+        expect(calc().metaTitle).toContain('Freelance True Rate System');
         
     });
 

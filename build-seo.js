@@ -294,7 +294,7 @@ function renderSidebarNav(activeSlug = null, isHome = false) {
   return `
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -962,10 +962,12 @@ const toolPageTemplate = (tool, allTools = {}) => {
     ${jsonLdBlocks.map(b => `<script type="application/ld+json">${JSON.stringify(b)}</script>`).join('\n    ')}
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Preconnect for performance -->
@@ -1043,7 +1045,7 @@ const toolPageTemplate = (tool, allTools = {}) => {
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -1257,10 +1259,12 @@ const categoryPageTemplate = (cat, catTools) => {
     <script type="application/ld+json">${JSON.stringify(itemListJsonLd)}</script>
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Preconnect for performance -->
@@ -1427,7 +1431,7 @@ const categoryPageTemplate = (cat, catTools) => {
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/logo.png" alt="GetCalcu" width="36" height="36"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>

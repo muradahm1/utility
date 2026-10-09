@@ -11,9 +11,9 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'getcalcu-v6';
-const STATIC_CACHE = 'getcalcu-static-v6';
-const PAGE_CACHE = 'getcalcu-pages-v6';
+const CACHE_NAME = 'getcalcu-v7';
+const STATIC_CACHE = 'getcalcu-static-v7';
+const PAGE_CACHE = 'getcalcu-pages-v7';
 
 // Core shell assets to precache on install (lightweight to prevent bandwidth congestion)
 const PRECACHE_URLS = [
@@ -26,7 +26,8 @@ const PRECACHE_URLS = [
   '/js/tools.js',
   '/js/tools-template.js',
   '/js/app.js',
-  '/favicon.png',
+  '/favicon.svg',
+  '/logo.svg',
   '/manifest.json'
 ];
 

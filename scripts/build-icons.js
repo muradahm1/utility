@@ -1,3 +1,17 @@
+/**
+ * build-icons.js — LEGACY one-off asset generator (NOT part of the build).
+ *
+ * ⚠️ DEPRECATED as of the navy "G" rebrand. The canonical, committed brand
+ * assets now live in the site root and are the source of truth:
+ *   /logo.svg, /favicon.svg, /favicon-32x32.png, /favicon-48x48.png,
+ *   /favicon-96x96.png, /icon-192.png, /icon-512.png, /apple-touch-icon.png,
+ *   /og-image.png, /og-image.jpg
+ *
+ * Running this script re-derives raster icons from its external master files
+ * (outside the repo) and previously overwrote the root assets, so it must not
+ * be run as part of a normal build. `npm run build` only runs
+ * scripts/minify-css.js + build-seo.js.
+ */
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
