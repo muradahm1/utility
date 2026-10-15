@@ -20,7 +20,7 @@ try {
 
         // Enable offline persistence in browser environments if supported
         if (typeof window !== 'undefined' && _db.enablePersistence) {
-            _db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+            _db.enablePersistence().catch((err) => {
                 if (err.code === 'failed-precondition') {
                     // Multiple tabs open, persistence can only be enabled in one tab at a time
                 } else if (err.code === 'unimplemented') {
