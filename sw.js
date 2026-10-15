@@ -11,9 +11,9 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'getcalcu-v7';
-const STATIC_CACHE = 'getcalcu-static-v7';
-const PAGE_CACHE = 'getcalcu-pages-v7';
+const CACHE_NAME = 'getcalcu-v8';
+const STATIC_CACHE = 'getcalcu-static-v8';
+const PAGE_CACHE = 'getcalcu-pages-v8';
 
 // Core shell assets to precache on install (lightweight to prevent bandwidth congestion)
 const PRECACHE_URLS = [
@@ -74,6 +74,11 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests
   if (request.method !== 'GET') return;
+
+  // Never intercept cross-origin requests (Firebase, Google APIs, external CDNs)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
   // Network-only for API/analytics endpoints
   if (NETWORK_ONLY.some((domain) => url.hostname.includes(domain))) {
