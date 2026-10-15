@@ -29,7 +29,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Education","item":"https://www.getcalcu.com/category/education"},{"@type":"ListItem","position":3,"name":"College & High School GPA Calculator","item":"https://www.getcalcu.com/tool/gpa-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a 4.0 GPA equivalent in percentage?","acceptedAnswer":{"@type":"Answer","text":"Generally, an unweighted 4.0 GPA corresponds to an average grade percentage of 93-100% (A or A+)."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the College & High School GPA Calculator","description":"Calculate semester and cumulative grade point averages (GPA) on 4.0 and weighted 5.0 scales with target GPA forecasting.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Select your letter grade and credit hours for each course."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Select Honors or AP weighting if applicable."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Optionally enter your prior GPA and completed credits for a cumulative projection."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Review your calculated semester and cumulative GPA."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How Grade Point Average (GPA) Is Calculated","description":"GPA represents your average academic performance by weighting your letter grade points by each course credit value.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"College & High School GPA Calculator","url":"https://www.getcalcu.com/tool/gpa-calculator","dateModified":"2026-10-09"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How Grade Point Average (GPA) Is Calculated","description":"GPA represents your average academic performance by weighting your letter grade points by each course credit value.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"College & High School GPA Calculator","url":"https://www.getcalcu.com/tool/gpa-calculator","dateModified":"2026-10-15"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -655,8 +655,10 @@
     <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.min.js"></script>
     <script src="/js/config.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="/js/supabase.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js" defer></script>
+    <script src="/js/firebase.js" defer></script>
     <script src="/js/cookie-consent.js" defer></script>
     <script src="/js/maintenance-banner.js" defer></script>
     <script src="/js/pwa.js" defer></script>

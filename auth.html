@@ -200,9 +200,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     </div><!-- /.auth-card -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
     <script src="/js/config.js"></script>
-    <script src="/js/supabase.js"></script>
+    <script src="/js/firebase.js"></script>
     <script>
     (function () {
         // ── Panel routing ────────────────────────────────────
@@ -214,14 +216,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         // Check URL mode param on load
-        const mode = new URLSearchParams(location.search).get('mode') || 'signin';
-        showPanel(panels.includes(mode) ? mode : 'signin');
+        const urlParams = new URLSearchParams(location.search);
+        const mode = urlParams.get('mode') || 'signin';
+        if (mode === 'resetPassword' || urlParams.get('oobCode')) {
+            showPanel('update-password');
+        } else {
+            showPanel(panels.includes(mode) ? mode : 'signin');
+        }
 
-        // If arriving from password reset email, Supabase sets the session automatically
-        // and fires PASSWORD_RECOVERY event — we catch it below
-        _sb.auth.onAuthStateChange((event, session) => {
-            if (event === 'PASSWORD_RECOVERY') showPanel('update-password');
-            if (event === 'SIGNED_IN' && mode !== 'update-password') {
+        // Handle authenticated session redirect
+        onAuthChange((session) => {
+            if (session && mode !== 'update-password' && mode !== 'resetPassword') {
                 // Redirect to page they came from, or home
                 const returnTo = sessionStorage.getItem('uh_return') || '/';
                 sessionStorage.removeItem('uh_return');
@@ -236,8 +241,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         document.getElementById('goto-signin-from-forgot').addEventListener('click', e => { e.preventDefault(); showPanel('signin'); });
 
         // ── Google OAuth ─────────────────────────────────────
-        document.getElementById('google-signin-btn').addEventListener('click', () => signInWithGoogle());
-        document.getElementById('google-signup-btn').addEventListener('click', () => signInWithGoogle());
+        const handleGoogleAuth = async (formType, btnId) => {
+            hideBanner(formType + '-error');
+            const btn = document.getElementById(btnId);
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Connecting to Google...';
+            try {
+                const { error } = await signInWithGoogle();
+                if (error) {
+                    showBanner(formType + '-error', friendlyError(error.message), 'error');
+                }
+            } catch (err) {
+                showBanner(formType + '-error', friendlyError(err.message), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
+        };
+
+        document.getElementById('google-signin-btn').addEventListener('click', () => handleGoogleAuth('signin', 'google-signin-btn'));
+        document.getElementById('google-signup-btn').addEventListener('click', () => handleGoogleAuth('signup', 'google-signup-btn'));
 
         // ── Password visibility toggle ───────────────────────
         document.querySelectorAll('.pw-toggle').forEach(btn => {
@@ -362,11 +386,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // ── Friendly error messages ──────────────────────────
         function friendlyError(msg) {
             if (!msg) return 'Something went wrong. Please try again.';
-            if (msg.includes('Invalid login'))       return 'Incorrect email or password.';
-            if (msg.includes('Email not confirmed')) return 'Please confirm your email before signing in.';
-            if (msg.includes('already registered'))  return 'An account with this email already exists.';
-            if (msg.includes('Password should'))     return 'Password must be at least 8 characters.';
-            if (msg.includes('rate limit'))          return 'Too many attempts. Please wait a moment.';
+            if (msg.includes('user-not-found') || msg.includes('wrong-password') || msg.includes('invalid-credential') || msg.includes('Invalid login')) {
+                return 'Incorrect email or password.';
+            }
+            if (msg.includes('email-already-in-use') || msg.includes('already registered')) {
+                return 'An account with this email already exists. Try signing in.';
+            }
+            if (msg.includes('weak-password') || msg.includes('Password should')) {
+                return 'Password must be at least 8 characters.';
+            }
+            if (msg.includes('invalid-email')) {
+                return 'Please enter a valid email address.';
+            }
+            if (msg.includes('unauthorized-domain')) {
+                return 'Domain not authorized for Google Sign-In yet. In Firebase Console, go to Authentication → Settings → Authorized domains and add this domain.';
+            }
+            if (msg.includes('operation-not-allowed')) {
+                return 'Google Sign-In is not enabled yet. In Firebase Console, go to Authentication → Sign-in method → Google and click Enable.';
+            }
+            if (msg.includes('popup-closed-by-user')) {
+                return 'Google sign-in popup was closed before completing.';
+            }
+            if (msg.includes('popup-blocked')) {
+                return 'Sign-in popup was blocked by your browser. Please allow popups for this site.';
+            }
+            if (msg.includes('too-many-requests') || msg.includes('rate limit')) {
+                return 'Too many attempts. Please wait a few moments and try again.';
+            }
             return msg;
         }
     })();

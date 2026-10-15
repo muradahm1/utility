@@ -1,14 +1,16 @@
 // GetCalcu — Public runtime config
-// The Supabase ANON key is intentionally public — it is safe to expose in
-// frontend code ONLY because Row Level Security (RLS) is enforced on ALL
-// tables in Supabase. Never use the service_role key here.
-// Verify RLS is ON: Supabase Dashboard → Table Editor → RLS column = Enabled
+// Firebase Client configuration
 const APP_CONFIG = {
-    SUPABASE_URL:  'https://uvkukqdrkvqhzrvfgxgq.supabase.co',
-    SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2a3VrcWRya3ZxaHpydmZneGdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1OTgzMDUsImV4cCI6MjEwMDE3NDMwNX0.lnzPHVUWFsZQ6mikxO2hQd9Uy1bjMutmvQXa8A8_-cA',
+    FIREBASE: {
+        apiKey: "AIzaSyDjFGku4UvEDBzgi8WNNX46Xgo8u6UF1zk",
+        authDomain: "getcalcu-98dc0.firebaseapp.com",
+        projectId: "getcalcu-98dc0",
+        storageBucket: "getcalcu-98dc0.firebasestorage.app",
+        messagingSenderId: "672912367081",
+        appId: "1:672912367081:web:e525a126ce57c1129abf78",
+        measurementId: "G-9R2C0BJHV3"
+    },
     SITE_URL: 'https://www.getcalcu.com',
     ADS_ENABLED: false, // Set to true when ready to activate ad network
-    // EmailJS credentials removed (ISSUE-001): they are now held server-side
-    // in Vercel environment variables (EMAILJS_PUBLIC_KEY, EMAILJS_SERVICE_ID,
-    // EMAILJS_TEMPLATE_ID) and used only by /api/contact.
+    // EmailJS credentials held server-side in Vercel environment variables
 };
