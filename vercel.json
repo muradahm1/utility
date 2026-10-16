@@ -4,6 +4,7 @@
   "outputDirectory": ".",
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/tool/:slug/:country", "destination": "/tool/:slug/:country/index.html" },
     { "source": "/tool/:slug",      "destination": "/tool/:slug/index.html" },
     { "source": "/tool",            "destination": "/tool.html" },
     { "source": "/auth",            "destination": "/auth.html" },

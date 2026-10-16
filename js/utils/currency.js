@@ -20,11 +20,13 @@
  * @returns {string} Formatted currency string
  */
 export function formatCurrency(value, options = {}) {
+    const defaultCurrency = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY__) || 'USD';
+    const defaultLocale = (typeof window !== 'undefined' && window.__ACTIVE_LOCALE__) || 'en-US';
     const {
         minFractionDigits = 2,
         maxFractionDigits = 2,
-        currency = 'USD',
-        locale = 'en-US'
+        currency = defaultCurrency,
+        locale = defaultLocale
     } = options;
     
     const num = safeNumber(value, 0);
@@ -205,7 +207,16 @@ export function getCurrencySymbol(currencyCode) {
         'HKD': 'HK$',
         'NZD': 'NZ$',
         'SGD': 'S$',
-        'ZAR': 'R'
+        'ZAR': 'R',
+        'ETB': 'Br',
+        'KES': 'KSh',
+        'NGN': '₦',
+        'AED': 'AED',
+        'SAR': 'SAR',
+        'QAR': 'QAR',
+        'KWD': 'KWD',
+        'BHD': 'BHD',
+        'OMR': 'OMR'
     };
     
     return symbols[currencyCode] || currencyCode;
@@ -344,7 +355,13 @@ export const CURRENCIES = {
     CAD: 'Canadian Dollar',
     AUD: 'Australian Dollar',
     INR: 'Indian Rupee',
-    BRL: 'Brazilian Real'
+    BRL: 'Brazilian Real',
+    ETB: 'Ethiopian Birr',
+    KES: 'Kenyan Shilling',
+    NGN: 'Nigerian Naira',
+    ZAR: 'South African Rand',
+    AED: 'UAE Dirham',
+    SAR: 'Saudi Riyal'
 };
 
 // Log module initialization

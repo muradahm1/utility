@@ -55,12 +55,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     let slug = urlParams.get('slug');
+    let country = urlParams.get('country') || (typeof window !== 'undefined' && window.__GETCALCU_COUNTRY__) || null;
 
-    // Support pretty URL format: /tool/{slug} (Phase 4 SEO)
+    // Support pretty URL formats: /tool/{slug}/{country} or /tool/{slug} (Phase 4 SEO & International)
     if (!slug) {
-        const pathMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/?$/);
-        if (pathMatch) {
-            slug = pathMatch[1];
+        const localizedMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/([a-z]{2})\/?$/);
+        if (localizedMatch) {
+            slug = localizedMatch[1];
+            country = localizedMatch[2].toLowerCase();
+        } else {
+            const pathMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/?$/);
+            if (pathMatch) {
+                slug = pathMatch[1];
+            }
         }
     }
 
@@ -70,13 +77,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     if (slug && SLUG_ALIASES[slug]) slug = SLUG_ALIASES[slug];
 
-    const TOOLS = window.TOOLS || {};
-    // Prefer the legacy window.TOOLS registry, but also resolve against the
-    // core registry so modular calculators (construction/engineering/tools.js
-    // modules) that register via registerTool() are reachable at runtime.
-    // Before this fallback, modular tools rendered a false "Tool Not Found".
-    const tool = TOOLS[slug]
-        || (window.CORE && typeof window.CORE.getTool === 'function' ? window.CORE.getTool(slug) : undefined);
+    let tool;
+    if (slug === 'salary-calculator' && country === 'et') {
+        window.__ACTIVE_CURRENCY__ = 'ETB';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = 'Br';
+        try {
+            const taxModule = await import('./modules/tax-ethiopia.js');
+            tool = taxModule.ethiopiaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load Ethiopian tax module:', err);
+        }
+    }
+
+    if (!tool) {
+        const TOOLS = window.TOOLS || {};
+        // Prefer the legacy window.TOOLS registry, but also resolve against the
+        // core registry so modular calculators (construction/engineering/tools.js
+        // modules) that register via registerTool() are reachable at runtime.
+        // Before this fallback, modular tools rendered a false "Tool Not Found".
+        tool = TOOLS[slug]
+            || (window.CORE && typeof window.CORE.getTool === 'function' ? window.CORE.getTool(slug) : undefined);
+    }
 
     if (!tool) {
         if (!slug) {
@@ -112,7 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (useNewArchitecture && core && core.updateSeoMeta) {
         core.updateSeoMeta(tool, slug);
     } else {
-        updateSeoLegacy(tool, slug);
+        updateSeoLegacy(tool, slug, country);
     }
 
     if (useNewArchitecture && core && core.initToolRunner) {
@@ -122,11 +143,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    initLegacyRunner(tool, slug, container);
+    initLegacyRunner(tool, slug, container, country);
 });
 
-function updateSeoLegacy(tool, slug) {
-    const pageUrl = `https://www.getcalcu.com/tool/${slug}`;
+function updateSeoLegacy(tool, slug, country = null) {
+    const pageUrl = (country && !slug.includes('/'))
+        ? `https://www.getcalcu.com/tool/${slug}/${country}`
+        : `https://www.getcalcu.com/tool/${slug}`;
     document.title = tool.metaTitle
         ? tool.metaTitle
         : (`${tool.name} — Free Online Calculator | GetCalcu`.length > 60
@@ -223,11 +246,49 @@ function updateSeoLegacy(tool, slug) {
     }
 }
 
-function initLegacyRunner(tool, slug, container) {
+function formatFieldLabel(rawLabel) {
+    if (!rawLabel) return '';
+    const currency = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY__) || 'USD';
+    const symbol = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY_SYMBOL__) 
+        || (currency === 'USD' ? '$' : currency);
+    if (symbol === '$' && currency === 'USD') return rawLabel;
+    return rawLabel.replace(/\(\$\)/g, `(${symbol})`).replace(/\(USD\)/g, `(${currency})`);
+}
+
+function formatFieldHint(rawHint) {
+    if (!rawHint) return '';
+    const currency = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY__) || 'USD';
+    const symbol = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY_SYMBOL__) 
+        || (currency === 'USD' ? '$' : currency);
+    if (symbol === '$' && currency === 'USD') return rawHint;
+    return rawHint.replace(/\$/g, symbol).replace(/USD/g, currency);
+}
+
+function initLegacyRunner(tool, slug, container, country = null) {
     let values = {};
     tool.fields.forEach(f => {
         values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
     });
+
+    function buildCountrySwitcherHtml() {
+        const baseSlug = (tool.baseSlug || slug).split('/')[0];
+        if (baseSlug === 'salary-calculator') {
+            const isET = country === 'et' || slug === 'salary-calculator/et' || (tool.country === 'et');
+            return `
+                <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
+                    <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
+                    <div class="country-switcher-options">
+                        <a href="/tool/salary-calculator" class="country-pill ${!isET ? 'active' : ''}">
+                            <span class="country-flag">🇺🇸</span> <span>United States</span>
+                        </a>
+                        <a href="/tool/salary-calculator/et" class="country-pill ${isET ? 'active' : ''}">
+                            <span class="country-flag">🇪🇹</span> <span>Ethiopia (ETB)</span>
+                        </a>
+                    </div>
+                </div>`;
+        }
+        return '';
+    }
 
     let isCompareMode = false;
     let activeScenario = 'A';
@@ -330,7 +391,7 @@ function initLegacyRunner(tool, slug, container) {
         let inCollapsible = false;
         for (const field of tool.fields) {
             const labels = tool.fieldLabels ? tool.fieldLabels(currentVals) : {};
-            const label = labels[field.id] || field.label;
+            const label = formatFieldLabel(labels[field.id] || field.label);
             const hidden = field.condition && !field.condition(currentVals);
             const attrs = [
                 field.min !== undefined ? `min="${field.min}"` : '',
@@ -349,15 +410,15 @@ function initLegacyRunner(tool, slug, container) {
                 continue;
             }
             if (field.type === 'select') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${currentVals[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(formatFieldHint(field.hint))}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${currentVals[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
                 continue;
             }
             if (field.type === 'range') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${currentVals[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(formatFieldHint(field.hint))}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${currentVals[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
                 continue;
             }
             const inputModeAttr = (field.type === 'number' || field.type === 'currency' || field.type === 'percentage') ? 'inputmode="decimal"' : '';
-            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
+            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(formatFieldHint(field.hint))}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
         }
         if (inCollapsible) html += '</div></details>';
         return html;
@@ -679,7 +740,11 @@ function initLegacyRunner(tool, slug, container) {
 
         container.innerHTML = `
             <div class="tool-runner-card">
-                <div class="tool-header"><h1>${escapeHtml(tool.name)}</h1><p>${escapeHtml(tool.description)}</p></div>
+                <div class="tool-header">
+                    <h1>${escapeHtml(tool.name)}</h1>
+                    <p>${escapeHtml(tool.description)}</p>
+                    ${buildCountrySwitcherHtml()}
+                </div>
                 <div class="tool-grid-workspace">
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
                     <div class="calculator-results-card" aria-live="polite" aria-atomic="true">

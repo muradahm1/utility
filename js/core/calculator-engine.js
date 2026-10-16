@@ -29,27 +29,27 @@ const ENGINE_VERSION = '1.0.0';
 const INPUT_TYPES = {
     number: (v) => {
         if (v === null || v === undefined || v === '') return null;
-        const num = Number(String(v).replace(/[$,%\s]/g, ''));
+        const num = Number(String(v).replace(/[^0-9.-]/g, ''));
         return isFinite(num) ? num : null;
     },
     currency: (v) => {
         if (v === null || v === undefined || v === '') return null;
-        const num = Number(String(v).replace(/[$,%\s]/g, ''));
+        const num = Number(String(v).replace(/[^0-9.-]/g, ''));
         return isFinite(num) ? num : null;
     },
     percentage: (v) => {
         if (v === null || v === undefined || v === '') return null;
-        const num = Number(String(v).replace(/[%\s]/g, ''));
+        const num = Number(String(v).replace(/[^0-9.-]/g, ''));
         return isFinite(num) ? num / 100 : null;
     },
     integer: (v) => {
         if (v === null || v === undefined || v === '') return null;
-        const num = Math.round(Number(String(v).replace(/[$,%\s]/g, '')));
+        const num = Math.round(Number(String(v).replace(/[^0-9.-]/g, '')));
         return isFinite(num) ? num : null;
     },
     decimal: (v) => {
         if (v === null || v === undefined || v === '') return null;
-        const num = Number(String(v).replace(/[$,%\s]/g, ''));
+        const num = Number(String(v).replace(/[^0-9.-]/g, ''));
         return isFinite(num) ? num : null;
     },
     date: (v) => {

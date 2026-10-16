@@ -216,10 +216,41 @@ function buildSoftwareAppJsonLd(tool) {
     name: tool.name,
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Web',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: tool.currency || 'USD' },
     description: tool.metaDescription || tool.description,
     url: buildCanonical(tool.slug),
   };
+}
+
+function buildHreflangTags(slug) {
+  const baseSlug = slug.split('/')[0];
+  if (baseSlug === 'salary-calculator') {
+    return `
+    <link rel="alternate" hreflang="x-default" href="${BASE_URL}/tool/salary-calculator">
+    <link rel="alternate" hreflang="en-US" href="${BASE_URL}/tool/salary-calculator">
+    <link rel="alternate" hreflang="en-ET" href="${BASE_URL}/tool/salary-calculator/et">`;
+  }
+  return '';
+}
+
+function renderCountrySwitcher(slug, currentCountry = 'us') {
+  const baseSlug = slug.split('/')[0];
+  if (baseSlug === 'salary-calculator') {
+    const isET = currentCountry === 'et' || slug === 'salary-calculator/et';
+    return `
+      <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
+        <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
+        <div class="country-switcher-options">
+          <a href="/tool/salary-calculator" class="country-pill ${!isET ? 'active' : ''}">
+            <span class="country-flag">🇺🇸</span> <span>United States</span>
+          </a>
+          <a href="/tool/salary-calculator/et" class="country-pill ${isET ? 'active' : ''}">
+            <span class="country-flag">🇪🇹</span> <span>Ethiopia (ETB)</span>
+          </a>
+        </div>
+      </div>`;
+  }
+  return '';
 }
 
 function buildBreadcrumbJsonLd(tool) {
@@ -355,6 +386,13 @@ function getToolTrustInfo(tool, slug) {
         standard: 'IRS Title 26 Internal Revenue Code (Rev. Proc. 2024-40) 2026 federal brackets, standard deductions, and FICA statutory rates.',
         reviewer: 'GetCalcu Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser payroll calculation'
+      };
+    }
+    if (slug === 'salary-calculator/et') {
+      return {
+        standard: 'Federal Income Tax Proclamation No. 979/2016 (Schedule A) & Pension Proclamation No. 715/2011 statutory pension framework.',
+        reviewer: 'GetCalcu Ethiopian Payroll & Tax Calculation Desk',
+        policy: 'Deterministic in-browser Schedule A tax and pension computation'
       };
     }
     if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
@@ -883,6 +921,7 @@ function renderPreRenderedToolContent(tool, slug, allTools = {}) {
       <div class="tool-header">
         <h1>${escapeHtml(tool.name)}</h1>
         <p>${escapeHtml(tool.description)}</p>
+        ${renderCountrySwitcher(slug, tool.country || 'us')}
       </div>
       <div class="tool-grid-workspace">
         <div class="calculator-form-inputs">
@@ -941,6 +980,8 @@ const toolPageTemplate = (tool, allTools = {}) => {
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${desc}">
     <link rel="canonical" href="${canonical}">
+    ${buildHreflangTags(tool.slug)}
+    ${(tool.country === 'et' || tool.slug === 'salary-calculator/et') ? `<script>window.__GETCALCU_COUNTRY__ = 'et'; window.__ACTIVE_CURRENCY__ = 'ETB'; window.__ACTIVE_CURRENCY_SYMBOL__ = 'Br';</script>` : ''}
     <meta name="robots" content="index, follow">
     ${tool.keywords && tool.keywords.length ? `<meta name="keywords" content="${escapeHtml(tool.keywords.join(', '))}">` : ''}
 
@@ -1500,9 +1541,24 @@ const categoryPageTemplate = (cat, catTools) => {
 };
 
 // ── 6. Main Build Runner ─────────────────────────────────────────────
-function build() {
-  const tools = loadTools();
+async function loadLocalizedTools() {
+  try {
+    const taxModule = await import('./js/modules/tax-ethiopia.js');
+    return {
+      'salary-calculator/et': taxModule.ethiopiaSalaryCalculator
+    };
+  } catch (err) {
+    console.error('Failed to load localized tools in build-seo.js:', err);
+    return {};
+  }
+}
+
+async function build() {
+  const baseTools = loadTools();
+  const localizedTools = await loadLocalizedTools();
+  const tools = { ...baseTools, ...localizedTools };
   const allSlugs = Object.keys(tools);
+  const primarySlugs = allSlugs.filter(s => !s.includes('/'));
 
   // 1. Generate tool landing pages
   allSlugs.forEach(slug => {
@@ -1517,7 +1573,7 @@ function build() {
   // 2. Generate category landing pages
   Object.keys(CATEGORIES).forEach(catKey => {
     const cat = CATEGORIES[catKey];
-    const catTools = allSlugs
+    const catTools = primarySlugs
       .map(s => ({ ...tools[s], slug: s }))
       .filter(t => (t.category || '').toLowerCase() === cat.slug);
 
@@ -1539,7 +1595,7 @@ function build() {
     })),
     ...allSlugs.map(s => {
       const toolObj = tools[s] || {};
-      const toolLastMod = toolObj.lastmod || '2026-09-19';
+      const toolLastMod = toolObj.lastmod || TODAY;
       return {
         loc: `${BASE_URL}/tool/${s}`,
         priority: '0.9',
@@ -1575,11 +1631,14 @@ Sitemap: ${BASE_URL}/sitemap.xml
   fs.writeFileSync(path.join(__dirname, 'robots.txt'), robotsTxt, 'utf8');
 
   console.log(`✓ build-seo.js complete`);
-  console.log(`  Tools registered: ${allSlugs.length}`);
+  console.log(`  Tools registered: ${allSlugs.length} (including localized variants)`);
   console.log(`  Static tool pages: ${allSlugs.length} (in /tool/{slug}/)`);
   console.log(`  Static category pages: ${Object.keys(CATEGORIES).length} (in /category/{slug}/)`);
   console.log(`  Sitemap URLs: ${sitemapUrls.length}`);
   console.log(`  robots.txt updated`);
 }
 
-build();
+build().catch(err => {
+  console.error('Build failed:', err);
+  process.exit(1);
+});
