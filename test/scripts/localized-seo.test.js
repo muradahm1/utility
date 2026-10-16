@@ -19,6 +19,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-US" href="https://www.getcalcu.com/tool/salary-calculator">');
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
         
         // Active jurisdiction pill
         expect(content).toContain('country-switcher-bar');
@@ -45,6 +46,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-US" href="https://www.getcalcu.com/tool/salary-calculator">');
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
         
         // Active jurisdiction pill
         expect(content).toContain('country-switcher-bar');
@@ -55,6 +57,33 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('"priceCurrency":"KES"');
         expect(content).toContain('"name":"Kenya Salary & PAYE Tax Calculator"');
         expect(content).toContain('Income Tax Act (Cap. 470), Finance Act');
+    });
+
+    it('generates static localized page for /tool/salary-calculator/ng', () => {
+        const ngPath = resolve(root, 'tool/salary-calculator/ng/index.html');
+        expect(existsSync(ngPath), 'Nigerian salary calculator page should exist').toBe(true);
+        
+        const content = readFileSync(ngPath, 'utf-8');
+        
+        // Self-referencing canonical
+        expect(content).toContain('<link rel="canonical" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        
+        // Reciprocal hreflang tags
+        expect(content).toContain('<link rel="alternate" hreflang="x-default" href="https://www.getcalcu.com/tool/salary-calculator">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-US" href="https://www.getcalcu.com/tool/salary-calculator">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        
+        // Active jurisdiction pill
+        expect(content).toContain('country-switcher-bar');
+        expect(content).toContain('class="country-pill active">');
+        expect(content).toContain('Nigeria (NGN)');
+        
+        // Structured data with NGN currency
+        expect(content).toContain('"priceCurrency":"NGN"');
+        expect(content).toContain('"name":"Nigeria Salary & PAYE Tax Calculator"');
+        expect(content).toContain('Personal Income Tax Act (PITA)');
     });
 
     it('includes reciprocal hreflang and country switcher on US /tool/salary-calculator', () => {
@@ -71,11 +100,13 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-US" href="https://www.getcalcu.com/tool/salary-calculator">');
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
         
         // Country switcher with links to localized variants
         expect(content).toContain('country-switcher-bar');
         expect(content).toContain('href="/tool/salary-calculator/et"');
         expect(content).toContain('href="/tool/salary-calculator/ke"');
+        expect(content).toContain('href="/tool/salary-calculator/ng"');
     });
 
     it('indexes localized calculators in sitemap.xml', () => {
@@ -85,6 +116,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         const sitemap = readFileSync(sitemapPath, 'utf-8');
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/et</loc>');
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/ke</loc>');
+        expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/ng</loc>');
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator</loc>');
     });
 

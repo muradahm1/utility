@@ -96,6 +96,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
             console.error('Failed to load Kenyan tax module:', err);
         }
+    } else if (slug === 'salary-calculator' && country === 'ng') {
+        window.__ACTIVE_CURRENCY__ = 'NGN';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = '₦';
+        try {
+            const taxModule = await import('./modules/tax-nigeria.js');
+            tool = taxModule.nigeriaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load Nigerian tax module:', err);
+        }
     }
 
     if (!tool) {
@@ -284,7 +293,8 @@ function initLegacyRunner(tool, slug, container, country = null) {
         if (baseSlug === 'salary-calculator') {
             const isET = country === 'et' || slug === 'salary-calculator/et' || (tool.country === 'et');
             const isKE = country === 'ke' || slug === 'salary-calculator/ke' || (tool.country === 'ke');
-            const isUS = !isET && !isKE;
+            const isNG = country === 'ng' || slug === 'salary-calculator/ng' || (tool.country === 'ng');
+            const isUS = !isET && !isKE && !isNG;
             return `
                 <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
                     <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
@@ -297,6 +307,9 @@ function initLegacyRunner(tool, slug, container, country = null) {
                         </a>
                         <a href="/tool/salary-calculator/ke" class="country-pill ${isKE ? 'active' : ''}">
                             <span class="country-flag">🇰🇪</span> <span>Kenya (KES)</span>
+                        </a>
+                        <a href="/tool/salary-calculator/ng" class="country-pill ${isNG ? 'active' : ''}">
+                            <span class="country-flag">🇳🇬</span> <span>Nigeria (NGN)</span>
                         </a>
                     </div>
                 </div>`;

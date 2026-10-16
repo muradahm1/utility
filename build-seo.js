@@ -229,7 +229,8 @@ function buildHreflangTags(slug) {
     <link rel="alternate" hreflang="x-default" href="${BASE_URL}/tool/salary-calculator">
     <link rel="alternate" hreflang="en-US" href="${BASE_URL}/tool/salary-calculator">
     <link rel="alternate" hreflang="en-ET" href="${BASE_URL}/tool/salary-calculator/et">
-    <link rel="alternate" hreflang="en-KE" href="${BASE_URL}/tool/salary-calculator/ke">`;
+    <link rel="alternate" hreflang="en-KE" href="${BASE_URL}/tool/salary-calculator/ke">
+    <link rel="alternate" hreflang="en-NG" href="${BASE_URL}/tool/salary-calculator/ng">`;
   }
   return '';
 }
@@ -239,7 +240,8 @@ function renderCountrySwitcher(slug, currentCountry = 'us') {
   if (baseSlug === 'salary-calculator') {
     const isET = currentCountry === 'et' || slug === 'salary-calculator/et';
     const isKE = currentCountry === 'ke' || slug === 'salary-calculator/ke';
-    const isUS = !isET && !isKE;
+    const isNG = currentCountry === 'ng' || slug === 'salary-calculator/ng';
+    const isUS = !isET && !isKE && !isNG;
     return `
       <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
         <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
@@ -252,6 +254,9 @@ function renderCountrySwitcher(slug, currentCountry = 'us') {
           </a>
           <a href="/tool/salary-calculator/ke" class="country-pill ${isKE ? 'active' : ''}">
             <span class="country-flag">🇰🇪</span> <span>Kenya (KES)</span>
+          </a>
+          <a href="/tool/salary-calculator/ng" class="country-pill ${isNG ? 'active' : ''}">
+            <span class="country-flag">🇳🇬</span> <span>Nigeria (NGN)</span>
           </a>
         </div>
       </div>`;
@@ -406,6 +411,13 @@ function getToolTrustInfo(tool, slug) {
         standard: 'Kenya Revenue Authority (KRA) Income Tax Act (Cap. 470), Finance Act, NSSF Act 2013, SHIF Act 2023 & Affordable Housing Act 2024.',
         reviewer: 'GetCalcu Kenyan Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser PAYE, NSSF, SHIF, and Housing Levy computation'
+      };
+    }
+    if (slug === 'salary-calculator/ng') {
+      return {
+        standard: 'Personal Income Tax Act (PITA) Cap P8 LFN 2004 (amended by Finance Acts), Pension Reform Act (PRA) 2014 & NHF Act.',
+        reviewer: 'GetCalcu Nigerian Payroll & Tax Calculation Desk',
+        policy: 'Deterministic in-browser PAYE, CRA, pension, and NHF computation'
       };
     }
     if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
@@ -1567,6 +1579,12 @@ async function loadLocalizedTools() {
     localized['salary-calculator/ke'] = keModule.kenyaSalaryCalculator;
   } catch (err) {
     console.error('Failed to load Kenyan tax module in build-seo.js:', err);
+  }
+  try {
+    const ngModule = await import('./js/modules/tax-nigeria.js');
+    localized['salary-calculator/ng'] = ngModule.nigeriaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load Nigerian tax module in build-seo.js:', err);
   }
   return localized;
 }
