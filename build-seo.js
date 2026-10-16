@@ -228,7 +228,8 @@ function buildHreflangTags(slug) {
     return `
     <link rel="alternate" hreflang="x-default" href="${BASE_URL}/tool/salary-calculator">
     <link rel="alternate" hreflang="en-US" href="${BASE_URL}/tool/salary-calculator">
-    <link rel="alternate" hreflang="en-ET" href="${BASE_URL}/tool/salary-calculator/et">`;
+    <link rel="alternate" hreflang="en-ET" href="${BASE_URL}/tool/salary-calculator/et">
+    <link rel="alternate" hreflang="en-KE" href="${BASE_URL}/tool/salary-calculator/ke">`;
   }
   return '';
 }
@@ -237,15 +238,20 @@ function renderCountrySwitcher(slug, currentCountry = 'us') {
   const baseSlug = slug.split('/')[0];
   if (baseSlug === 'salary-calculator') {
     const isET = currentCountry === 'et' || slug === 'salary-calculator/et';
+    const isKE = currentCountry === 'ke' || slug === 'salary-calculator/ke';
+    const isUS = !isET && !isKE;
     return `
       <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
         <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
         <div class="country-switcher-options">
-          <a href="/tool/salary-calculator" class="country-pill ${!isET ? 'active' : ''}">
+          <a href="/tool/salary-calculator" class="country-pill ${isUS ? 'active' : ''}">
             <span class="country-flag">🇺🇸</span> <span>United States</span>
           </a>
           <a href="/tool/salary-calculator/et" class="country-pill ${isET ? 'active' : ''}">
             <span class="country-flag">🇪🇹</span> <span>Ethiopia (ETB)</span>
+          </a>
+          <a href="/tool/salary-calculator/ke" class="country-pill ${isKE ? 'active' : ''}">
+            <span class="country-flag">🇰🇪</span> <span>Kenya (KES)</span>
           </a>
         </div>
       </div>`;
@@ -393,6 +399,13 @@ function getToolTrustInfo(tool, slug) {
         standard: 'Federal Income Tax Proclamation No. 979/2016 (Schedule A) & Pension Proclamation No. 715/2011 statutory pension framework.',
         reviewer: 'GetCalcu Ethiopian Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser Schedule A tax and pension computation'
+      };
+    }
+    if (slug === 'salary-calculator/ke') {
+      return {
+        standard: 'Kenya Revenue Authority (KRA) Income Tax Act (Cap. 470), Finance Act, NSSF Act 2013, SHIF Act 2023 & Affordable Housing Act 2024.',
+        reviewer: 'GetCalcu Kenyan Payroll & Tax Calculation Desk',
+        policy: 'Deterministic in-browser PAYE, NSSF, SHIF, and Housing Levy computation'
       };
     }
     if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
@@ -981,7 +994,7 @@ const toolPageTemplate = (tool, allTools = {}) => {
     <meta name="description" content="${desc}">
     <link rel="canonical" href="${canonical}">
     ${buildHreflangTags(tool.slug)}
-    ${(tool.country === 'et' || tool.slug === 'salary-calculator/et') ? `<script>window.__GETCALCU_COUNTRY__ = 'et'; window.__ACTIVE_CURRENCY__ = 'ETB'; window.__ACTIVE_CURRENCY_SYMBOL__ = 'Br';</script>` : ''}
+    ${(tool.country && tool.currency) ? `<script>window.__GETCALCU_COUNTRY__ = '${tool.country}'; window.__ACTIVE_CURRENCY__ = '${tool.currency}'; window.__ACTIVE_CURRENCY_SYMBOL__ = '${tool.currencySymbol || tool.currency}';</script>` : ''}
     <meta name="robots" content="index, follow">
     ${tool.keywords && tool.keywords.length ? `<meta name="keywords" content="${escapeHtml(tool.keywords.join(', '))}">` : ''}
 
@@ -1542,15 +1555,20 @@ const categoryPageTemplate = (cat, catTools) => {
 
 // ── 6. Main Build Runner ─────────────────────────────────────────────
 async function loadLocalizedTools() {
+  const localized = {};
   try {
-    const taxModule = await import('./js/modules/tax-ethiopia.js');
-    return {
-      'salary-calculator/et': taxModule.ethiopiaSalaryCalculator
-    };
+    const etModule = await import('./js/modules/tax-ethiopia.js');
+    localized['salary-calculator/et'] = etModule.ethiopiaSalaryCalculator;
   } catch (err) {
-    console.error('Failed to load localized tools in build-seo.js:', err);
-    return {};
+    console.error('Failed to load Ethiopian tax module in build-seo.js:', err);
   }
+  try {
+    const keModule = await import('./js/modules/tax-kenya.js');
+    localized['salary-calculator/ke'] = keModule.kenyaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load Kenyan tax module in build-seo.js:', err);
+  }
+  return localized;
 }
 
 async function build() {

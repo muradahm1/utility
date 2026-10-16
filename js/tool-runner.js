@@ -87,6 +87,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
             console.error('Failed to load Ethiopian tax module:', err);
         }
+    } else if (slug === 'salary-calculator' && country === 'ke') {
+        window.__ACTIVE_CURRENCY__ = 'KES';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = 'KSh';
+        try {
+            const taxModule = await import('./modules/tax-kenya.js');
+            tool = taxModule.kenyaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load Kenyan tax module:', err);
+        }
     }
 
     if (!tool) {
@@ -274,15 +283,20 @@ function initLegacyRunner(tool, slug, container, country = null) {
         const baseSlug = (tool.baseSlug || slug).split('/')[0];
         if (baseSlug === 'salary-calculator') {
             const isET = country === 'et' || slug === 'salary-calculator/et' || (tool.country === 'et');
+            const isKE = country === 'ke' || slug === 'salary-calculator/ke' || (tool.country === 'ke');
+            const isUS = !isET && !isKE;
             return `
                 <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
                     <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
                     <div class="country-switcher-options">
-                        <a href="/tool/salary-calculator" class="country-pill ${!isET ? 'active' : ''}">
+                        <a href="/tool/salary-calculator" class="country-pill ${isUS ? 'active' : ''}">
                             <span class="country-flag">🇺🇸</span> <span>United States</span>
                         </a>
                         <a href="/tool/salary-calculator/et" class="country-pill ${isET ? 'active' : ''}">
                             <span class="country-flag">🇪🇹</span> <span>Ethiopia (ETB)</span>
+                        </a>
+                        <a href="/tool/salary-calculator/ke" class="country-pill ${isKE ? 'active' : ''}">
+                            <span class="country-flag">🇰🇪</span> <span>Kenya (KES)</span>
                         </a>
                     </div>
                 </div>`;
