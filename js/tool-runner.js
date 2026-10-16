@@ -105,6 +105,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (err) {
             console.error('Failed to load Nigerian tax module:', err);
         }
+    } else if (slug === 'salary-calculator' && country === 'za') {
+        window.__ACTIVE_CURRENCY__ = 'ZAR';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = 'R';
+        try {
+            const taxModule = await import('./modules/tax-south-africa.js');
+            tool = taxModule.southAfricaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load South African tax module:', err);
+        }
     }
 
     if (!tool) {
@@ -294,7 +303,8 @@ function initLegacyRunner(tool, slug, container, country = null) {
             const isET = country === 'et' || slug === 'salary-calculator/et' || (tool.country === 'et');
             const isKE = country === 'ke' || slug === 'salary-calculator/ke' || (tool.country === 'ke');
             const isNG = country === 'ng' || slug === 'salary-calculator/ng' || (tool.country === 'ng');
-            const isUS = !isET && !isKE && !isNG;
+            const isZA = country === 'za' || slug === 'salary-calculator/za' || (tool.country === 'za');
+            const isUS = !isET && !isKE && !isNG && !isZA;
             return `
                 <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
                     <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
@@ -310,6 +320,9 @@ function initLegacyRunner(tool, slug, container, country = null) {
                         </a>
                         <a href="/tool/salary-calculator/ng" class="country-pill ${isNG ? 'active' : ''}">
                             <span class="country-flag">🇳🇬</span> <span>Nigeria (NGN)</span>
+                        </a>
+                        <a href="/tool/salary-calculator/za" class="country-pill ${isZA ? 'active' : ''}">
+                            <span class="country-flag">🇿🇦</span> <span>South Africa (ZAR)</span>
                         </a>
                     </div>
                 </div>`;

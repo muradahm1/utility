@@ -20,6 +20,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
         expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ZA" href="https://www.getcalcu.com/tool/salary-calculator/za">');
         
         // Active jurisdiction pill
         expect(content).toContain('country-switcher-bar');
@@ -47,6 +48,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
         expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ZA" href="https://www.getcalcu.com/tool/salary-calculator/za">');
         
         // Active jurisdiction pill
         expect(content).toContain('country-switcher-bar');
@@ -74,6 +76,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
         expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ZA" href="https://www.getcalcu.com/tool/salary-calculator/za">');
         
         // Active jurisdiction pill
         expect(content).toContain('country-switcher-bar');
@@ -84,6 +87,34 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('"priceCurrency":"NGN"');
         expect(content).toContain('"name":"Nigeria Salary & PAYE Tax Calculator"');
         expect(content).toContain('Personal Income Tax Act (PITA)');
+    });
+
+    it('generates static localized page for /tool/salary-calculator/za', () => {
+        const zaPath = resolve(root, 'tool/salary-calculator/za/index.html');
+        expect(existsSync(zaPath), 'South African salary calculator page should exist').toBe(true);
+        
+        const content = readFileSync(zaPath, 'utf-8');
+        
+        // Self-referencing canonical
+        expect(content).toContain('<link rel="canonical" href="https://www.getcalcu.com/tool/salary-calculator/za">');
+        
+        // Reciprocal hreflang tags
+        expect(content).toContain('<link rel="alternate" hreflang="x-default" href="https://www.getcalcu.com/tool/salary-calculator">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-US" href="https://www.getcalcu.com/tool/salary-calculator">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ZA" href="https://www.getcalcu.com/tool/salary-calculator/za">');
+        
+        // Active jurisdiction pill
+        expect(content).toContain('country-switcher-bar');
+        expect(content).toContain('class="country-pill active">');
+        expect(content).toContain('South Africa (ZAR)');
+        
+        // Structured data with ZAR currency
+        expect(content).toContain('"priceCurrency":"ZAR"');
+        expect(content).toContain('"name":"South Africa Salary & PAYE Tax Calculator"');
+        expect(content).toContain('Income Tax Act No. 58 of 1962');
     });
 
     it('includes reciprocal hreflang and country switcher on US /tool/salary-calculator', () => {
@@ -101,12 +132,14 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(content).toContain('<link rel="alternate" hreflang="en-ET" href="https://www.getcalcu.com/tool/salary-calculator/et">');
         expect(content).toContain('<link rel="alternate" hreflang="en-KE" href="https://www.getcalcu.com/tool/salary-calculator/ke">');
         expect(content).toContain('<link rel="alternate" hreflang="en-NG" href="https://www.getcalcu.com/tool/salary-calculator/ng">');
+        expect(content).toContain('<link rel="alternate" hreflang="en-ZA" href="https://www.getcalcu.com/tool/salary-calculator/za">');
         
         // Country switcher with links to localized variants
         expect(content).toContain('country-switcher-bar');
         expect(content).toContain('href="/tool/salary-calculator/et"');
         expect(content).toContain('href="/tool/salary-calculator/ke"');
         expect(content).toContain('href="/tool/salary-calculator/ng"');
+        expect(content).toContain('href="/tool/salary-calculator/za"');
     });
 
     it('indexes localized calculators in sitemap.xml', () => {
@@ -117,6 +150,7 @@ describe('Localized Tool & International SEO Architecture', () => {
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/et</loc>');
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/ke</loc>');
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/ng</loc>');
+        expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator/za</loc>');
         expect(sitemap).toContain('<loc>https://www.getcalcu.com/tool/salary-calculator</loc>');
     });
 

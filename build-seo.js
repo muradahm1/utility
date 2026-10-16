@@ -230,7 +230,8 @@ function buildHreflangTags(slug) {
     <link rel="alternate" hreflang="en-US" href="${BASE_URL}/tool/salary-calculator">
     <link rel="alternate" hreflang="en-ET" href="${BASE_URL}/tool/salary-calculator/et">
     <link rel="alternate" hreflang="en-KE" href="${BASE_URL}/tool/salary-calculator/ke">
-    <link rel="alternate" hreflang="en-NG" href="${BASE_URL}/tool/salary-calculator/ng">`;
+    <link rel="alternate" hreflang="en-NG" href="${BASE_URL}/tool/salary-calculator/ng">
+    <link rel="alternate" hreflang="en-ZA" href="${BASE_URL}/tool/salary-calculator/za">`;
   }
   return '';
 }
@@ -241,7 +242,8 @@ function renderCountrySwitcher(slug, currentCountry = 'us') {
     const isET = currentCountry === 'et' || slug === 'salary-calculator/et';
     const isKE = currentCountry === 'ke' || slug === 'salary-calculator/ke';
     const isNG = currentCountry === 'ng' || slug === 'salary-calculator/ng';
-    const isUS = !isET && !isKE && !isNG;
+    const isZA = currentCountry === 'za' || slug === 'salary-calculator/za';
+    const isUS = !isET && !isKE && !isNG && !isZA;
     return `
       <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
         <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
@@ -257,6 +259,9 @@ function renderCountrySwitcher(slug, currentCountry = 'us') {
           </a>
           <a href="/tool/salary-calculator/ng" class="country-pill ${isNG ? 'active' : ''}">
             <span class="country-flag">🇳🇬</span> <span>Nigeria (NGN)</span>
+          </a>
+          <a href="/tool/salary-calculator/za" class="country-pill ${isZA ? 'active' : ''}">
+            <span class="country-flag">🇿🇦</span> <span>South Africa (ZAR)</span>
           </a>
         </div>
       </div>`;
@@ -418,6 +423,13 @@ function getToolTrustInfo(tool, slug) {
         standard: 'Personal Income Tax Act (PITA) Cap P8 LFN 2004 (amended by Finance Acts), Pension Reform Act (PRA) 2014 & NHF Act.',
         reviewer: 'GetCalcu Nigerian Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser PAYE, CRA, pension, and NHF computation'
+      };
+    }
+    if (slug === 'salary-calculator/za') {
+      return {
+        standard: 'South African Revenue Service (SARS) Income Tax Act No. 58 of 1962 & Unemployment Insurance Contributions Act No. 4 of 2002.',
+        reviewer: 'GetCalcu South African Payroll & Tax Calculation Desk',
+        policy: 'Deterministic in-browser SARS PAYE, UIF, Section 11F, and Section 6 rebate computation'
       };
     }
     if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
@@ -1585,6 +1597,12 @@ async function loadLocalizedTools() {
     localized['salary-calculator/ng'] = ngModule.nigeriaSalaryCalculator;
   } catch (err) {
     console.error('Failed to load Nigerian tax module in build-seo.js:', err);
+  }
+  try {
+    const zaModule = await import('./js/modules/tax-south-africa.js');
+    localized['salary-calculator/za'] = zaModule.southAfricaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load South African tax module in build-seo.js:', err);
   }
   return localized;
 }
