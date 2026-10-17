@@ -31,7 +31,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"1099 Self-Employment Tax Calculator","item":"https://www.getcalcu.com/tool/self-employment-tax-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does self-employment tax apply at a 15.3% rate?","acceptedAnswer":{"@type":"Answer","text":"W-2 employees share FICA liabilities equally with employers (7.65% each). Self-employed individuals represent both enterprise and employee, requiring remittance of both halves under SECA statutory guidelines."}},{"@type":"Question","name":"What criteria govern IRS Safe Harbor underpayment rules?","acceptedAnswer":{"@type":"Answer","text":"To avoid underpayment penalties, taxpayers must remit at least 90% of current year liabilities or 100% of prior year tax (110% if prior year Adjusted Gross Income exceeded $150,000)."}},{"@type":"Question","name":"How do ordinary business expenses decrease tax liabilities?","acceptedAnswer":{"@type":"Answer","text":"Self-employment and income taxes apply solely to net profit (gross revenue minus allowable ordinary business expenses). Each legitimate deduction directly reduces the taxable base."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the 1099 Self-Employment Tax Calculator","description":"Calculate federal self-employment tax (SECA), effective tax brackets, and quarterly estimated IRS 1040-ES payments for independent contractors and sole proprietors.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter projected annual gross 1099 revenue and client billings."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Specify qualified deductible operating expenses to determine Schedule C net profit."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Select applicable IRS tax filing status and individual state income tax rate."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Input concurrent W-2 compensation to calibrate Social Security statutory wage base limits."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Review total tax allocation percentages and exact quarterly installment obligations."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Self-Employment Tax (SECA) & Estimated Tax Compliance","description":"Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"1099 Self-Employment Tax Calculator","url":"https://www.getcalcu.com/tool/self-employment-tax-calculator","dateModified":"2026-10-16"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Self-Employment Tax (SECA) & Estimated Tax Compliance","description":"Unlike W-2 wage earners with automatic payroll withholding, independent contractors and single-member business owners are subject to quarterly estimated tax requirements under Internal Revenue Code Section 1401.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"1099 Self-Employment Tax Calculator","url":"https://www.getcalcu.com/tool/self-employment-tax-calculator","dateModified":"2026-10-17"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -207,14 +207,26 @@
             <input type="number" id="other_w2_income" data-id="other_w2_income" value="0" inputmode="decimal">
           </div>
         
+          <div class="form-group" data-field="tax_year">
+            <label for="tax_year">Tax Year</label>
+            <span class="field-hint">IRS statutory tax year parameters.</span>
+            <select id="tax_year" data-id="tax_year">
+          <option value="2026" selected>2026 (Active — $184,500 SS Wage Base, $16,100 Std Ded)</option>
+        
+          <option value="2025" >2025 (Historical — $176,100 SS Wage Base, $15,000 Std Ded)</option>
+        
+          <option value="2024" >2024 (Historical — $168,600 SS Wage Base, $14,600 Std Ded)</option>
+        </select>
+          </div>
+        
         </div>
         <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
           
       <div class="insight-banner insight-banner--info">
         <i class="fa-solid fa-file-invoice-dollar"></i>
         <div class="insight-content">
-          <h4>Allocate 22.6% ($4,807.97 quarterly) for tax liability.</h4>
-          <p>Self-employed professionals remit both employer and employee portions of Social Security and Medicare (15.3% SECA). Reserving 22.6% of each invoice into an earmarked liquid account ensures full compliance across IRS quarterly deadlines.</p>
+          <h4>Allocate 22% ($4,684.60 quarterly) for tax liability.</h4>
+          <p>Self-employed professionals remit both employer and employee portions of Social Security and Medicare (15.3% SECA). Reserving 22% of each invoice into an earmarked liquid account ensures full compliance across IRS quarterly deadlines.</p>
         </div>
       </div>
     
@@ -223,17 +235,17 @@
         
           <div class="stat-card stat-card--highlight ">
             <span class="stat-label">Save From Every Check</span>
-            <span class="stat-value">Save 22.6% of Gross</span>
+            <span class="stat-value">Save 22% of Gross</span>
           </div>
         
           <div class="stat-card stat-card--highlight ">
             <span class="stat-label">Quarterly Estimated Payment</span>
-            <span class="stat-value">$4,807.97</span>
+            <span class="stat-value">$4,684.60</span>
           </div>
         
           <div class="stat-card stat-card--highlight ">
             <span class="stat-label">Total Estimated Annual Tax</span>
-            <span class="stat-value">$19,231.89</span>
+            <span class="stat-value">$18,738.39</span>
           </div>
         
           <div class="stat-card  ">
@@ -243,17 +255,17 @@
         
           <div class="stat-card  ">
             <span class="stat-label">Federal Income Tax</span>
-            <span class="stat-value">$6,539.40</span>
+            <span class="stat-value">$6,095.40</span>
           </div>
         
           <div class="stat-card  ">
             <span class="stat-label">State Income Tax</span>
-            <span class="stat-value">$2,377.92</span>
+            <span class="stat-value">$2,328.42</span>
           </div>
         
           <div class="stat-card  ">
             <span class="stat-label">Net Take-Home Cash in Pocket</span>
-            <span class="stat-value">$53,768.11</span>
+            <span class="stat-value">$54,261.61</span>
           </div>
         
           <div class="stat-card  ">

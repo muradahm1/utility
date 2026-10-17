@@ -2,12 +2,15 @@
  * Kenyan Employment Tax & Salary Calculation Engine
  *
  * Implements:
- * - KRA PAYE (Pay As You Earn) progressive brackets: Kenya Finance Act
+ * - KRA PAYE (Pay As You Earn) progressive brackets: Kenya Income Tax Act (Cap. 470)
  * - Statutory Personal Relief: KSh 2,400/month (KSh 28,800/year)
- * - NSSF (National Social Security Fund Act 2013): Tier I & Tier II capped contributions
- * - SHIF (Social Health Insurance Fund): 2.75% of gross income (min KSh 300)
+ * - NSSF (National Social Security Fund Act 2013, Third Schedule):
+ *   - Year 4 (Active Feb 2026 – Jan 2027): Tier I KSh 9,000 (cap KSh 540), Tier II KSh 108,000 (cap KSh 5,940), Total cap KSh 6,480
+ *   - Year 3 (Historical Feb 2025 – Jan 2026): Tier I KSh 8,000 (cap KSh 480), Tier II KSh 72,000 (cap KSh 3,840), Total cap KSh 4,320
+ *   - Year 2 (Historical Feb 2024 – Jan 2025): Tier I KSh 7,000 (cap KSh 420), Tier II KSh 36,000 (cap KSh 1,740), Total cap KSh 2,160
+ * - SHIF (Social Health Insurance Act 2023): 2.75% of gross income (minimum KSh 300)
  * - Affordable Housing Levy (Affordable Housing Act 2024): 1.5% of gross income
- * - Insurance Relief (15% of SHIF) & Housing Relief (15% of AHL)
+ * - Tax Laws (Amendment) Act 2024 Statutory Sequence: NSSF, SHIF, and Housing Levy are allowable pre-tax deductions against gross employment income to arrive at Taxable Pay before PAYE bands are applied.
  *
  * Pure financial computation engine. Zero DOM side effects.
  *
@@ -27,48 +30,85 @@ export const KENYA_TAX_BRACKETS = [
     { min: 800000, max: Infinity, rate: 0.35, label: 'Above KSh 800,000 (35%)' }
 ];
 
+/**
+ * Multi-year NSSF statutory schedules under NSSF Act 2013 Third Schedule
+ */
+export const KENYA_NSSF_SCHEDULES = {
+    year4: {
+        id: 'year4',
+        name: 'Year 4 (Effective Feb 2026 – Active)',
+        tierILimit: 9000,
+        tierIILimit: 108000,
+        rate: 0.06,
+        maxTierI: 540,
+        maxTierII: 5940,
+        maxTotal: 6480
+    },
+    year3: {
+        id: 'year3',
+        name: 'Year 3 (Feb 2025 – Jan 2026)',
+        tierILimit: 8000,
+        tierIILimit: 72000,
+        rate: 0.06,
+        maxTierI: 480,
+        maxTierII: 3840,
+        maxTotal: 4320
+    },
+    year2: {
+        id: 'year2',
+        name: 'Year 2 (Feb 2024 – Jan 2025)',
+        tierILimit: 7000,
+        tierIILimit: 36000,
+        rate: 0.06,
+        maxTierI: 420,
+        maxTierII: 1740,
+        maxTotal: 2160
+    }
+};
+
 export const KENYA_STATUTORY_RATES = {
     PERSONAL_RELIEF_MONTHLY: 2400,
     PERSONAL_RELIEF_ANNUAL: 28800,
-    NSSF_TIER_I_LIMIT: 7000,
-    NSSF_TIER_II_LIMIT: 36000,
-    NSSF_RATE: 0.06,
-    MAX_EMPLOYEE_NSSF: 2160,
     SHIF_RATE: 0.0275,
     SHIF_MINIMUM: 300,
     HOUSING_LEVY_RATE: 0.015,
     INSURANCE_RELIEF_RATE: 0.15,
     INSURANCE_RELIEF_CAP: 5000,
     HOUSING_RELIEF_RATE: 0.15,
-    HOUSING_RELIEF_CAP: 9000
+    HOUSING_RELIEF_CAP: 9000,
+    PENSION_DEDUCTION_CAP: 20000,
+    // Active default NSSF rates (Year 4)
+    NSSF_TIER_I_LIMIT: KENYA_NSSF_SCHEDULES.year4.tierILimit,
+    NSSF_TIER_II_LIMIT: KENYA_NSSF_SCHEDULES.year4.tierIILimit,
+    NSSF_RATE: KENYA_NSSF_SCHEDULES.year4.rate,
+    MAX_EMPLOYEE_NSSF: KENYA_NSSF_SCHEDULES.year4.maxTotal
 };
 
 /**
  * Calculate mandatory monthly NSSF contribution (Tier I & Tier II)
- * Under NSSF Act 2013, employee contributes 6% of pensionable earnings.
- * Tier I: 6% of earnings up to KSh 7,000 (max KSh 420)
- * Tier II: 6% of earnings between KSh 7,001 and KSh 36,000 (max KSh 1,740)
- * Maximum combined employee contribution = KSh 2,160/month
  *
  * @param {number} pensionableEarnings - Monthly pensionable earnings (Basic Salary)
- * @returns {Object} { tierI, tierII, totalEmployeeNssf, totalEmployerNssf }
+ * @param {string} [scheduleKey='year4'] - NSSF schedule ('year4', 'year3', or 'year2')
+ * @returns {Object} { tierI, tierII, totalEmployeeNssf, totalEmployerNssf, schedule }
  */
-export function calculateKenyaNSSF(pensionableEarnings) {
+export function calculateKenyaNSSF(pensionableEarnings, scheduleKey = 'year4') {
     const gross = Math.max(0, Number(pensionableEarnings) || 0);
+    const sched = KENYA_NSSF_SCHEDULES[scheduleKey] || KENYA_NSSF_SCHEDULES.year4;
+
     if (gross <= 0) {
-        return { tierI: 0, tierII: 0, totalEmployeeNssf: 0, totalEmployerNssf: 0 };
+        return { tierI: 0, tierII: 0, totalEmployeeNssf: 0, totalEmployerNssf: 0, schedule: sched.name };
     }
 
-    const tierIEarnings = Math.min(gross, KENYA_STATUTORY_RATES.NSSF_TIER_I_LIMIT);
-    const tierI = roundTo(tierIEarnings * KENYA_STATUTORY_RATES.NSSF_RATE, 2);
+    const tierIEarnings = Math.min(gross, sched.tierILimit);
+    const tierI = roundTo(tierIEarnings * sched.rate, 2);
 
     let tierII = 0;
-    if (gross > KENYA_STATUTORY_RATES.NSSF_TIER_I_LIMIT) {
+    if (gross > sched.tierILimit) {
         const tierIIEarnings = Math.min(
-            gross - KENYA_STATUTORY_RATES.NSSF_TIER_I_LIMIT,
-            KENYA_STATUTORY_RATES.NSSF_TIER_II_LIMIT - KENYA_STATUTORY_RATES.NSSF_TIER_I_LIMIT
+            gross - sched.tierILimit,
+            sched.tierIILimit - sched.tierILimit
         );
-        tierII = roundTo(tierIIEarnings * KENYA_STATUTORY_RATES.NSSF_RATE, 2);
+        tierII = roundTo(tierIIEarnings * sched.rate, 2);
     }
 
     const totalEmployeeNssf = roundTo(tierI + tierII, 2);
@@ -78,13 +118,14 @@ export function calculateKenyaNSSF(pensionableEarnings) {
         tierI,
         tierII,
         totalEmployeeNssf,
-        totalEmployerNssf
+        totalEmployerNssf,
+        schedule: sched.name
     };
 }
 
 /**
  * Calculate SHIF (Social Health Insurance Fund) contribution
- * Replaced NHIF: statutory 2.75% of gross monthly salary (minimum KSh 300)
+ * 2.75% of gross monthly salary (minimum KSh 300)
  *
  * @param {number} grossSalary - Monthly gross salary
  * @returns {number} Monthly SHIF contribution in KES
@@ -113,7 +154,7 @@ export function calculateKenyaHousingLevy(grossSalary) {
 
 /**
  * Calculate Gross PAYE before tax reliefs
- * Uses progressive brackets on Taxable Pay (Gross minus allowable NSSF/pension)
+ * Uses progressive brackets on Taxable Pay
  *
  * @param {number} taxablePay - Taxable pay in KES
  * @returns {Object} { grossPaye, breakdown }
@@ -123,7 +164,6 @@ export function calculateKenyaGrossPAYE(taxablePay) {
     let grossPaye = 0;
     const breakdown = [];
 
-    let previousMax = 0;
     for (const bracket of KENYA_TAX_BRACKETS) {
         if (pay > bracket.min) {
             const sliceMax = bracket.max === Infinity ? pay : Math.min(pay, bracket.max);
@@ -137,7 +177,6 @@ export function calculateKenyaGrossPAYE(taxablePay) {
                 taxableInBracket,
                 taxPaid: taxInBracket
             });
-            previousMax = bracket.max;
         } else {
             break;
         }
@@ -155,9 +194,11 @@ export function calculateKenyaGrossPAYE(taxablePay) {
  * @param {Object} inputs
  * @param {number} inputs.basicSalary - Monthly basic salary in KES
  * @param {number} [inputs.taxableAllowance=0] - Additional taxable cash allowances
- * @param {number} [inputs.nonTaxableAllowance=0] - Statutory exempt allowances (valid per diem, medical)
- * @param {number} [inputs.voluntaryPension=0] - Voluntary pension fund contributions (tax-deductible up to KSh 20,000/mo)
- * @param {number} [inputs.voluntaryDeductions=0] - Other deductions (SACCO, bank loan repayment)
+ * @param {number} [inputs.nonTaxableAllowance=0] - Statutory exempt allowances
+ * @param {number} [inputs.voluntaryPension=0] - Voluntary pension contributions (tax-deductible up to KSh 20,000/mo)
+ * @param {number} [inputs.voluntaryDeductions=0] - Other deductions (SACCO, bank loan)
+ * @param {string} [inputs.nssfSchedule='year4'] - NSSF schedule ('year4', 'year3', or 'year2')
+ * @param {string} [inputs.framework='2025_2026'] - Legal framework: '2025_2026' (Tax Laws Amendment Act 2024: NSSF, SHIF, AHL allowable pre-tax deductions) or '2024_PRE_AMENDMENT' (historical reliefs)
  * @returns {Object} Comprehensive calculation breakdown
  */
 export function calculateKenyaSalary(inputs = {}) {
@@ -166,55 +207,75 @@ export function calculateKenyaSalary(inputs = {}) {
     const nonTaxableAllowance = Math.max(0, Number(inputs.nonTaxableAllowance) || 0);
     const voluntaryPension = Math.max(0, Number(inputs.voluntaryPension) || 0);
     const voluntaryDeductions = Math.max(0, Number(inputs.voluntaryDeductions) || 0);
+    const nssfSchedule = inputs.nssfSchedule || 'year4';
+    const isPreAmendment2024 = inputs.framework === '2024_PRE_AMENDMENT';
 
     // 1. Gross Earnings
     const grossSalary = roundTo(basicSalary + taxableAllowance + nonTaxableAllowance, 2);
+    const totalTaxableEarnings = roundTo(basicSalary + taxableAllowance, 2);
 
     // 2. Statutory NSSF (calculated on pensionable earnings: basic salary)
-    const nssf = calculateKenyaNSSF(basicSalary);
+    const nssf = calculateKenyaNSSF(basicSalary, nssfSchedule);
     const employeeNssf = nssf.totalEmployeeNssf;
     const employerNssf = nssf.totalEmployerNssf;
 
-    // 3. Tax Allowable Deductions: NSSF + Voluntary Pension (capped at KSh 20,000/mo combined)
-    const allowablePensionDeduction = Math.min(20000, roundTo(employeeNssf + voluntaryPension, 2));
+    // 3. Tax Allowable Pension Deductions (capped at KSh 20,000/mo combined)
+    const allowablePensionDeduction = Math.min(
+        KENYA_STATUTORY_RATES.PENSION_DEDUCTION_CAP,
+        roundTo(employeeNssf + voluntaryPension, 2)
+    );
 
-    // 4. Taxable Pay = Basic + Taxable Allowances - Allowable Pension Deductions
-    const totalTaxableEarnings = roundTo(basicSalary + taxableAllowance, 2);
-    const taxablePay = Math.max(0, roundTo(totalTaxableEarnings - allowablePensionDeduction, 2));
+    // 4. Statutory Health (SHIF) & Affordable Housing Levy (AHL)
+    const shif = calculateKenyaSHIF(grossSalary);
+    const { employeeAhl, employerAhl } = calculateKenyaHousingLevy(grossSalary);
+
+    let taxablePay = 0;
+    let personalRelief = KENYA_STATUTORY_RATES.PERSONAL_RELIEF_MONTHLY;
+    let insuranceRelief = 0;
+    let housingRelief = 0;
+    let totalReliefs = personalRelief;
+
+    if (!isPreAmendment2024) {
+        // Active framework (Tax Laws Amendment Act 2024):
+        // NSSF, SHIF, and Housing Levy are allowable pre-tax deductions reducing taxable employment income.
+        const totalAllowablePreTaxDeductions = roundTo(allowablePensionDeduction + shif + employeeAhl, 2);
+        taxablePay = Math.max(0, roundTo(totalTaxableEarnings - totalAllowablePreTaxDeductions, 2));
+
+        // Personal relief of KSh 2,400 applies against gross PAYE.
+        // SHIF and AHL no longer generate double tax credits since they are deducted pre-tax.
+        totalReliefs = personalRelief;
+    } else {
+        // Historical 2024 pre-amendment framework:
+        // Only allowable pension is deducted pre-tax; SHIF and AHL provide 15% tax reliefs.
+        taxablePay = Math.max(0, roundTo(totalTaxableEarnings - allowablePensionDeduction, 2));
+        insuranceRelief = Math.min(
+            KENYA_STATUTORY_RATES.INSURANCE_RELIEF_CAP,
+            roundTo(shif * KENYA_STATUTORY_RATES.INSURANCE_RELIEF_RATE, 2)
+        );
+        housingRelief = Math.min(
+            KENYA_STATUTORY_RATES.HOUSING_RELIEF_CAP,
+            roundTo(employeeAhl * KENYA_STATUTORY_RATES.HOUSING_RELIEF_RATE, 2)
+        );
+        totalReliefs = roundTo(personalRelief + insuranceRelief + housingRelief, 2);
+    }
 
     // 5. Gross PAYE
     const { grossPaye, breakdown } = calculateKenyaGrossPAYE(taxablePay);
 
-    // 6. Statutory Health (SHIF) & Affordable Housing Levy (AHL)
-    const shif = calculateKenyaSHIF(grossSalary);
-    const { employeeAhl, employerAhl } = calculateKenyaHousingLevy(grossSalary);
-
-    // 7. Tax Reliefs
-    const personalRelief = KENYA_STATUTORY_RATES.PERSONAL_RELIEF_MONTHLY;
-    const insuranceRelief = Math.min(
-        KENYA_STATUTORY_RATES.INSURANCE_RELIEF_CAP,
-        roundTo(shif * KENYA_STATUTORY_RATES.INSURANCE_RELIEF_RATE, 2)
-    );
-    const housingRelief = Math.min(
-        KENYA_STATUTORY_RATES.HOUSING_RELIEF_CAP,
-        roundTo(employeeAhl * KENYA_STATUTORY_RATES.HOUSING_RELIEF_RATE, 2)
-    );
-    const totalReliefs = roundTo(personalRelief + insuranceRelief + housingRelief, 2);
-
-    // 8. Net PAYE (Tax Payable after reliefs, min 0)
+    // 6. Net PAYE (Tax Payable after reliefs, min 0)
     const netPaye = Math.max(0, roundTo(grossPaye - totalReliefs, 2));
 
-    // 9. Total Employee Deductions & Net Salary
+    // 7. Total Employee Deductions & Net Salary
     const totalDeductions = roundTo(
         netPaye + employeeNssf + shif + employeeAhl + voluntaryPension + voluntaryDeductions,
         2
     );
     const netSalary = roundTo(grossSalary - totalDeductions, 2);
 
-    // 10. Employer Total Liability (Cost to Company - CTC)
+    // 8. Employer Total Liability (Cost to Company - CTC)
     const costToEmployer = roundTo(grossSalary + employerNssf + employerAhl, 2);
 
-    // 11. Rates & Percentages
+    // 9. Rates & Percentages
     const effectiveTaxRate = grossSalary > 0 ? roundTo((netPaye / grossSalary) * 100, 2) : 0;
     const totalDeductionRate = grossSalary > 0 ? roundTo((totalDeductions / grossSalary) * 100, 2) : 0;
 
@@ -264,11 +325,16 @@ export function calculateKenyaSalary(inputs = {}) {
         },
         breakdown,
         metadata: {
-            legalFramework: 'Kenya Finance Act & Income Tax Act (Cap. 470)',
-            pensionFramework: 'NSSF Act No. 45 of 2013 (Tier I & Tier II)',
+            nssfSchedule: nssf.schedule,
+            statutorySequence: isPreAmendment2024
+                ? 'Historical Pre-Amendment: Pension pre-tax; SHIF & AHL 15% reliefs'
+                : 'Tax Laws (Amendment) Act 2024: NSSF, SHIF & AHL allowable pre-tax deductions',
+            legalFramework: 'Kenya Income Tax Act (Cap. 470) & Tax Laws (Amendment) Act 2024',
+            pensionFramework: 'NSSF Act No. 45 of 2013 (Third Schedule)',
             healthFramework: 'Social Health Insurance Act (SHIF) 2023',
             housingFramework: 'Affordable Housing Act 2024',
             taxAuthority: 'Kenya Revenue Authority (KRA)',
+            lastVerified: '2026-10-16',
             jurisdiction: 'KE'
         }
     };
@@ -298,16 +364,16 @@ export const kenyaSalaryCalculator = {
     icon: 'fa-wallet',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    description: 'Calculate monthly take-home pay, KRA PAYE tax, NSSF Tier I & II, SHIF health insurance, and Affordable Housing Levy in Kenya.',
-    metaTitle: 'Kenya Salary & PAYE Calculator 2026 | KRA Net Pay, NSSF & SHIF',
-    metaDescription: 'Free Kenya salary calculator — calculate monthly net take-home pay, KRA PAYE tax brackets, NSSF Tier I & II, SHIF (2.75%), and Housing Levy (1.5%). Accurate & instant.',
+    description: 'Calculate monthly take-home pay, KRA PAYE tax, NSSF Tier I & II (Year 4 rate), SHIF (2.75%), and Affordable Housing Levy under the Tax Laws (Amendment) Act 2024 in Kenya.',
+    metaTitle: 'Kenya Salary & PAYE Calculator 2026 | KRA Net Pay, NSSF Year 4 & SHIF',
+    metaDescription: 'Free Kenya salary calculator — calculate monthly net pay, KRA PAYE tax, NSSF Year 4 rates (max KSh 6,480), SHIF (2.75%), and Affordable Housing Levy (1.5%) with pre-tax allowable deductions.',
     keywords: [
         'kenya salary calculator',
         'kra paye calculator',
         'kenya net salary calculator',
         'paye calculator kenya 2026',
         'shif calculator kenya',
-        'nssf tier 1 and tier 2 calculator',
+        'nssf tier 1 and tier 2 calculator year 4',
         'housing levy calculator kenya',
         'nairobi payroll calculator'
     ],
@@ -319,7 +385,8 @@ export const kenyaSalaryCalculator = {
                 taxableAllowance: 0,
                 nonTaxableAllowance: 0,
                 voluntaryPension: 0,
-                voluntaryDeductions: 0
+                voluntaryDeductions: 0,
+                nssfSchedule: 'year4'
             }
         },
         {
@@ -329,7 +396,8 @@ export const kenyaSalaryCalculator = {
                 taxableAllowance: 10000,
                 nonTaxableAllowance: 5000,
                 voluntaryPension: 3000,
-                voluntaryDeductions: 2000
+                voluntaryDeductions: 2000,
+                nssfSchedule: 'year4'
             }
         },
         {
@@ -339,7 +407,8 @@ export const kenyaSalaryCalculator = {
                 taxableAllowance: 50000,
                 nonTaxableAllowance: 15000,
                 voluntaryPension: 10000,
-                voluntaryDeductions: 5000
+                voluntaryDeductions: 5000,
+                nssfSchedule: 'year4'
             }
         }
     ],
@@ -348,10 +417,10 @@ export const kenyaSalaryCalculator = {
             id: 'basicSalary',
             label: 'Monthly Basic Salary (KSh)',
             type: 'number',
-            default: 80000,
+            default: 70000,
             min: 0,
             step: 1000,
-            hint: 'Your contractual monthly base salary in Kenya Shillings (KES).'
+            hint: 'Contractual monthly base salary in Kenya Shillings (KES).'
         },
         {
             id: 'taxableAllowance',
@@ -378,7 +447,7 @@ export const kenyaSalaryCalculator = {
             default: 0,
             min: 0,
             step: 500,
-            hint: 'Tax-deductible registered pension or provident fund contributions (up to KSh 20,000/mo).'
+            hint: 'Tax-deductible registered pension or provident fund contributions (up to KSh 20,000/mo combined).'
         },
         {
             id: 'voluntaryDeductions',
@@ -387,7 +456,19 @@ export const kenyaSalaryCalculator = {
             default: 0,
             min: 0,
             step: 500,
-            hint: 'Personal payroll deductions such as SACCO contributions, staff loans, or insurance.'
+            hint: 'Personal payroll deductions such as SACCO contributions, staff loans, or welfare.'
+        },
+        {
+            id: 'nssfSchedule',
+            label: 'NSSF Contribution Year',
+            type: 'select',
+            default: 'year4',
+            options: [
+                { value: 'year4', label: 'Year 4 (2026/2027: LEL KSh 9k, UEL KSh 108k, Max KSh 6,480)' },
+                { value: 'year3', label: 'Year 3 (2025: LEL KSh 8k, UEL KSh 72k, Max KSh 4,320)' },
+                { value: 'year2', label: 'Year 2 (2024: LEL KSh 7k, UEL KSh 36k, Max KSh 2,160)' }
+            ],
+            hint: 'NSSF Act 2013 Third Schedule progressive implementation years.'
         }
     ],
     calculate(v) {
@@ -396,6 +477,7 @@ export const kenyaSalaryCalculator = {
         const nonTaxableAllowance = Math.max(0, Number(v.nonTaxableAllowance) || 0);
         const voluntaryPension = Math.max(0, Number(v.voluntaryPension) || 0);
         const voluntaryDeductions = Math.max(0, Number(v.voluntaryDeductions) || 0);
+        const nssfSchedule = v.nssfSchedule || 'year4';
 
         if (basicSalary <= 0 && taxableAllowance <= 0) {
             return {
@@ -416,7 +498,8 @@ export const kenyaSalaryCalculator = {
             taxableAllowance,
             nonTaxableAllowance,
             voluntaryPension,
-            voluntaryDeductions
+            voluntaryDeductions,
+            nssfSchedule
         });
 
         const m = res.monthly;
@@ -431,7 +514,8 @@ export const kenyaSalaryCalculator = {
                 { label: 'NSSF Employee Contribution', value: fmtKsh(m.employeeNssf) },
                 { label: 'SHIF (Health 2.75%)', value: fmtKsh(m.shif) },
                 { label: 'Affordable Housing Levy (1.5%)', value: fmtKsh(m.employeeAhl) },
-                { label: 'Total Statutory Reliefs', value: fmtKsh(m.totalReliefs) },
+                { label: 'Statutory Personal Relief', value: fmtKsh(m.totalReliefs) },
+                { label: 'Taxable Employment Pay', value: fmtKsh(m.taxablePay) },
                 { label: 'Gross Monthly Earnings', value: fmtKsh(m.grossSalary) },
                 { label: 'Employer Total Cost (CTC)', value: fmtKsh(m.costToEmployer) },
                 { label: 'Effective PAYE Tax Rate', value: pctStr(res.rates.effectiveTaxRate), warn: res.rates.effectiveTaxRate > 25 }
@@ -458,91 +542,91 @@ export const kenyaSalaryCalculator = {
         };
     },
     methodology: {
-        standards: 'Kenya Revenue Authority (KRA) Income Tax Act (Cap. 470), Finance Act, NSSF Act 2013, SHIF Act 2023 & Affordable Housing Act 2024.',
+        standards: 'Kenya Revenue Authority (KRA) Income Tax Act (Cap. 470), Finance Act, Tax Laws (Amendment) Act 2024, NSSF Act 2013 (Third Schedule), SHIF Act 2023 & Affordable Housing Act 2024.',
         sources: [
-            'Kenya Revenue Authority (KRA) PAYE Regulations',
-            'National Social Security Fund (NSSF Act 2013)',
-            'Social Health Authority (SHIF Guidelines)',
-            'Affordable Housing Act 2024'
+            'Kenya Revenue Authority (KRA) PAYE Regulations & Guidelines',
+            'National Social Security Fund (NSSF Act 2013 Third Schedule)',
+            'Social Health Authority (SHIF Guidelines & Contribution Schedule)',
+            'Affordable Housing Act 2024 & Tax Laws (Amendment) Act 2024'
         ],
         lastReviewed: 'October 2026',
         assumptions: [
-            'Employee receives standard personal relief of KSh 2,400 per month.',
-            'NSSF Tier I and Tier II contributions are deducted from gross earnings before calculating taxable pay.',
-            'SHIF (2.75%) qualifies for 15% Insurance Relief; Affordable Housing Levy (1.5%) qualifies for 15% Housing Relief.'
+            'Employee receives standard statutory personal relief of KSh 2,400 per month (KSh 28,800 per year).',
+            'Under the Tax Laws (Amendment) Act 2024, NSSF, SHIF (2.75%), and the Affordable Housing Levy (1.5%) are allowable pre-tax deductions that reduce gross earnings to calculate Taxable Pay before progressive PAYE bands are applied.',
+            'NSSF contributions default to Year 4 rates under the NSSF Act 2013 Third Schedule (Tier I cap KSh 540 on 9,000; Tier II cap KSh 5,940 on 108,000; combined maximum KSh 6,480/month).'
         ]
     },
     article: {
-        heading: 'Complete Guide to Kenya PAYE, NSSF, SHIF, and Housing Levy Deductions',
-        intro: 'In Kenya, payroll calculations are governed by the Income Tax Act (Cap. 470) administered by the Kenya Revenue Authority (KRA), alongside statutory contributions under the NSSF Act 2013, the Social Health Insurance Act (SHIF) 2023, and the Affordable Housing Act 2024. This comprehensive guide explains how gross earnings are converted into net take-home pay, how tax relief offsets liability, and what employers must contribute.',
+        heading: 'Complete Guide to Kenya PAYE, NSSF Year 4, SHIF, and Housing Levy Deductions',
+        intro: 'In Kenya, payroll calculations are governed by the Income Tax Act (Cap. 470) administered by the Kenya Revenue Authority (KRA), alongside statutory contributions under the NSSF Act 2013, the Social Health Insurance Act (SHIF) 2023, and the Affordable Housing Act 2024 as amended by the Tax Laws (Amendment) Act 2024. This guide explains how gross earnings are converted into net take-home pay under the latest statutory sequence.',
         sections: [
             {
-                heading: 'KRA PAYE Tax Brackets (Finance Act)',
-                body: 'Kenya utilizes a progressive individual income tax schedule. Monthly taxable pay up to KSh 24,000 is taxed at 10%. The next KSh 8,333 (between KSh 24,001 and KSh 32,333) is taxed at 25%. Earnings between KSh 32,334 and KSh 500,000 are taxed at 30%, while earnings between KSh 500,001 and KSh 800,000 attract a 32.5% rate. Any taxable income exceeding KSh 800,000 per month is taxed at the top marginal rate of 35%.'
+                heading: 'KRA PAYE Tax Brackets & Allowable Deductions Sequence',
+                body: 'Under the Tax Laws (Amendment) Act 2024, statutory contributions to NSSF, SHIF (2.75%), and the Affordable Housing Levy (1.5%) are classified as allowable deductions from gross taxable income before applying progressive PAYE bands. The progressive bands apply to the resulting Taxable Pay: first KSh 24,000 at 10%; next KSh 8,333 at 25%; next KSh 467,667 at 30%; next KSh 300,000 at 32.5%; and any amount over KSh 800,000 at 35%.'
             },
             {
-                heading: 'Personal Relief and Tax Reliefs Explained',
-                body: 'Every Kenyan resident employee is entitled to a statutory Personal Relief of KSh 2,400 per month (KSh 28,800 per year). As a result, individuals earning KSh 24,000 or less pay zero PAYE tax, as their gross tax (10% of KSh 24,000 = KSh 2,400) is fully wiped out by the relief. Additionally, employees receive an Insurance Relief equal to 15% of their monthly SHIF contribution (capped at KSh 5,000/mo) and an Affordable Housing Relief equal to 15% of their Housing Levy contribution (capped at KSh 9,000/mo).'
+                heading: 'Personal Relief and Net PAYE Computation',
+                body: 'Every Kenyan resident employee is entitled to a statutory Personal Relief of KSh 2,400 per month (KSh 28,800 per year). Because NSSF, SHIF, and Housing Levy are now deducted pre-tax from income, personal relief is subtracted directly from gross PAYE to determine final net PAYE liability payable to the KRA.'
             },
             {
-                heading: 'NSSF Pension Contributions (Tier I and Tier II)',
-                body: 'Under the NSSF Act No. 45 of 2013, statutory pension contributions are split into two tiers based on pensionable earnings. Tier I applies to earnings up to the Lower Earnings Limit (LEL) of KSh 7,000, resulting in a 6% employee contribution of KSh 420. Tier II applies to earnings between KSh 7,001 and the Upper Earnings Limit (UEL) of KSh 36,000, resulting in a maximum contribution of KSh 1,740. Total employee NSSF contribution is capped at KSh 2,160 per month, which the employer matches shilling for shilling. Crucially, employee NSSF contributions are fully tax-allowable, reducing your taxable pay.'
+                heading: 'NSSF Pension Contributions: Year 4 Implementation',
+                body: 'Under the Third Schedule of the NSSF Act No. 45 of 2013, contribution ceilings increase annually. For Year 4 (effective February 2026), the Lower Earnings Limit (Tier I) is KSh 9,000, resulting in a maximum employee contribution of KSh 540 (6%). The Upper Earnings Limit (Tier II) is KSh 108,000, yielding a maximum Tier II contribution of KSh 5,940 (6% on KSh 9,001 to KSh 108,000). Total combined employee NSSF is capped at KSh 6,480 per month, matched equally by the employer.'
             },
             {
                 heading: 'SHIF Health Insurance and Affordable Housing Levy',
-                body: 'The Social Health Insurance Fund (SHIF) replaced the former NHIF flat-rate schedule with a universal proportional contribution of 2.75% of gross monthly salary, with a statutory minimum contribution of KSh 300. The Affordable Housing Levy (AHL) requires employees to contribute 1.5% of gross monthly salary, matched by an equal 1.5% employer contribution. Both contributions generate 15% tax reliefs that directly reduce monthly PAYE tax liability.'
+                body: 'The Social Health Insurance Fund (SHIF) replaced the former NHIF flat schedule with a proportional contribution of 2.75% of gross monthly salary (minimum KSh 300/mo) with no upper cap. The Affordable Housing Levy (AHL) requires an employee contribution of 1.5% of gross salary matched by a 1.5% employer contribution.'
             }
         ]
     },
     howTo: [
         'Enter your Monthly Basic Salary in Kenya Shillings (KES).',
-        'Add any monthly Taxable Cash Allowances (such as transport, communication, or bonus).',
+        'Add any monthly Taxable Cash Allowances (such as overtime or performance bonuses).',
         'Add any Non-Taxable Allowances that qualify for statutory exemptions under KRA rules.',
-        'Enter voluntary contributions to registered pension schemes (tax-deductible up to KSh 20,000/mo).',
-        'Enter personal deductions such as SACCO shares, bank loans, or benevolent funds.',
-        'Instantly review your net take-home salary, PAYE tax, NSSF, SHIF, Housing Levy, and employer liabilities.'
+        'Enter voluntary contributions to registered pension schemes (tax-deductible up to KSh 20,000/mo combined with NSSF).',
+        'Select the NSSF implementation schedule (Year 4 active, Year 3, or Year 2 historical).',
+        'Review your net take-home salary, PAYE tax, NSSF, SHIF, Housing Levy, and employer liabilities.'
     ],
-    formula: 'Net Pay = Gross Salary − Net PAYE (Gross Tax − Reliefs) − NSSF − SHIF − Housing Levy − Voluntary Deductions',
+    formula: 'Taxable Pay = Gross − Allowable Deductions (NSSF + Pension + SHIF + Housing Levy); Net Pay = Gross − PAYE (Gross Tax − KSh 2,400 Relief) − NSSF − SHIF − Housing Levy − Other Deductions',
     examples: [
         {
-            title: 'Entry-Level Worker (KSh 24,000 Gross)',
+            title: 'Entry-Level Worker (KSh 24,000 Gross) — Year 4 Active Law',
             input: 'Basic Salary: KSh 24,000, Zero Allowances',
-            result: 'Net Pay: KSh 20,950.00/mo | PAYE: KSh 0.00 | NSSF: KSh 1,440.00 | SHIF: KSh 660.00 | AHL: KSh 360.00',
-            explanation: 'Taxable pay is KSh 22,560 after NSSF. Gross PAYE is KSh 2,256, which is completely erased by the KSh 2,400 personal relief. PAYE payable is KSh 0.'
+            result: 'Net Pay: KSh 21,540.00/mo | PAYE: KSh 0.00 | NSSF: KSh 1,440.00 | SHIF: KSh 660.00 | AHL: KSh 360.00',
+            explanation: 'Under Year 4, NSSF is KSh 1,440 (Tier I: 540 + Tier II: 900). SHIF is KSh 660 (2.75%) and AHL is KSh 360 (1.5%). Allowable deductions total KSh 2,460, leaving taxable pay of KSh 21,540. Gross PAYE is KSh 2,154, fully covered by KSh 2,400 personal relief. Net PAYE is KSh 0.'
         },
         {
-            title: 'Middle-Income Professional (KSh 80,000 Gross)',
+            title: 'Mid-Level Professional (KSh 80,000 Gross: 70k Basic + 10k Allowance)',
             input: 'Basic Salary: KSh 70,000, Taxable Allowance: KSh 10,000',
-            result: 'Net Pay: KSh 62,378.42/mo | PAYE: KSh 12,061.58 | NSSF: KSh 2,160.00 | SHIF: KSh 2,200.00 | AHL: KSh 1,200.00',
-            explanation: 'Gross salary is KSh 80,000. Employee NSSF reaches the KSh 2,160 cap. SHIF is KSh 2,200 (2.75%) and Housing Levy is KSh 1,200 (1.5%). Reliefs total KSh 2,910, reducing gross PAYE to KSh 12,061.58.'
+            result: 'Net Pay: KSh 58,296.67/mo | PAYE: KSh 14,103.33 | NSSF: KSh 4,200.00 | SHIF: KSh 2,200.00 | AHL: KSh 1,200.00',
+            explanation: 'Basic salary 70,000 yields NSSF of KSh 4,200. SHIF on 80k is KSh 2,200; AHL is KSh 1,200. Pre-tax allowable deductions total KSh 7,600, giving Taxable Pay of KSh 72,400. Gross PAYE is KSh 16,503.33 minus KSh 2,400 personal relief = KSh 14,103.33 Net PAYE. Take-home pay is KSh 58,296.67.'
         },
         {
-            title: 'Executive Salary (KSh 250,000 Gross)',
+            title: 'Executive Salary (KSh 250,000 Gross: 200k Basic + 50k Allowance)',
             input: 'Basic Salary: KSh 200,000, Taxable Allowance: KSh 50,000',
-            result: 'Net Pay: KSh 176,143.42/mo | PAYE: KSh 60,331.58 | NSSF: KSh 2,160.00 | SHIF: KSh 6,875.00 | AHL: KSh 3,750.00',
-            explanation: 'Taxable pay is KSh 247,840. Marginal tax is 30%. With SHIF (KSh 6,875) and Housing Levy (KSh 3,750) providing reliefs, total take-home pay is KSh 176,143.42.'
+            result: 'Net Pay: KSh 170,643.17/mo | PAYE: KSh 62,251.83 | NSSF: KSh 6,480.00 | SHIF: KSh 6,875.00 | AHL: KSh 3,750.00',
+            explanation: 'NSSF is capped at Year 4 max KSh 6,480. SHIF is KSh 6,875 and AHL is KSh 3,750. Allowable deductions of KSh 17,105 reduce taxable pay to KSh 232,895. Net PAYE is KSh 62,251.83. Employer CTC is KSh 260,230.'
         }
     ],
     faqs: [
         {
-            q: 'How is PAYE calculated in Kenya in 2026?',
-            a: 'KRA PAYE is calculated on monthly taxable pay (Gross earnings minus allowable NSSF and pension deductions). Progressive rates of 10%, 25%, 30%, 32.5%, and 35% are applied across brackets. Personal relief (KSh 2,400/mo), insurance relief (15% of SHIF), and housing relief (15% of Housing Levy) are subtracted to determine final tax payable.'
+            q: 'How is PAYE calculated in Kenya under the Tax Laws (Amendment) Act 2024?',
+            a: 'PAYE is calculated on Taxable Pay after subtracting allowable statutory deductions: NSSF, SHIF (2.75%), and the Affordable Housing Levy (1.5%). Progressive tax rates (10% to 35%) are applied to this net figure, and statutory personal relief (KSh 2,400/mo) is deducted to determine final PAYE payable.'
         },
         {
-            q: 'What is the minimum taxable salary in Kenya?',
-            a: 'Employees earning KSh 24,000 or less per month pay zero PAYE tax because the tax generated in the 10% bracket (KSh 2,400) is completely offset by the statutory KSh 2,400 personal relief.'
+            q: 'What are the NSSF contribution limits for Year 4 (2026)?',
+            a: 'Under the NSSF Act 2013 Third Schedule, Year 4 increases the Lower Earnings Limit (LEL) to KSh 9,000 (max Tier I contribution KSh 540) and the Upper Earnings Limit (UEL) to KSh 108,000 (max Tier II contribution KSh 5,940). The total maximum employee contribution is KSh 6,480 per month, matched equally by the employer.'
         },
         {
-            q: 'How much is deducted for SHIF in Kenya?',
-            a: 'Under the Social Health Insurance Act 2023, SHIF deduction is 2.75% of your gross monthly salary, with a statutory minimum contribution of KSh 300 per month. There is no upper salary cap.'
+            q: 'Are SHIF and Affordable Housing Levy pre-tax deductions in Kenya?',
+            a: 'Yes. Under the Tax Laws (Amendment) Act 2024, employee contributions to SHIF (2.75%) and the Affordable Housing Levy (1.5%) are deductible from gross employment income before calculating PAYE income tax, reducing overall taxable income.'
         },
         {
-            q: 'How much is the Affordable Housing Levy in Kenya?',
-            a: 'Under the Affordable Housing Act 2024, employees contribute 1.5% of their gross monthly salary, and employers match an additional 1.5%. Employees receive a 15% Affordable Housing Relief that offsets their PAYE tax.'
+            q: 'Can I still calculate Kenya payroll using historical 2024 rates?',
+            a: 'Yes. GetCalcu allows you to select historical NSSF schedules (Year 2 or Year 3) and calculation frameworks to reconcile previous payroll periods.'
         },
         {
-            q: 'What is the maximum NSSF contribution in Kenya in 2026?',
-            a: 'Under NSSF Act 2013, Tier I is 6% of earnings up to KSh 7,000 (KSh 420), and Tier II is 6% of earnings between KSh 7,001 and KSh 36,000 (KSh 1,740). The maximum combined employee NSSF contribution is KSh 2,160 per month, matched equally by the employer.'
+            q: 'What is the standard personal relief in Kenya?',
+            a: 'Every resident employee is entitled to standard statutory personal relief of KSh 2,400 per month (KSh 28,800 per year), which directly offsets gross PAYE tax liability.'
         }
     ]
 };
