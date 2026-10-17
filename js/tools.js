@@ -15,6 +15,183 @@
     }
 })();
 
+const US_TAX_SCHEDULES = {
+  '2026': {
+    name: '2026 Tax Year (Active)',
+    socSecCap: 184500,
+    standardDeduction: {
+      single: 16100,
+      married: 32200,
+      married_joint: 32200,
+      head: 24150,
+      head_household: 24150
+    },
+    brackets: {
+      single: [
+        { cap: 12400, rate: 0.10 },
+        { cap: 50400, rate: 0.12 },
+        { cap: 107450, rate: 0.22 },
+        { cap: 205100, rate: 0.24 },
+        { cap: 260450, rate: 0.32 },
+        { cap: 651050, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married: [
+        { cap: 24800, rate: 0.10 },
+        { cap: 100800, rate: 0.12 },
+        { cap: 214900, rate: 0.22 },
+        { cap: 410200, rate: 0.24 },
+        { cap: 520900, rate: 0.32 },
+        { cap: 781250, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { cap: 24800, rate: 0.10 },
+        { cap: 100800, rate: 0.12 },
+        { cap: 214900, rate: 0.22 },
+        { cap: 410200, rate: 0.24 },
+        { cap: 520900, rate: 0.32 },
+        { cap: 781250, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head: [
+        { cap: 17700, rate: 0.10 },
+        { cap: 67500, rate: 0.12 },
+        { cap: 107450, rate: 0.22 },
+        { cap: 205100, rate: 0.24 },
+        { cap: 260450, rate: 0.32 },
+        { cap: 651050, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head_household: [
+        { cap: 17700, rate: 0.10 },
+        { cap: 67500, rate: 0.12 },
+        { cap: 107450, rate: 0.22 },
+        { cap: 205100, rate: 0.24 },
+        { cap: 260450, rate: 0.32 },
+        { cap: 651050, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ]
+    }
+  },
+  '2025': {
+    name: '2025 Tax Year (Historical)',
+    socSecCap: 176100,
+    standardDeduction: {
+      single: 15000,
+      married: 30000,
+      married_joint: 30000,
+      head: 22500,
+      head_household: 22500
+    },
+    brackets: {
+      single: [
+        { cap: 11925, rate: 0.10 },
+        { cap: 48475, rate: 0.12 },
+        { cap: 103350, rate: 0.22 },
+        { cap: 197300, rate: 0.24 },
+        { cap: 250525, rate: 0.32 },
+        { cap: 626350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married: [
+        { cap: 23850, rate: 0.10 },
+        { cap: 96950, rate: 0.12 },
+        { cap: 206700, rate: 0.22 },
+        { cap: 394600, rate: 0.24 },
+        { cap: 501050, rate: 0.32 },
+        { cap: 751600, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { cap: 23850, rate: 0.10 },
+        { cap: 96950, rate: 0.12 },
+        { cap: 206700, rate: 0.22 },
+        { cap: 394600, rate: 0.24 },
+        { cap: 501050, rate: 0.32 },
+        { cap: 751600, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head: [
+        { cap: 17000, rate: 0.10 },
+        { cap: 64850, rate: 0.12 },
+        { cap: 103350, rate: 0.22 },
+        { cap: 197300, rate: 0.24 },
+        { cap: 250500, rate: 0.32 },
+        { cap: 626350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head_household: [
+        { cap: 17000, rate: 0.10 },
+        { cap: 64850, rate: 0.12 },
+        { cap: 103350, rate: 0.22 },
+        { cap: 197300, rate: 0.24 },
+        { cap: 250500, rate: 0.32 },
+        { cap: 626350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ]
+    }
+  },
+  '2024': {
+    name: '2024 Tax Year (Historical)',
+    socSecCap: 168600,
+    standardDeduction: {
+      single: 14600,
+      married: 29200,
+      married_joint: 29200,
+      head: 21900,
+      head_household: 21900
+    },
+    brackets: {
+      single: [
+        { cap: 11600, rate: 0.10 },
+        { cap: 47150, rate: 0.12 },
+        { cap: 100525, rate: 0.22 },
+        { cap: 191950, rate: 0.24 },
+        { cap: 243725, rate: 0.32 },
+        { cap: 609350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married: [
+        { cap: 23200, rate: 0.10 },
+        { cap: 94300, rate: 0.12 },
+        { cap: 201050, rate: 0.22 },
+        { cap: 383900, rate: 0.24 },
+        { cap: 487450, rate: 0.32 },
+        { cap: 731200, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { cap: 23200, rate: 0.10 },
+        { cap: 94300, rate: 0.12 },
+        { cap: 201050, rate: 0.22 },
+        { cap: 383900, rate: 0.24 },
+        { cap: 487450, rate: 0.32 },
+        { cap: 731200, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head: [
+        { cap: 16550, rate: 0.10 },
+        { cap: 63100, rate: 0.12 },
+        { cap: 100500, rate: 0.22 },
+        { cap: 191950, rate: 0.24 },
+        { cap: 243700, rate: 0.32 },
+        { cap: 609350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head_household: [
+        { cap: 16550, rate: 0.10 },
+        { cap: 63100, rate: 0.12 },
+        { cap: 100500, rate: 0.22 },
+        { cap: 191950, rate: 0.24 },
+        { cap: 243700, rate: 0.32 },
+        { cap: 609350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ]
+    }
+  }
+};
+
 const TOOLS = {
   'mortgage-calculator': {
     presets: [
@@ -6892,6 +7069,11 @@ const TOOLS = {
       ], hint: 'Your tax filing status for federal tax bracket calculation.' },
       { id: 'state_tax_rate', label: 'Estimated State Tax Rate (%)', type: 'number', default: 5.0, min: 0, max: 15, step: 0.1, hint: 'State income tax rate (e.g. 0% in TX/FL/WA, ~5% average, up to 13% in CA).' },
       { id: 'pretax_401k', label: '401(k) / Retirement Deduction ($/yr)', type: 'number', default: 4000, min: 0, step: 500, hint: 'Annual pre-tax retirement contribution.' },
+      { id: 'tax_year', label: 'Tax Year', type: 'select', default: '2026', options: [
+        { value: '2026', label: '2026 (Active — $184,500 SS Wage Base, $16,100 Std Ded)' },
+        { value: '2025', label: '2025 (Historical — $176,100 SS Wage Base, $15,000 Std Ded)' },
+        { value: '2024', label: '2024 (Historical — $168,600 SS Wage Base, $14,600 Std Ded)' }
+      ], hint: 'IRS statutory tax year parameters.' },
       { id: 'pretax_health', label: 'Health Insurance Pre-tax ($/mo)', type: 'number', default: 200, min: 0, step: 25, hint: 'Monthly pre-tax health and dental insurance premium.' },
     ],
     calculate(v) {
@@ -6914,7 +7096,10 @@ const TOOLS = {
       const pretaxHealthAnnual = safeNum(v.pretax_health, 0) * 12;
       const totalPretax = roundTo(pretax401k + pretaxHealthAnnual, 2);
 
-      const socSecCap = 168600;
+      const taxYear = v.tax_year || '2026';
+      const sched = US_TAX_SCHEDULES[taxYear] || US_TAX_SCHEDULES['2026'];
+
+      const socSecCap = sched.socSecCap;
       const socSecTaxable = Math.min(annualGross, socSecCap);
       const socSecTax = roundTo(socSecTaxable * 0.062, 2);
 
@@ -6926,29 +7111,11 @@ const TOOLS = {
       medTax = roundTo(medTax, 2);
       const totalFica = roundTo(socSecTax + medTax, 2);
 
-      const stdDeduction = status === 'married' ? 29200 : status === 'head' ? 21900 : 14600;
+      const stdDeduction = sched.standardDeduction[status] || sched.standardDeduction.single;
       const taxableFedIncome = Math.max(0, annualGross - totalPretax - stdDeduction);
 
       let fedTax = 0;
-      const brackets = status === 'married'
-        ? [
-            { cap: 23200, rate: 0.10 },
-            { cap: 94300, rate: 0.12 },
-            { cap: 201050, rate: 0.22 },
-            { cap: 383900, rate: 0.24 },
-            { cap: 487450, rate: 0.32 },
-            { cap: 731200, rate: 0.35 },
-            { cap: Infinity, rate: 0.37 },
-          ]
-        : [
-            { cap: 11600, rate: 0.10 },
-            { cap: 47150, rate: 0.12 },
-            { cap: 100525, rate: 0.22 },
-            { cap: 191950, rate: 0.24 },
-            { cap: 243725, rate: 0.32 },
-            { cap: 609350, rate: 0.35 },
-            { cap: Infinity, rate: 0.37 },
-          ];
+      const brackets = sched.brackets[status] || sched.brackets.single;
 
       let prevCap = 0;
       for (const b of brackets) {
@@ -8569,8 +8736,8 @@ const TOOLS = {
       });
 
       for (let y = 1; y <= yearsToRetire; y++) {
-        // Annual employee contribution (capped at $23,500 statutory 2026 baseline limit)
-        const empContrib = Math.min(salary * empPct, 23500);
+        // Annual employee contribution (capped at $24,500 statutory 2026 limit)
+        const empContrib = Math.min(salary * empPct, 24500);
         // Company match: matches employee contribution up to employer_match_limit_pct of salary
         const eligibleSalary = salary * Math.min(empPct, matchLimitPct);
         const matchContrib = eligibleSalary * matchPct;
@@ -8646,7 +8813,7 @@ const TOOLS = {
     ],
     formula: 'Future Balance = PV(1+r)^n + ∑ [Annual Contribs × (1+r)^(n-t)]',
     faqs: [
-      { q: 'What is the 401(k) contribution limit?', a: 'For 2026, the IRS employee elective deferral limit is $23,500 ($31,000 for workers aged 50 and older utilizing catch-up contributions).' },
+      { q: 'What is the 401(k) contribution limit?', a: 'For 2026, the IRS employee elective deferral limit is $24,500 ($32,500 for workers aged 50 and older utilizing catch-up contributions).' },
       { q: 'What is the difference between Traditional and Roth 401(k)?', a: 'Traditional 401(k) contributions are made with pre-tax dollars, lowering your taxable income today and taxing withdrawals in retirement. Roth 401(k) contributions are made with post-tax dollars, allowing completely tax-free withdrawals in retirement.' }
     ]
   },
@@ -9239,7 +9406,12 @@ const TOOLS = {
         { value: 'head_household', label: 'Head of Household' }
       ], hint: 'IRS tax filing status determining progressive bracket thresholds and standard deductions.' },
       { id: 'state_tax_rate', label: 'Applicable State Income Tax Rate (%)', type: 'number', default: 4.5, min: 0, max: 15, step: 0.5, hint: 'State income tax rate (0% for states without individual income tax including TX, FL, WA, TN).' },
-      { id: 'other_w2_income', label: 'Concurrent W-2 Compensation ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'W-2 wage earnings subject to mandatory FICA withholding (adjusts Social Security wage cap).' }
+      { id: 'other_w2_income', label: 'Concurrent W-2 Compensation ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'W-2 wage earnings subject to mandatory FICA withholding (adjusts Social Security wage cap).' },
+      { id: 'tax_year', label: 'Tax Year', type: 'select', default: '2026', options: [
+        { value: '2026', label: '2026 (Active — $184,500 SS Wage Base, $16,100 Std Ded)' },
+        { value: '2025', label: '2025 (Historical — $176,100 SS Wage Base, $15,000 Std Ded)' },
+        { value: '2024', label: '2024 (Historical — $168,600 SS Wage Base, $14,600 Std Ded)' }
+      ], hint: 'IRS statutory tax year parameters.' }
     ],
     calculate(v) {
       const gross = Math.max(0, safeNum(v.gross_income, 0));
@@ -9247,6 +9419,8 @@ const TOOLS = {
       const filingStatus = safeStr(v.filing_status) || 'single';
       const stateRate = Math.max(0, safeNum(v.state_tax_rate, 0));
       const w2Income = Math.max(0, safeNum(v.other_w2_income, 0));
+      const taxYear = v.tax_year || '2026';
+      const sched = US_TAX_SCHEDULES[taxYear] || US_TAX_SCHEDULES['2026'];
 
       if (gross <= 0 && w2Income <= 0) {
         return errorResult('Please specify gross freelance revenue or employment compensation.');
@@ -9258,9 +9432,9 @@ const TOOLS = {
       // 2. Schedule SE Net Earnings (IRS 92.35% statutory rule)
       const seEarnings = netProfit * 0.9235;
 
-      // 3. Social Security Tax (12.4% up to 2026 cap of $176,100)
-      const SS_CAP_2026 = 176100;
-      const ssCapRemaining = Math.max(0, SS_CAP_2026 - w2Income);
+      // 3. Social Security Tax (12.4% up to statutory cap: $184,500 for 2026)
+      const ssCap = sched.socSecCap;
+      const ssCapRemaining = Math.max(0, ssCap - w2Income);
       const ssTaxableIncome = Math.min(seEarnings, ssCapRemaining);
       const ssTax = roundTo(ssTaxableIncome * 0.124, 2);
 
@@ -9268,7 +9442,7 @@ const TOOLS = {
       const medicareTax = roundTo(seEarnings * 0.029, 2);
 
       // 5. Additional Medicare Tax (0.9% above statutory thresholds)
-      const addlThreshold = filingStatus === 'married_joint' ? 250000 : 200000;
+      const addlThreshold = (filingStatus === 'married_joint' || filingStatus === 'married') ? 250000 : 200000;
       const totalCombinedEarned = netProfit + w2Income;
       let addlMedicareTax = 0;
       if (totalCombinedEarned > addlThreshold) {
@@ -9281,61 +9455,24 @@ const TOOLS = {
       // 6. Above-the-line deduction for 50% of self-employment tax
       const seDeduction = roundTo(totalSETax * 0.5, 2);
 
-      // 7. Standard Deductions (IRS 2026 baseline)
-      const standardDeductions = {
-        single: 15000,
-        married_joint: 30000,
-        head_household: 22500
-      };
-      const standardDeduction = standardDeductions[filingStatus] || 15000;
+      // 7. Standard Deductions
+      const standardDeduction = sched.standardDeduction[filingStatus] || sched.standardDeduction.single;
 
       // 8. Federal Taxable Income
       const adjustedGrossIncome = Math.max(0, (netProfit + w2Income) - seDeduction);
       const federalTaxableIncome = Math.max(0, adjustedGrossIncome - standardDeduction);
 
-      // 9. Progressive Federal Income Tax Calculation (2026 baseline brackets)
+      // 9. Progressive Federal Income Tax Calculation
       const calcFederalTax = (taxable, status) => {
         if (taxable <= 0) return 0;
-        let brackets;
-        if (status === 'married_joint') {
-          brackets = [
-            { limit: 23850, rate: 0.10 },
-            { limit: 96950, rate: 0.12 },
-            { limit: 206700, rate: 0.22 },
-            { limit: 394600, rate: 0.24 },
-            { limit: 501050, rate: 0.32 },
-            { limit: 751600, rate: 0.35 },
-            { limit: Infinity, rate: 0.37 }
-          ];
-        } else if (status === 'head_household') {
-          brackets = [
-            { limit: 17000, rate: 0.10 },
-            { limit: 64850, rate: 0.12 },
-            { limit: 103350, rate: 0.22 },
-            { limit: 197300, rate: 0.24 },
-            { limit: 250500, rate: 0.32 },
-            { limit: 626350, rate: 0.35 },
-            { limit: Infinity, rate: 0.37 }
-          ];
-        } else {
-          brackets = [
-            { limit: 11925, rate: 0.10 },
-            { limit: 48475, rate: 0.12 },
-            { limit: 103350, rate: 0.22 },
-            { limit: 197300, rate: 0.24 },
-            { limit: 250525, rate: 0.32 },
-            { limit: 626350, rate: 0.35 },
-            { limit: Infinity, rate: 0.37 }
-          ];
-        }
-
+        const brackets = sched.brackets[status] || sched.brackets.single;
         let tax = 0;
         let prev = 0;
         for (const b of brackets) {
           if (taxable > prev) {
-            const chunk = Math.min(taxable - prev, b.limit - prev);
+            const chunk = Math.min(taxable - prev, b.cap - prev);
             tax += chunk * b.rate;
-            prev = b.limit;
+            prev = b.cap;
           } else {
             break;
           }
