@@ -990,10 +990,24 @@ export function initSaveButton(calculator) {
     const msg = document.getElementById('save-result-msg');
     if (!bar || !btn) return;
     
+    const updateSaveBar = (session) => {
+        bar.style.display = (session && session.user) ? '' : 'none';
+    };
     if (typeof onAuthChange === 'function') {
-        onAuthChange(session => { bar.style.display = session ? '' : 'none'; });
+        onAuthChange(updateSaveBar);
     } else {
         bar.style.display = 'none';
+        window.addEventListener('getcalcu:auth-change', (e) => updateSaveBar(e.detail));
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof onAuthChange === 'function') {
+                clearInterval(interval);
+                onAuthChange(updateSaveBar);
+            } else if (attempts > 30) {
+                clearInterval(interval);
+            }
+        }, 100);
     }
     
     btn.addEventListener('click', async () => {

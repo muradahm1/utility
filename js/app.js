@@ -325,25 +325,27 @@ function initMobileNav() {
 
 // Auth UI — header slot + history nav visibility
 function initAuthUI() {
-    if (typeof onAuthChange !== 'function') return;
     const slot = document.getElementById('auth-header-slot');
     const historyNav = document.querySelector('.nav-item.auth-only');
     const promoCard  = document.getElementById('sidebar-promo');
 
-    onAuthChange(async (session) => {
+    function renderAuthUI(session) {
         if (!slot) return;
-        if (session) {
+        if (session && session.user) {
             const name = session.user.user_metadata?.full_name
-                || session.user.email.split('@')[0];
+                || (session.user.email ? session.user.email.split('@')[0] : 'User');
             slot.innerHTML = `
                 <div class="auth-user-menu">
                     <span class="auth-user-name">${name}</span>
                     <button class="btn btn-outline btn-sm" id="signout-btn">Sign out</button>
                 </div>`;
-            document.getElementById('signout-btn').addEventListener('click', async () => {
-                await signOut();
-                location.reload();
-            });
+            const signoutBtn = document.getElementById('signout-btn');
+            if (signoutBtn) {
+                signoutBtn.addEventListener('click', async () => {
+                    if (typeof signOut === 'function') await signOut();
+                    location.reload();
+                });
+            }
             if (historyNav) historyNav.classList.remove('hidden');
             if (promoCard)  promoCard.style.display = 'none';
         } else {
@@ -351,7 +353,23 @@ function initAuthUI() {
             if (historyNav) historyNav.classList.add('hidden');
             if (promoCard)  promoCard.style.display = '';
         }
-    });
+    }
+
+    if (typeof onAuthChange === 'function') {
+        onAuthChange(renderAuthUI);
+    } else {
+        window.addEventListener('getcalcu:auth-change', (e) => renderAuthUI(e.detail));
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof onAuthChange === 'function') {
+                clearInterval(interval);
+                onAuthChange(renderAuthUI);
+            } else if (attempts > 30) {
+                clearInterval(interval);
+            }
+        }, 100);
+    }
 }
 
 // Global Search Overlay Logic

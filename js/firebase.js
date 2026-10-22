@@ -59,6 +59,38 @@ function normalizeSession(fbUser) {
 }
 
 // ── 3. Session & Auth State Listeners ────────────────────────
+const _authListeners = (typeof window !== 'undefined' && Array.isArray(window._authCallbacks))
+    ? window._authCallbacks
+    : [];
+
+let _currentSession = null;
+let _authResolved = false;
+
+if (_auth) {
+    _auth.onAuthStateChanged((user) => {
+        _authResolved = true;
+        _currentSession = normalizeSession(user);
+        if (typeof window !== 'undefined') {
+            window._currentAuthSession = _currentSession;
+        }
+        _authListeners.forEach(cb => {
+            try { cb(_currentSession); } catch (err) { console.error('[GetCalcu] Auth callback error:', err); }
+        });
+        if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('getcalcu:auth-change', { detail: _currentSession }));
+        }
+    });
+} else {
+    _authResolved = true;
+    _currentSession = null;
+    if (typeof window !== 'undefined') {
+        window._currentAuthSession = null;
+    }
+    _authListeners.forEach(cb => {
+        try { cb(null); } catch (e) {}
+    });
+}
+
 async function getSession() {
     const user = await getUser();
     return user ? normalizeSession(user) : null;
@@ -76,18 +108,17 @@ async function getUser() {
     });
 }
 
-// Fires callback immediately on load and on every auth state change
+// Fires callback immediately if state is known, and on every subsequent auth change
 function onAuthChange(callback) {
-    if (!_auth) {
-        if (typeof callback === 'function') callback(null);
-        return () => {};
+    if (typeof callback !== 'function') return () => {};
+    _authListeners.push(callback);
+    if (_authResolved) {
+        try { callback(_currentSession); } catch (err) { console.error('[GetCalcu] Auth callback error:', err); }
     }
-
-    return _auth.onAuthStateChanged((user) => {
-        if (typeof callback === 'function') {
-            callback(normalizeSession(user));
-        }
-    });
+    return () => {
+        const idx = _authListeners.indexOf(callback);
+        if (idx !== -1) _authListeners.splice(idx, 1);
+    };
 }
 
 // ── 4. Authentication Actions ────────────────────────────────
