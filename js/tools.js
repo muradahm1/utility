@@ -1429,17 +1429,17 @@ const TOOLS = {
         result: 'Future Balance: $32,240.26 | Total Contributions: $27,000.00 | Total Interest Earned: $5,240.26'
       }
     ],
-    formula: {
-      text: 'FV = P × (1 + r / n)^(n × t) + PMT × [((1 + r / n)^(n × t) − 1) / (r / n)]',
-      variables: [
-        { symbol: 'FV', description: 'Future Value (total accumulated balance including contributions and compound interest)' },
-        { symbol: 'P', description: 'Initial Principal balance deposited at inception' },
-        { symbol: 'r', description: 'Nominal annual interest rate expressed in decimal form (e.g., 8% = 0.08)' },
-        { symbol: 'n', description: 'Compounding frequency per year (1 for annual, 4 for quarterly, 12 for monthly, 365 for daily)' },
-        { symbol: 't', description: 'Investment duration in years' },
-        { symbol: 'PMT', description: 'Periodic recurring contribution amount adjusted to match compounding frequency' }
-      ]
-    },
+    formulaTitle: 'Compound Interest Formula',
+    formula: 'FV = P × (1 + r / n)^(n × t) + PMT × [((1 + r / n)^(n × t) − 1) / (r / n)]',
+    formulaExplanation: 'Future Value (FV) calculates the compound growth of your starting principal (P) combined with periodic recurring contributions (PMT) compounded n times per year across t years.',
+    formulaVariables: [
+      { name: 'FV', description: 'Future Value (total accumulated balance including contributions and compound interest)' },
+      { name: 'P', description: 'Initial Principal balance deposited at inception' },
+      { name: 'r', description: 'Nominal annual interest rate expressed in decimal form (e.g., 8% = 0.08)' },
+      { name: 'n', description: 'Compounding frequency per year (1 for annual, 4 for quarterly, 12 for monthly, 365 for daily)' },
+      { name: 't', description: 'Investment duration in years' },
+      { name: 'PMT', description: 'Periodic recurring contribution amount adjusted to match compounding frequency' }
+    ],
     faqs: [
       { q: 'How is compound interest calculated?', a: 'Compound interest is calculated with the compound annuity formula FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P is initial principal, r is the annual rate, n is compounding frequency per year, t is time in years, and PMT is the periodic contribution. Our calculator computes both lump-sum growth and periodic contributions simultaneously.' },
       { q: 'What is the difference between simple and compound interest?', a: 'Simple interest is calculated solely on original principal (Interest = P × r × t), meaning annual growth remains flat. Compound interest calculates returns on both initial principal and previously accumulated interest. Over 30 years at 8%, a $10,000 deposit produces $24,000 in simple interest ($34,000 total) versus $99,357.30 in monthly compound interest ($109,357.30 total).' },
@@ -3289,16 +3289,16 @@ const TOOLS = {
         result: 'Buying reaches break-even rapidly by Year 3 as compounding rent hikes outpace fixed mortgage costs.'
       }
     ],
-    formula: {
-      text: 'Net Worth (Buy) = Home Value − Mortgage Balance − Selling Costs | Net Worth (Rent) = Invested Down Payment & Cash Flow Savings × (1 + r)^t − Cumulative Rent',
-      variables: [
-        { symbol: 'Home Value', description: 'Initial purchase price compounded by annual appreciation rate over t years' },
-        { symbol: 'Mortgage Balance', description: 'Remaining amortized loan principal balance at year t' },
-        { symbol: 'Selling Costs', description: 'Realtor commissions and transfer costs deducted upon home disposition (5-7%)' },
-        { symbol: 'Invested Capital', description: 'Down payment, closing costs, and monthly cash flow differentials invested at portfolio rate r' },
-        { symbol: 'Cumulative Rent', description: 'Sum of all monthly rent payments compounded by annual rent inflation' }
-      ]
-    },
+    formulaTitle: 'Rent vs. Buy Comparison Formula',
+    formula: 'Net Worth (Buy) = Home Value − Mortgage Balance − Selling Costs | Net Worth (Rent) = Invested Capital × (1 + r)^t − Cumulative Rent',
+    formulaExplanation: 'Compares total net worth accumulated by purchasing a home (equity + appreciation − remaining debt and selling costs) versus renting and investing the down payment and monthly cash flow savings in financial markets.',
+    formulaVariables: [
+      { name: 'Home Value', description: 'Initial purchase price compounded by annual appreciation rate over t years' },
+      { name: 'Mortgage Balance', description: 'Remaining amortized loan principal balance at year t' },
+      { name: 'Selling Costs', description: 'Realtor commissions and transfer costs deducted upon home disposition (5-7%)' },
+      { name: 'Invested Capital', description: 'Down payment, closing costs, and monthly cash flow differentials invested at portfolio rate r' },
+      { name: 'Cumulative Rent', description: 'Sum of all monthly rent payments compounded by annual rent inflation' }
+    ],
 
     // ── Schema-Ready FAQs (15-20)
     faqs: [
@@ -3626,16 +3626,16 @@ const TOOLS = {
         result: 'Affordable Home Price: $419,268 | Max Loan: $419,268 | Monthly PITI: $2,775.00 | Back DTI: 41.0%'
       }
     ],
-    formula: {
-      text: 'Max Housing Payment = min(Gross Monthly Income × Front-End %, (Gross Monthly Income × Back-End %) − Monthly Debt) | Max Loan = PV(Rate / 12, Term × 12, Available for P&I) | Affordable Price = Max Loan + Down Payment',
-      variables: [
-        { symbol: 'Front-End %', description: 'Maximum allowable percentage of gross income for housing costs (e.g., 28% for conventional)' },
-        { symbol: 'Back-End %', description: 'Maximum allowable percentage of gross income for all debt service (e.g., 36% for conventional)' },
-        { symbol: 'Available for P&I', description: 'Max housing payment minus monthly property taxes, insurance, and HOA fees' },
-        { symbol: 'Max Loan', description: 'Present value of the amortized loan supported by Available for P&I' },
-        { symbol: 'Affordable Price', description: 'Total purchase price (Max Loan amount + Cash Down Payment)' }
-      ]
-    },
+    formulaTitle: 'Home Affordability Formula',
+    formula: 'Max Housing Payment = min(Gross Monthly Income × Front-End %, (Gross Monthly Income × Back-End %) − Monthly Debt) | Max Loan = PV(Rate / 12, Term × 12, Available for P&I) | Affordable Price = Max Loan + Down Payment',
+    formulaExplanation: 'Calculates maximum home purchasing power by evaluating front-end and back-end debt-to-income (DTI) underwriting thresholds, determining the amortized loan capacity plus your down payment.',
+    formulaVariables: [
+      { name: 'Front-End %', description: 'Maximum allowable percentage of gross income for housing costs (e.g., 28% for conventional)' },
+      { name: 'Back-End %', description: 'Maximum allowable percentage of gross income for all debt service (e.g., 36% for conventional)' },
+      { name: 'Available for P&I', description: 'Max housing payment minus monthly property taxes, insurance, and HOA fees' },
+      { name: 'Max Loan', description: 'Present value of the amortized loan supported by Available for P&I' },
+      { name: 'Affordable Price', description: 'Total purchase price (Max Loan amount + Cash Down Payment)' }
+    ],
 
     faqs: [
       { q: 'Can I afford a $500k house on $100k income?', a: 'With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario.' },
@@ -4553,16 +4553,16 @@ const TOOLS = {
         result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12.0 years | Savings Rate: 62.5%'
       }
     ],
-    formula: {
-      text: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years',
-      variables: [
-        { symbol: 'FIRE Number', description: 'Total portfolio capital required to sustain living expenses indefinitely' },
-        { symbol: 'Safe Withdrawal Rate', description: 'Annual percentage withdrawn from portfolio (typically 3.5%–4.0%)' },
-        { symbol: 'Savings Rate', description: 'Percentage of net income invested toward wealth accumulation' },
-        { symbol: 'Annual Retirement Expenses', description: 'Projected annual living expenditures adjusted for lifestyle mode' },
-        { symbol: 'Inflation-Adjusted FIRE', description: 'Future nominal dollar value required to maintain equivalent purchasing power' }
-      ]
-    },
+    formulaTitle: 'FIRE Number & Target Horizon Formula',
+    formula: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years',
+    formulaExplanation: 'Determines the financial independence portfolio target (FIRE Number) required to sustain living expenses, along with the savings rate driving your retirement horizon.',
+    formulaVariables: [
+      { name: 'FIRE Number', description: 'Total portfolio capital required to sustain living expenses indefinitely' },
+      { name: 'Safe Withdrawal Rate', description: 'Annual percentage withdrawn from portfolio (typically 3.5%–4.0%)' },
+      { name: 'Savings Rate', description: 'Percentage of net income invested toward wealth accumulation' },
+      { name: 'Annual Retirement Expenses', description: 'Projected annual living expenditures adjusted for lifestyle mode' },
+      { name: 'Inflation-Adjusted FIRE', description: 'Future nominal dollar value required to maintain equivalent purchasing power' }
+    ],
     faqs: [
       { q: 'What is a good FIRE number?', a: 'A standard FIRE number is 25 times your expected annual retirement expenses, derived from the 4% safe withdrawal rule. For example, spending $40,000 per year requires a $1,000,000 portfolio ($40,000 ÷ 0.04). If you want greater safety or plan to retire before age 40, using a 3.3% withdrawal rate requires 30 times annual expenses ($1,200,000).' },
       { q: 'Is the 4% rule still valid for early retirement?', a: 'The 4% rule was modeled on a 30-year horizon. For an early retirement spanning 40 to 50 years, academic research suggests aiming for a 3.25% to 3.75% withdrawal rate to account for longer market exposure and potential low-return decades. Combining a 3.5% initial rate with flexible spending in down markets provides high longevity confidence.' },

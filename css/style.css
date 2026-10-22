@@ -3861,6 +3861,7 @@ article[id],
     margin-bottom: 16px;
 }
 
+.formula-variables-box,
 .formula-variables-wrap {
     background: var(--bg-main);
     border: 1px solid var(--border-color);

@@ -783,28 +783,34 @@ function renderPreRenderedToolContent(tool, slug, allTools = {}) {
     const formulaTitle = tool.formulaTitle || `${tool.name} Formula`;
     tocItems.push({ id: formulaId, label: formulaTitle });
 
+    const formulaText = typeof tool.formula === 'string'
+      ? tool.formula
+      : (tool.formula && tool.formula.text ? tool.formula.text : (tool.formulaBreakdown || ''));
+    const rawVars = tool.formulaVariables || (tool.formula && tool.formula.variables) || [];
+
     let variablesHtml = '';
-    if (tool.formulaVariables && tool.formulaVariables.length) {
+    if (rawVars && rawVars.length) {
       variablesHtml = `
         <div class="formula-variables-wrap">
           <h4 class="formula-variables-heading">Variable Definitions:</h4>
           <ul class="formula-variables-list">
-            ${tool.formulaVariables.map(v => `<li><strong>${escapeHtml(v.name)}</strong>: ${escapeHtml(v.description)}</li>`).join('')}
+            ${rawVars.map(v => `<li><strong>${escapeHtml(v.name || v.symbol || '')}</strong>: ${escapeHtml(v.description || '')}</li>`).join('')}
           </ul>
         </div>
       `;
     }
 
     let plainEnglishHtml = '';
-    if (tool.formulaExplanation) {
-      plainEnglishHtml = `<div class="article-body-text"><p>${escapeHtml(tool.formulaExplanation)}</p></div>`;
+    const explanation = tool.formulaExplanation || (tool.formula && tool.formula.explanation);
+    if (explanation) {
+      plainEnglishHtml = `<div class="article-body-text"><p>${escapeHtml(explanation)}</p></div>`;
     }
 
     formulaHtml = `
       <section class="tool-runner-card educational-card" id="${formulaId}" aria-labelledby="${formulaId}-title">
         <h2 id="${formulaId}-title" class="educational-section-title">${escapeHtml(formulaTitle)}</h2>
         <div class="formula-display-box">
-          <code>${escapeHtml(tool.formula)}</code>
+          <code>${escapeHtml(formulaText)}</code>
         </div>
         ${plainEnglishHtml}
         ${variablesHtml}
