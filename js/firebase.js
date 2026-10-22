@@ -18,16 +18,7 @@ try {
         _auth = firebase.auth();
         _db = firebase.firestore();
 
-        // Enable offline persistence in browser environments if supported
-        if (typeof window !== 'undefined' && _db.enablePersistence) {
-            _db.enablePersistence().catch((err) => {
-                if (err.code === 'failed-precondition') {
-                    // Multiple tabs open, persistence can only be enabled in one tab at a time
-                } else if (err.code === 'unimplemented') {
-                    // The current browser does not support all of the features required to enable persistence
-                }
-            });
-        }
+        // Cloud Firestore instance initialized with standard persistence
     }
 } catch (e) {
     console.warn('[GetCalcu] Firebase initialization warning:', e);

@@ -573,7 +573,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
             } else {
                 const saveBar = document.getElementById('save-result-bar') || document.querySelector('.save-result-bar');
                 if (saveBar && newTableHtml) {
-                    saveBar.insertAdjacentHTML('beforebegin', newTableHtml);
+                    saveBar.insertAdjacentHTML('afterend', newTableHtml);
                 }
             }
         } else if (tableContainer) {
@@ -607,6 +607,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
     function buildResultsToolbarHtml(result) {
         return `
             <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+                <button class="btn btn-primary btn-sm action-btn action-save-btn" id="action-save-btn" title="Save calculation to your history"><i class="fa-solid fa-bookmark"></i> <span>Save</span></button>
                 <button class="btn btn-outline btn-sm action-btn ${isCompareMode ? 'active' : ''}" id="action-compare-btn" title="Compare Side-by-Side Scenarios"><i class="fa-solid fa-code-compare"></i> <span>${isCompareMode ? 'Close Compare' : 'Compare A vs B'}</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-share-btn" title="Share calculation with current inputs"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn" title="Download PDF Report"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
@@ -633,6 +634,37 @@ function initLegacyRunner(tool, slug, container, country = null) {
     }
 
     function bindResultsToolbar(result) {
+        const actionSaveBtn = document.getElementById('action-save-btn');
+        if (actionSaveBtn) {
+            actionSaveBtn.addEventListener('click', async () => {
+                if (typeof saveCalculation !== 'function') return;
+                actionSaveBtn.disabled = true;
+                actionSaveBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Saving...</span>';
+                try {
+                    const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                    const res = tool.calculate(currentVals);
+                    const saveRes = await saveCalculation(slug, tool.name, currentVals, { stats: res.stats });
+                    const isLocal = saveRes && saveRes.data && String(saveRes.data.id).startsWith('loc_');
+                    actionSaveBtn.classList.add('btn-saved');
+                    actionSaveBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Saved!</span>';
+                    const toastMsg = isLocal
+                        ? 'Saved to device history! Sign in anytime to sync across devices.'
+                        : 'Saved to your calculation history!';
+                    showActionToast(toastMsg);
+                    trackEvent('calculator_action', { action_type: 'save' });
+                } catch (err) {
+                    actionSaveBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <span>Error</span>';
+                    showActionToast('Failed to save calculation. Please try again.', true);
+                } finally {
+                    setTimeout(() => {
+                        actionSaveBtn.disabled = false;
+                        actionSaveBtn.classList.remove('btn-saved');
+                        actionSaveBtn.innerHTML = '<i class="fa-solid fa-bookmark"></i> <span>Save</span>';
+                    }, 2500);
+                }
+            });
+        }
+
         const compareBtn = document.getElementById('action-compare-btn');
         if (compareBtn) {
             compareBtn.addEventListener('click', () => {
@@ -800,12 +832,12 @@ function initLegacyRunner(tool, slug, container, country = null) {
                         ${buildResultsToolbarHtml(result)}
                     </div>
                 </div>
-                ${tableHtml}
                 <div class="save-result-bar" id="save-result-bar">
                     <button class="btn btn-primary" id="save-result-btn"><i class="fa-solid fa-bookmark"></i> Save Result</button>
                     <button class="btn btn-outline btn-sm" id="reset-btn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
                     <span class="save-result-msg hidden" id="save-result-msg"></span>
                 </div>
+                ${tableHtml}
             </div>
             ${buildJourneyHtml(result.journey)}
             ${buildEducationalLayoutHtml(tool, slug)}`;
@@ -931,25 +963,10 @@ function initLegacyRunner(tool, slug, container, country = null) {
         const btn = document.getElementById('save-result-btn');
         const msg = document.getElementById('save-result-msg');
         if (!bar || !btn) return;
-        const updateSaveBar = (session) => {
-            bar.style.display = (session && session.user) ? '' : 'none';
-        };
-        if (typeof onAuthChange === 'function') {
-            onAuthChange(updateSaveBar);
-        } else {
-            bar.style.display = 'none';
-            window.addEventListener('getcalcu:auth-change', (e) => updateSaveBar(e.detail));
-            let attempts = 0;
-            const interval = setInterval(() => {
-                attempts++;
-                if (typeof onAuthChange === 'function') {
-                    clearInterval(interval);
-                    onAuthChange(updateSaveBar);
-                } else if (attempts > 30) {
-                    clearInterval(interval);
-                }
-            }, 100);
-        }
+        
+        // Always display save bar prominently for all visitors
+        bar.style.display = '';
+
         btn.addEventListener('click', async () => {
             if (typeof saveCalculation !== 'function') return;
             btn.disabled = true;
@@ -957,18 +974,33 @@ function initLegacyRunner(tool, slug, container, country = null) {
             try {
                 const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
                 const result = tool.calculate(currentVals);
-                const { error } = await saveCalculation(slug, tool.name, currentVals, { stats: result.stats });
-                msg.classList.remove('hidden');
-                msg.textContent = error ? 'Failed to save. Please try again.' : 'Saved to history!';
-                msg.style.color = error ? '#EF4444' : '#10B981';
+                const saveRes = await saveCalculation(slug, tool.name, currentVals, { stats: result.stats });
+                const isLocal = saveRes && saveRes.data && String(saveRes.data.id).startsWith('loc_');
+                const successMsg = isLocal
+                    ? 'Saved to device! Sign in to sync across devices.'
+                    : 'Saved to history!';
+                btn.classList.add('btn-saved');
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+                if (msg) {
+                    msg.classList.remove('hidden');
+                    msg.textContent = successMsg;
+                    msg.style.color = '#10B981';
+                }
+                showActionToast(successMsg);
             } catch (err) {
-                msg.classList.remove('hidden');
-                msg.textContent = 'Failed to save. Please try again.';
-                msg.style.color = '#EF4444';
+                if (msg) {
+                    msg.classList.remove('hidden');
+                    msg.textContent = 'Failed to save. Please try again.';
+                    msg.style.color = '#EF4444';
+                }
+                showActionToast('Failed to save calculation.', true);
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
-                setTimeout(() => msg.classList.add('hidden'), 3000);
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.classList.remove('btn-saved');
+                    btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
+                    if (msg) msg.classList.add('hidden');
+                }, 2500);
             }
         });
     }

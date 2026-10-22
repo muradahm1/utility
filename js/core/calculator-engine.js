@@ -990,25 +990,8 @@ export function initSaveButton(calculator) {
     const msg = document.getElementById('save-result-msg');
     if (!bar || !btn) return;
     
-    const updateSaveBar = (session) => {
-        bar.style.display = (session && session.user) ? '' : 'none';
-    };
-    if (typeof onAuthChange === 'function') {
-        onAuthChange(updateSaveBar);
-    } else {
-        bar.style.display = 'none';
-        window.addEventListener('getcalcu:auth-change', (e) => updateSaveBar(e.detail));
-        let attempts = 0;
-        const interval = setInterval(() => {
-            attempts++;
-            if (typeof onAuthChange === 'function') {
-                clearInterval(interval);
-                onAuthChange(updateSaveBar);
-            } else if (attempts > 30) {
-                clearInterval(interval);
-            }
-        }, 100);
-    }
+    // Always visible to all users
+    bar.style.display = '';
     
     btn.addEventListener('click', async () => {
         if (typeof saveCalculation !== 'function') return;
@@ -1016,18 +999,31 @@ export function initSaveButton(calculator) {
         btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
         try {
             const result = calculator.tool.calculate(calculator.state.values);
-            const { error } = await saveCalculation(calculator.slug, calculator.tool.name, calculator.state.values, { stats: result.stats });
-            msg.classList.remove('hidden');
-            msg.textContent = error ? 'Failed to save. Please try again.' : 'Saved to history!';
-            msg.style.color = error ? '#EF4444' : '#10B981';
+            const saveRes = await saveCalculation(calculator.slug, calculator.tool.name, calculator.state.values, { stats: result.stats });
+            const isLocal = saveRes && saveRes.data && String(saveRes.data.id).startsWith('loc_');
+            const successMsg = isLocal
+                ? 'Saved to device! Sign in to sync across devices.'
+                : 'Saved to history!';
+            btn.classList.add('btn-saved');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Saved!';
+            if (msg) {
+                msg.classList.remove('hidden');
+                msg.textContent = successMsg;
+                msg.style.color = '#10B981';
+            }
         } catch (err) {
-            msg.classList.remove('hidden');
-            msg.textContent = 'Failed to save. Please try again.';
-            msg.style.color = '#EF4444';
+            if (msg) {
+                msg.classList.remove('hidden');
+                msg.textContent = 'Failed to save. Please try again.';
+                msg.style.color = '#EF4444';
+            }
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
-            setTimeout(() => msg.classList.add('hidden'), 3000);
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.classList.remove('btn-saved');
+                btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
+                if (msg) msg.classList.add('hidden');
+            }, 2500);
         }
     });
 }

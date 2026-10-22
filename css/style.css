@@ -4727,3 +4727,48 @@ body.is-embedded .tool-runner-card {
     max-width: 560px;
     margin: 0 auto;
 }
+
+
+/* ── Elevated Save Button & Toolbar UX (Desktop & Mobile) ─── */
+.results-action-toolbar .action-btn#action-save-btn,
+.results-action-toolbar .action-btn.action-save-btn {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+    font-weight: 600;
+}
+
+.results-action-toolbar .action-btn#action-save-btn:hover,
+.results-action-toolbar .action-btn.action-save-btn:hover {
+    background: var(--primary-hover);
+    color: #ffffff;
+    border-color: var(--primary-hover);
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+}
+
+.results-action-toolbar .action-btn#action-save-btn.btn-saved,
+.results-action-toolbar .action-btn.action-save-btn.btn-saved,
+.save-result-bar .btn.btn-saved {
+    background: #10B981 !important;
+    border-color: #10B981 !important;
+    color: #ffffff !important;
+}
+
+@media (max-width: 640px) {
+    .results-action-toolbar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .results-action-toolbar .action-btn#action-save-btn,
+    .results-action-toolbar .action-btn.action-save-btn {
+        grid-column: span 2;
+        justify-content: center;
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+    .results-action-toolbar .action-btn {
+        justify-content: center;
+    }
+}
