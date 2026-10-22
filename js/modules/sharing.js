@@ -162,7 +162,12 @@ export function generateShareText(tool, result) {
     const parts = [tool.name];
     if (result && result.stats) {
         const mainStat = result.stats.find(s => s.highlight) || result.stats[0];
-        if (mainStat) parts.push(mainStat.label + ': ' + mainStat.value);
+        if (mainStat) {
+            const val = typeof mainStat.value === 'object' && mainStat.value !== null
+                ? (mainStat.value.value || mainStat.value.val || JSON.stringify(mainStat.value))
+                : mainStat.value;
+            parts.push(mainStat.label + ': ' + val);
+        }
     }
     
     return parts.join(' - ');

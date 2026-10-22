@@ -982,20 +982,18 @@ const TOOLS = {
         result: 'Monthly Payment: $478.92 | Total Interest: $2,988.16 | Total Repayment: $22,988.16'
       }
     ],
-    formula: {
-      text: 'M = P × [r(1 + r)^n] / [(1 + r)^n − 1] | Total Interest = (M × n) − P | Total Cost = M × n',
-      variables: [
-        { symbol: 'M', description: 'Monthly fixed installment payment' },
-        { symbol: 'P', description: 'Loan principal (initial borrowed amount)' },
-        { symbol: 'r', description: 'Monthly interest rate (Annual APR ÷ 12 ÷ 100)' },
-        { symbol: 'n', description: 'Total number of monthly payments (Loan term in years × 12)' },
-        { symbol: 'Total Cost', description: 'Sum of all monthly payments over the entire loan life' }
-      ]
-    },
+    formulaTitle: 'Loan Calculator Formula',
+    formula: 'M = P × [r(1 + r)^n] / [(1 + r)^n − 1]',
+    formulaVariables: [
+      { name: 'M', description: 'monthly payment' },
+      { name: 'P', description: 'loan amount' },
+      { name: 'r', description: 'monthly interest rate = annual rate ÷ 12 ÷ 100' },
+      { name: 'n', description: 'number of monthly payments' },
+    ],
     faqs: [
       { q: 'How is a loan payment calculated?', a: 'Fixed loan installments are calculated using standard amortization: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is principal, r is monthly interest (APR ÷ 12), and n is total monthly payments. This ensures equal payments throughout the term that amortize principal to zero.' },
       { q: 'What is the difference between APR and interest rate?', a: 'The interest rate represents the direct fee for borrowing principal, while APR (Annual Percentage Rate) incorporates the interest rate plus lender origination fees, processing charges, and closing costs. APR is the true metric for comparing loan offers.' },
-      { q: 'How does loan term affect total interest?', a: 'A longer term lowers monthly payments by spreading principal across more months, but increases total interest paid because balance declines more slowly. For example, a $30,000 loan at 6.5% costs $3,114 in interest over 3 years versus $5,216 over 5 years.' },
+      { q: 'How does loan term affect total interest?', a: 'A longer term lowers monthly payments by spreading principal across more months, but increases total interest paid because balance declines more slowly. For example, a $30,000 loan at 6.5% costs $3,100.92 in interest over 3 years versus $5,218.80 over 5 years.' },
       { q: 'Can I pay off my loan early without penalty?', a: 'Most modern auto and personal loans permit prepayment without penalty, allowing extra principal payments to reduce total interest. However, always review your loan agreement for prepayment penalties or rule-of-78s interest calculation terms before making extra payments.' },
       { q: 'How does credit score affect loan interest rates?', a: 'Credit scores directly determine lender risk tiers. Borrowers with excellent credit (740+) typically secure APRs several percentage points lower than borrowers in fair or poor tiers, saving thousands in interest over the life of a loan.' },
     ],

@@ -1,3 +1,15 @@
+
+function formatPdfValue(val) {
+    if (val === null || val === undefined) return '';
+    if (typeof val === 'object') {
+        if (val.value !== undefined) return String(val.value);
+        if (val.val !== undefined) return String(val.val);
+        if (val.text !== undefined) return String(val.text);
+        if (Array.isArray(val)) return val.map(formatPdfValue).join(', ');
+        try { return JSON.stringify(val); } catch { return ''; }
+    }
+    return String(val);
+}
 /**
  * PDF Module
  * 
@@ -137,7 +149,7 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             doc.text((primaryStat.label || 'PRIMARY RESULT').toUpperCase(), margin + 6, y + 6);
             
             doc.setFontSize(16);
-            doc.text(String(primaryStat.value || ''), margin + 6, y + 14);
+            doc.text(formatPdfValue(primaryStat.value), margin + 6, y + 14);
             
             y += 24;
         }
@@ -177,7 +189,7 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
                 doc.setTextColor(15, 23, 42);
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(10);
-                doc.text(String(stat.value), currentX + 4, currentY + 9.5);
+                doc.text(formatPdfValue(stat.value), currentX + 4, currentY + 9.5);
             });
             
             y = currentY + 18;
@@ -254,7 +266,7 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
                 
                 doc.setTextColor(51, 65, 85);
                 headers.forEach((h, i) => {
-                    const val = String(row[h] || '');
+                    const val = formatPdfValue(row[h]);
                     doc.text(val, margin + (i * tableColWidth) + 3, y + 3.8);
                 });
                 y += 5.5;

@@ -761,7 +761,12 @@ function initLegacyRunner(tool, slug, container, country = null) {
         const copyBtn = document.getElementById('copy-results-btn');
         if (copyBtn && result && result.stats) {
             copyBtn.addEventListener('click', async () => {
-                const text = result.stats.map(s => `${s.label}: ${s.value}`).join('\n');
+                const text = result.stats.map(s => {
+                    const val = typeof s.value === 'object' && s.value !== null
+                        ? (s.value.value || s.value.val || JSON.stringify(s.value))
+                        : s.value;
+                    return `${s.label}: ${val}`;
+                }).join('\n');
                 try {
                     await navigator.clipboard.writeText(text);
                     copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';

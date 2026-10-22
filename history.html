@@ -245,14 +245,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // into innerHTML so stored malicious input/results can never execute.
         const esc = escapeHtml;
 
-        const inputLines = Object.entries(row.inputs)
-            .map(([k, v]) => `<span class="history-input-chip">${esc(formatKey(k))}: <strong>${esc(v)}</strong></span>`)
-            .join('');
+        function formatVal(val) {
+            if (val === null || val === undefined) return '';
+            if (typeof val === 'object') {
+                if (val.value !== undefined) return String(val.value);
+                if (val.val !== undefined) return String(val.val);
+                if (val.label !== undefined) return String(val.label);
+                if (Array.isArray(val)) return val.map(formatVal).filter(Boolean).join(', ');
+                try { return JSON.stringify(val); } catch { return ''; }
+            }
+            return String(val);
+        }
 
-        const resultLines = Object.entries(row.results)
-            .slice(0, 3)
-            .map(([k, v]) => `<div class="history-result-line"><span>${esc(formatKey(k))}</span><strong>${esc(v)}</strong></div>`)
-            .join('');
+        const inputLines = row.inputs && typeof row.inputs === 'object'
+            ? Object.entries(row.inputs)
+                .map(([k, v]) => `<span class="history-input-chip">${esc(formatKey(k))}: <strong>${esc(formatVal(v))}</strong></span>`)
+                .join('')
+            : '';
+
+        let resultLines = '';
+        if (row.results) {
+            if (Array.isArray(row.results.stats) && row.results.stats.length > 0) {
+                resultLines = row.results.stats
+                    .slice(0, 3)
+                    .map(s => `<div class="history-result-line"><span>${esc(s.label || 'Result')}</span><strong>${esc(formatVal(s.value))}</strong></div>`)
+                    .join('');
+            } else if (Array.isArray(row.results)) {
+                resultLines = row.results
+                    .slice(0, 3)
+                    .map(item => {
+                        const label = item.label || item.name || 'Result';
+                        const val = item.value !== undefined ? item.value : item;
+                        return `<div class="history-result-line"><span>${esc(label)}</span><strong>${esc(formatVal(val))}</strong></div>`;
+                    })
+                    .join('');
+            } else if (typeof row.results === 'object') {
+                const entries = Object.entries(row.results).filter(([k]) => k !== 'table' && k !== 'chart');
+                resultLines = entries
+                    .slice(0, 3)
+                    .map(([k, v]) => `<div class="history-result-line"><span>${esc(formatKey(k))}</span><strong>${esc(formatVal(v))}</strong></div>`)
+                    .join('');
+            }
+        }
 
         // Encode attribute values too — never trust stored slug/name/tool data
         const safeSlug = esc(row.tool_slug);
