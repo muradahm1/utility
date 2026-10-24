@@ -25,7 +25,7 @@
     { "source": "/terms.html",         "destination": "/terms",         "permanent": true },
     { "source": "/cookie-policy.html", "destination": "/cookie-policy", "permanent": true },
     { "source": "/index.html",         "destination": "/",              "permanent": true },
-    { "source": "/tool", "destination": "/tool/:slug", "permanent": true, "has": [{ "type": "query", "key": "slug", "value": "(?<slug>.*)" }] }
+    { "source": "/tool", "has": [{ "type": "query", "key": "slug", "value": "(?<slug>[a-z0-9-]+)" }], "destination": "/tool/:slug", "permanent": true }
   ],
   "headers": [
     {
