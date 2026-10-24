@@ -5,61 +5,64 @@
 
 const fs   = require('fs');
 const path = require('path');
+const vm   = require('vm');
 
 const BASE_URL = 'https://www.getcalcu.com';
-const TODAY    = new Date().toISOString().split('T')[0];
 
-// Parse slugs directly from tools.js without executing it
+// Load tool registry by executing tools.js in sandbox
 const toolsSource = fs.readFileSync(path.join(__dirname, 'js', 'tools.js'), 'utf8');
-const slugs = [...toolsSource.matchAll(/'([a-z0-9-]+)':\s*\{/g)].map(m => m[1]);
+const sandbox = {
+  window: {},
+  document: { createElement: () => ({ setAttribute() {}, appendChild() {} }) },
+  navigator: { userAgent: 'node' },
+  console,
+  URLSearchParams,
+  URL,
+  Date,
+  Math,
+  Number,
+  String,
+  Array,
+  Object,
+  JSON,
+  isFinite,
+  isNaN,
+  parseFloat,
+  parseInt,
+};
+vm.createContext(sandbox);
+vm.runInContext(toolsSource, sandbox);
+const primarySlugs = Object.keys(sandbox.window.TOOLS || {});
 
-// Also parse slugs from modular calculator files
-const modularFiles = [
-    path.join(__dirname, 'js', 'calculators', 'construction.js'),
-    path.join(__dirname, 'js', 'calculators', 'engineering.js'),
-    path.join(__dirname, 'js', 'calculators', 'finance.js'),
-    path.join(__dirname, 'js', 'calculators', 'health.js'),
+// Localized salary tools
+const localizedSlugs = [
+  'salary-calculator/et',
+  'salary-calculator/ke',
+  'salary-calculator/ng',
+  'salary-calculator/za'
 ];
-const modularSlugs = modularFiles.flatMap(filePath => {
-    if (!fs.existsSync(filePath)) return [];
-    const source = fs.readFileSync(filePath, 'utf8');
-    return [...source.matchAll(/export\s+const\s+\w+\s*=\s*\{\s*id:\s*'([a-z0-9-]+)'/g)].map(m => m[1]);
-});
 
-const allSlugs = [...new Set([...slugs, ...modularSlugs])];
+const allSlugs = [...new Set([...primarySlugs, ...localizedSlugs])];
 
 const categories = ['finance', 'health', 'math', 'business', 'education', 'construction', 'engineering'];
-const categoryUrls = categories.map(cat => ({
-    loc:        `${BASE_URL}/category/${cat}`,
-    priority:   '0.8',
-    changefreq: 'weekly',
-}));
+const categoryUrls = categories.map(cat => `${BASE_URL}/category/${cat}`);
 
 const staticUrls = [
-    { loc: `${BASE_URL}/`,            priority: '1.0', changefreq: 'daily',   lastmod: '2026-09-19' },
-    ...categoryUrls.map(c => ({ ...c, lastmod: '2026-09-19' })),
-    { loc: `${BASE_URL}/about`,       priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
-    { loc: `${BASE_URL}/contact`,     priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
+  `${BASE_URL}/`,
+  ...categoryUrls,
+  `${BASE_URL}/about`,
+  `${BASE_URL}/contact`,
 ];
 
-const toolUrls = allSlugs.map(slug => ({
-    loc:        `${BASE_URL}/tool/${slug}`,
-    priority:   '0.9',
-    changefreq: 'weekly',
-    lastmod:    '2026-09-19',
-}));
+const toolUrls = allSlugs.map(slug => `${BASE_URL}/tool/${slug}`);
 
 const allUrls = [...staticUrls, ...toolUrls];
 
 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map(u => `
-  <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${u.lastmod}</lastmod>
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
-  </url>`).join('')}
+${allUrls.map(u => `  <url>
+    <loc>${u}</loc>
+  </url>`).join('\n')}
 </urlset>
 `;
 

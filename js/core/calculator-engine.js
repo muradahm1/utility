@@ -651,6 +651,8 @@ export function renderCalculator(calculator) {
     setTimeout(() => calculator.calculate(), 0);
 }
 
+export const METHODOLOGY_BYLINE = 'Built and maintained by the GetCalcu founder.';
+
 /**
  * Build Methodology & Editorial Standards HTML
  * @param {Object} tool - Tool definition
@@ -691,7 +693,7 @@ export function buildMethodologyHtml(tool) {
                     <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
                     <h2 id="methodology-heading">GetCalcu Methodology & Editorial Standards</h2>
                 </div>
-                <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: ${escapeHtml(lastReviewed)}</span>
+                <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> ${escapeHtml(METHODOLOGY_BYLINE)}</span>
             </div>
             <p class="methodology-summary">${escapeHtml(m.summary || standards)}</p>
             ${assumptionsHtml}
