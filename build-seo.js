@@ -997,7 +997,7 @@ const toolPageTemplate = (tool, allTools = {}) => {
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
     <title>${escapeHtml(title)}</title>
@@ -1313,7 +1313,7 @@ const categoryPageTemplate = (cat, catTools) => {
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
     <title>${escapeHtml(cat.title)}</title>
@@ -1624,38 +1624,21 @@ async function build() {
     fs.writeFileSync(path.join(catSubDir, 'index.html'), html, 'utf8');
   });
 
-  // 3. Generate sitemap.xml (Focus on high-value indexing targets; exclude low-intent legal boilerplate)
+  // 3. Generate sitemap.xml (Clean, canonical indexable URLs; omit changefreq, priority, and lastmod per hygiene guidelines)
   const sitemapUrls = [
-    { loc: `${BASE_URL}/`, priority: '1.0', changefreq: 'daily', lastmod: '2026-09-19' },
-    ...Object.keys(CATEGORIES).map(k => ({
-      loc: `${BASE_URL}/category/${CATEGORIES[k].slug}`,
-      priority: '0.8',
-      changefreq: 'weekly',
-      lastmod: '2026-09-19',
-    })),
-    ...allSlugs.map(s => {
-      const toolObj = tools[s] || {};
-      const toolLastMod = toolObj.lastmod || TODAY;
-      return {
-        loc: `${BASE_URL}/tool/${s}`,
-        priority: '0.9',
-        changefreq: 'weekly',
-        lastmod: toolLastMod,
-      };
-    }),
-    { loc: `${BASE_URL}/about`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
-    { loc: `${BASE_URL}/contact`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
+    `${BASE_URL}/`,
+    ...Object.keys(CATEGORIES).map(k => `${BASE_URL}/category/${CATEGORIES[k].slug}`),
+    ...allSlugs.map(s => `${BASE_URL}/tool/${s}`),
+    `${BASE_URL}/about`,
+    `${BASE_URL}/contact`,
   ];
 
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapUrls.map(u => `  <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${u.lastmod}</lastmod>
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
+    <loc>${u}</loc>
   </url>`).join('\n')}
-</urlset>`;
+</urlset>\n`;
 
   fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapXml, 'utf8');
 
