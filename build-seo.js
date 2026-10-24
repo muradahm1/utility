@@ -500,6 +500,8 @@ function getToolTrustInfo(tool, slug) {
   };
 }
 
+const METHODOLOGY_BYLINE = 'Built and maintained by the GetCalcu founder.';
+
 function buildMethodologyHtml(tool, slug) {
   if (!tool.methodology && !tool.formula) return '';
   const m = tool.methodology || {};
@@ -536,7 +538,7 @@ function buildMethodologyHtml(tool, slug) {
           <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
           <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
-        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Reviewed: ${escapeHtml(lastReviewed)}</span>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> ${escapeHtml(METHODOLOGY_BYLINE)}</span>
       </div>
       <p class="methodology-summary">${escapeHtml(m.summary || standards)}</p>
       ${assumptionsHtml}
