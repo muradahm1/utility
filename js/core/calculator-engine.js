@@ -660,7 +660,8 @@ export function buildMethodologyHtml(tool) {
     if (!tool.methodology && !tool.formula) return '';
     const m = tool.methodology || {};
     const standards = m.standards || 'Calculations are based on recognized financial, mathematical, and scientific models verified against authoritative reference standards.';
-    const sources = m.sources || ['GetCalcu Technical & Calculation Review Group'];
+    const rawSources = Array.isArray(m.sources) ? m.sources : [];
+    const sources = rawSources.filter(s => s && !/GetCalcu/i.test(s));
     const lastReviewed = tool.lastReviewed || m.lastReviewed || 'September 2026';
     const assumptions = m.assumptions || [];
     

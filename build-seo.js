@@ -318,7 +318,7 @@ function buildArticleJsonLd(tool) {
     '@type': 'TechArticle',
     headline: tool.article.heading,
     description: tool.article.intro || tool.metaDescription || tool.description,
-    author: { '@type': 'Organization', name: 'GetCalcu Editorial & Calculation Review Board' },
+    author: { '@type': 'Organization', name: 'GetCalcu' },
     publisher: { '@type': 'Organization', name: 'GetCalcu', url: `${BASE_URL}/` },
     about: tool.name,
     url: buildCanonical(tool.slug),
@@ -372,76 +372,65 @@ function getToolTrustInfo(tool, slug) {
     if (['mortgage-calculator', 'auto-loan-calculator', 'loan-calculator', 'loan-interest-calculator', 'credit-card-payoff-calculator', 'amortization-calculator', 'house-affordability-calculator', 'student-loan-calculator'].includes(slug)) {
       return {
         standard: 'Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) & Truth in Lending Act (TILA) amortization standards.',
-        reviewer: 'GetCalcu Consumer Credit & Lending Review Board',
         policy: 'Deterministic in-browser amortization'
       };
     }
     if (['debt-snowball-calculator'].includes(slug)) {
       return {
         standard: 'Harvard Business School debt payoff empirical behavioral research & CFPB debt reduction guidelines.',
-        reviewer: 'GetCalcu Consumer Debt & Credit Planning Board',
         policy: 'Deterministic mathematical payoff simulation'
       };
     }
     if (['refinance-calculator'].includes(slug)) {
       return {
         standard: 'Consumer Financial Protection Bureau (CFPB) TILA disclosure standards & break-even mortgage amortization formulas.',
-        reviewer: 'GetCalcu Mortgage & Real Estate Review Desk',
         policy: 'Deterministic break-even computation'
       };
     }
     if (['self-employment-tax-calculator'].includes(slug)) {
       return {
         standard: 'IRS Schedule SE (Form 1040) statutory 92.35% SECA rules & Social Security Administration statutory wage limits.',
-        reviewer: 'GetCalcu Small Business & Tax Planning Board',
         policy: 'Deterministic progressive tax modeling'
       };
     }
     if (['salary-calculator'].includes(slug)) {
       return {
         standard: 'IRS Title 26 Internal Revenue Code (Rev. Proc. 2024-40) 2026 federal brackets, standard deductions, and FICA statutory rates.',
-        reviewer: 'GetCalcu Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser payroll calculation'
       };
     }
     if (slug === 'salary-calculator/et') {
       return {
         standard: 'Federal Income Tax Proclamation No. 979/2016 (Schedule A) & Pension Proclamation No. 715/2011 statutory pension framework.',
-        reviewer: 'GetCalcu Ethiopian Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser Schedule A tax and pension computation'
       };
     }
     if (slug === 'salary-calculator/ke') {
       return {
         standard: 'Kenya Revenue Authority (KRA) Income Tax Act (Cap. 470), Finance Act, NSSF Act 2013, SHIF Act 2023 & Affordable Housing Act 2024.',
-        reviewer: 'GetCalcu Kenyan Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser PAYE, NSSF, SHIF, and Housing Levy computation'
       };
     }
     if (slug === 'salary-calculator/ng') {
       return {
         standard: 'Personal Income Tax Act (PITA) Cap P8 LFN 2004 (amended by Finance Acts), Pension Reform Act (PRA) 2014 & NHF Act.',
-        reviewer: 'GetCalcu Nigerian Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser PAYE, CRA, pension, and NHF computation'
       };
     }
     if (slug === 'salary-calculator/za') {
       return {
         standard: 'South African Revenue Service (SARS) Income Tax Act No. 58 of 1962 & Unemployment Insurance Contributions Act No. 4 of 2002.',
-        reviewer: 'GetCalcu South African Payroll & Tax Calculation Desk',
         policy: 'Deterministic in-browser SARS PAYE, UIF, Section 11F, and Section 6 rebate computation'
       };
     }
     if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
       return {
         standard: 'Fisher Real Rate of Return Equation & SEC / FINRA compound interest modeling guidelines (4% Safe Withdrawal Framework).',
-        reviewer: 'GetCalcu Quantitative Finance & Wealth Planning Board',
         policy: 'Deterministic real purchasing-power projection'
       };
     }
     return {
       standard: 'Generally Accepted Accounting Principles (GAAP) & CFPB financial disclosure guidelines.',
-      reviewer: 'GetCalcu Financial Editorial Board',
       policy: 'Deterministic client-side computation'
     };
   }
@@ -449,13 +438,11 @@ function getToolTrustInfo(tool, slug) {
     if (slug === 'bmi-calculator') {
       return {
         standard: 'CDC Adult & Pediatric Body Mass Index criteria and World Health Organization (WHO) international classification thresholds.',
-        reviewer: 'GetCalcu Health & Nutrition Advisory Group',
         policy: 'Deterministic anthropometric evaluation'
       };
     }
     return {
       standard: 'Mifflin-St Jeor Energy Expenditure Equations (validated by the Academy of Nutrition and Dietetics).',
-      reviewer: 'GetCalcu Health & Nutrition Advisory Group',
       policy: 'Deterministic metabolic computation'
     };
   }
@@ -463,41 +450,35 @@ function getToolTrustInfo(tool, slug) {
     if (slug === 'ohms-law-calculator') {
       return {
         standard: "IEEE standard DC/AC resistive circuit principles and Ohm's Law governing electrical relations.",
-        reviewer: 'GetCalcu Physical Science & Electrical Review Desk',
         policy: 'Deterministic physics evaluation'
       };
     }
     if (slug === 'beam-deflection-calculator') {
       return {
         standard: 'American Institute of Steel Construction (AISC) & classical Euler-Bernoulli beam theory deflection formulations.',
-        reviewer: 'GetCalcu Structural Engineering Review Board',
         policy: 'Deterministic structural mechanics calculation'
       };
     }
     return {
       standard: 'ISO 80000-4 Quantities and Units (Mechanics) & standard hydrostatic pressure equations.',
-      reviewer: 'GetCalcu Physical Science & Engineering Board',
       policy: 'Deterministic fluid mechanics computation'
     };
   }
   if (cat === 'construction') {
     return {
       standard: 'ASTM International standard specifications for construction materials and standard architectural coverage ratios.',
-      reviewer: 'GetCalcu Construction & Building Estimations Board',
       policy: 'Deterministic volumetric & material estimation'
     };
   }
   if (cat === 'education') {
     return {
       standard: 'AACRAO (American Association of Collegiate Registrars and Admissions Officers) standard 4.0 GPA weighting conventions.',
-      reviewer: 'GetCalcu Academic & Educational Review Board',
       policy: 'Deterministic academic calculation'
     };
   }
   if (cat === 'business') {
     return {
       standard: 'Corporate Finance Institute (CFI) standard unit economics, GAAP gross margin formulas, and SaaS LTV/CAC metrics.',
-      reviewer: 'GetCalcu Commercial Planning & Unit Economics Desk',
       policy: 'Deterministic commercial calculation'
     };
   }
@@ -505,19 +486,16 @@ function getToolTrustInfo(tool, slug) {
     if (slug === 'unit-converter') {
       return {
         standard: 'NIST Special Publication 811 (Guide for the Use of the International System of Units) & BIPM definitions.',
-        reviewer: 'GetCalcu Metrology & Dimensional Analysis Board',
         policy: 'Deterministic floating-point unit conversion'
       };
     }
     return {
       standard: 'ISO 80000 mathematical sign standards and deterministic algebraic formulas.',
-      reviewer: 'GetCalcu Mathematical Review Board',
       policy: 'Deterministic arithmetic evaluation'
     };
   }
   return {
     standard: 'Deterministic mathematical principles and open peer-reviewed computational standards.',
-    reviewer: 'GetCalcu Editorial & Calculation Board',
     policy: 'In-browser deterministic computation'
   };
 }
@@ -527,10 +505,10 @@ function buildMethodologyHtml(tool, slug) {
   const m = tool.methodology || {};
   const trustInfo = getToolTrustInfo(tool, slug);
   const standards = m.standards || trustInfo.standard || 'Calculations are based on recognized financial, mathematical, and scientific models verified against authoritative reference standards.';
-  const reviewer = m.reviewer || trustInfo.reviewer || 'GetCalcu Editorial & Calculation Board';
   const lastReviewed = tool.lastReviewed || m.lastReviewed || 'September 2026';
   const assumptions = m.assumptions || [];
-  const sources = m.sources || [reviewer];
+  const rawSources = Array.isArray(m.sources) ? m.sources : [];
+  const sources = rawSources.filter(s => s && !/GetCalcu/i.test(s));
 
   let assumptionsHtml = '';
   if (assumptions.length > 0) {
