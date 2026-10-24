@@ -11,9 +11,9 @@
  * @version 1.0.0
  */
 
-const CACHE_NAME = 'getcalcu-v8';
-const STATIC_CACHE = 'getcalcu-static-v8';
-const PAGE_CACHE = 'getcalcu-pages-v8';
+const CACHE_NAME = 'getcalcu-v9';
+const STATIC_CACHE = 'getcalcu-static-v9';
+const PAGE_CACHE = 'getcalcu-pages-v9';
 
 // Core shell assets to precache on install (lightweight to prevent bandwidth congestion)
 const PRECACHE_URLS = [
@@ -26,6 +26,10 @@ const PRECACHE_URLS = [
   '/js/tools.js',
   '/js/tools-template.js',
   '/js/app.js',
+  '/js/tools.min.js',
+  '/js/app.min.js',
+  '/js/config.js',
+  '/js/firebase.js',
   '/favicon.svg',
   '/logo.svg',
   '/manifest.json'
@@ -36,7 +40,11 @@ const CACHE_FIRST = /\.(css|js|png|jpg|jpeg|svg|webp|gif|ico|woff2?|ttf)$/;
 
 // API & external CDN endpoints that should always hit network directly
 const NETWORK_ONLY = [
-  'supabase.co',
+  'firebaseio.com',
+  'googleapis.com',
+  'firebaseapp.com',
+  'identitytoolkit.googleapis.com',
+  'securetoken.googleapis.com',
   'emailjs.com',
   'google-analytics.com',
   'googletagmanager.com',
