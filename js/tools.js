@@ -828,41 +828,228 @@ const TOOLS = {
       return {};
     },
     calculate(v) {
-      const a = safeNum(v.val_a, 0);
-      const b = safeNum(v.val_b, 0);
+      const mode = v.mode || (v.percentage !== undefined ? 'percent-of' : 'what-percent');
+      const a = safeNum(v.val_a !== undefined ? v.val_a : v.percentage, 0);
+      const b = safeNum(v.val_b !== undefined ? v.val_b : v.number, 0);
 
-      if (v.mode === 'what-percent') {
+      if (mode === 'what-percent') {
         if (b === 0) return errorResult('Value B cannot be zero when calculating "X is what % of Y?"');
         const result = (a / b) * 100;
+        const part = Math.abs(a);
+        const whole = Math.abs(b);
+        const remainder = Math.max(0, whole - part);
+
+        const charts = [
+          {
+            id: 'proportional-split',
+            label: 'Proportional Split',
+            icon: 'fa-chart-pie',
+            type: 'doughnut',
+            labels: a <= b ? ['Value A (Part)', 'Remaining of B'] : ['Baseline B (100%)', 'Excess beyond B'],
+            datasets: [{
+              data: a <= b ? [part, remainder] : [whole, Math.abs(part - whole)],
+              backgroundColor: ['#6366F1', '#E2E8F0']
+            }],
+            title: `Proportion: ${fmtN(a)} out of ${fmtN(b)} (${roundTo(result, 2)}%)`
+          },
+          {
+            id: 'value-comparison',
+            label: 'Value Comparison',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: ['Value A', 'Value B (Whole)'],
+            datasets: [{
+              label: 'Value',
+              data: [a, b],
+              backgroundColor: ['#6366F1', '#10B981']
+            }],
+            title: 'Value A vs. Value B'
+          }
+        ];
+
+        const refPercentages = [10, 25, 50, 75, 100, 150];
+        const tableRows = refPercentages.map(pct => ({
+          percent: pct + '%',
+          value: fmtN(roundTo((pct / 100) * b, 2)),
+          description: `${pct}% of ${fmtN(b)}`
+        }));
+
+        const table = makeTableSpec({
+          mode: 'table',
+          title: `Percentage Reference Scale for ${fmtN(b)}`,
+          columns: [
+            { key: 'percent', label: 'Percentage', emphasis: true },
+            { key: 'value', label: 'Equivalent Value' },
+            { key: 'description', label: 'Context' }
+          ],
+          rows: tableRows
+        });
+
         return {
           stats: [
             { label: 'Result',              value: fmtN(result) + '%', highlight: true },
             { label: 'Calculation',         value: `${fmtN(a)} is ${fmtN(result)}% of ${fmtN(b)}` },
+            { label: 'Fractional Ratio',    value: `${roundTo(a / b, 4)}` },
+            { label: 'Remaining Portion',   value: `${roundTo(Math.max(0, 100 - result), 2)}%` }
           ],
+          charts,
+          chart: charts[0],
+          table,
+          insight: {
+            tone: 'positive',
+            icon: 'fa-percent',
+            headline: `${fmtN(a)} represents ${roundTo(result, 2)}% of ${fmtN(b)}.`,
+            detail: result > 100
+              ? `${fmtN(a)} exceeds the base value ${fmtN(b)} by ${roundTo(result - 100, 2)}% (${fmtN(a - b)} units).`
+              : `The remaining ${roundTo(100 - result, 2)}% equals ${fmtN(b - a)} units to complete the whole.`
+          }
         };
       }
 
-      if (v.mode === 'percent-of') {
+      if (mode === 'percent-of') {
         const result = (a / 100) * b;
+        const part = Math.abs(result);
+        const whole = Math.abs(b);
+        const remainder = Math.max(0, whole - part);
+
+        const charts = [
+          {
+            id: 'calculated-split',
+            label: 'Calculated Split',
+            icon: 'fa-chart-pie',
+            type: 'doughnut',
+            labels: [`Calculated ${roundTo(a, 1)}%`, 'Remaining Balance'],
+            datasets: [{
+              data: [part, remainder],
+              backgroundColor: ['#10B981', '#E2E8F0']
+            }],
+            title: `${roundTo(a, 2)}% of ${fmtN(b)} = ${fmtN(result)}`
+          },
+          {
+            id: 'scale-comparison',
+            label: 'Scale Comparison',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: [`${roundTo(a, 1)}% Part`, '100% Whole (B)'],
+            datasets: [{
+              label: 'Amount',
+              data: [result, b],
+              backgroundColor: ['#10B981', '#3B82F6']
+            }],
+            title: 'Calculated Part vs. Total Base'
+          }
+        ];
+
+        const refPercentages = [5, 10, 20, 25, 50, a, 100];
+        const uniquePcts = [...new Set(refPercentages.map(p => roundTo(p, 2)))].sort((x, y) => x - y);
+        const tableRows = uniquePcts.map(pct => ({
+          percent: pct + '%',
+          value: fmtN(roundTo((pct / 100) * b, 2)),
+          description: pct === roundTo(a, 2) ? '★ Your Target' : `${pct}% of ${fmtN(b)}`
+        }));
+
+        const table = makeTableSpec({
+          mode: 'table',
+          title: `Percentage Multipliers of ${fmtN(b)}`,
+          columns: [
+            { key: 'percent', label: 'Rate', emphasis: true },
+            { key: 'value', label: 'Value', emphasis: true },
+            { key: 'description', label: 'Description' }
+          ],
+          rows: tableRows
+        });
+
         return {
           stats: [
             { label: 'Result',              value: fmtN(result),       highlight: true },
             { label: 'Calculation',         value: `${fmtN(a)}% of ${fmtN(b)} = ${fmtN(result)}` },
+            { label: 'Remaining Balance',   value: fmtN(roundTo(b - result, 2)) },
+            { label: 'Decimal Multiplier',  value: roundTo(a / 100, 4).toString() }
           ],
+          charts,
+          chart: charts[0],
+          table,
+          insight: {
+            tone: 'positive',
+            icon: 'fa-calculator',
+            headline: `${fmtN(a)}% of ${fmtN(b)} is ${fmtN(result)}.`,
+            detail: `Multiplying by ${roundTo(a / 100, 4)} yields ${fmtN(result)}. Deducting this from ${fmtN(b)} leaves ${fmtN(roundTo(b - result, 2))}.`
+          }
         };
       }
 
-      if (v.mode === 'change') {
+      if (mode === 'change') {
         if (a === 0) return errorResult('Starting value (From) cannot be zero when calculating percent change.');
         const result = ((b - a) / Math.abs(a)) * 100;
         const direction = result >= 0 ? 'increase' : 'decrease';
+        const diff = b - a;
+
+        const charts = [
+          {
+            id: 'value-trajectory',
+            label: 'Shift Comparison',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: ['Baseline (From)', 'Target (To)', 'Net Shift (Difference)'],
+            datasets: [{
+              label: 'Value',
+              data: [a, b, Math.abs(diff)],
+              backgroundColor: ['#6366F1', '#3B82F6', result >= 0 ? '#10B981' : '#EF4444']
+            }],
+            title: `Percentage Shift: ${result >= 0 ? '+' : ''}${roundTo(result, 2)}%`
+          },
+          {
+            id: 'relative-breakdown',
+            label: 'Relative Proportion',
+            icon: 'fa-chart-pie',
+            type: 'doughnut',
+            labels: ['Starting Base', result >= 0 ? 'Gain (+)' : 'Loss (-)'],
+            datasets: [{
+              data: [Math.abs(a), Math.abs(diff)],
+              backgroundColor: ['#94A3B8', result >= 0 ? '#10B981' : '#EF4444']
+            }],
+            title: `Baseline vs. Absolute Delta (${fmtN(Math.abs(diff))})`
+          }
+        ];
+
+        const steps = [-50, -25, -10, 0, 10, 25, 50, 100];
+        const tableRows = steps.map(pct => {
+          const val = roundTo(a * (1 + pct / 100), 2);
+          return {
+            change: (pct >= 0 ? '+' : '') + pct + '%',
+            resultingValue: fmtN(val),
+            context: pct === 0 ? 'Starting Baseline' : `${pct >= 0 ? '+' : ''}${pct}% from ${fmtN(a)}`
+          };
+        });
+
+        const table = makeTableSpec({
+          mode: 'table',
+          title: `Percentage Change Benchmark Scenarios from ${fmtN(a)}`,
+          columns: [
+            { key: 'change', label: '% Shift', emphasis: true },
+            { key: 'resultingValue', label: 'Resulting Value', emphasis: true },
+            { key: 'context', label: 'Scenario Context' }
+          ],
+          rows: tableRows
+        });
+
         return {
           stats: [
             { label: 'Result',              value: fmtN(Math.abs(result)) + '% ' + direction, highlight: true },
-            { label: 'Difference',          value: fmtN(b - a) },
+            { label: 'Difference',          value: (diff >= 0 ? '+' : '') + fmtN(diff) },
             { label: 'From',                value: fmtN(a) },
             { label: 'To',                  value: fmtN(b) },
+            { label: 'Growth Factor',       value: roundTo(b / a, 4) + 'x' }
           ],
+          charts,
+          chart: charts[0],
+          table,
+          insight: {
+            tone: result >= 0 ? 'positive' : 'warning',
+            icon: result >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down',
+            headline: `Moving from ${fmtN(a)} to ${fmtN(b)} represents a ${roundTo(Math.abs(result), 2)}% ${direction}.`,
+            detail: `The absolute difference is ${diff >= 0 ? '+' : ''}${fmtN(diff)}. The final value is ${roundTo((b / a) * 100, 1)}% of the initial value.`
+          }
         };
       }
 
@@ -3955,9 +4142,37 @@ const TOOLS = {
             { slug: 'inflation-calculator', name: 'Inflation Calculator', icon: 'fa-arrow-trend-up', iconClass: 'icon-finance', description: 'Understand how rising housing costs may affect future affordability.' },
           ];
 
+      const charts = [
+        {
+          id: 'net-worth-timeline',
+          label: 'Net Worth Comparison',
+          icon: 'fa-chart-line',
+          ...chart
+        },
+        {
+          id: 'cumulative-costs',
+          label: 'Cumulative Costs',
+          icon: 'fa-scale-balanced',
+          ...chart2
+        },
+        {
+          id: 'home-equity-growth',
+          label: 'Home Equity Growth',
+          icon: 'fa-chart-area',
+          ...compareChart
+        },
+        {
+          id: 'opportunity-cost',
+          label: 'Opportunity Cost',
+          icon: 'fa-sack-dollar',
+          ...chart3
+        }
+      ];
+
       return {
         stats,
         summary,
+        charts,
         chart,
         chart2,
         compareChart,
@@ -6973,10 +7188,32 @@ const TOOLS = {
         { label: '10-Year Equity vs Index Fund', value: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' vs ' + sym + y10.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }), highlight: true }
       ];
 
+      const charts = [
+        {
+          id: 'monthly-pitia-split',
+          label: 'Monthly PITIA Breakdown',
+          icon: 'fa-chart-pie',
+          ...chart
+        },
+        {
+          id: 'equity-vs-sp500',
+          label: 'Home Equity vs S&P 500',
+          icon: 'fa-chart-line',
+          ...chart2
+        },
+        {
+          id: 'amortization-home-value',
+          label: 'Amortization & Equity Curve',
+          icon: 'fa-chart-area',
+          ...chart3
+        }
+      ];
+
       return {
         summary,
         stats,
         table: matrixTable,
+        charts,
         chart,
         chart2,
         chart3,
@@ -7385,10 +7622,32 @@ const TOOLS = {
         { label: 'Annual Platform & Gateway Fees', value: '$' + annualPlatformFees.toLocaleString('en-US', { minimumFractionDigits: 2 }) }
       ];
 
+      const charts = [
+        {
+          id: 'revenue-waterfall',
+          label: 'Annual Revenue Waterfall',
+          icon: 'fa-chart-column',
+          ...chart
+        },
+        {
+          id: 'working-time-split',
+          label: 'Working Time Allocation',
+          icon: 'fa-chart-pie',
+          ...chart2
+        },
+        {
+          id: 'hourly-rate-decay',
+          label: 'Hourly Rate Decay',
+          icon: 'fa-sliders',
+          ...chart3
+        }
+      ];
+
       return {
         summary,
         stats,
         table: waterfallTable,
+        charts,
         chart,
         chart2,
         chart3,
@@ -7486,13 +7745,105 @@ const TOOLS = {
       } else {
         deflection = (P * L * L * L) / (3 * E * I);
       }
+
+      // Generate Deflection Curve Profile across span
+      const spanLabels = [];
+      const deflectionCurve = [];
+      for (let i = 0; i <= 10; i++) {
+        const fraction = i / 10;
+        const x = fraction * L;
+        spanLabels.push(`${Math.round(fraction * 100)}% (${roundTo(x / 12, 1)}ft)`);
+        let y = 0;
+        if (beamType === 'simply') {
+          const symX = x <= L / 2 ? x : L - x;
+          y = (P * symX * (3 * L * L - 4 * symX * symX)) / (48 * E * I);
+        } else {
+          y = (P * x * x * (3 * L - x)) / (6 * E * I);
+        }
+        deflectionCurve.push(roundTo(y, 4));
+      }
+
+      const limit360 = roundTo(L / 360, 4);
+      const limit240 = roundTo(L / 240, 4);
+      const limit180 = roundTo(L / 180, 4);
+
+      const charts = [
+        {
+          id: 'deflection-profile',
+          label: 'Deflection Profile',
+          icon: 'fa-chart-area',
+          type: 'line',
+          labels: spanLabels,
+          datasets: [{
+            label: 'Deflection (in)',
+            data: deflectionCurve,
+            color: '#6366F1',
+            borderColor: '#6366F1',
+            fill: true
+          }],
+          yLabel: 'Deflection (in)',
+          title: `Deflection Curve along Span (${beamType === 'simply' ? 'Simply Supported' : 'Cantilever'})`
+        },
+        {
+          id: 'code-limits-comparison',
+          label: 'Code Limits Comparison',
+          icon: 'fa-chart-column',
+          type: 'bar',
+          labels: ['Actual Max Deflection', 'L/360 (Floors/Live)', 'L/240 (Total Load)', 'L/180 (Roof/Cantilever)'],
+          datasets: [{
+            label: 'Inches',
+            data: [roundTo(deflection, 4), limit360, limit240, limit180],
+            backgroundColor: [
+              deflection <= limit360 ? '#10B981' : '#EF4444',
+              '#3B82F6',
+              '#F59E0B',
+              '#94A3B8'
+            ]
+          }],
+          yLabel: 'Inches',
+          title: 'Actual Deflection vs. Standard Building Code Thresholds'
+        }
+      ];
+
+      const complianceRows = [
+        { code: 'L/360 Limit', standard: 'Floors under live load', allowable: limit360 + ' in', actual: roundTo(deflection, 4) + ' in', status: deflection <= limit360 ? 'PASS (Compliant)' : 'FAIL (Excessive)' },
+        { code: 'L/240 Limit', standard: 'Total load deflection', allowable: limit240 + ' in', actual: roundTo(deflection, 4) + ' in', status: deflection <= limit240 ? 'PASS (Compliant)' : 'FAIL (Excessive)' },
+        { code: 'L/180 Limit', standard: 'Roofs without plaster', allowable: limit180 + ' in', actual: roundTo(deflection, 4) + ' in', status: deflection <= limit180 ? 'PASS (Compliant)' : 'FAIL (Excessive)' }
+      ];
+
+      const complianceTable = makeTableSpec({
+        mode: 'table',
+        title: 'Building Code Deflection Compliance Check',
+        columns: [
+          { key: 'code', label: 'Standard Limit', emphasis: true },
+          { key: 'standard', label: 'Application Scope' },
+          { key: 'allowable', label: 'Allowable Deflection' },
+          { key: 'actual', label: 'Calculated Deflection', emphasis: true },
+          { key: 'status', label: 'Compliance Status' }
+        ],
+        rows: complianceRows
+      });
+
+      const pass360 = deflection <= limit360;
+
       return {
         stats: [
           { label: 'Beam Type', value: beamType === 'simply' ? 'Simply Supported' : 'Cantilever' },
           { label: 'Max Deflection', value: roundTo(deflection, 4) + ' in', highlight: true },
           { label: 'Deflection (in)', value: roundTo(deflection, 4) },
           { label: 'L/Δ Ratio', value: 'L/' + roundTo(L / deflection, 1) },
+          { label: 'Span Length', value: `${roundTo(L / 12, 1)} ft (${roundTo(L, 1)} in)` },
+          { label: 'L/360 Allowable', value: limit360 + ' in' }
         ],
+        charts,
+        chart: charts[0],
+        table: complianceTable,
+        insight: {
+          tone: pass360 ? 'positive' : 'warning',
+          icon: pass360 ? 'fa-circle-check' : 'fa-triangle-exclamation',
+          headline: `Maximum deflection is ${roundTo(deflection, 4)} inches (${pass360 ? 'Meets L/360 standard' : 'Exceeds standard L/360 limit'}).`,
+          detail: `Under a ${P.toLocaleString('en-US')} lb point load, the beam achieves an L/${roundTo(L / deflection, 1)} span ratio. The allowable L/360 limit is ${limit360} inches. ${pass360 ? 'The member demonstrates adequate structural stiffness under standard serviceability criteria.' : 'Consider selecting a section with higher moment of inertia (I) or decreasing the unbraced span length.'}`
+        },
         formula: 'δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]',
       };
     },
@@ -7558,13 +7909,74 @@ const TOOLS = {
 
       P = V * I;
 
+      const charts = [
+        {
+          id: 'circuit-parameters',
+          label: 'Circuit Quantities',
+          icon: 'fa-chart-column',
+          type: 'bar',
+          labels: ['Voltage (V)', 'Current (A)', 'Resistance (Ω)', 'Power (W)'],
+          datasets: [{
+            label: 'Value',
+            data: [roundTo(V, 2), roundTo(I, 4), roundTo(R, 2), roundTo(P, 2)],
+            backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444']
+          }],
+          title: "Ohm's Law Operating Parameters"
+        },
+        {
+          id: 'power-curve',
+          label: 'Power vs. Current Curve',
+          icon: 'fa-chart-line',
+          type: 'line',
+          labels: ['0.25x I', '0.5x I', '0.75x I', '1.0x I (Active)', '1.25x I', '1.5x I', '2.0x I'],
+          datasets: [{
+            label: 'Power Dissipation P = I²R (Watts)',
+            data: [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(m => roundTo((m * I) * (m * I) * R, 2)),
+            color: '#EF4444',
+            borderColor: '#EF4444',
+            fill: true
+          }],
+          yLabel: 'Watts (W)',
+          title: 'Power Dissipation Scaling with Current'
+        }
+      ];
+
+      const energy1h = roundTo(P, 2);
+      const energy24h = roundTo((P * 24) / 1000, 3);
+      const energyMonth = roundTo((P * 24 * 30) / 1000, 2);
+
+      const circuitTable = makeTableSpec({
+        mode: 'table',
+        title: 'Circuit Energy Consumption & Power Dissipation',
+        columns: [
+          { key: 'duration', label: 'Operating Duration', emphasis: true },
+          { key: 'energy', label: 'Energy Consumed', emphasis: true },
+          { key: 'estCost', label: 'Est. Cost (@ $0.16/kWh)' }
+        ],
+        rows: [
+          { duration: '1 Hour Continuous', energy: energy1h + ' Wh', estCost: '$' + roundTo((energy1h / 1000) * 0.16, 4) },
+          { duration: '24 Hours (1 Day)', energy: energy24h + ' kWh', estCost: '$' + roundTo(energy24h * 0.16, 3) },
+          { duration: '30 Days (1 Month)', energy: energyMonth + ' kWh', estCost: '$' + roundTo(energyMonth * 0.16, 2) }
+        ]
+      });
+
       return {
         stats: [
           { label: 'Voltage (V)', value: roundTo(V, 2) + ' V', highlight: calculatedField === 'Voltage' },
           { label: 'Current (I)', value: roundTo(I, 4) + ' A', highlight: calculatedField === 'Current' },
           { label: 'Resistance (R)', value: roundTo(R, 2) + ' Ω', highlight: calculatedField === 'Resistance' || calculatedField.includes('Resistance') },
           { label: 'Power (P)', value: roundTo(P, 2) + ' W', highlight: true },
+          { label: 'Daily Energy', value: energy24h + ' kWh/day' }
         ],
+        charts,
+        chart: charts[0],
+        table: circuitTable,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-bolt',
+          headline: `Circuit dissipates ${roundTo(P, 2)} Watts at ${roundTo(V, 2)}V and ${roundTo(I, 4)}A.`,
+          detail: `With a resistance of ${roundTo(R, 2)} Ω, current flow is ${roundTo(I, 4)} Amps. Over 24 hours of continuous operation, this circuit consumes ${energy24h} kWh of electrical energy.`
+        },
         formula: 'V = I × R | I = V ÷ R | R = V ÷ I | P = V × I = I² × R',
       };
     },
@@ -7627,13 +8039,73 @@ const TOOLS = {
         atm = psi * 0.068046;
       }
 
+      const charts = [
+        {
+          id: 'pressure-comparison',
+          label: 'Unit Comparison',
+          icon: 'fa-chart-column',
+          type: 'bar',
+          labels: ['PSI (lbf/in²)', 'kPa (kN/m²)', 'Bar (x10 scale)', 'Atmospheres (x10 scale)'],
+          datasets: [{
+            label: 'Equivalent Pressure',
+            data: [roundTo(psi, 2), roundTo(kpa, 2), roundTo(bar * 10, 2), roundTo(atm * 10, 2)],
+            backgroundColor: ['#6366F1', '#3B82F6', '#10B981', '#F59E0B']
+          }],
+          title: 'Pressure Values Across Engineering Units'
+        },
+        {
+          id: 'area-sensitivity',
+          label: 'Area Sensitivity Curve',
+          icon: 'fa-chart-line',
+          type: 'line',
+          labels: ['0.5x Area', '0.75x Area', '1.0x Area (Current)', '1.25x Area', '1.5x Area', '2.0x Area'],
+          datasets: [{
+            label: isMetric ? 'Pressure (kPa)' : 'Pressure (PSI)',
+            data: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(m => roundTo((isMetric ? kpa : psi) / m, 2)),
+            color: '#6366F1',
+            borderColor: '#6366F1',
+            fill: true
+          }],
+          yLabel: isMetric ? 'kPa' : 'PSI',
+          title: 'Pressure vs Contact Area (Constant Force)'
+        }
+      ];
+
+      const pressureTable = makeTableSpec({
+        mode: 'table',
+        title: 'Comprehensive Pressure Unit Equivalencies',
+        columns: [
+          { key: 'unit', label: 'Unit System', emphasis: true },
+          { key: 'val', label: 'Calculated Magnitude', emphasis: true },
+          { key: 'standardAtm', label: 'Atmospheric Ratio' }
+        ],
+        rows: [
+          { unit: 'Pounds per Square Inch (PSI)', val: roundTo(psi, 2) + ' psi', standardAtm: roundTo(psi / 14.6959, 3) + ' x 1 atm' },
+          { unit: 'Kilopascals (kPa)', val: roundTo(kpa, 2) + ' kPa', standardAtm: roundTo(kpa / 101.325, 3) + ' x 1 atm' },
+          { unit: 'Bar', val: roundTo(bar, 4) + ' bar', standardAtm: roundTo(bar / 1.01325, 3) + ' x 1 atm' },
+          { unit: 'Standard Atmospheres (atm)', val: roundTo(atm, 4) + ' atm', standardAtm: roundTo(atm, 3) + ' x 1 atm' },
+          { unit: 'Megapascals (MPa)', val: roundTo(kpa / 1000, 4) + ' MPa', standardAtm: roundTo(kpa / 1000 / 0.101325, 3) + ' x 1 atm' },
+          { unit: 'Torr / mmHg', val: roundTo(atm * 760, 1) + ' mmHg', standardAtm: roundTo(atm, 3) + ' x 1 atm' }
+        ]
+      });
+
       return {
         stats: [
           { label: 'Pressure (PSI)', value: roundTo(psi, 2) + ' psi', highlight: !isMetric },
           { label: 'Pressure (kPa)', value: roundTo(kpa, 2) + ' kPa', highlight: isMetric },
           { label: 'Pressure (Bar)', value: roundTo(bar, 4) + ' bar' },
           { label: 'Atmospheres (atm)', value: roundTo(atm, 4) + ' atm' },
+          { label: 'Megapascals (MPa)', value: roundTo(kpa / 1000, 4) + ' MPa' }
         ],
+        charts,
+        chart: charts[0],
+        table: pressureTable,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-gauge-high',
+          headline: `Calculated pressure is ${roundTo(isMetric ? kpa : psi, 2)} ${isMetric ? 'kPa' : 'PSI'} (${roundTo(atm, 3)} atmospheres).`,
+          detail: `Distributing a force of ${force} ${isMetric ? 'N' : 'lbf'} across an area of ${area} ${isMetric ? 'm²' : 'in²'} produces ${roundTo(bar, 4)} bar. This is equivalent to ${roundTo(atm, 2)}x standard atmospheric pressure at sea level.`
+        },
         formula: 'P = Force / Area | 1 PSI = 6.89476 kPa | 1 Bar = 100 kPa ≈ 14.5038 PSI',
       };
     },
@@ -8118,7 +8590,37 @@ const TOOLS = {
           ],
           legendPosition: 'bottom',
           format: 'number',
+          title: 'Step Dimensions (Riser Height vs Tread Depth)'
         },
+        charts: [
+          {
+            id: 'step-dimensions',
+            label: 'Step Dimensions',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: chartLabels,
+            datasets: [
+              { label: 'Riser (in)', data: riserArr, color: '#6366F1' },
+              { label: 'Tread (in)', data: treadArr, color: '#10B981' },
+            ],
+            legendPosition: 'bottom',
+            format: 'number',
+            title: 'Step Dimensions (Riser Height vs Tread Depth)'
+          },
+          {
+            id: 'stair-slope',
+            label: 'Rise & Run Trajectory',
+            icon: 'fa-chart-line',
+            type: 'line',
+            labels: tableRows.map(r => r.step),
+            datasets: [
+              { label: 'Cumulative Rise (in)', data: tableRows.map(r => r.cumHeight), color: '#6366F1', borderColor: '#6366F1' },
+              { label: 'Cumulative Run (in)', data: tableRows.map(r => r.cumRun), color: '#10B981', borderColor: '#10B981' }
+            ],
+            yLabel: 'Inches',
+            title: 'Cumulative Stair Rise & Run Trajectory'
+          }
+        ],
         table: makeTableSpec({
           mode: 'table',
           title: 'Step-by-Step Stair Detail',
