@@ -280,6 +280,89 @@ const TOOLS = {
       const trueTotalCost = roundTo(safeNum(v.down_payment, 0) + monthlyTotal * n, 2);
 
       const schedule = buildAmortization(principal, r, n, monthlyPI);
+
+      // Multi-view charts
+      const yearsCount = Math.round(n / 12);
+      const trajLabels = ['Year 0'];
+      const balancePoints = [principal];
+      const equityPoints = [safeNum(v.down_payment, 0)];
+
+      const annualLabels = [];
+      const annualPrincipal = [];
+      const annualInterest = [];
+
+      let runningPrincipalPaid = 0;
+      for (let y = 1; y <= yearsCount; y++) {
+        annualLabels.push(`Year ${y}`);
+        let yrPrinc = 0;
+        let yrInt = 0;
+        const endMonth = Math.min(y * 12, schedule.length);
+        const startMonth = (y - 1) * 12;
+        for (let m = startMonth; m < endMonth; m++) {
+          if (schedule[m]) {
+            yrPrinc += schedule[m].principal;
+            yrInt += schedule[m].interest;
+          }
+        }
+        annualPrincipal.push(roundTo(yrPrinc, 2));
+        annualInterest.push(roundTo(yrInt, 2));
+        runningPrincipalPaid += yrPrinc;
+
+        const endBal = schedule[endMonth - 1] ? schedule[endMonth - 1].balance : 0;
+        trajLabels.push(`Year ${y}`);
+        balancePoints.push(roundTo(endBal, 2));
+        equityPoints.push(roundTo(safeNum(v.down_payment, 0) + runningPrincipalPaid, 2));
+      }
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'balance-trajectory',
+          title: 'Loan Balance & Equity',
+          icon: 'fa-chart-area',
+          labels: trajLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Remaining Balance', data: balancePoints, color: '#6366F1', fill: true },
+            { label: 'Home Equity Built', data: equityPoints, color: '#10B981', fill: false }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-breakdown',
+          title: 'Principal vs Interest',
+          icon: 'fa-chart-column',
+          labels: annualLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Principal Paid', data: annualPrincipal, color: '#6366F1', stack: 'payment' },
+            { label: 'Interest Paid', data: annualInterest, color: '#F59E0B', stack: 'payment' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'total-cost-split',
+          title: 'Total Cost Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Loan Principal', 'Total Interest', 'Property Taxes & Insurance'],
+          data: [principal, totalInterest, totalTaxIns],
+          colors: ['#6366F1', '#F59E0B', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'doughnut',
+          id: 'monthly-payment-split',
+          title: 'Monthly Payment PITI',
+          icon: 'fa-wallet',
+          labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance'],
+          data: [monthlyPI, roundTo(taxMonthly, 2), roundTo(insMonthly, 2)],
+          colors: ['#6366F1', '#3B82F6', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Monthly Payment',   value: fmt(monthlyTotal), highlight: true  },
@@ -290,6 +373,7 @@ const TOOLS = {
           { label: 'Loan Amount',       value: fmt(principal)                          },
           { label: 'Down Payment',      value: pct(safeNum(v.down_payment, 0) / safeNum(v.home_price, 1)) },
         ],
+        charts,
         chart: { principal, totalInterest },
         table: schedule,
       };
@@ -903,6 +987,72 @@ const TOOLS = {
       const totalInterest = roundTo(totalPaid - principal, 2);
 
       const schedule = buildAmortization(principal, r, n, monthlyPayment);
+
+      const loanYears = Math.round(n / 12);
+      const loanLabels = ['Start'];
+      const loanBalances = [principal];
+
+      const barLabels = [];
+      const barPrincipal = [];
+      const barInterest = [];
+
+      for (let y = 1; y <= loanYears; y++) {
+        barLabels.push(`Year ${y}`);
+        let yrPrinc = 0;
+        let yrInt = 0;
+        const endMonth = Math.min(y * 12, schedule.length);
+        const startMonth = (y - 1) * 12;
+        for (let m = startMonth; m < endMonth; m++) {
+          if (schedule[m]) {
+            yrPrinc += schedule[m].principal;
+            yrInt += schedule[m].interest;
+          }
+        }
+        barPrincipal.push(roundTo(yrPrinc, 2));
+        barInterest.push(roundTo(yrInt, 2));
+
+        const endBal = schedule[endMonth - 1] ? schedule[endMonth - 1].balance : 0;
+        loanLabels.push(`Year ${y}`);
+        loanBalances.push(roundTo(endBal, 2));
+      }
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'payoff-trajectory',
+          title: 'Balance Trajectory',
+          icon: 'fa-chart-area',
+          labels: loanLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Remaining Balance', data: loanBalances, color: '#6366F1', fill: true }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-breakdown',
+          title: 'Principal vs Interest',
+          icon: 'fa-chart-column',
+          labels: barLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Principal Paid', data: barPrincipal, color: '#6366F1', stack: 'payment' },
+            { label: 'Interest Paid', data: barInterest, color: '#F59E0B', stack: 'payment' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'loan-composition',
+          title: 'Total Cost Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Loan Principal', 'Total Interest'],
+          data: [principal, totalInterest],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Monthly Payment',   value: fmt(monthlyPayment), highlight: true },
@@ -910,6 +1060,7 @@ const TOOLS = {
           { label: 'Total Paid',        value: fmt(totalPaid)                         },
           { label: 'Loan Amount',       value: fmt(principal)                         },
         ],
+        charts,
         chart: { principal, totalInterest },
         table: schedule,
       };
@@ -1337,9 +1488,62 @@ const TOOLS = {
         });
       }
 
-      // Format chart data as simple numbers (not formatted strings)
-      const chartPrincipal = totalContributions;
-      const chartInterest = totalInterest;
+      // Multi-view charts
+      const chartLabels = ['Start'];
+      const balanceData = [principal];
+      const contribData = [principal];
+
+      const barLabels = [];
+      const barContribs = [];
+      const barInterest = [];
+
+      schedule.forEach(row => {
+        chartLabels.push(`Year ${row.month}`);
+        balanceData.push(row.balance);
+        contribData.push(row.principal);
+
+        barLabels.push(`Year ${row.month}`);
+        barContribs.push(row.principal);
+        barInterest.push(Math.max(0, row.interest));
+      });
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'growth-trajectory',
+          title: 'Growth Trajectory',
+          icon: 'fa-chart-area',
+          labels: chartLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Portfolio Balance', data: balanceData, color: '#6366F1', fill: true },
+            { label: 'Total Deposits', data: contribData, color: '#10B981', fill: false }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-accumulation',
+          title: 'Annual Accumulation',
+          icon: 'fa-chart-column',
+          labels: barLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Deposits', data: barContribs, color: '#6366F1', stack: 'portfolio' },
+            { label: 'Compound Interest', data: barInterest, color: '#10B981', stack: 'portfolio' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'portfolio-split',
+          title: 'Portfolio Split',
+          icon: 'fa-chart-pie',
+          labels: ['Total Principal & Deposits', 'Compound Interest Earned'],
+          data: [totalContributions, Math.max(0, totalInterest)],
+          colors: ['#6366F1', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
 
       return {
         stats: [
@@ -1347,7 +1551,8 @@ const TOOLS = {
           { label: 'Total Contributions',   value: fmt(totalContributions)                 },
           { label: 'Total Interest Earned', value: fmt(totalInterest)                       },
         ],
-        chart: { principal: chartPrincipal, totalInterest: chartInterest },
+        charts,
+        chart: { principal: totalContributions, totalInterest },
         table: schedule,
       };
     },
@@ -1547,7 +1752,85 @@ const TOOLS = {
           highlight: goalReached, warn: !goalReached,
         });
       }
-      return { stats, chart: { principal: totalContributions, totalInterest: totalReturn }, table: schedule };
+      const invLabels = ['Start'];
+      const invBalances = [principal];
+      const invContribs = [principal];
+      const invGoals = goal > 0 ? [goal] : null;
+
+      const invBarLabels = [];
+      const invBarContribs = [];
+      const invBarReturns = [];
+
+      schedule.forEach(row => {
+        invLabels.push(`Year ${row.month}`);
+        invBalances.push(row.balance);
+        invContribs.push(row.principal);
+        if (invGoals) invGoals.push(goal);
+
+        invBarLabels.push(`Year ${row.month}`);
+        invBarContribs.push(row.principal);
+        invBarReturns.push(Math.max(0, row.interest));
+      });
+
+      const trajectoryDatasets = [
+        { label: 'Projected Portfolio Value', data: invBalances, color: '#6366F1', fill: true },
+        { label: 'Total Contributions', data: invContribs, color: '#10B981', fill: false }
+      ];
+      if (invGoals) {
+        trajectoryDatasets.push({ label: 'Savings Goal', data: invGoals, color: '#EF4444', fill: false });
+      }
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'investment-trajectory',
+          title: 'Investment Trajectory',
+          icon: 'fa-chart-area',
+          labels: invLabels,
+          format: 'currency',
+          datasets: trajectoryDatasets
+        },
+        {
+          type: 'stackedBar',
+          id: 'milestone-breakdown',
+          title: 'Annual Accumulation',
+          icon: 'fa-chart-column',
+          labels: invBarLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Contributions', data: invBarContribs, color: '#6366F1', stack: 'investment' },
+            { label: 'Investment Return', data: invBarReturns, color: '#10B981', stack: 'investment' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'return-split',
+          title: 'Return vs Capital',
+          icon: 'fa-chart-pie',
+          labels: ['Total Principal & Deposits', 'Investment Return (Profit)'],
+          data: [totalContributions, Math.max(0, totalReturn)],
+          colors: ['#6366F1', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
+      if (goal > 0) {
+        const goalPct = Math.min(100, roundTo((futureValue / goal) * 100, 1));
+        charts.push({
+          type: 'doughnut',
+          id: 'goal-progress',
+          title: 'Goal Progress',
+          icon: 'fa-bullseye',
+          labels: ['Goal Funded', 'Remaining Gap'],
+          data: [goalPct, roundTo(Math.max(0, 100 - goalPct), 1)],
+          colors: [goalPct >= 100 ? '#10B981' : '#F59E0B', '#E2E8F0'],
+          format: 'percentage',
+          cutout: '72%'
+        });
+      }
+
+      return { stats, charts, chart: { principal: totalContributions, totalInterest: totalReturn }, table: schedule };
     },
 
     article: {
@@ -5324,8 +5607,57 @@ const TOOLS = {
       }
 
       // ── Build return object ──
+      const charts = [
+        {
+          type: 'area',
+          id: 'balance-trajectory',
+          title: 'Balance Trajectory',
+          icon: 'fa-chart-area',
+          labels: balanceChartLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Remaining Balance', data: balanceChartData, color: '#6366F1', fill: true },
+          ],
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-breakdown',
+          title: 'Annual Breakdown',
+          icon: 'fa-chart-column',
+          labels: yearLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Principal', data: principalData, color: '#6366F1', stack: 'payment' },
+            { label: 'Interest', data: interestData, color: '#F59E0B', stack: 'payment' },
+          ],
+        },
+        {
+          type: 'doughnut',
+          id: 'payment-composition',
+          title: 'Payment Breakdown',
+          icon: 'fa-chart-pie',
+          labels: doughnutLabels,
+          data: doughnutData,
+          colors: doughnutColors,
+          format: 'currency',
+          cutout: '62%',
+        },
+        {
+          type: 'area',
+          id: 'cumulative-interest',
+          title: 'Cumulative Interest',
+          icon: 'fa-arrow-trend-up',
+          labels: cumLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Cumulative Interest', data: cumInterestData, color: '#EF4444', fill: true },
+          ],
+        },
+      ];
+
       const result = {
         stats,
+        charts,
         chart: {
           type: 'line',
           labels: balanceChartLabels,
@@ -9854,6 +10186,62 @@ const TOOLS = {
         insightDetail = `Monthly payment decreases by ${fmt(monthlySavings)}. Over your ${yearsInHome}-year occupancy horizon, you recover ${fmt(closingCosts)} in closing fees and generate ${fmt(netSavingsInHome)} in net cumulative cash savings.`;
       }
 
+      const refLabels = ['Month 0'];
+      const refNetSavings = [-closingCosts];
+      const refGrossSavings = [0];
+
+      const refBarLabels = [];
+      const refCurrentOutflows = [];
+      const refNewOutflows = [];
+
+      table.rows.forEach(r => {
+        refLabels.push(r.period);
+        refNetSavings.push(r.netSavings);
+        refGrossSavings.push(r.grossSavings);
+
+        refBarLabels.push(r.period);
+        refCurrentOutflows.push(r.currentOutflow);
+        refNewOutflows.push(r.newOutflow);
+      });
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'cumulative-savings',
+          title: 'Cumulative Savings & Break-Even',
+          icon: 'fa-chart-area',
+          labels: refLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Net Savings (After Closing Costs)', data: refNetSavings, color: '#10B981', fill: true },
+            { label: 'Cumulative Gross Payment Savings', data: refGrossSavings, color: '#6366F1', fill: false }
+          ]
+        },
+        {
+          type: 'bar',
+          id: 'outflow-comparison',
+          title: 'Cumulative Outflow Comparison',
+          icon: 'fa-chart-column',
+          labels: refBarLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Current Loan Outflow', data: refCurrentOutflows, color: '#EF4444' },
+            { label: 'Refinanced Outflow', data: refNewOutflows, color: '#6366F1' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'refinance-cost-split',
+          title: 'New Loan Structure',
+          icon: 'fa-chart-pie',
+          labels: ['Refinanced Principal', 'New Total Interest', 'Closing Costs'],
+          data: [balance, newTotalInterest, closingCosts],
+          colors: ['#6366F1', '#F59E0B', '#EF4444'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Monthly Payment Savings', value: monthlySavings > 0 ? `+${fmt(monthlySavings)} / mo` : `-${fmt(Math.abs(monthlySavings))} / mo`, highlight: true },
@@ -9865,6 +10253,7 @@ const TOOLS = {
           { label: 'Upfront Closing Costs', value: fmt(closingCosts) },
           { label: 'Total Lifetime Interest Saved', value: fmt(lifetimeInterestDiff) }
         ],
+        charts,
         chart: {
           principal: balance,
           totalInterest: newTotalInterest

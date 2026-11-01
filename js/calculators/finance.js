@@ -64,6 +64,9 @@ export const mortgageCalculator = {
         { id: 'insurance', label: 'Annual Insurance ($)', type: 'number', default: 1200, min: 0, step: 100, hint: 'Yearly homeowners insurance premium.' },
     ],
     calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['mortgage-calculator']) {
+            return window.TOOLS['mortgage-calculator'].calculate(v);
+        }
         const principal = safeNum(v.home_price, 0) - safeNum(v.down_payment, 0);
         if (principal <= 0) return errorResult('Down payment must be less than home price.');
         const annualRate = safeNum(v.interest_rate, 0);
@@ -114,6 +117,9 @@ export const loanCalculator = {
         { id: 'loan_term', label: 'Loan Term (years)', type: 'select', default: 5, options: [1,2,3,4,5,6,7,10].map(v => ({ value: v, label: `${v} year${v > 1 ? 's' : ''}` })), hint: 'How many years you will take to repay the loan.' },
     ],
     calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['loan-calculator']) {
+            return window.TOOLS['loan-calculator'].calculate(v);
+        }
         const principal = safeNum(v.loan_amount, 0);
         if (principal <= 0) return errorResult('Loan amount must be greater than zero.');
         const annualRate = safeNum(v.interest_rate, 0);
@@ -339,13 +345,67 @@ export const retirementCalculator = {
     howTo: [], examples: [], formula: 'FV = PV(1+r)^n + PMT[((1+r)^n - 1)/r]', faqs: []
 };
 
+// ── Amortization Calculator ───────────────────────────────────
+export const amortizationCalculator = {
+    id: 'amortization-calculator',
+    name: 'Amortization Calculator',
+    category: 'Finance',
+    icon: 'fa-chart-simple',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate loan payments, generate a complete amortization schedule, visualize principal and interest over time, and analyze the impact of extra payments.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['amortization-calculator']) {
+            return window.TOOLS['amortization-calculator'].calculate(v);
+        }
+        return errorResult('Amortization calculator not loaded');
+    }
+};
+
+// ── Compound Interest Calculator ──────────────────────────────
+export const compoundInterestCalculator = {
+    id: 'compound-interest-calculator',
+    name: 'Compound Interest Calculator',
+    category: 'Finance',
+    icon: 'fa-chart-line',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate compound interest on savings and investments with regular deposits and multiple compounding frequencies.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['compound-interest-calculator']) {
+            return window.TOOLS['compound-interest-calculator'].calculate(v);
+        }
+        return errorResult('Compound interest calculator not loaded');
+    }
+};
+
+// ── Investment Calculator ─────────────────────────────────────
+export const investmentCalculator = {
+    id: 'investment-calculator',
+    name: 'Investment Calculator',
+    category: 'Finance',
+    icon: 'fa-arrow-trend-up',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Project portfolio growth over time from lump sums and monthly contributions, calculate return on investment, and model savings milestones.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['investment-calculator']) {
+            return window.TOOLS['investment-calculator'].calculate(v);
+        }
+        return errorResult('Investment calculator not loaded');
+    }
+};
+
 export const financeCalculators = [
     mortgageCalculator,
     loanCalculator,
     debtSnowballCalculator,
     refinanceCalculator,
     selfEmploymentTaxCalculator,
-    retirementCalculator
+    retirementCalculator,
+    amortizationCalculator,
+    compoundInterestCalculator,
+    investmentCalculator
 ];
 
 /**
