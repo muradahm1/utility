@@ -681,9 +681,10 @@ const TOOLS = {
   'percentage-calculator': {
     name: 'Percentage Calculator',
     related: [
-      'unit-converter',
       'tip-calculator',
+      'final-grade-calculator',
       'date-calculator',
+      'unit-converter',
       'profit-margin-calculator'
     ],
     category: 'Math',
@@ -3395,6 +3396,7 @@ const TOOLS = {
     name: 'House Affordability Calculator',
     related: [
       'mortgage-calculator',
+      'rent-vs-buy-calculator',
       'true-home-buying-system',
       'fha-loan-calculator',
       'budget-planner'
@@ -8486,7 +8488,9 @@ const TOOLS = {
     name: 'Final Grade Calculator',
     related: [
       'gpa-calculator',
-      'student-loan-calculator'
+      'percentage-calculator',
+      'student-loan-calculator',
+      'date-calculator'
     ],
     category: 'Education',
     icon: 'fa-graduation-cap',
@@ -8604,6 +8608,7 @@ const TOOLS = {
     name: 'Student Loan Calculator',
     related: [
       'loan-calculator',
+      'final-grade-calculator',
       'budget-planner',
       'salary-calculator',
       'gpa-calculator'
