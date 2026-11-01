@@ -1655,47 +1655,12 @@ export function buildBmiGaugeHtml(bmiGauge) {
 
 /**
  * Build charts HTML
+ * Delegated to ChartManager for unified styling and performance
  * @param {Object} result - Calculation result
  * @returns {string} HTML string
  */
 export function buildChartsHtml(result) {
-    if (Array.isArray(result.charts) && result.charts.length > 0) {
-        const tabsHtml = result.charts.map((c, idx) => `
-            <button type="button" class="chart-view-tab ${idx === 0 ? 'active' : ''}" data-chart-index="${idx}" aria-label="${escapeHtml(c.title || `View ${idx+1}`)}" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
-                ${c.icon ? `<i class="fa-solid ${escapeHtml(c.icon)}"></i> ` : ''}<span>${escapeHtml(c.title || `View ${idx+1}`)}</span>
-            </button>
-        `).join('');
-
-        return `
-            <div class="chart-view-card">
-                <div class="chart-view-header">
-                    <span class="chart-view-title"><i class="fa-solid fa-chart-line" style="color:var(--primary-color);margin-right:6px;"></i>Visual Projection</span>
-                    <div class="chart-view-tabs" role="tablist">
-                        ${tabsHtml}
-                    </div>
-                </div>
-                <div class="chart-container chart-container--unified">
-                    <canvas id="result-chart"></canvas>
-                </div>
-            </div>
-        `;
-    }
-
-    const charts = [];
-    if (result.chart) charts.push('<div class="chart-container"><canvas id="result-chart"></canvas></div>');
-    if (result.chart2) charts.push('<div class="chart-container"><canvas id="result-chart-2"></canvas></div>');
-    if (result.compareChart) charts.push('<div class="chart-container"><canvas id="result-chart-3"></canvas></div>');
-    if (result.chart3) charts.push('<div class="chart-container"><canvas id="result-chart-4"></canvas></div>');
-    
-    if (!charts.length) return '';
-    
-    if (result.chart && result.chart2) {
-        const firstTwo = charts.slice(0, 2).join('');
-        const rest = charts.slice(2).join('');
-        return `<div class="charts-side-by-side">${firstTwo}</div>${rest}`;
-    }
-    
-    return charts.join('');
+    return ChartManager.buildCardHtml(result);
 }
 
 /**
@@ -1955,67 +1920,18 @@ export function buildTableSpecHtml(tbl) {
  */
 export function renderCharts(calculator, result) {
     const { container } = calculator;
+    if (!container || !result) return;
     
     // Destroy existing charts
     if (calculator.chartInstances) {
-        calculator.chartInstances.forEach(chart => chart.destroy());
-    }
-    calculator.chartInstances = [];
-    
-    if (Array.isArray(result.charts) && result.charts.length > 0) {
-        const activeIdx = calculator.activeChartViewIdx || 0;
-        const activeData = result.charts[activeIdx] || result.charts[0];
-        const canvas = container.querySelector('#result-chart');
-        if (canvas) {
-            const chart = createChart(canvas, activeData);
-            if (chart) {
-                calculator.chartInstances.push(chart);
-            }
-        }
-        
-        // Bind tab switching
-        const tabs = container.querySelectorAll('.chart-view-tab');
-        tabs.forEach(tab => {
-            tab.onclick = (e) => {
-                e.preventDefault();
-                const idx = parseInt(tab.getAttribute('data-chart-index'), 10);
-                if (isNaN(idx) || idx === calculator.activeChartViewIdx) return;
-                calculator.activeChartViewIdx = idx;
-                tabs.forEach(t => {
-                    const isSel = parseInt(t.getAttribute('data-chart-index'), 10) === idx;
-                    t.classList.toggle('active', isSel);
-                    t.setAttribute('aria-selected', isSel ? 'true' : 'false');
-                });
-                if (calculator.chartInstances) {
-                    calculator.chartInstances.forEach(c => c.destroy());
-                    calculator.chartInstances = [];
-                }
-                const newChart = createChart(canvas, result.charts[idx]);
-                if (newChart) calculator.chartInstances.push(newChart);
-            };
-        });
-        return;
+        calculator.chartInstances.forEach(chart => chart && typeof chart.destroy === 'function' && chart.destroy());
     }
     
-    // Render each chart
-    const charts = [
-        { data: result.chart, id: 'result-chart' },
-        { data: result.chart2, id: 'result-chart-2' },
-        { data: result.compareChart, id: 'result-chart-3' },
-        { data: result.chart3, id: 'result-chart-4' }
-    ];
-    
-    charts.forEach(({ data, id }) => {
-        if (!data) return;
-        
-        const canvas = container.querySelector(`#${id}`);
-        if (!canvas) return;
-        
-        const chart = createChart(canvas, data);
-        if (chart) {
-            calculator.chartInstances.push(chart);
+    calculator.chartInstances = ChartManager.mount(container, result, {
+        onTabChange: (idx) => {
+            calculator.activeChartViewIdx = idx;
         }
-    });
+    }) || [];
 }
 
 /**
@@ -2025,67 +1941,7 @@ export function renderCharts(calculator, result) {
  * @returns {Object|null} Chart instance
  */
 export function createChart(canvas, chartData) {
-    if (!canvas || !chartData) return null;
-    const id = canvas.id || `chart-${Date.now()}`;
-    if (!canvas.id) canvas.id = id;
-    
-    // Build datasets for ChartManager
-    let datasets;
-    if (Array.isArray(chartData.datasets) && chartData.datasets.length > 0) {
-        datasets = chartData.datasets.map(ds => ({
-            label: ds.label || '',
-            data: ds.data || [],
-            color: ds.color || ds.borderColor,
-            colors: ds.colors || (Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined),
-            backgroundColor: ds.backgroundColor,
-            borderColor: ds.borderColor,
-            fill: ds.fill,
-            format: ds.format,
-            stack: ds.stack
-        }));
-    } else if (Array.isArray(chartData.data)) {
-        datasets = [{
-            data: chartData.data,
-            colors: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
-            backgroundColor: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
-        }];
-    } else if (chartData.principal !== undefined || chartData.totalInterest !== undefined) {
-        datasets = [{
-            data: [safeNum(chartData.principal, 0), safeNum(chartData.totalInterest, 0)],
-            colors: ['#6366F1', '#F59E0B'],
-            backgroundColor: ['#6366F1', '#F59E0B']
-        }];
-    } else {
-        return null;
-    }
-
-    let type = chartData.type;
-    if (!type) {
-        if (datasets.length > 1 || (datasets[0] && datasets[0].label)) {
-            type = 'bar';
-        } else {
-            type = 'doughnut';
-        }
-    }
-    
-    const isHBar = type === 'horizontalBar';
-    const normalizedType = isHBar ? 'bar' : type;
-    
-    // Create chart via ChartManager
-    const instance = ChartManager.create({
-        id,
-        type: normalizedType,
-        container: canvas.parentElement || canvas,
-        data: {
-            labels: chartData.labels || ['Principal', 'Interest'],
-            datasets
-        },
-        format: chartData.format || 'currency',
-        cutout: chartData.cutout,
-        options: isHBar ? { indexAxis: 'y' } : undefined
-    });
-    
-    return instance ? instance.chart : null;
+    return ChartManager.render(canvas, chartData);
 }
 
 // ── Utility Functions ──────────────────────────────────────────

@@ -54,6 +54,7 @@ export {
 
 export { registerConstructionCalculators } from '../calculators/construction.js';
 export { registerEngineeringCalculators } from '../calculators/engineering.js';
+export { registerFinanceCalculators } from '../calculators/finance.js';
 
 // ── Backward Compatibility Layer ───────────────────────────────
 
@@ -62,6 +63,7 @@ import { parseCurrentUrl, resolveToolFromUrl, handleRoute } from './router.js';
 import { initializeCalculator, escapeHtml, safeNum, safeStr, roundTo, formatCurrency } from './calculator-engine.js';
 import { registerConstructionCalculators } from '../calculators/construction.js';
 import { registerEngineeringCalculators } from '../calculators/engineering.js';
+import { registerFinanceCalculators } from '../calculators/finance.js';
 
 /**
  * Legacy TOOLS object - maintains backward compatibility

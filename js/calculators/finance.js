@@ -232,10 +232,120 @@ export const selfEmploymentTaxCalculator = {
     howTo: [], examples: [], formula: 'Tax = SECA + Fed + State', faqs: []
 };
 
+// ── Retirement Calculator ──────────────────────────────────────
+export const retirementCalculator = {
+    id: 'retirement-calculator',
+    name: 'Retirement Calculator',
+    category: 'Finance',
+    icon: 'fa-umbrella',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Determine how much money you need to retire comfortably, estimate your future nest egg balance, and calculate required monthly savings based on inflation and life expectancy.',
+    metaTitle: 'Retirement Calculator for Early Career Professionals | Free Template - GetCalcu',
+    metaDescription: 'Free online Retirement Savings Calculator for early career professionals. Estimate your target retirement nest egg, monthly savings requirements, compound returns, and inflation impact. Start planning at 25.',
+    fields: [
+        { id: 'current_age', label: 'Your Current Age', type: 'number', default: 25, min: 18, max: 75, step: 1, hint: 'Your age today. The calculator uses this to determine years remaining until retirement.' },
+        { id: 'retirement_age', label: 'Desired Retirement Age', type: 'number', default: 65, min: 30, max: 85, step: 1, hint: 'The age you plan to stop working and begin drawing upon your nest egg.' },
+        { id: 'current_savings', label: 'Current Retirement Savings ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'Total combined balance across all retirement accounts: 401k, IRA, Roth IRA, and taxable brokerage.' },
+        { id: 'monthly_contribution', label: 'Monthly Contribution ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'Total monthly savings directed into investments. Even modest contributions compound powerfully over decades.' },
+        { id: 'annual_income', label: 'Annual Pre-Tax Income ($)', type: 'number', default: 55000, min: 10000, step: 5000, hint: 'Your current gross yearly salary. Used to benchmark your required retirement replacement income.' },
+        { id: 'annual_return', label: 'Expected Annual Return (%)', type: 'number', default: 7.0, min: 0.1, max: 30, step: 0.1, hint: 'Expected average annual nominal portfolio growth.' },
+        { id: 'inflation_rate', label: 'Expected Inflation Rate (%)', type: 'number', default: 3.0, min: 0, max: 20, step: 0.1, hint: 'Expected long-term annual rise in consumer prices.' },
+        { id: 'income_replacement', label: 'Desired Retirement Income (% of salary)', type: 'number', default: 80, min: 10, max: 120, step: 5, hint: 'Percentage of pre-retirement income needed to maintain your standard of living.' },
+        { id: 'life_expectancy', label: 'Life Expectancy (years)', type: 'number', default: 95, min: 50, max: 120, step: 1, hint: 'How long your portfolio needs to support you in retirement.' }
+    ],
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['retirement-calculator']) {
+            return window.TOOLS['retirement-calculator'].calculate(v);
+        }
+        const currentAge = Math.max(1, safeNum(v.current_age, 25));
+        const currentSavings = Math.max(0, safeNum(v.current_savings, 0));
+        const annualIncome = Math.max(0, safeNum(v.annual_income, 55000));
+        const monthlyContrib = Math.max(0, safeNum(v.monthly_contribution, 500));
+        const annualReturn = safeNum(v.annual_return, 7) / 100;
+        const rawInflation = safeNum(v.inflation_rate, 3) / 100;
+        const inflationRate = rawInflation <= -1 ? -0.99 : rawInflation;
+        const retirementAge = safeNum(v.retirement_age, 65);
+        const lifeExpectancy = safeNum(v.life_expectancy, 95);
+        const incomeReplace = Math.max(0, safeNum(v.income_replacement, 80)) / 100;
+
+        if (retirementAge <= currentAge) {
+            return errorResult('Retirement age must be greater than your current age.');
+        }
+        if (lifeExpectancy <= retirementAge) {
+            return errorResult('Life expectancy must be greater than retirement age.');
+        }
+
+        const yearsToRetire = retirementAge - currentAge;
+        const realReturn = (1 + annualReturn) / (1 + inflationRate) - 1;
+        const monthlyRealRet = realReturn / 12;
+        const totalMonths = yearsToRetire * 12;
+
+        const fvCurrentSavings = currentSavings * Math.pow(1 + realReturn, yearsToRetire);
+        let fvContributions;
+        if (monthlyRealRet === 0) {
+            fvContributions = monthlyContrib * totalMonths;
+        } else {
+            const growthFactor = Math.pow(1 + monthlyRealRet, totalMonths);
+            fvContributions = monthlyContrib * (growthFactor - 1) / monthlyRealRet;
+        }
+
+        const totalNestEgg = roundTo(fvCurrentSavings + fvContributions, 2);
+        const totalContribs = roundTo(currentSavings + monthlyContrib * 12 * yearsToRetire, 2);
+        const totalGrowth = roundTo(totalNestEgg - totalContribs, 2);
+        const desiredIncomeToday = annualIncome * incomeReplace;
+        const targetNestEgg = roundTo(desiredIncomeToday * 25, 2);
+        const monthlyRetireIncome = roundTo(totalNestEgg * 0.04 / 12, 2);
+        const annualRetireIncome = roundTo(totalNestEgg * 0.04, 2);
+        const futureNominalMonthly = roundTo(monthlyRetireIncome * Math.pow(1 + inflationRate, yearsToRetire), 2);
+        const achievedReplaceRate = annualIncome > 0 ? roundTo((annualRetireIncome / annualIncome) * 100, 1) : 0;
+        const fundedRatio = targetNestEgg > 0 ? (totalNestEgg / targetNestEgg) : 1;
+        const fundedPct = Math.round(fundedRatio * 100);
+
+        let status = 'On Track ✓';
+        if (totalNestEgg < targetNestEgg * 0.75) {
+            status = 'Needs Attention - Boost Contributions';
+        } else if (totalNestEgg < targetNestEgg) {
+            status = 'Close - Increase Savings';
+        }
+
+        let additionalMonthlyNeeded = 0;
+        if (totalNestEgg < targetNestEgg && monthlyRealRet > 0) {
+            const fvCurrentOnly = currentSavings * Math.pow(1 + realReturn, yearsToRetire);
+            const neededFromContribs = targetNestEgg - fvCurrentOnly;
+            if (neededFromContribs > 0) {
+                const gf = Math.pow(1 + monthlyRealRet, totalMonths);
+                const pmtNeeded = neededFromContribs * monthlyRealRet / (gf - 1);
+                additionalMonthlyNeeded = roundTo(Math.max(0, pmtNeeded - monthlyContrib), 2);
+            }
+        }
+
+        return {
+            stats: [
+                { label: "Projected Nest Egg (Today's $)", value: fmt(totalNestEgg), highlight: true },
+                { label: "Target Nest Egg (4% Rule)", value: fmt(targetNestEgg) },
+                { label: 'Status', value: status, warn: totalNestEgg < targetNestEgg },
+                { label: "Monthly Income (Today's $)", value: fmt(monthlyRetireIncome) },
+                { label: "Annual Income (Today's $)", value: fmt(annualRetireIncome) },
+                { label: 'Total Contributions', value: fmt(totalContribs) },
+                { label: 'Investment Growth', value: fmt(totalGrowth) },
+                { label: 'Future Monthly (At Retirement $)', value: fmt(futureNominalMonthly) },
+                { label: 'Income Replacement Rate', value: pct(achievedReplaceRate / 100) },
+                { label: 'Additional Monthly Savings Needed', value: fmt(additionalMonthlyNeeded), warn: additionalMonthlyNeeded > 0 }
+            ]
+        };
+    },
+    article: { heading: 'Retirement Planning & Compound Wealth Accumulation', intro: '', sections: [] },
+    howTo: [], examples: [], formula: 'FV = PV(1+r)^n + PMT[((1+r)^n - 1)/r]', faqs: []
+};
+
 export const financeCalculators = [
     mortgageCalculator,
     loanCalculator,
-    // Additional finance calculators will be added here
+    debtSnowballCalculator,
+    refinanceCalculator,
+    selfEmploymentTaxCalculator,
+    retirementCalculator
 ];
 
 /**

@@ -9,6 +9,8 @@ import {
     getToolCount, toolExists
 } from '../../js/core/tools.js';
 import { registerConstructionCalculators } from '../../js/calculators/construction.js';
+import { registerFinanceCalculators, retirementCalculator } from '../../js/calculators/finance.js';
+import { ChartManager } from '../../js/modules/charts.js';
 
 describe('Core Tool Registry', () => {
     it('TOOLS is an object', () => {
@@ -138,5 +140,56 @@ describe('Safe module loading (try/catch resilience)', () => {
             registerConstructionCalculators(registerTool, undefined);
         }).not.toThrow();
         expect(registered).toHaveLength(4);
+    });
+});
+
+describe('Finance Calculator Registration & Unified Visual System', () => {
+    it('registerFinanceCalculators registers retirement-calculator and finance tools', () => {
+        const registered = [];
+        const mockRegister = (slug, calc) => { registered.push(slug); return true; };
+        const mockExists = (slug) => false;
+        registerFinanceCalculators(mockRegister, mockExists);
+
+        expect(registered).toContain('retirement-calculator');
+        expect(registered).toContain('mortgage-calculator');
+        expect(registered).toContain('loan-calculator');
+    });
+
+    it('retirementCalculator computes accurate projection stats', () => {
+        const res = retirementCalculator.calculate({
+            current_age: 25,
+            retirement_age: 65,
+            current_savings: 10000,
+            annual_income: 55000,
+            monthly_contribution: 500,
+            annual_return: 7.0,
+            inflation_rate: 3.0,
+            life_expectancy: 95,
+            income_replacement: 80
+        });
+
+        expect(res).toBeDefined();
+        expect(res.stats).toBeDefined();
+        const nestEggStat = res.stats.find(s => s.label.includes('Projected Nest Egg'));
+        expect(nestEggStat).toBeDefined();
+        expect(nestEggStat.value).toContain('$619,975');
+    });
+
+    it('ChartManager.buildCardHtml generates unified multi-view tabs and legacy fallback', () => {
+        const modernHtml = ChartManager.buildCardHtml({
+            charts: [
+                { id: 'v1', title: 'View 1', icon: 'fa-chart-area' },
+                { id: 'v2', title: 'View 2', icon: 'fa-chart-pie' }
+            ]
+        });
+        expect(modernHtml).toContain('chart-view-card');
+        expect(modernHtml).toContain('data-chart-index="0"');
+        expect(modernHtml).toContain('data-chart-index="1"');
+        expect(modernHtml).toContain('id="result-chart"');
+
+        const legacyHtml = ChartManager.buildCardHtml({
+            chart: { labels: ['A', 'B'], data: [1, 2] }
+        });
+        expect(legacyHtml).toContain('id="result-chart"');
     });
 });

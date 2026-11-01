@@ -338,39 +338,15 @@ function initLegacyRunner(tool, slug, container, country = null) {
 
     function renderActiveCharts(res) {
         if (!res) return;
-        if (Array.isArray(res.charts) && res.charts.length > 0) {
-            const idx = (activeChartViewIdx >= 0 && activeChartViewIdx < res.charts.length) ? activeChartViewIdx : 0;
-            renderChart(res.charts[idx], 'result-chart');
-            bindChartViewTabs(res);
-        } else {
-            if (res.chart) renderChart(res.chart);
-            if (res.chart2) renderChart(res.chart2, 'result-chart-2');
-            if (res.compareChart) renderChart(res.compareChart, 'result-chart-3');
-            if (res.chart3) renderChart(res.chart3, 'result-chart-4');
+        const container = document.querySelector('.results-column') || document.querySelector('.chart-view-card') || document.body;
+        if (typeof activeChartViewIdx === 'number') {
+            container._activeChartIdx = activeChartViewIdx;
         }
-    }
-
-    function bindChartViewTabs(res) {
-        const tabs = document.querySelectorAll('.chart-view-tab');
-        if (!tabs || !tabs.length) return;
-        tabs.forEach(tab => {
-            tab.onclick = (e) => {
-                e.preventDefault();
-                const idx = parseInt(tab.getAttribute('data-chart-index'), 10);
-                if (isNaN(idx) || idx === activeChartViewIdx) return;
+        ChartManager.mount(container, res, {
+            onTabChange: (idx) => {
                 activeChartViewIdx = idx;
-                tabs.forEach(t => {
-                    const isSelected = parseInt(t.getAttribute('data-chart-index'), 10) === activeChartViewIdx;
-                    t.classList.toggle('active', isSelected);
-                    t.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-                });
-                const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
-                let currentRes;
-                try { currentRes = tool.calculate(currentVals); } catch(err) { return; }
-                if (currentRes && currentRes.charts && currentRes.charts[activeChartViewIdx]) {
-                    renderChart(currentRes.charts[activeChartViewIdx], 'result-chart');
-                }
-            };
+                container._activeChartIdx = idx;
+            }
         });
     }
 
@@ -1106,7 +1082,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
     }
 
     function renderChart(chartData, canvasId) {
-        if (!chartData) return;
+        if (!chartData) return null;
         const id = canvasId || 'result-chart';
         let canvas = document.getElementById(id);
         if (!canvas) {
@@ -1116,62 +1092,8 @@ function initLegacyRunner(tool, slug, container, country = null) {
                 if (canvas) canvas.id = id;
             }
         }
-        if (!canvas) return;
-        
-        let datasets;
-        if (Array.isArray(chartData.datasets) && chartData.datasets.length > 0) {
-            datasets = chartData.datasets.map(ds => ({
-                label: ds.label || '',
-                data: ds.data || [],
-                color: ds.color || ds.borderColor,
-                colors: ds.colors || (Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined),
-                backgroundColor: ds.backgroundColor,
-                borderColor: ds.borderColor,
-                fill: ds.fill,
-                format: ds.format,
-                stack: ds.stack
-            }));
-        } else if (Array.isArray(chartData.data)) {
-            datasets = [{
-                data: chartData.data,
-                colors: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
-                backgroundColor: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
-            }];
-        } else if (chartData.principal !== undefined || chartData.totalInterest !== undefined) {
-            datasets = [{
-                data: [safeNum(chartData.principal, 0), safeNum(chartData.totalInterest, 0)],
-                colors: ['#6366F1', '#F59E0B'],
-                backgroundColor: ['#6366F1', '#F59E0B']
-            }];
-        } else {
-            return;
-        }
-
-        let type = chartData.type;
-        if (!type) {
-            if (datasets.length > 1 || (datasets[0] && datasets[0].label)) {
-                type = 'bar';
-            } else {
-                type = 'doughnut';
-            }
-        }
-        
-        const isHBar = type === 'horizontalBar';
-        const normalizedType = isHBar ? 'bar' : type;
-        
-        ChartManager.create({
-            id,
-            type: normalizedType,
-            container: canvas.parentElement || canvas,
-            data: {
-                labels: chartData.labels || ['Principal', 'Interest'],
-                datasets
-            },
-            title: chartData.title,
-            format: chartData.format || 'currency',
-            cutout: chartData.cutout,
-            options: isHBar ? { indexAxis: 'y' } : undefined
-        });
+        if (!canvas) return null;
+        return ChartManager.render(canvas, chartData);
     }
 
     function renderTableHtml(tableData, currentSlug) {
