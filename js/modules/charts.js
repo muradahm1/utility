@@ -358,10 +358,13 @@ export const ChartManager = {
         }
         
         // Check for existing canvas
-        let canvas = container.querySelector('canvas');
+        let canvas = container.querySelector('canvas') || (config.id ? document.getElementById(config.id) : null);
         if (!canvas) {
             canvas = document.createElement('canvas');
+            if (config.id) canvas.id = config.id;
             container.appendChild(canvas);
+        } else if (!canvas.id && config.id) {
+            canvas.id = config.id;
         }
         
         // Validate datasets
@@ -379,6 +382,12 @@ export const ChartManager = {
         // ── Phase 5.11: Lazy-load Chart.js only when needed ─────
         const createChart = () => {
             try {
+                if (typeof Chart !== 'undefined' && Chart.getChart) {
+                    const existingChart = Chart.getChart(canvas);
+                    if (existingChart) {
+                        existingChart.destroy();
+                    }
+                }
                 return new Chart(canvas.getContext('2d'), chartConfig);
             } catch (err) {
                 console.error('[ChartManager] Failed to create chart:', err);
@@ -471,7 +480,7 @@ export const ChartManager = {
      * @param {string} id - Chart ID
      * @returns {boolean} Success
      */
-    destroy(id) {
+    destroy(id, removeCanvas = false) {
         const instance = instances.get(id);
         if (!instance) return false;
         
@@ -481,8 +490,8 @@ export const ChartManager = {
                 instance.chart.destroy();
             }
             
-            // Remove canvas
-            if (instance.canvas && instance.canvas.parentElement) {
+            // Remove canvas only if explicitly requested
+            if (removeCanvas && instance.canvas && instance.canvas.parentElement) {
                 instance.canvas.remove();
             }
             

@@ -354,7 +354,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
         const tabs = document.querySelectorAll('.chart-view-tab');
         if (!tabs || !tabs.length) return;
         tabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
+            tab.onclick = (e) => {
                 e.preventDefault();
                 const idx = parseInt(tab.getAttribute('data-chart-index'), 10);
                 if (isNaN(idx) || idx === activeChartViewIdx) return;
@@ -1108,7 +1108,14 @@ function initLegacyRunner(tool, slug, container, country = null) {
     function renderChart(chartData, canvasId) {
         if (!chartData) return;
         const id = canvasId || 'result-chart';
-        const canvas = document.getElementById(id);
+        let canvas = document.getElementById(id);
+        if (!canvas) {
+            const container = document.querySelector('.chart-container--unified') || document.querySelector('.chart-container');
+            if (container) {
+                canvas = container.querySelector('canvas');
+                if (canvas) canvas.id = id;
+            }
+        }
         if (!canvas) return;
         
         let datasets;

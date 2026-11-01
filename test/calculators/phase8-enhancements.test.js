@@ -2,6 +2,7 @@
 import { resolve } from 'node:path';
 import { describe, it, expect, beforeAll } from 'vitest';
 import { buildInsightsHtml, buildChartsHtml } from '../../js/core/calculator-engine.js';
+import { ChartManager } from '../../js/modules/charts.js';
 
 const toolsSource = readFileSync(resolve(process.cwd(), 'js/tools.js'), 'utf-8');
 
@@ -173,6 +174,53 @@ describe('Retirement Calculator: Inflation Scaling Fix', () => {
         expect(m["Target Nest Egg (4% Rule)"]).toBe('$0.00');
         expect(m["Income Replacement Rate"]).toBe('0.00%');
         expect(res.financialContract.outputs.achievedReplacementRatePct).toBe(0);
+    });
+
+    it('seamlessly transitions between multiple chart views on the same canvas without losing canvas identity', () => {
+        const calc = TOOLS()['retirement-calculator'];
+        const res = calc.calculate({
+            current_age: 30,
+            current_savings: 20000,
+            annual_income: 60000,
+            monthly_contribution: 600,
+            annual_return: 7,
+            inflation_rate: 3,
+            retirement_age: 65,
+            life_expectancy: 90,
+            income_replacement: 80,
+        });
+
+        // Setup DOM container with canvas
+        const container = document.createElement('div');
+        container.className = 'chart-container chart-container--unified';
+        const canvas = document.createElement('canvas');
+        canvas.id = 'result-chart';
+        container.appendChild(canvas);
+        document.body.appendChild(container);
+
+        // Switch through all 4 views consecutively across 3 cycles (12 conversions)
+        for (let cycle = 0; cycle < 3; cycle++) {
+            res.charts.forEach((chartView) => {
+                ChartManager.create({
+                    id: 'result-chart',
+                    type: chartView.type === 'stackedBar' ? 'bar' : (chartView.type === 'area' ? 'line' : (chartView.type || 'doughnut')),
+                    container,
+                    data: {
+                        labels: chartView.labels || ['A', 'B'],
+                        datasets: chartView.datasets || [{ data: chartView.data || [50, 50] }]
+                    }
+                });
+
+                // Canvas must NEVER be removed, detached, or lose its ID
+                const currentCanvas = document.getElementById('result-chart');
+                expect(currentCanvas).not.toBeNull();
+                expect(currentCanvas.id).toBe('result-chart');
+                expect(currentCanvas.parentElement).toBe(container);
+            });
+        }
+
+        ChartManager.destroy('result-chart');
+        container.remove();
     });
 });
 
