@@ -1905,6 +1905,7 @@ const TOOLS = {
         chartTargetData.push(targetNestEgg);
       });
 
+      const scheduleRows = [];
       for (let y = 1; y <= yearsToRetire; y++) {
         const periods = y * 12;
         let yearValue = currentSavings * Math.pow(1 + realReturn, y);
@@ -1917,11 +1918,19 @@ const TOOLS = {
         yearValue = roundTo(yearValue, 2);
 
         const yrContribs = roundTo(currentSavings + monthlyContrib * 12 * y, 2);
+        const yrGrowth = Math.max(0, roundTo(yearValue - yrContribs, 2));
+        scheduleRows.push({
+          year: `Yr ${y} (Age ${currentAge + y})`,
+          annualContrib: roundTo(monthlyContrib * 12, 2),
+          totalContrib: yrContribs,
+          growth: yrGrowth,
+          balance: yearValue,
+        });
         schedule.push({
           month: y,
           payment: roundTo(monthlyContrib * 12, 2),
           principal: roundTo(yrContribs, 2),
-          interest: roundTo(yearValue - yrContribs, 2),
+          interest: yrGrowth,
           balance: yearValue,
         });
       }
@@ -1976,6 +1985,91 @@ const TOOLS = {
         data: [progressToTarget, roundTo(Math.max(0, 100 - progressToTarget), 1)],
         colors: [progressToTarget >= 100 ? '#10B981' : '#F59E0B', '#E2E8F0'],
         cutout: '72%',
+      };
+
+      // ── Milestone Bar Chart: Contributions vs Compound Growth
+      const barLabels = [];
+      const barContribs = [];
+      const barGrowth = [];
+
+      sampleYears.forEach(y => {
+        if (y === 0) return;
+        const age = currentAge + y;
+        barLabels.push(`Age ${age}`);
+        const yrContribs = roundTo(currentSavings + monthlyContrib * 12 * y, 2);
+        const periods = y * 12;
+        let yrVal = currentSavings * Math.pow(1 + realReturn, y);
+        if (monthlyRealRet === 0) {
+          yrVal += monthlyContrib * periods;
+        } else {
+          const gf = Math.pow(1 + monthlyRealRet, periods);
+          yrVal += monthlyContrib * (gf - 1) / monthlyRealRet;
+        }
+        const yrGrowth = Math.max(0, roundTo(yrVal - yrContribs, 2));
+        barContribs.push(yrContribs);
+        barGrowth.push(yrGrowth);
+      });
+
+      const breakdownChart = {
+        type: 'stackedBar',
+        title: 'Milestone Balance: Contributions vs Compound Growth',
+        labels: barLabels,
+        datasets: [
+          {
+            label: 'Cumulative Contributions',
+            data: barContribs,
+            color: '#6366F1',
+            stack: 'portfolio',
+          },
+          {
+            label: 'Compound Investment Growth',
+            data: barGrowth,
+            color: '#10B981',
+            stack: 'portfolio',
+          },
+        ],
+      };
+
+      // ── Unified Chart Views Array (Fintech Master Switcher)
+      const charts = [
+        {
+          ...chart,
+          id: 'trajectory',
+          title: 'Growth Trajectory',
+          icon: 'fa-chart-area',
+        },
+        {
+          ...breakdownChart,
+          id: 'breakdown',
+          title: 'Annual Breakdown',
+          icon: 'fa-chart-column',
+        },
+        {
+          ...chart2,
+          id: 'portfolio-split',
+          title: 'Portfolio Split',
+          icon: 'fa-chart-pie',
+        },
+        {
+          ...compareChart,
+          id: 'target-progress',
+          title: 'Target Progress',
+          icon: 'fa-bullseye',
+        },
+      ];
+
+      // ── Year-by-Year Growth Schedule Table Spec
+      const table = {
+        mode: 'schedule',
+        title: 'Year-by-Year Retirement Growth Schedule',
+        columns: [
+          { key: 'year', label: 'Year / Age', format: 'text' },
+          { key: 'annualContrib', label: 'Annual Savings', format: 'currency' },
+          { key: 'totalContrib', label: 'Total Contributed', format: 'currency' },
+          { key: 'growth', label: 'Compound Growth', format: 'currency' },
+          { key: 'balance', label: 'Portfolio Balance', format: 'currency', emphasis: true },
+        ],
+        rows: scheduleRows,
       };
 
       // ── Future AI Readiness Data Contract
@@ -2073,7 +2167,8 @@ const TOOLS = {
         chart,
         chart2,
         compareChart,
-        table: schedule,
+        charts,
+        table,
         financialContract,
       };
     },

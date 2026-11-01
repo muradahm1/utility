@@ -247,13 +247,20 @@ function setupAccessibility(container, config) {
     container.setAttribute('role', 'img');
     container.setAttribute('aria-label', config.ariaLabel || config.title || 'Chart');
     
-    // Add title if provided
-    if (config.title && !container.querySelector('.chart-title')) {
-        const title = document.createElement('div');
-        title.className = 'chart-title';
+    // If container is unified, remove any previous title element to avoid collision/duplication
+    if (container.classList && container.classList.contains('chart-container--unified')) {
+        const existingTitle = container.querySelector('.chart-title');
+        if (existingTitle) existingTitle.remove();
+    } else if (config.title) {
+        // Add or update title if provided
+        let title = container.querySelector('.chart-title');
+        if (!title) {
+            title = document.createElement('div');
+            title.className = 'chart-title';
+            title.style.cssText = 'font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;';
+            container.prepend(title);
+        }
         title.textContent = config.title;
-        title.style.cssText = 'font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;';
-        container.prepend(title);
     }
     
     // Add text summary if provided

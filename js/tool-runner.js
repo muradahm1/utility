@@ -332,8 +332,47 @@ function initLegacyRunner(tool, slug, container, country = null) {
 
     let isCompareMode = false;
     let activeScenario = 'A';
+    let activeChartViewIdx = 0;
     let valuesA = { ...values };
     let valuesB = JSON.parse(JSON.stringify(values));
+
+    function renderActiveCharts(res) {
+        if (!res) return;
+        if (Array.isArray(res.charts) && res.charts.length > 0) {
+            const idx = (activeChartViewIdx >= 0 && activeChartViewIdx < res.charts.length) ? activeChartViewIdx : 0;
+            renderChart(res.charts[idx], 'result-chart');
+            bindChartViewTabs(res);
+        } else {
+            if (res.chart) renderChart(res.chart);
+            if (res.chart2) renderChart(res.chart2, 'result-chart-2');
+            if (res.compareChart) renderChart(res.compareChart, 'result-chart-3');
+            if (res.chart3) renderChart(res.chart3, 'result-chart-4');
+        }
+    }
+
+    function bindChartViewTabs(res) {
+        const tabs = document.querySelectorAll('.chart-view-tab');
+        if (!tabs || !tabs.length) return;
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const idx = parseInt(tab.getAttribute('data-chart-index'), 10);
+                if (isNaN(idx) || idx === activeChartViewIdx) return;
+                activeChartViewIdx = idx;
+                tabs.forEach(t => {
+                    const isSelected = parseInt(t.getAttribute('data-chart-index'), 10) === activeChartViewIdx;
+                    t.classList.toggle('active', isSelected);
+                    t.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                });
+                const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                let currentRes;
+                try { currentRes = tool.calculate(currentVals); } catch(err) { return; }
+                if (currentRes && currentRes.charts && currentRes.charts[activeChartViewIdx]) {
+                    renderChart(currentRes.charts[activeChartViewIdx], 'result-chart');
+                }
+            });
+        });
+    }
 
     // ── Phase 5.3: Debounce recalculation (~200ms) ─────────────
     let debounceTimer = null;
@@ -543,8 +582,8 @@ function initLegacyRunner(tool, slug, container, country = null) {
                 buildBreakdownTablesHtml(activeScenario === 'A' ? resA : resB) +
                 buildResultsToolbarHtml(activeScenario === 'A' ? resA : resB);
 
-            if (resA.chart && activeScenario === 'A') renderChart(resA.chart);
-            if (resB.chart && activeScenario === 'B') renderChart(resB.chart);
+            if (activeScenario === 'A') renderActiveCharts(resA);
+            if (activeScenario === 'B') renderActiveCharts(resB);
             bindResultsToolbar(activeScenario === 'A' ? resA : resB);
             return;
         }
@@ -580,10 +619,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
             tableContainer.remove();
         }
 
-        if (result.chart) renderChart(result.chart);
-        if (result.chart2) renderChart(result.chart2, 'result-chart-2');
-        if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
-        if (result.chart3) renderChart(result.chart3, 'result-chart-4');
+        renderActiveCharts(result);
         bindResultsToolbar(result);
 
         const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
@@ -847,10 +883,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
             ${buildJourneyHtml(result.journey)}
             ${buildEducationalLayoutHtml(tool, slug)}`;
 
-        if (result.chart) renderChart(result.chart);
-        if (result.chart2) renderChart(result.chart2, 'result-chart-2');
-        if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
-        if (result.chart3) renderChart(result.chart3, 'result-chart-4');
+        renderActiveCharts(result);
         bindResultsToolbar(result);
         initSaveButton();
         initResetButton();
@@ -1127,6 +1160,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
                 labels: chartData.labels || ['Principal', 'Interest'],
                 datasets
             },
+            title: chartData.title,
             format: chartData.format || 'currency',
             cutout: chartData.cutout,
             options: isHBar ? { indexAxis: 'y' } : undefined

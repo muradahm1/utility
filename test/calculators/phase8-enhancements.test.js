@@ -1,6 +1,7 @@
 ﻿import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, it, expect, beforeAll } from 'vitest';
+import { buildInsightsHtml, buildChartsHtml } from '../../js/core/calculator-engine.js';
 
 const toolsSource = readFileSync(resolve(process.cwd(), 'js/tools.js'), 'utf-8');
 
@@ -108,6 +109,33 @@ describe('Retirement Calculator: Inflation Scaling Fix', () => {
         expect(res.financialContract.outputs.projectedNestEggTodayDollars).toBe(574070.19);
         expect(res.financialContract.provenance.realRateEquation).toBeDefined();
         expect(res.financialContract.limitations.length).toBeGreaterThan(0);
+
+        // 7. Unified 4-view switcher chart architecture
+        expect(res.charts).toBeDefined();
+        expect(res.charts).toHaveLength(4);
+        expect(res.charts.map(c => c.id)).toEqual(['trajectory', 'breakdown', 'portfolio-split', 'target-progress']);
+        expect(res.charts[1].type).toBe('stackedBar');
+        expect(res.charts[1].datasets).toHaveLength(2);
+
+        // 8. Year-by-year schedule data table
+        expect(res.table).toBeDefined();
+        expect(res.table.mode).toBe('schedule');
+        expect(res.table.title).toBe('Year-by-Year Retirement Growth Schedule');
+        expect(res.table.columns).toHaveLength(5);
+        expect(res.table.rows).toHaveLength(40);
+        expect(res.table.rows[0].year).toBe('Yr 1 (Age 26)');
+
+        // 9. Personalized insights formatting (NO [object Object])
+        const insightsHtml = buildInsightsHtml(res.insights);
+        expect(insightsHtml).not.toContain('[object Object]');
+        expect(insightsHtml).toContain('Compound Growth Leverage:');
+
+        // 10. Unified chart HTML rendering
+        const chartsHtml = buildChartsHtml(res);
+        expect(chartsHtml).toContain('chart-view-card');
+        expect(chartsHtml).toContain('chart-view-tabs');
+        expect(chartsHtml).toContain('Growth Trajectory');
+        expect(chartsHtml).toContain('Annual Breakdown');
     });
 
     it('verifies presets integrity and execution', () => {

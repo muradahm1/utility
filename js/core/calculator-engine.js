@@ -1659,6 +1659,28 @@ export function buildBmiGaugeHtml(bmiGauge) {
  * @returns {string} HTML string
  */
 export function buildChartsHtml(result) {
+    if (Array.isArray(result.charts) && result.charts.length > 0) {
+        const tabsHtml = result.charts.map((c, idx) => `
+            <button type="button" class="chart-view-tab ${idx === 0 ? 'active' : ''}" data-chart-index="${idx}" aria-label="${escapeHtml(c.title || `View ${idx+1}`)}" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                ${c.icon ? `<i class="fa-solid ${escapeHtml(c.icon)}"></i> ` : ''}<span>${escapeHtml(c.title || `View ${idx+1}`)}</span>
+            </button>
+        `).join('');
+
+        return `
+            <div class="chart-view-card">
+                <div class="chart-view-header">
+                    <span class="chart-view-title"><i class="fa-solid fa-chart-line" style="color:var(--primary-color);margin-right:6px;"></i>Visual Projection</span>
+                    <div class="chart-view-tabs" role="tablist">
+                        ${tabsHtml}
+                    </div>
+                </div>
+                <div class="chart-container chart-container--unified">
+                    <canvas id="result-chart"></canvas>
+                </div>
+            </div>
+        `;
+    }
+
     const charts = [];
     if (result.chart) charts.push('<div class="chart-container"><canvas id="result-chart"></canvas></div>');
     if (result.chart2) charts.push('<div class="chart-container"><canvas id="result-chart-2"></canvas></div>');
@@ -1818,12 +1840,23 @@ export function buildBreakdownTablesHtml(result) {
 export function buildInsightsHtml(insights) {
     if (!insights || !insights.length) return '';
     
-    const items = insights.map(ins => `
-        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border-color);">
-            <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary-color);margin-top:3px;font-size:14px;flex-shrink:0;"></i>
-            <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(ins)}</div>
-        </div>
-    `).join('');
+    const items = insights.map(ins => {
+        let content = '';
+        if (typeof ins === 'string') {
+            content = escapeHtml(ins);
+        } else if (ins && typeof ins === 'object') {
+            const titleHtml = ins.title ? `<strong style="color:var(--text-primary);display:inline;">${escapeHtml(ins.title)}: </strong>` : '';
+            const textHtml = ins.text ? escapeHtml(ins.text) : (ins.message ? escapeHtml(ins.message) : '');
+            content = `${titleHtml}${textHtml}`;
+        }
+        const icon = (ins && typeof ins === 'object' && ins.icon) ? escapeHtml(ins.icon) : 'fa-wand-magic-sparkles';
+        return `
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border-color);">
+                <i class="fa-solid ${icon}" style="color:var(--primary-color);margin-top:3px;font-size:14px;flex-shrink:0;"></i>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">${content}</div>
+            </div>
+        `;
+    }).join('');
     
     return `
         <div class="insights-card" style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px 18px;margin-top:16px;">
@@ -1928,6 +1961,41 @@ export function renderCharts(calculator, result) {
         calculator.chartInstances.forEach(chart => chart.destroy());
     }
     calculator.chartInstances = [];
+    
+    if (Array.isArray(result.charts) && result.charts.length > 0) {
+        const activeIdx = calculator.activeChartViewIdx || 0;
+        const activeData = result.charts[activeIdx] || result.charts[0];
+        const canvas = container.querySelector('#result-chart');
+        if (canvas) {
+            const chart = createChart(canvas, activeData);
+            if (chart) {
+                calculator.chartInstances.push(chart);
+            }
+        }
+        
+        // Bind tab switching
+        const tabs = container.querySelectorAll('.chart-view-tab');
+        tabs.forEach(tab => {
+            tab.onclick = (e) => {
+                e.preventDefault();
+                const idx = parseInt(tab.getAttribute('data-chart-index'), 10);
+                if (isNaN(idx) || idx === calculator.activeChartViewIdx) return;
+                calculator.activeChartViewIdx = idx;
+                tabs.forEach(t => {
+                    const isSel = parseInt(t.getAttribute('data-chart-index'), 10) === idx;
+                    t.classList.toggle('active', isSel);
+                    t.setAttribute('aria-selected', isSel ? 'true' : 'false');
+                });
+                if (calculator.chartInstances) {
+                    calculator.chartInstances.forEach(c => c.destroy());
+                    calculator.chartInstances = [];
+                }
+                const newChart = createChart(canvas, result.charts[idx]);
+                if (newChart) calculator.chartInstances.push(newChart);
+            };
+        });
+        return;
+    }
     
     // Render each chart
     const charts = [
