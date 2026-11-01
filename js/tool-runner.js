@@ -370,7 +370,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
                 if (currentRes && currentRes.charts && currentRes.charts[activeChartViewIdx]) {
                     renderChart(currentRes.charts[activeChartViewIdx], 'result-chart');
                 }
-            });
+            };
         });
     }
 
