@@ -53,6 +53,99 @@ describe('Retirement Calculator: Inflation Scaling Fix', () => {
         expect(m['Future Monthly (At Retirement $)']).toBe('$6,741.26');
         expect(m["Projected Nest Egg (Today's $)"]).toBe('$619,975.42');
     });
+
+    it('provides multi-dataset trajectory charts, executive insight, and AI financialContract', () => {
+        const calc = TOOLS()['retirement-calculator'];
+        const res = calc.calculate({
+            current_age: 25,
+            current_savings: 0,
+            annual_income: 55000,
+            monthly_contribution: 500,
+            annual_return: 7,
+            inflation_rate: 3,
+            retirement_age: 65,
+            life_expectancy: 95,
+            income_replacement: 80,
+        });
+
+        // 1. Primary timeline trajectory chart
+        expect(res.chart).toBeDefined();
+        expect(res.chart.type).toBe('area');
+        expect(res.chart.labels.length).toBeGreaterThan(5);
+        expect(res.chart.datasets).toHaveLength(3);
+        expect(res.chart.datasets[0].label).toContain('Projected Portfolio');
+        expect(res.chart.datasets[1].label).toContain('Total Cumulative Contributions');
+        expect(res.chart.datasets[2].label).toContain('4% Rule Target Nest Egg');
+
+        // 2. Secondary portfolio composition chart
+        expect(res.chart2).toBeDefined();
+        expect(res.chart2.type).toBe('doughnut');
+        expect(res.chart2.data).toEqual([240000, 334070.19]);
+
+        // 3. Goal progress ring
+        expect(res.compareChart).toBeDefined();
+        expect(res.compareChart.type).toBe('doughnut');
+        expect(res.compareChart.labels).toEqual(['Target Funded', 'Remaining Gap']);
+
+        // 4. Executive insight banner
+        expect(res.insight).toBeDefined();
+        expect(res.insight.tone).toBe('warning');
+        expect(res.insight.headline).toContain('Savings Shortfall');
+        expect(res.insight.detail).toContain('$458.07');
+
+        // 5. Takeaways array
+        expect(res.insights).toBeDefined();
+        expect(res.insights).toHaveLength(3);
+        expect(res.insights[0].title).toBe('Compound Growth Leverage');
+
+        // 6. Future AI data contract
+        expect(res.financialContract).toBeDefined();
+        expect(res.financialContract.schemaVersion).toBe('1.0.0');
+        expect(res.financialContract.calculator).toBe('retirement-calculator');
+        expect(res.financialContract.inputs.currentAge).toBe(25);
+        expect(res.financialContract.inputs.yearsToRetire).toBe(40);
+        expect(res.financialContract.assumptions.fisherRealReturnRate).toBeCloseTo(3.8835, 3);
+        expect(res.financialContract.outputs.projectedNestEggTodayDollars).toBe(574070.19);
+        expect(res.financialContract.provenance.realRateEquation).toBeDefined();
+        expect(res.financialContract.limitations.length).toBeGreaterThan(0);
+    });
+
+    it('verifies presets integrity and execution', () => {
+        const tool = TOOLS()['retirement-calculator'];
+        expect(tool.presets).toBeDefined();
+        expect(tool.presets.length).toBe(3);
+
+        tool.presets.forEach(preset => {
+            expect(preset.label).toBeDefined();
+            const res = tool.calculate(preset.values);
+            expect(res.error).toBeFalsy();
+            expect(res.stats.length).toBeGreaterThan(0);
+            expect(res.chart).toBeDefined();
+            expect(res.financialContract).toBeDefined();
+        });
+    });
+
+    it('safely handles zero annual income and zero contributions without NaN', () => {
+        const calc = TOOLS()['retirement-calculator'];
+        const res = calc.calculate({
+            current_age: 30,
+            current_savings: 50000,
+            annual_income: 0,
+            monthly_contribution: 0,
+            annual_return: 6,
+            inflation_rate: 2.5,
+            retirement_age: 60,
+            life_expectancy: 85,
+            income_replacement: 0,
+        });
+
+        expect(res.error).toBeFalsy();
+        const m = {};
+        res.stats.forEach(s => { m[s.label] = s.value; });
+        expect(m["Target Nest Egg (4% Rule)"]).toBe('$0.00');
+        expect(m["Income Replacement Rate"]).toBe('0.00%');
+        expect(res.financialContract.outputs.achievedReplacementRatePct).toBe(0);
+    });
 });
 
 describe('Emergency Fund Calculator', () => {
