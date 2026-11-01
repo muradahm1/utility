@@ -6148,6 +6148,54 @@ const TOOLS = {
       const total = roundTo(bill + taxAmount + tipAmount, 2);
       const perPerson = roundTo(total / people, 2);
       const tipPerPerson = roundTo(tipAmount / people, 2);
+
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'bill-breakdown',
+          title: 'Total Outflow Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Pre-Tax Bill', 'Tip Amount', 'Sales Tax'],
+          data: [bill, tipAmount, taxAmount],
+          colors: ['#6366F1', '#10B981', '#F59E0B'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'tip-rate-scenarios',
+          title: 'Tip Percentage Scenarios',
+          icon: 'fa-scale-balanced',
+          labels: ['15% (Fair)', '18% (Standard)', '20% (Great)', '25% (Exceptional)', `Selected (${tipPct}%)`],
+          format: 'currency',
+          datasets: [{
+            label: 'Tip Amount ($)',
+            data: [
+              roundTo(bill * 0.15, 2),
+              roundTo(bill * 0.18, 2),
+              roundTo(bill * 0.20, 2),
+              roundTo(bill * 0.25, 2),
+              tipAmount
+            ],
+            colors: ['#94A3B8', '#3B82F6', '#10B981', '#8B5CF6', '#6366F1'],
+            backgroundColor: ['#94A3B8', '#3B82F6', '#10B981', '#8B5CF6', '#6366F1']
+          }]
+        },
+        {
+          type: 'stackedBar',
+          id: 'per-person-split',
+          title: 'Individual Share per Person',
+          icon: 'fa-users',
+          labels: people > 1 ? Array.from({ length: Math.min(people, 6) }, (_, i) => `Person ${i + 1}`) : ['Solo Diner'],
+          format: 'currency',
+          datasets: [
+            { label: 'Bill Share', data: Array(Math.min(people, 6)).fill(roundTo(bill / people, 2)), color: '#6366F1', stack: 'split' },
+            { label: 'Tip Share', data: Array(Math.min(people, 6)).fill(tipPerPerson), color: '#10B981', stack: 'split' },
+            { label: 'Tax Share', data: Array(Math.min(people, 6)).fill(roundTo(taxAmount / people, 2)), color: '#F59E0B', stack: 'split' }
+          ]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Tip Amount', value: fmt(tipAmount), highlight: true },
@@ -6156,6 +6204,7 @@ const TOOLS = {
           { label: 'Per Person', value: fmt(perPerson) },
           { label: 'Tip Per Person', value: fmt(tipPerPerson) },
         ],
+        charts,
       };
     },
     article: {
@@ -7654,6 +7703,36 @@ const TOOLS = {
       const bags60 = Math.ceil(totalCF / 0.45);
       const bags80 = Math.ceil(totalCF / 0.60);
 
+      const netVolumeCF = roundTo(volumeCF * qty, 2);
+      const wasteCF = roundTo(totalCF - netVolumeCF, 2);
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'concrete-volume-split',
+          title: 'Concrete Volume Breakdown',
+          icon: 'fa-chart-pie',
+          labels: ['Net Structural Volume', `${waste}% Waste & Spillage Buffer`],
+          data: [netVolumeCF, wasteCF],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'bag-options-comparison',
+          title: 'Pre-Mix Bag Count by Weight',
+          icon: 'fa-cubes-stacked',
+          labels: ['80-lb Bags (0.60 cu ft)', '60-lb Bags (0.45 cu ft)'],
+          format: 'number',
+          datasets: [{
+            label: 'Total Bags to Purchase',
+            data: [bags80, bags60],
+            colors: ['#10B981', '#3B82F6'],
+            backgroundColor: ['#10B981', '#3B82F6']
+          }]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Concrete Needed (Cubic Yards)', value: totalCY + ' yd³', highlight: true },
@@ -7663,6 +7742,7 @@ const TOOLS = {
           { label: '60lb Pre-mix Bags', value: bags60 + ' bags' },
           { label: 'Total Weight', value: Math.round(totalCF * 145).toLocaleString('en-US') + ' lbs' },
         ],
+        charts,
         formula: 'Volume (yd³) = (Length × Width × (Depth ÷ 12)) ÷ 27 × (1 + Waste%)',
       };
     },
@@ -7727,6 +7807,38 @@ const TOOLS = {
       const gallonsToBuy = Math.ceil(gallonsNeeded);
       const litersNeeded = roundTo(gallonsNeeded * 3.78541, 2);
 
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'surface-area-composition',
+          title: 'Wall Surface Area Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Net Paintable Wall Area', 'Doors & Windows Deductions', ...(incCeiling ? ['Ceiling Area'] : [])],
+          data: [Math.max(0, wallArea - deductions), deductions, ...(incCeiling ? [L * W] : [])],
+          colors: ['#10B981', '#94A3B8', '#6366F1'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'coats-paint-needed',
+          title: 'Paint Volume Needed by Coat Count',
+          icon: 'fa-paint-roller',
+          labels: ['1 Single Coat', '2 Standard Coats', '3 Primer/Deep Coats'],
+          format: 'number',
+          datasets: [{
+            label: 'Gallons Needed',
+            data: [
+              roundTo(netArea / 350, 2),
+              roundTo((netArea * 2) / 350, 2),
+              roundTo((netArea * 3) / 350, 2)
+            ],
+            colors: ['#3B82F6', '#10B981', '#6366F1'],
+            backgroundColor: ['#3B82F6', '#10B981', '#6366F1']
+          }]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Paint Needed (Gallons)', value: gallonsNeeded + ' gal (' + gallonsToBuy + ' to buy)', highlight: true },
@@ -7734,6 +7846,7 @@ const TOOLS = {
           { label: 'Total Wall Area', value: roundTo(netArea, 0) + ' sq ft' },
           { label: 'Total Coverage with Coats', value: roundTo(totalPaintArea, 0) + ' sq ft' },
         ],
+        charts,
         formula: 'Gallons = ((2 × (L + W) × H − (Doors × 21 + Windows × 15)) × Coats) ÷ 350 sq ft/gal',
       };
     },
@@ -7802,6 +7915,36 @@ const TOOLS = {
       const totalBoxes = Math.ceil(totalTiles / perBox);
       const sqFtWithWaste = roundTo(totalSqFt * (1 + waste / 100), 2);
 
+      const netTileCount = Math.ceil(rawTiles);
+      const wasteTileCount = Math.max(0, totalTiles - netTileCount);
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'tile-area-composition',
+          title: 'Tile Square Footage Split',
+          icon: 'fa-chart-pie',
+          labels: ['Net Floor Surface Area', `${waste}% Cutting & Waste Allowance`],
+          data: [roundTo(totalSqFt, 2), roundTo(sqFtWithWaste - totalSqFt, 2)],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'tile-count-breakdown',
+          title: 'Required Tiles vs Purchase Boxes',
+          icon: 'fa-boxes-stacked',
+          labels: ['Net Tiles Needed', 'Waste Margin Tiles', 'Total Tiles to Order', 'Boxes to Buy'],
+          format: 'number',
+          datasets: [{
+            label: 'Quantity',
+            data: [netTileCount, wasteTileCount, totalTiles, totalBoxes],
+            colors: ['#3B82F6', '#F59E0B', '#10B981', '#6366F1'],
+            backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#6366F1']
+          }]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Tiles Needed (with waste)', value: totalTiles + ' tiles', highlight: true },
@@ -7809,6 +7952,7 @@ const TOOLS = {
           { label: 'Raw Area', value: roundTo(totalSqFt, 2) + ' sq ft' },
           { label: 'Area with ' + waste + '% Waste', value: sqFtWithWaste + ' sq ft' },
         ],
+        charts,
         formula: 'Tiles = (Area sq ft ÷ Tile sq ft) × (1 + Waste%)',
       };
     },
@@ -9691,8 +9835,49 @@ const TOOLS = {
         }
       });
 
+      const charts = [
+        {
+          type: 'bar',
+          id: 'gpa-honors-ladder',
+          title: 'Academic Honors & Standings',
+          icon: 'fa-award',
+          labels: ['Good Standing (2.0)', "Dean's List (3.0)", 'Cum Laude (3.5)', 'Magna Cum Laude (3.8)', 'Summa Cum Laude (3.9)', 'Your Semester GPA'],
+          format: 'number',
+          datasets: [{
+            label: 'Grade Point Average',
+            data: [2.0, 3.0, 3.5, 3.8, 3.9, semesterGpa],
+            colors: ['#94A3B8', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#6366F1'],
+            backgroundColor: ['#94A3B8', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#6366F1']
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'credits-distribution',
+          title: 'Credit Hours by Course',
+          icon: 'fa-chart-pie',
+          labels: rows.map(r => `${r.course} (${r.grade})`),
+          data: rows.map(r => r.credits),
+          colors: ['#6366F1', '#3B82F6', '#10B981', '#F59E0B', '#EC4899'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'course-grade-points',
+          title: 'Grade Points per Course',
+          icon: 'fa-chart-column',
+          labels: rows.map(r => r.course),
+          format: 'number',
+          datasets: [
+            { label: 'Unweighted Points (4.0)', data: rows.map(r => parseFloat(r.unweighted)), color: '#3B82F6', backgroundColor: '#3B82F6' },
+            { label: 'Weighted Points (5.0)', data: rows.map(r => parseFloat(r.weighted)), color: '#10B981', backgroundColor: '#10B981' }
+          ]
+        }
+      ];
+
       return {
         stats,
+        charts,
         table,
         insight: {
           tone: semesterGpa >= 3.5 ? 'positive' : semesterGpa >= 2.5 ? 'neutral' : 'warning',
@@ -9807,8 +9992,37 @@ const TOOLS = {
         })
       });
 
+      const charts = [
+        {
+          type: 'bar',
+          id: 'letter-grade-targets',
+          title: 'Required Final Exam Score by Target Grade',
+          icon: 'fa-chart-column',
+          labels: letterGoals.map(g => g.grade),
+          format: 'percentage',
+          datasets: [{
+            label: 'Score Needed on Final (%)',
+            data: letterGoals.map(g => Math.max(0, roundTo((g.target - current * (1 - weight)) / weight, 1))),
+            colors: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+            backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'course-weight-split',
+          title: 'Total Course Weight Distribution',
+          icon: 'fa-chart-pie',
+          labels: ['Prior Coursework Weight', 'Final Exam Weight'],
+          data: [roundTo((1 - weight) * 100, 1), roundTo(weight * 100, 1)],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'percentage',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats,
+        charts,
         table,
         insight: {
           tone,
