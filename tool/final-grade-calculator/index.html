@@ -29,9 +29,9 @@
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Final Grade Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Final Grade Calculator. Find out what grade you need on your final exam to pass or achieve your target course grade.","url":"https://www.getcalcu.com/tool/final-grade-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Education","item":"https://www.getcalcu.com/category/education"},{"@type":"ListItem","position":3,"name":"Final Grade Calculator","item":"https://www.getcalcu.com/tool/final-grade-calculator"}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What if I need over 100% on the final?","acceptedAnswer":{"@type":"Answer","text":"If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor."}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What if I need over 100% on the final?","acceptedAnswer":{"@type":"Answer","text":"If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor."}},{"@type":"Question","name":"How do I figure out the weight of my final exam if my syllabus uses points?","acceptedAnswer":{"@type":"Answer","text":"If your class uses a total-points system rather than percentages, divide the total points possible on the final exam by the total possible points for the entire course, then multiply by 100. For example, if your final is worth 250 points out of 1,000 total course points, the final exam weight is 25% (250 ÷ 1,000 × 100)."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Final Grade Calculator","description":"Calculate the exact score needed on your final exam to earn your desired target course grade.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter your current class grade percentage."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Enter the target letter grade or percentage you want to achieve."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Enter the weight percentage of the final exam."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"See the exact test score required and check grade cutoff benchmarks."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Required Final Exam Grade","description":"Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Final Grade Calculator","url":"https://www.getcalcu.com/tool/final-grade-calculator","dateModified":"2026-11-01"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Required Final Exam Grade","description":"Knowing what you need on your final exam allows you to prioritize study time strategically across your courses. This calculator assumes a standard percentage-based grading system (0% to 100%) where prior coursework and the final exam combine to form 100% of your total score. Note that grading scales differ across other countries and international universities—such as the UK honors classification, the German 1-to-5 scale, or the French 20-point system—so international students should convert their letter or scale marks into proportional percentage equivalents before calculating.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Final Grade Calculator","url":"https://www.getcalcu.com/tool/final-grade-calculator","dateModified":"2026-11-01"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -252,9 +252,19 @@
         </div>
         <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Built and maintained by the GetCalcu founder.</span>
       </div>
-      <p class="methodology-summary">AACRAO (American Association of Collegiate Registrars and Admissions Officers) standard 4.0 GPA weighting conventions.</p>
+      <p class="methodology-summary">Calculations use standard linear weighted mean arithmetic commonly applied across secondary and post-secondary educational institutions.</p>
       
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Grading Model: Assumes a percentage-based grading system (0% to 100%), where all previous assignments, midterms, and participation constitute (100% - Final Exam Weight).</li><li>International Grading Scale Variation: Grading scales differ significantly across countries and educational systems—such as the UK degree classifications (1st/2:1/2:2), the German 1.0–5.0 system, the French 20-point scale, and the Australian 7-point GPA—so non-percentage marks must first be converted into equivalent percentage terms.</li><li>Linear Distribution: Assumes no unannounced curves, drops, or penalty deductions are retroactively applied to prior coursework.</li>
+        </ul>
+      </div>
       
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">AACRAO (American Association of Collegiate Registrars and Admissions Officers) Evaluation Guidelines • Standard Weighted Mean Equation: W = (Target - Current × (1 - Weight)) ÷ Weight</span>
+      </div>
     </section>
   
     <div class="educational-layout">
@@ -262,11 +272,15 @@
         
       <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
         <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate Your Required Final Exam Grade</h2>
-        <div class="article-intro-text"><p>Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.</p></div>
+        <div class="article-intro-text"><p>Knowing what you need on your final exam allows you to prioritize study time strategically across your courses. This calculator assumes a standard percentage-based grading system (0% to 100%) where prior coursework and the final exam combine to form 100% of your total score. Note that grading scales differ across other countries and international universities—such as the UK honors classification, the German 1-to-5 scale, or the French 20-point system—so international students should convert their letter or scale marks into proportional percentage equivalents before calculating.</p></div>
         
           <div class="article-subsection" >
             <h3 class="article-subheading">Weighted Grading Formula</h3>
-            <div class="article-body-text"><p>Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight.</p></div>
+            <div class="article-body-text"><p>Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight. This formula isolates the remaining points required on your syllabus and divides them by the exam weight.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Percentage Assumptions and International Grading Scales</h3>
+            <div class="article-body-text"><p>Calculations assume continuous percentage scoring. If your syllabus uses letter cutoffs (e.g. 90% for an A, 80% for a B, 70% for a C), input the minimum percentage required for that letter grade. Because grading scales differ in other countries and curricula, always reference your institution-specific grading conversion rubric when translating foreign credits or non-percentage marks.</p></div>
           </div>
       </article>
     
@@ -328,6 +342,11 @@
         <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
           <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What if I need over 100% on the final?</summary>
           <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I figure out the weight of my final exam if my syllabus uses points?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">If your class uses a total-points system rather than percentages, divide the total points possible on the final exam by the total possible points for the entire course, then multiply by 100. For example, if your final is worth 250 points out of 1,000 total course points, the final exam weight is 25% (250 ÷ 1,000 × 100).</p>
         </details>
       
       </section>
