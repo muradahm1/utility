@@ -396,6 +396,125 @@ export const investmentCalculator = {
     }
 };
 
+// ── 401(k) Calculator ─────────────────────────────────────────
+export const fourOhOneKCalculator = {
+    id: '401k-calculator',
+    name: '401(k) Retirement Growth Calculator',
+    category: 'Finance',
+    icon: 'fa-piggy-bank',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Project your 401(k) retirement balance, company match growth, and tax-advantaged compound interest.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['401k-calculator']) {
+            return window.TOOLS['401k-calculator'].calculate(v);
+        }
+        return errorResult('401(k) calculator not loaded');
+    }
+};
+
+// ── Net Worth Calculator ──────────────────────────────────────
+export const netWorthCalculator = {
+    id: 'net-worth-calculator',
+    name: 'Net Worth Calculator',
+    category: 'Finance',
+    icon: 'fa-scale-balanced',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Track your total assets and liabilities to calculate your current personal net worth.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['net-worth-calculator']) {
+            return window.TOOLS['net-worth-calculator'].calculate(v);
+        }
+        return errorResult('Net worth calculator not loaded');
+    }
+};
+
+// ── House Affordability Calculator ────────────────────────────
+export const houseAffordabilityCalculator = {
+    id: 'house-affordability-calculator',
+    name: 'House Affordability Calculator',
+    category: 'Finance',
+    icon: 'fa-house-chimney',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate how much home you can afford based on income, down payment, monthly debts, and DTI ratios.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['house-affordability-calculator']) {
+            return window.TOOLS['house-affordability-calculator'].calculate(v);
+        }
+        return errorResult('House affordability calculator not loaded');
+    }
+};
+
+// ── Emergency Fund Calculator ─────────────────────────────────
+export const emergencyFundCalculator = {
+    id: 'emergency-fund-calculator',
+    name: 'Emergency Fund Calculator',
+    category: 'Finance',
+    icon: 'fa-shield-halved',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate your target emergency safety net buffer in months of living expenses.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['emergency-fund-calculator']) {
+            return window.TOOLS['emergency-fund-calculator'].calculate(v);
+        }
+        return errorResult('Emergency fund calculator not loaded');
+    }
+};
+
+// ── 15-Year vs 30-Year Mortgage Calculator ────────────────────
+export const fifteenYearMortgageCalculator = {
+    id: '15-year-mortgage-calculator',
+    name: '15-Year vs. 30-Year Mortgage Calculator',
+    category: 'Finance',
+    icon: 'fa-house-chimney',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Compare 15-year and 30-year fixed mortgages side-by-side with investment opportunity cost.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['15-year-mortgage-calculator']) {
+            return window.TOOLS['15-year-mortgage-calculator'].calculate(v);
+        }
+        return errorResult('15-Year mortgage calculator not loaded');
+    }
+};
+
+// ── Auto Loan Calculator ──────────────────────────────────────
+export const autoLoanCalculator = {
+    id: 'auto-loan-calculator',
+    name: 'Auto Loan Calculator',
+    category: 'Finance',
+    icon: 'fa-car',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate monthly auto loan payments, total interest, and total purchase costs.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['auto-loan-calculator']) {
+            return window.TOOLS['auto-loan-calculator'].calculate(v);
+        }
+        return errorResult('Auto loan calculator not loaded');
+    }
+};
+
+// ── Auto Refinance Calculator ─────────────────────────────────
+export const autoRefinanceCalculator = {
+    id: 'auto-refinance-calculator',
+    name: 'Auto Loan Refinance Calculator',
+    category: 'Finance',
+    icon: 'fa-arrows-rotate',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    description: 'Calculate auto loan refinance payment reduction, lifetime interest savings, and break-even point.',
+    calculate(v) {
+        if (typeof window !== 'undefined' && window.TOOLS && window.TOOLS['auto-refinance-calculator']) {
+            return window.TOOLS['auto-refinance-calculator'].calculate(v);
+        }
+        return errorResult('Auto refinance calculator not loaded');
+    }
+};
+
 export const financeCalculators = [
     mortgageCalculator,
     loanCalculator,
@@ -405,7 +524,14 @@ export const financeCalculators = [
     retirementCalculator,
     amortizationCalculator,
     compoundInterestCalculator,
-    investmentCalculator
+    investmentCalculator,
+    fourOhOneKCalculator,
+    netWorthCalculator,
+    houseAffordabilityCalculator,
+    emergencyFundCalculator,
+    fifteenYearMortgageCalculator,
+    autoLoanCalculator,
+    autoRefinanceCalculator
 ];
 
 /**
