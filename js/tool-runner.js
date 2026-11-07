@@ -523,7 +523,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
 
         return `
             <div class="comparison-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div class="comparison-header">
                     <h3 style="font-size:16px; font-weight:700; color:var(--text-primary);">
                         <i class="fa-solid fa-code-compare" style="color:var(--primary-color);"></i> Side-by-Side Scenario Comparison
                     </h3>

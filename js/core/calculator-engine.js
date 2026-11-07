@@ -1595,7 +1595,7 @@ export function buildRecommendationHtml(rec) {
             </div>
             ${rec.confidence ? `<div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;"><i class="fa-solid fa-gauge-high" style="color:${accent};"></i> Confidence: ${escapeHtml(rec.confidence)}</div>` : ''}
             ${rec.breakEvenYear ? `<div style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;margin-left:8px;"><i class="fa-solid fa-flag-checkered" style="color:${accent};"></i> Break-even: ${escapeHtml(rec.breakEvenYear)}</div>` : ''}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="recommendation-grid">
                 <div>
                     <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:8px;"><i class="fa-solid fa-lightbulb" style="color:#F59E0B;margin-right:6px;"></i>Why?</div>
                     <ul style="list-style:none;padding:0;margin:0;font-size:13px;color:var(--text-secondary);line-height:1.6;">${reasonsHtml}</ul>
@@ -1627,7 +1627,7 @@ export function buildSummaryHtml(summary) {
     return `
         <div class="executive-summary" style="margin-bottom:16px;">
             <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;"><i class="fa-solid fa-gauge-high" style="color:var(--primary-color);margin-right:8px;"></i>Executive Results Dashboard</div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;">${kpis}</div>
+            <div class="executive-kpis-grid">${kpis}</div>
         </div>
     `;
 }

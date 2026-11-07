@@ -2867,11 +2867,8 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     table {
         min-width: 600px;
     }
-    /* Chart container */
-    .chart-container {
-        height: 180px;
-        margin-top: 20px;
-    }
+    /* Chart container (handled by responsive visual projection system) */
+    .chart-container { margin-top: 20px; }
     /* Better touch targets */
     .btn { 
         min-height: 44px; 
@@ -3292,25 +3289,7 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
     }
 }
 
-/* Charts: taller on mobile for better readability of doughnut + bar charts */
-@media (max-width: 768px) {
-    .chart-container {
-        height: 200px;
-    }
-    .charts-side-by-side .chart-container {
-        min-height: 200px;
-    }
-}
-
-@media (max-width: 480px) {
-    .chart-container {
-        height: 180px;
-        padding: 10px;
-    }
-    .charts-side-by-side .chart-container {
-        min-height: 180px;
-    }
-}
+/* Charts: responsive heights handled by unified visual projection system */
 
 /* Insight callout: better text wrapping on mobile */
 @media (max-width: 480px) {
@@ -4920,4 +4899,310 @@ body.is-embedded .tool-runner-card {
 #tool-runner-container .result-card,
 #tool-runner-container .calculator-result {
     contain: layout style;
+}
+
+
+/* ==========================================================================
+   /* === MASTER RESPONSIVE & MOBILE VISUAL PROJECTION SYSTEM === */
+   Fixes visual projections across phones, foldables, tablets, and desktops.
+   ========================================================================== */
+
+/* ── Prevent horizontal overflow page-wide ────────────────────────────── */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ── Fluid & Proportional Chart Projections ───────────────────────────── */
+/* Desktop Default */
+.chart-container {
+    min-height: 300px;
+    height: 340px;
+    position: relative;
+    padding: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container.chart-container--unified {
+    margin-top: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    height: 350px;
+    min-height: 320px;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Tablet (769px - 1024px) */
+@media (max-width: 1024px) {
+    .chart-container {
+        height: 310px;
+        min-height: 280px;
+    }
+    .chart-container.chart-container--unified {
+        height: 320px;
+        min-height: 290px;
+    }
+}
+
+/* Mobile Devices (<= 768px) */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 280px !important;
+        min-height: 260px !important;
+        margin-top: 18px;
+        padding: 12px;
+    }
+    .chart-container.chart-container--unified {
+        height: 290px !important;
+        min-height: 270px !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+    }
+    .chart-view-card {
+        padding: 14px 12px;
+        margin-top: 16px;
+    }
+    .chart-view-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+    .chart-view-tabs {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        gap: 4px;
+        padding: 3px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .chart-view-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    .chart-view-tab {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        padding: 6px 12px;
+        font-size: 11.5px;
+    }
+}
+
+/* Small Phones (<= 480px, iPhone SE, Galaxy, Mini) */
+@media (max-width: 480px) {
+    .chart-container {
+        height: 260px !important;
+        min-height: 240px !important;
+        padding: 10px;
+    }
+    .chart-container.chart-container--unified {
+        height: 270px !important;
+        min-height: 250px !important;
+    }
+    .chart-view-card {
+        padding: 12px 10px;
+    }
+    .chart-view-tab {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+}
+
+/* ── Recommendation Grid Responsiveness ───────────────────────────────── */
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+@media (max-width: 640px) {
+    .recommendation-card {
+        padding: 16px 14px !important;
+    }
+    .recommendation-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+}
+
+/* ── Executive Dashboard KPIs Grid ────────────────────────────────────── */
+.executive-kpis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+@media (max-width: 480px) {
+    .executive-kpis-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 8px;
+    }
+}
+
+/* ── Side-by-Side Comparison Responsiveness ───────────────────────────── */
+.comparison-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+@media (max-width: 640px) {
+    .comparison-card {
+        padding: 14px 12px;
+    }
+    .comparison-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    .comparison-header h3 {
+        font-size: 14px !important;
+    }
+    .comparison-delta-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .comparison-delta-box {
+        padding: 10px 12px;
+    }
+    .comparison-delta-box .delta-values {
+        font-size: 13px;
+    }
+}
+
+/* ── Jurisdiction Switcher Strip (Horizontal Swipe on Mobile) ─────────── */
+@media (max-width: 768px) {
+    .country-switcher-bar {
+        padding: 8px 10px;
+        gap: 8px;
+    }
+    .country-switcher-options {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        width: 100%;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .country-switcher-options::-webkit-scrollbar {
+        display: none;
+    }
+    .country-pill {
+        flex: 0 0 auto;
+        font-size: 12px;
+        padding: 5px 10px;
+        white-space: nowrap;
+    }
+}
+
+/* ── Action Toolbar Mobile Optimization ───────────────────────────────── */
+@media (max-width: 480px) {
+    .results-action-toolbar {
+        gap: 6px;
+    }
+    .results-action-toolbar .action-btn {
+        font-size: 11.5px;
+        padding: 7px 6px;
+        min-height: 40px;
+    }
+    .results-action-toolbar .action-btn#action-save-btn,
+    .results-action-toolbar .action-btn.action-save-btn {
+        padding: 8px 14px;
+        font-size: 12.5px;
+    }
+}
+
+/* ── Result Stat Box Overflow Protection ──────────────────────────────── */
+.result-stat-box .res-val {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+@media (max-width: 480px) {
+    .result-stat-box {
+        padding: 12px 14px;
+        margin-top: 8px;
+    }
+    .result-stat-box .res-label {
+        font-size: 11.5px;
+    }
+    .result-stat-box .res-val {
+        font-size: 20px;
+    }
+    .result-stat-box .res-val.highlight {
+        font-size: 26px;
+    }
+}
+
+/* ── Table Horizontal Scroll Protection ───────────────────────────────── */
+.calc-data-table,
+.table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 768px) {
+    .calc-data-table table,
+    .table-wrapper table {
+        font-size: 12px;
+        min-width: 520px;
+    }
+    .calc-data-table th,
+    .calc-data-table td,
+    .table-wrapper th,
+    .table-wrapper td {
+        padding: 8px 10px;
+        white-space: nowrap;
+    }
+}
+
+/* ── Nesting & Container Padding Balance on Narrow Phones ─────────────── */
+@media (max-width: 480px) {
+    .content-body {
+        padding: 10px 8px !important;
+    }
+    .tool-runner-card {
+        padding: 14px 10px !important;
+        border-radius: var(--radius-sm);
+    }
+    .calculator-results-card {
+        padding: 14px 10px !important;
+        border-radius: var(--radius-sm);
+    }
+    .tool-header h1 {
+        font-size: 19px;
+        line-height: 1.3;
+    }
+    .tool-header p {
+        font-size: 12px;
+        line-height: 1.45;
+    }
+    .educational-card {
+        padding: 18px 14px;
+        border-radius: var(--radius-md);
+    }
+    .methodology-card {
+        padding: 16px 14px;
+        border-radius: var(--radius-md);
+    }
+    .educational-section-title {
+        font-size: 17px;
+    }
+    .article-subheading {
+        font-size: 15px;
+    }
 }

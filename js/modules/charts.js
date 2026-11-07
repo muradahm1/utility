@@ -148,7 +148,9 @@ function buildChartConfig(config) {
         return base;
     });
     
-    // Build options
+    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+
+    // Build options with responsive projection
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -161,10 +163,10 @@ function buildChartConfig(config) {
                 position: config.legendPosition || 'bottom',
                 labels: {
                     usePointStyle: true,
-                    boxWidth: 8,
-                    padding: 16,
+                    boxWidth: isSmallScreen ? 6 : 8,
+                    padding: isSmallScreen ? 10 : 16,
                     color: theme.text,
-                    font: { size: 12 }
+                    font: { size: isSmallScreen ? 11 : 12 }
                 }
             },
             tooltip: {
@@ -174,9 +176,11 @@ function buildChartConfig(config) {
                 bodyColor: theme.text,
                 borderColor: theme.border,
                 borderWidth: 1,
-                padding: 12,
+                padding: isSmallScreen ? 8 : 12,
                 cornerRadius: 8,
                 displayColors: true,
+                titleFont: { size: isSmallScreen ? 11 : 12 },
+                bodyFont: { size: isSmallScreen ? 10.5 : 11 },
                 callbacks: {
                     label: (context) => {
                         const ds = config.data?.datasets?.[context.datasetIndex];
@@ -189,14 +193,22 @@ function buildChartConfig(config) {
         },
         scales: isDoughnut ? undefined : {
             x: {
-                ticks: { color: theme.text, font: { size: 11 } },
+                ticks: { 
+                    color: theme.text, 
+                    font: { size: isSmallScreen ? 10 : 11 },
+                    autoSkip: true,
+                    maxTicksLimit: isSmallScreen ? 6 : 10,
+                    maxRotation: 45,
+                    minRotation: 0
+                },
                 grid: { display: false },
                 stacked: isStacked
             },
             y: {
                 ticks: {
                     color: theme.text,
-                    font: { size: 11 },
+                    font: { size: isSmallScreen ? 10 : 11 },
+                    maxTicksLimit: isSmallScreen ? 5 : 8,
                     callback: (value) => {
                         const format = config.format || 'number';
                         return formatValue(value, format);
