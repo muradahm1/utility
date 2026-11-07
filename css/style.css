@@ -1472,9 +1472,23 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 .tool-grid-workspace { 
     display: grid; 
-    grid-template-columns: 1fr 1fr; 
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); 
     gap: 32px; 
     align-items: start;
+    width: 100%;
+    max-width: 100%;
+}
+.tool-grid-workspace > * {
+    min-width: 0;
+    max-width: 100%;
+}
+.calculator-form-inputs {
+    min-width: 0;
+    width: 100%;
+}
+.calculator-results-card {
+    min-width: 0;
+    width: 100%;
 }
 /* Add subtle visual connector between form and results */
 .tool-grid-workspace > .calculator-form-inputs {
@@ -4866,7 +4880,7 @@ body.is-embedded .tool-runner-card {
 }
 
 /* ============================================================
-   /* === PERFORMANCE: content-visibility optimizations === */
+   === PERFORMANCE: content-visibility optimizations ===
    Added by perf-fix-03: skip layout/paint for below-fold content
    ============================================================ */
 
@@ -4903,7 +4917,7 @@ body.is-embedded .tool-runner-card {
 
 
 /* ==========================================================================
-   /* === MASTER RESPONSIVE & MOBILE VISUAL PROJECTION SYSTEM === */
+   === MASTER RESPONSIVE & MOBILE VISUAL PROJECTION SYSTEM ===
    Fixes visual projections across phones, foldables, tablets, and desktops.
    ========================================================================== */
 
@@ -5205,4 +5219,55 @@ html, body {
     .article-subheading {
         font-size: 15px;
     }
+}
+
+
+/* ── CRITICAL: Mobile & Tablet Single-Column Stacking ─────────────────── */
+/* Ensures entry boxes and charts ALWAYS stack vertically on phones/tablets.
+   The entry box sits cleanly at the top (order: 1), and results & charts
+   stack directly underneath (order: 2) at 100% full width.
+   Charts can NEVER be pushed to the right or off-screen. */
+@media (max-width: 991px) {
+    .tool-grid-workspace {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 20px !important;
+    }
+    .tool-grid-workspace > .calculator-form-inputs,
+    .calculator-form-inputs {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        order: 1 !important;
+    }
+    .tool-grid-workspace > .calculator-results-card,
+    .calculator-results-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        order: 2 !important;
+        margin-top: 8px !important;
+    }
+    .tool-grid-workspace > .calculator-form-inputs::after {
+        display: none !important;
+    }
+}
+
+/* Guard against chart canvas horizontal overflow */
+.chart-container,
+.chart-view-card,
+.chart-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+.chart-container canvas,
+.chart-wrapper canvas {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
