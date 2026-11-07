@@ -3106,9 +3106,10 @@ tbody tr:nth-child(even):hover td { background: var(--primary-light); }
 .save-result-bar {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-top: 24px;
-    padding-top: 20px;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
     border-top: 1px solid var(--border-color);
 }
 .save-result-bar .btn {
@@ -5270,4 +5271,23 @@ html, body {
 .chart-wrapper canvas {
     max-width: 100% !important;
     box-sizing: border-box !important;
+}
+
+
+.action-toast .toast-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 10px;
+    padding: 4px 10px;
+    background: var(--primary-color, #6366F1);
+    color: #ffffff !important;
+    border-radius: var(--radius-sm, 6px);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 12px;
+    transition: background-color var(--transition-fast);
+}
+.action-toast .toast-action-btn:hover {
+    background: var(--primary-hover, #4F46E5);
 }
