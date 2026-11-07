@@ -84,7 +84,7 @@ function minifyJs(code) {
   return result.trim();
 }
 
-const filesToMinify = ['tools.js', 'app.js'];
+const filesToMinify = ['tools.js', 'app.js', 'tool-runner.js'];
 
 filesToMinify.forEach(file => {
   const srcPath = path.join(rootDir, 'js', file);

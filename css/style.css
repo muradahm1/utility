@@ -4885,3 +4885,39 @@ body.is-embedded .tool-runner-card {
         justify-content: center;
     }
 }
+
+/* ============================================================
+   /* === PERFORMANCE: content-visibility optimizations === */
+   Added by perf-fix-03: skip layout/paint for below-fold content
+   ============================================================ */
+
+/* Below-fold SEO sections: skip rendering until near viewport */
+.tool-seo-content,
+.tool-article,
+.tool-how-to,
+.tool-examples,
+.tool-faq-section,
+.tool-related {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 400px;
+}
+
+/* Chart containers: promote to compositor layer to avoid repaints */
+.chart-container,
+.chart-wrapper,
+.result-chart-container {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Smooth chart canvas rendering */
+.chart-container canvas,
+.chart-wrapper canvas {
+    image-rendering: auto;
+}
+
+/* Results card: use contain for layout isolation */
+#tool-runner-container .result-card,
+#tool-runner-container .calculator-result {
+    contain: layout style;
+}

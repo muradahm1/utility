@@ -536,6 +536,17 @@ function initLegacyRunner(tool, slug, container, country = null) {
         `;
     }
 
+    // ── Targeted section update helper (avoids full innerHTML wipe) ──────────
+    function setSectionHtml(card, name, html) {
+        const el = card.querySelector(`[data-section="${name}"]`);
+        if (el) {
+            el.innerHTML = html;
+        } else {
+            // Fallback: section wrapper not present (compare mode or error state).
+            // Don't create it here — compare mode does its own full replacement.
+        }
+    }
+
     function updateResults() {
         const card = document.querySelector('.calculator-results-card');
         if (!card) return;
@@ -550,6 +561,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
                 return;
             }
 
+            // Compare mode still does a full replacement (sections differ in structure)
             card.innerHTML =
                 buildComparisonCardHtml(resA, resB) +
                 buildStatsHtml(activeScenario === 'A' ? resA.stats : resB.stats) +
@@ -568,17 +580,38 @@ function initLegacyRunner(tool, slug, container, country = null) {
         try { result = tool.calculate(valuesA); } 
         catch (err) { console.error('Calculation error:', err); return; }
 
-        card.innerHTML =
-            (result.error ? '' : buildInsightHtml(result.insight)) +
-            buildRecommendationHtml(result.recommendation) +
-            buildSummaryHtml(result.summary) +
-            buildBmiGaugeHtml(result.bmiGauge) +
-            buildStatsHtml(result.stats) +
-            (result.bars ? buildBarsHtml(result.bars) : '') +
-            buildChartsHtml(result) +
-            buildBreakdownTablesHtml(result) +
-            buildInsightsHtml(result.insights) +
-            buildResultsToolbarHtml(result);
+        // ── Phase perf: Targeted section updates instead of full innerHTML ──
+        // If section wrappers exist (normal mode), update each section in-place.
+        // This preserves canvas elements so ChartManager can update chart data
+        // without destroy + recreate on every debounce tick.
+        const hasWrappers = !!card.querySelector('[data-section="stats"]');
+        if (hasWrappers) {
+            setSectionHtml(card, 'insight', result.error ? '' : buildInsightHtml(result.insight));
+            setSectionHtml(card, 'recommendation', buildRecommendationHtml(result.recommendation));
+            setSectionHtml(card, 'summary', buildSummaryHtml(result.summary));
+            setSectionHtml(card, 'bmiGauge', buildBmiGaugeHtml(result.bmiGauge));
+            setSectionHtml(card, 'stats', buildStatsHtml(result.stats));
+            setSectionHtml(card, 'bars', result.bars ? buildBarsHtml(result.bars) : '');
+            // Note: 'charts' section is intentionally NOT wiped here.
+            // ChartManager.mount() (called below via renderActiveCharts) will update
+            // chart data in-place. Only rebuild chart HTML if the chart spec changed.
+            setSectionHtml(card, 'breakdownTables', buildBreakdownTablesHtml(result));
+            setSectionHtml(card, 'insights', buildInsightsHtml(result.insights));
+            setSectionHtml(card, 'toolbar', buildResultsToolbarHtml(result));
+        } else {
+            // Fallback: no section wrappers present — full replacement
+            card.innerHTML =
+                (result.error ? '' : buildInsightHtml(result.insight)) +
+                buildRecommendationHtml(result.recommendation) +
+                buildSummaryHtml(result.summary) +
+                buildBmiGaugeHtml(result.bmiGauge) +
+                buildStatsHtml(result.stats) +
+                (result.bars ? buildBarsHtml(result.bars) : '') +
+                buildChartsHtml(result) +
+                buildBreakdownTablesHtml(result) +
+                buildInsightsHtml(result.insights) +
+                buildResultsToolbarHtml(result);
+        }
 
         const tableContainer = document.querySelector('.calc-data-table');
         if (result.table) {
@@ -837,16 +870,16 @@ function initLegacyRunner(tool, slug, container, country = null) {
                 <div class="tool-grid-workspace">
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
                     <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
-                        ${result.error ? '' : buildInsightHtml(result.insight)}
-                        ${buildRecommendationHtml(result.recommendation)}
-                        ${buildSummaryHtml(result.summary)}
-                        ${buildBmiGaugeHtml(result.bmiGauge)}
-                        ${buildStatsHtml(result.stats)}
-                        ${result.bars ? buildBarsHtml(result.bars) : ''}
-                        ${buildChartsHtml(result)}
-                        ${buildBreakdownTablesHtml(result)}
-                        ${buildInsightsHtml(result.insights)}
-                        ${buildResultsToolbarHtml(result)}
+                        <div data-section="insight">${result.error ? '' : buildInsightHtml(result.insight)}</div>
+                        <div data-section="recommendation">${buildRecommendationHtml(result.recommendation)}</div>
+                        <div data-section="summary">${buildSummaryHtml(result.summary)}</div>
+                        <div data-section="bmiGauge">${buildBmiGaugeHtml(result.bmiGauge)}</div>
+                        <div data-section="stats">${buildStatsHtml(result.stats)}</div>
+                        <div data-section="bars">${result.bars ? buildBarsHtml(result.bars) : ''}</div>
+                        <div data-section="charts">${buildChartsHtml(result)}</div>
+                        <div data-section="breakdownTables">${buildBreakdownTablesHtml(result)}</div>
+                        <div data-section="insights">${buildInsightsHtml(result.insights)}</div>
+                        <div data-section="toolbar">${buildResultsToolbarHtml(result)}</div>
                     </div>
                 </div>
                 <div class="save-result-bar" id="save-result-bar">
