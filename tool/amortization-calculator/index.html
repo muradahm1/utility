@@ -199,7 +199,7 @@
           <div class="form-group" data-field="loan_start_date">
             <label for="loan_start_date">Loan Start Date</label>
             <span class="field-hint">When the loan begins. Used to generate the payment schedule with dates.</span>
-            <input type="date" id="loan_start_date" data-id="loan_start_date" value="2026-06-20" inputmode="decimal">
+            <input type="date" id="loan_start_date" data-id="loan_start_date" value="2026-08-09" inputmode="decimal">
           </div>
         
           <div class="form-group" data-field="extra_monthly">
@@ -220,7 +220,7 @@
           <div class="form-group" data-field="extra_one_time_date">
             <label for="extra_one_time_date">One-Time Payment Date</label>
             <span class="field-hint">When the one-time extra payment is made.</span>
-            <input type="date" id="extra_one_time_date" data-id="extra_one_time_date" value="2027-09-20" inputmode="decimal">
+            <input type="date" id="extra_one_time_date" data-id="extra_one_time_date" value="2027-11-09" inputmode="decimal">
           </div>
         
           <div class="form-group" data-field="extra_annual">
@@ -318,7 +318,7 @@
         <i class="fa-solid fa-circle-info"></i>
         <div class="insight-content">
           <h4>Your $1,896.20 monthly payment pays off $300,000.00 over 30 years, costing $382,636.71 in total interest.</h4>
-          <p>Your effective interest rate is 6.7%. The loan will be fully paid off by June 20, 2056. </p>
+          <p>Your effective interest rate is 6.7%. The loan will be fully paid off by August 9, 2056. </p>
         </div>
       </div>
     
@@ -352,7 +352,7 @@
         
           <div class="stat-card stat-card--highlight ">
             <span class="stat-label">Loan Payoff Date</span>
-            <span class="stat-value">June 20, 2056</span>
+            <span class="stat-value">August 9, 2056</span>
           </div>
         
           <div class="stat-card  ">
@@ -617,12 +617,13 @@
 
     <script src="/js/tools.js"></script>
     <script src="/js/tools-template.js"></script>
-    <script src="/js/modules/budget-planner.js" type="module"></script>
     <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js" defer></script>
     <script src="/js/config.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="/js/supabase.js" defer></script>
+    <script src="/js/firebase.js" defer></script>
     <script src="/js/cookie-consent.js" defer></script>
     <script src="/js/maintenance-banner.js" defer></script>
     <script src="/js/pwa.js" defer></script>

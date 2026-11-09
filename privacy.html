@@ -144,11 +144,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </ul>
 
                         <h3 id="s3">3. Account Information</h3>
-                        <p>Creating an account is entirely optional. If you choose to register to save your calculation history, we collect and store the following, managed securely by Supabase:</p>
+                        <p>Creating an account is entirely optional. If you choose to register to save your calculation history, we collect and store the following, managed securely by Google Firebase:</p>
                         <ul>
                             <li><strong>Display Name:</strong> The name you provide for your profile.</li>
                             <li><strong>Email Address:</strong> Used for authentication and password resets only.</li>
-                            <li><strong>Password:</strong> Stored in a securely hashed format using industry-standard bcrypt. We can never see your actual password.</li>
+                            <li><strong>Password:</strong> Stored in a securely hashed format using industry-standard cryptography. We can never see your actual password.</li>
                             <li><strong>Calculation History:</strong> Inputs and results associated with your user ID. This data is never analyzed, shared, or sold.</li>
                         </ul>
 
@@ -173,7 +173,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <p>To exercise any of these rights, contact us at <a href="mailto:privacy@getcalcu.com">privacy@getcalcu.com</a>. We will respond within 30 days.</p>
 
                         <h3 id="s6">6. Data Security</h3>
-                        <p>We implement industry-standard security measures to protect any data we do hold. Account data is stored on Supabase's secure, encrypted infrastructure. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+                        <p>We implement industry-standard security measures to protect any data we do hold. Account data is stored on Google Firebase's secure, encrypted infrastructure. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
 
                         <h3 id="s7">7. Children's Privacy</h3>
                         <p>Our Site is not directed to children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us and we will delete it promptly.</p>
@@ -226,9 +226,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
     <script src="/js/config.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/supabase.js"></script>
+    <script src="/js/firebase.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/cookie-consent.js"></script>
     <script src="/js/maintenance-banner.js"></script>

@@ -899,43 +899,532 @@ const TOOLS = {
 
   // ── Budget Planner & Expense Tracker ──────────────────────────
   'budget-planner': {
+    presets: [
+      {
+        label: 'Balanced 50/30/20 ($5,500/mo)',
+        values: {
+          income_frequency: 'monthly',
+          primary_income: 5000,
+          additional_income: 500,
+          budgeting_rule: 'rule_50_30_20',
+          housing: 1500,
+          utilities: 300,
+          groceries: 500,
+          transportation: 350,
+          healthcare: 150,
+          dining_entertainment: 400,
+          shopping_personal: 300,
+          subscriptions_memberships: 100,
+          other_wants: 100,
+          debt_payments: 250,
+          emergency_savings: 500,
+          retirement_investments: 550
+        }
+      },
+      {
+        label: 'High Cost of Living ($7,500/mo)',
+        values: {
+          income_frequency: 'monthly',
+          primary_income: 7000,
+          additional_income: 500,
+          budgeting_rule: 'rule_50_30_20',
+          housing: 2600,
+          utilities: 400,
+          groceries: 750,
+          transportation: 500,
+          healthcare: 250,
+          dining_entertainment: 600,
+          shopping_personal: 450,
+          subscriptions_memberships: 150,
+          other_wants: 150,
+          debt_payments: 400,
+          emergency_savings: 650,
+          retirement_investments: 600
+        }
+      },
+      {
+        label: 'Aggressive Saver / FIRE ($8,000/mo)',
+        values: {
+          income_frequency: 'monthly',
+          primary_income: 7000,
+          additional_income: 1000,
+          budgeting_rule: 'rule_80_20',
+          housing: 1600,
+          utilities: 250,
+          groceries: 500,
+          transportation: 250,
+          healthcare: 150,
+          dining_entertainment: 300,
+          shopping_personal: 200,
+          subscriptions_memberships: 50,
+          other_wants: 50,
+          debt_payments: 0,
+          emergency_savings: 1000,
+          retirement_investments: 3650
+        }
+      },
+      {
+        label: 'Entry-Level / Tight Budget ($3,200/mo)',
+        values: {
+          income_frequency: 'monthly',
+          primary_income: 3000,
+          additional_income: 200,
+          budgeting_rule: 'rule_50_30_20',
+          housing: 1100,
+          utilities: 200,
+          groceries: 400,
+          transportation: 250,
+          healthcare: 100,
+          dining_entertainment: 150,
+          shopping_personal: 100,
+          subscriptions_memberships: 50,
+          other_wants: 50,
+          debt_payments: 250,
+          emergency_savings: 250,
+          retirement_investments: 300
+        }
+      }
+    ],
     name: 'Budget Planner & Expense Tracker',
     category: 'Finance',
     icon: 'fa-wallet',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
-    description: 'Plan your monthly budget, track expenses by category, and get personalized spending insights with the 50/30/20 rule.',
-    metaDescription: 'Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.',
-    fields: [],
-    calculate() { return {}; },
-    customRenderer: (container) => { if (window.renderBudgetPlannerModule) window.renderBudgetPlannerModule(container); },
+    description: 'Plan your monthly budget, categorize expenses, track your savings rate, and benchmark spending against the 50/30/20 rule and customizable targets.',
+    metaTitle: 'Budget Planner & Expense Tracker | Monthly Budget Calculator — GetCalcu',
+    metaDescription: 'Free personal budget planner and expense tracker. Calculate net income, categorize needs vs wants, track savings rate, and optimize your 50/30/20 monthly budget.',
+    keywords: [
+      'budget planner',
+      'monthly budget calculator',
+      'personal budget calculator',
+      'income and expense tracker',
+      'monthly expense planner',
+      '50 30 20 budget calculator',
+      'household budget calculator',
+      'zero based budget calculator',
+      'savings rate calculator'
+    ],
+    fields: [
+      { id: 'income_frequency', label: 'Income Frequency', type: 'select', default: 'monthly', options: [
+        { value: 'monthly', label: 'Monthly Take-Home Pay' },
+        { value: 'annual', label: 'Annual Net Salary' },
+        { value: 'biweekly', label: 'Biweekly Paycheck' }
+      ], hint: 'How often you receive your after-tax take-home earnings.' },
+      { id: 'primary_income', label: 'Primary Monthly Net Income ($)', type: 'number', default: 5000, min: 0, step: 100, hint: 'Main paycheck deposited into your bank account after taxes and deductions.' },
+      { id: 'additional_income', label: 'Additional Monthly / Side Income ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'Side hustle, bonuses, freelancing, investments, or partner income.' },
+      { id: 'budgeting_rule', label: 'Budgeting Framework Target', type: 'select', default: 'rule_50_30_20', options: [
+        { value: 'rule_50_30_20', label: '50/30/20 Rule (50% Needs, 30% Wants, 20% Savings)' },
+        { value: 'rule_70_20_10', label: '70/20/10 Rule (70% Needs/Living, 20% Savings, 10% Wants/Debt)' },
+        { value: 'rule_80_20', label: '80/20 Rule (80% Living Expenses, 20% Savings & Wealth)' },
+        { value: 'rule_custom', label: 'Custom / Zero-Based Allocation Target' }
+      ], hint: 'The budgeting framework used to benchmark and evaluate your cash flow.' },
+
+      { id: 'sec_needs', label: 'Essential Needs (Fixed Living Costs)', type: 'section' },
+      { id: 'housing', label: 'Housing (Rent or Mortgage PITI) ($)', type: 'number', default: 1500, min: 0, step: 50, hint: 'Monthly rent, mortgage payment, property taxes, HOA/condo fees, and home insurance.' },
+      { id: 'utilities', label: 'Utilities & Connectivity ($)', type: 'number', default: 300, min: 0, step: 25, hint: 'Electricity, gas, water, home broadband internet, and mobile phone plans.' },
+      { id: 'groceries', label: 'Groceries & Household Essentials ($)', type: 'number', default: 500, min: 0, step: 25, hint: 'Supermarket food, household cleaning supplies, and basic personal hygiene.' },
+      { id: 'transportation', label: 'Transportation & Commute ($)', type: 'number', default: 350, min: 0, step: 25, hint: 'Car loan/lease, auto insurance, fuel, transit passes, tolls, and maintenance.' },
+      { id: 'healthcare', label: 'Healthcare & Out-of-Pocket Medical ($)', type: 'number', default: 150, min: 0, step: 25, hint: 'Health insurance premiums, prescriptions, copays, and dental/vision care.' },
+
+      { id: 'sec_wants', label: 'Discretionary Wants (Lifestyle & Flexible)', type: 'section' },
+      { id: 'dining_entertainment', label: 'Dining Out & Entertainment ($)', type: 'number', default: 400, min: 0, step: 25, hint: 'Restaurants, coffee shops, takeout, bars, concerts, movies, and social events.' },
+      { id: 'shopping_personal', label: 'Shopping & Personal Care ($)', type: 'number', default: 300, min: 0, step: 25, hint: 'Clothing, gadgets, salon/haircuts, beauty products, gifts, and personal decor.' },
+      { id: 'subscriptions_memberships', label: 'Subscriptions & Memberships ($)', type: 'number', default: 100, min: 0, step: 10, hint: 'Streaming media (Netflix, Spotify), gym membership, and software subscriptions.' },
+      { id: 'other_wants', label: 'Travel & Miscellaneous Wants ($)', type: 'number', default: 100, min: 0, step: 25, hint: 'Vacation savings, weekend trips, hobbies, pet luxuries, and incidental splurges.' },
+
+      { id: 'sec_savings', label: 'Savings, Debt Payoff & Investments', type: 'section' },
+      { id: 'debt_payments', label: 'Debt Repayments (Credit Cards, Loans) ($)', type: 'number', default: 250, min: 0, step: 25, hint: 'High-interest credit cards, personal loans, or student loans above minimum payments.' },
+      { id: 'emergency_savings', label: 'Emergency Fund & Cash Reserves ($)', type: 'number', default: 500, min: 0, step: 50, hint: 'High-yield cash savings deposits dedicated to establishing a 3-6 month safety cushion.' },
+      { id: 'retirement_investments', label: 'Retirement & Wealth Investments ($)', type: 'number', default: 550, min: 0, step: 50, hint: 'Roth IRA, 401(k), low-cost index funds, and taxable brokerage accounts.' }
+    ],
+    fieldLabels(v) {
+      const freq = v.income_frequency || 'monthly';
+      const isAnnual = freq === 'annual';
+      const isBiweekly = freq === 'biweekly';
+      return {
+        primary_income: isAnnual ? 'Primary Annual Net Salary ($)' : isBiweekly ? 'Primary Biweekly Take-Home Pay ($)' : 'Primary Monthly Net Income ($)',
+        additional_income: isAnnual ? 'Additional Annual Income ($)' : isBiweekly ? 'Additional Biweekly Income ($)' : 'Additional Monthly / Side Income ($)'
+      };
+    },
+    calculate(v) {
+      const freq = v.income_frequency || 'monthly';
+      let prim = safeNum(v.primary_income, 0);
+      let addl = safeNum(v.additional_income, 0);
+
+      let monthlyIncome = 0;
+      if (freq === 'annual') {
+        monthlyIncome = (prim + addl) / 12;
+      } else if (freq === 'biweekly') {
+        monthlyIncome = ((prim + addl) * 26) / 12;
+      } else {
+        monthlyIncome = prim + addl;
+      }
+      monthlyIncome = roundTo(monthlyIncome, 2);
+
+      if (monthlyIncome <= 0) {
+        return errorResult('Total net income must be greater than zero to calculate a budget.');
+      }
+
+      // Essential Needs
+      const housing = Math.max(0, safeNum(v.housing, 0));
+      const utilities = Math.max(0, safeNum(v.utilities, 0));
+      const groceries = Math.max(0, safeNum(v.groceries, 0));
+      const transportation = Math.max(0, safeNum(v.transportation, 0));
+      const healthcare = Math.max(0, safeNum(v.healthcare, 0));
+      const needsTotal = roundTo(housing + utilities + groceries + transportation + healthcare, 2);
+
+      // Discretionary Wants
+      const dining = Math.max(0, safeNum(v.dining_entertainment, 0));
+      const shopping = Math.max(0, safeNum(v.shopping_personal, 0));
+      const subs = Math.max(0, safeNum(v.subscriptions_memberships, 0));
+      const otherWants = Math.max(0, safeNum(v.other_wants, 0));
+      const wantsTotal = roundTo(dining + shopping + subs + otherWants, 2);
+
+      // Savings, Debt & Investments
+      const debt = Math.max(0, safeNum(v.debt_payments, 0));
+      const emerg = Math.max(0, safeNum(v.emergency_savings, 0));
+      const invest = Math.max(0, safeNum(v.retirement_investments, 0));
+      const pureSavingsTotal = roundTo(emerg + invest, 2);
+      const savingsDebtTotal = roundTo(debt + pureSavingsTotal, 2);
+
+      // Aggregates
+      const totalExpenses = roundTo(needsTotal + wantsTotal, 2);
+      const totalOutflows = roundTo(totalExpenses + savingsDebtTotal, 2);
+      const netRemaining = roundTo(monthlyIncome - totalOutflows, 2);
+      const annualPureSavings = roundTo(pureSavingsTotal * 12, 2);
+      const annualProjectedWealth = roundTo((pureSavingsTotal + Math.max(0, netRemaining)) * 12, 2);
+
+      // Percentages of Income
+      const needsPct = roundTo((needsTotal / monthlyIncome) * 100, 1);
+      const wantsPct = roundTo((wantsTotal / monthlyIncome) * 100, 1);
+      const savingsDebtPct = roundTo((savingsDebtTotal / monthlyIncome) * 100, 1);
+      const effectiveSavingsRate = roundTo(((pureSavingsTotal + Math.max(0, netRemaining)) / monthlyIncome) * 100, 1);
+      const housingRatio = roundTo((housing / monthlyIncome) * 100, 1);
+
+      // Framework Targets
+      const rule = v.budgeting_rule || 'rule_50_30_20';
+      let needsTarget = 50;
+      let wantsTarget = 30;
+      let savingsTarget = 20;
+      let ruleName = '50/30/20';
+
+      if (rule === 'rule_70_20_10') {
+        needsTarget = 70;
+        wantsTarget = 10;
+        savingsTarget = 20;
+        ruleName = '70/20/10';
+      } else if (rule === 'rule_80_20') {
+        needsTarget = 60;
+        wantsTarget = 20;
+        savingsTarget = 20;
+        ruleName = '80/20';
+      } else if (rule === 'rule_custom') {
+        needsTarget = 50;
+        wantsTarget = 30;
+        savingsTarget = 20;
+        ruleName = 'Custom Model';
+      }
+
+      const targetNeedsAmt = roundTo(monthlyIncome * (needsTarget / 100), 2);
+      const targetWantsAmt = roundTo(monthlyIncome * (wantsTarget / 100), 2);
+      const targetSavingsAmt = roundTo(monthlyIncome * (savingsTarget / 100), 2);
+
+      const isDeficit = netRemaining < 0;
+      const needsOver = needsPct > needsTarget;
+      const wantsOver = wantsPct > wantsTarget;
+
+      let balanceLabel = 'Monthly Net Surplus';
+      let balanceFormatted = fmt(netRemaining);
+      if (isDeficit) {
+        balanceLabel = 'Monthly Budget Deficit';
+        balanceFormatted = `-${fmt(Math.abs(netRemaining))}`;
+      } else if (netRemaining === 0) {
+        balanceLabel = 'Zero-Based Balance';
+        balanceFormatted = '$0.00';
+      }
+
+      const stats = [
+        { label: balanceLabel, value: balanceFormatted, highlight: true, warn: isDeficit },
+        { label: 'Total Monthly Net Income', value: fmt(monthlyIncome) },
+        { label: 'Total Living Expenses', value: fmt(totalExpenses) },
+        { label: 'Total Savings & Debt Payoff', value: fmt(savingsDebtTotal) },
+        { label: 'Effective Savings Rate', value: `${effectiveSavingsRate}%`, warn: effectiveSavingsRate < 10 },
+        { label: `Essential Needs (${needsTarget}% target)`, value: `${fmt(needsTotal)} (${needsPct}%)`, warn: needsOver },
+        { label: `Discretionary Wants (${wantsTarget}% target)`, value: `${fmt(wantsTotal)} (${wantsPct}%)`, warn: wantsOver },
+        { label: 'Annual Projected Wealth Addition', value: fmt(annualProjectedWealth) }
+      ];
+
+      const chart = {
+        type: 'doughnut',
+        labels: [
+          'Housing', 'Groceries', 'Transport', 'Utilities', 'Healthcare',
+          'Dining Out', 'Shopping', 'Subscriptions', 'Other Wants',
+          'Debt Payoff', 'Emergency Fund', 'Investments'
+        ],
+        data: [
+          housing, groceries, transportation, utilities, healthcare,
+          dining, shopping, subs, otherWants,
+          debt, emerg, invest
+        ],
+        colors: [
+          '#6366F1', '#3B82F6', '#0EA5E9', '#06B6D4', '#14B8A6',
+          '#F59E0B', '#F97316', '#FB923C', '#FBBF24',
+          '#EF4444', '#10B981', '#059669'
+        ]
+      };
+
+      const chart2 = {
+        type: 'bar',
+        labels: ['Essential Needs', 'Discretionary Wants', 'Savings & Debt'],
+        datasets: [
+          {
+            label: 'Your Budget ($)',
+            data: [needsTotal, wantsTotal, savingsDebtTotal],
+            backgroundColor: ['#6366F1', '#F59E0B', '#10B981']
+          },
+          {
+            label: `${ruleName} Target ($)`,
+            data: [targetNeedsAmt, targetWantsAmt, targetSavingsAmt],
+            backgroundColor: ['#C7D2FE', '#FDE68A', '#A7F3D0']
+          }
+        ]
+      };
+
+      const bars = [
+        {
+          label: `Essential Needs (Target ≤ ${needsTarget}%)`,
+          value: needsTotal,
+          target: targetNeedsAmt,
+          color: needsOver ? '#EF4444' : '#6366F1',
+          caption: `${needsPct}% of income ($${fmtN(needsTotal)} of $${fmtN(targetNeedsAmt)})`
+        },
+        {
+          label: `Discretionary Wants (Target ≤ ${wantsTarget}%)`,
+          value: wantsTotal,
+          target: targetWantsAmt,
+          color: wantsOver ? '#EF4444' : '#F59E0B',
+          caption: `${wantsPct}% of income ($${fmtN(wantsTotal)} of $${fmtN(targetWantsAmt)})`
+        },
+        {
+          label: `Savings & Debt (Target ≥ ${savingsTarget}%)`,
+          value: savingsDebtTotal,
+          target: targetSavingsAmt,
+          color: savingsDebtPct >= savingsTarget ? '#10B981' : '#F59E0B',
+          caption: `${savingsDebtPct}% of income ($${fmtN(savingsDebtTotal)} of $${fmtN(targetSavingsAmt)})`
+        },
+        {
+          label: 'Total Budget Cash-Flow Utilization',
+          value: totalOutflows,
+          target: monthlyIncome,
+          color: isDeficit ? '#EF4444' : '#10B981',
+          caption: `${roundTo((totalOutflows / monthlyIncome) * 100, 1)}% of total income allocated`
+        }
+      ];
+
+      let insight;
+      if (isDeficit) {
+        insight = {
+          tone: 'warning',
+          icon: 'fa-triangle-exclamation',
+          headline: `Monthly Budget Shortfall: Deficit of ${fmt(Math.abs(netRemaining))}`,
+          detail: `Your monthly planned spending and savings exceed your net income by ${fmt(Math.abs(netRemaining))}. You are drawing down reserves or taking on debt. Trimming discretionary dining or shopping will balance your monthly cash flow.`
+        };
+      } else if (netRemaining === 0) {
+        insight = {
+          tone: 'positive',
+          icon: 'fa-scale-balanced',
+          headline: 'Zero-Based Budget in Perfect Balance',
+          detail: 'Every single dollar of your monthly income is purposefully allocated between living needs, lifestyle, debt reduction, and wealth-building investments.'
+        };
+      } else if (effectiveSavingsRate >= 25) {
+        insight = {
+          tone: 'positive',
+          icon: 'fa-rocket',
+          headline: `Outstanding ${effectiveSavingsRate}% Effective Savings Rate`,
+          detail: `You are saving and investing ${fmt(pureSavingsTotal + netRemaining)} each month (${fmt(annualProjectedWealth)}/year). This puts you well ahead of standard financial independence milestones.`
+        };
+      } else {
+        insight = {
+          tone: 'positive',
+          icon: 'fa-wallet',
+          headline: `Monthly Cash Surplus: ${fmt(netRemaining)} Unallocated`,
+          detail: `You have ${fmt(netRemaining)} in unallocated cash remaining after covering all living expenses and planned savings. Directing this extra surplus toward retirement accounts or extra debt reduction will accelerate your progress.`
+        };
+      }
+
+      const insights = [];
+      if (housingRatio > 32) {
+        insights.push(`Housing consumes ${housingRatio}% of your net pay. Financial advisors recommend keeping housing costs under 30% to prevent being 'house-poor'.`);
+      } else {
+        insights.push(`Your housing cost ratio is a healthy ${housingRatio}% of income (well within the recommended 30% guideline).`);
+      }
+
+      if (debt > 0) {
+        const debtRatio = roundTo((debt / monthlyIncome) * 100, 1);
+        insights.push(`Debt payments take up ${debtRatio}% (${fmt(debt)}) of your monthly income. Eliminating this debt will free up significant capital for long-term investments.`);
+      }
+
+      if (pureSavingsTotal > 0) {
+        const monthsOfEmergency = roundTo((emerg * 12) / (totalExpenses || 1), 1);
+        if (emerg > 0) {
+          insights.push(`Your emergency savings contribution of ${fmt(emerg)}/mo accumulates roughly ${monthsOfEmergency} months of living expenses per year of saving.`);
+        }
+        if (invest > 0) {
+          const tenYearCompounded = roundTo(invest * 12 * ((Math.pow(1 + 0.07, 10) - 1) / 0.07), 0);
+          insights.push(`Investing ${fmt(invest)} monthly in diversified low-cost index funds could grow to approximately ${fmt(tenYearCompounded)} in 10 years at a historical 7% annual return.`);
+        }
+      }
+
+      if (needsOver) {
+        insights.push(`Essential living needs are running ${roundTo(needsPct - needsTarget, 1)}% above your ${ruleName} target. Consider auditing utility subscriptions, grocery waste, or auto insurance rates.`);
+      }
+
+      if (wantsOver) {
+        insights.push(`Discretionary wants exceed your target by ${roundTo(wantsPct - wantsTarget, 1)}%. Trimming dining out or shopping by even $150/mo adds $1,800/yr directly to your wealth.`);
+      }
+
+      const categories = [
+        { name: 'Housing (Rent or Mortgage PITI)', type: 'Need', amt: housing },
+        { name: 'Utilities & Connectivity', type: 'Need', amt: utilities },
+        { name: 'Groceries & Essentials', type: 'Need', amt: groceries },
+        { name: 'Transportation & Commute', type: 'Need', amt: transportation },
+        { name: 'Healthcare & Medical', type: 'Need', amt: healthcare },
+        { name: 'Dining Out & Entertainment', type: 'Want', amt: dining },
+        { name: 'Shopping & Personal Care', type: 'Want', amt: shopping },
+        { name: 'Subscriptions & Memberships', type: 'Want', amt: subs },
+        { name: 'Travel & Other Wants', type: 'Want', amt: otherWants },
+        { name: 'Debt Repayments', type: 'Debt/Savings', amt: debt },
+        { name: 'Emergency Fund Savings', type: 'Savings', amt: emerg },
+        { name: 'Retirement & Investments', type: 'Savings', amt: invest }
+      ];
+
+      const table = categories.map(c => ({
+        Category: c.name,
+        Type: c.type,
+        'Monthly Amount': fmt(c.amt),
+        'Annual Amount': fmt(c.amt * 12),
+        '% of Income': pct(c.amt / monthlyIncome),
+        '% of Outflows': pct(c.amt / (totalOutflows || 1))
+      }));
+
+      table.push({
+        Category: '── Essential Needs Subtotal',
+        Type: 'Summary',
+        'Monthly Amount': fmt(needsTotal),
+        'Annual Amount': fmt(needsTotal * 12),
+        '% of Income': `${needsPct}%`,
+        '% of Outflows': pct(needsTotal / (totalOutflows || 1))
+      });
+      table.push({
+        Category: '── Discretionary Wants Subtotal',
+        Type: 'Summary',
+        'Monthly Amount': fmt(wantsTotal),
+        'Annual Amount': fmt(wantsTotal * 12),
+        '% of Income': `${wantsPct}%`,
+        '% of Outflows': pct(wantsTotal / (totalOutflows || 1))
+      });
+      table.push({
+        Category: '── Savings & Debt Subtotal',
+        Type: 'Summary',
+        'Monthly Amount': fmt(savingsDebtTotal),
+        'Annual Amount': fmt(savingsDebtTotal * 12),
+        '% of Income': `${savingsDebtPct}%`,
+        '% of Outflows': pct(savingsDebtTotal / (totalOutflows || 1))
+      });
+      table.push({
+        Category: '── Net Remaining Balance',
+        Type: isDeficit ? 'Deficit' : 'Surplus',
+        'Monthly Amount': balanceFormatted,
+        'Annual Amount': fmt(netRemaining * 12),
+        '% of Income': pct(Math.abs(netRemaining) / monthlyIncome),
+        '% of Outflows': '—'
+      });
+
+      return {
+        stats,
+        chart,
+        chart2,
+        bars,
+        insight,
+        insights,
+        table
+      };
+    },
     article: {
-      heading: 'How to Build a Monthly Budget and Track Your Spending',
-      intro: 'A budget is the foundation of financial control. The GetCalcu Budget Planner lets you log income sources, categorize expenses, visualize your spending, and get instant feedback with the 50/30/20 rule — all saved privately in your browser.',
+      heading: 'How to Build a Sustainable Personal Budget and Expense Strategy',
+      intro: 'A well-structured budget is the core engine of personal financial independence. The GetCalcu Budget Planner and Expense Tracker models your complete cash flow — separating essential living expenses, discretionary lifestyle spending, debt reduction, and wealth-building investments into clear, actionable financial metrics.',
       sections: [
-        { heading: 'The 50/30/20 Rule Explained', body: 'This popular framework splits after-tax income into 50% needs (housing, food, utilities, transport), 30% wants (dining, entertainment, hobbies), and 20% savings and debt repayment. It is a flexible target to aim for, not a strict rule.' },
-        { heading: 'Why Your Savings Rate Matters', body: 'Your savings rate — the percentage of income left after expenses — is the single best predictor of financial progress. A 20% rate puts you ahead of most households; pushing toward 30% or more accelerates debt payoff, investing, and financial independence.' },
-      ],
+        {
+          heading: 'Understanding the 50/30/20 Budgeting Framework',
+          body: 'The 50/30/20 rule organizes after-tax take-home pay into three fundamental pillars: 50% for essential needs (housing, utilities, groceries, transit, healthcare), 30% for discretionary wants (dining out, entertainment, shopping, hobbies), and 20% for savings and debt reduction. It offers a balanced benchmark that prevents lifestyle creep while safeguarding future security.'
+        },
+        {
+          heading: 'Alternative Budgeting Models: 70/20/10, 80/20 & Zero-Based Budgeting',
+          body: 'Different financial situations call for different budgeting strategies. In high-cost-of-living metropolitan areas, a 70/20/10 rule (70% living costs, 20% savings, 10% debt or giving) is often more realistic. High-earners and early retirees often adopt the 80/20 rule or zero-based budgeting, where every single dollar of income is assigned a purposeful job before the month starts.'
+        },
+        {
+          heading: 'Maximizing Your Savings Rate for Early Financial Freedom',
+          body: 'Your savings rate — the percentage of income you retain and invest after living expenses — is the single most predictive metric of your long-term wealth. Increasing your savings rate from 10% to 25% cuts over 15 years off the time required to achieve complete retirement readiness.'
+        }
+      ]
     },
     howTo: [
-      'Add your monthly income sources (salary, freelance, investments, etc.).',
-      'Enter your expenses by category — use the default categories or create your own.',
-      'View your spending breakdown with interactive charts and progress bars.',
-      'Check your Budget Status and 50/30/20 rule recommendations.',
-      'Export your budget as PDF or share the summary with others.',
+      'Select your income frequency (monthly, annual, or biweekly) and enter your net take-home pay.',
+      'Choose your preferred budgeting model: 50/30/20, 70/20/10, 80/20, or Custom Zero-Based Target.',
+      'Log your essential fixed needs: housing, utilities, groceries, transportation, and healthcare.',
+      'Enter your discretionary lifestyle spending: dining out, shopping, subscriptions, and travel.',
+      'Input your wealth-building allocations: debt payoff, emergency cash reserves, and retirement investments.',
+      'Analyze your Net Surplus/Deficit, category charts, progress bars, and personalized financial insights.',
+      'Export an executive PDF report or download your complete itemized budget schedule as a CSV spreadsheet.'
     ],
-    formula: 'Budget Status = Total Income – Total Expenses | Savings Rate = (Remaining / Income) × 100 | 50/30/20 Rule: Needs ≤ 50%, Wants ≤ 30%, Savings ≥ 20%',
+    formula: 'Net Monthly Balance = Total Net Income − (Essential Needs + Discretionary Wants + Debt Payoff + Savings) | Effective Savings Rate = ((Savings + Unallocated Surplus) ÷ Total Income) × 100 | Needs Ratio = (Needs ÷ Income) × 100 | Wants Ratio = (Wants ÷ Income) × 100',
     examples: [
-      { title: 'Healthy 50/30/20 Budget', input: 'Income: $5,000 | Needs: $2,500 | Wants: $1,500 | Savings: $1,000', result: 'Savings Rate: 20% — On Track' },
-      { title: 'Needs-Heavy Budget', input: 'Income: $5,000 | Needs: $3,500 | Wants: $1,000 | Savings: $500', result: 'Savings Rate: 10% — Boost Savings' },
+      {
+        title: 'Balanced 50/30/20 Household',
+        input: 'Income: $5,500/mo, Needs: $2,800 (50.9%), Wants: $1,400 (25.5%), Savings/Debt: $1,300 (23.6%)',
+        result: 'Net Surplus: +$0.00 | Savings Rate: 23.6% (On Track)'
+      },
+      {
+        title: 'High Cost-of-Living Renter',
+        input: 'Income: $7,500/mo, Housing: $2,600, Total Needs: $4,500 (60%), Wants: $1,500 (20%), Savings: $1,500 (20%)',
+        result: 'Net Surplus: +$0.00 | Savings Rate: 20.0% (Needs Heavy, Adjust Discretionary)'
+      },
+      {
+        title: 'Budget Deficit / Overspending Alert',
+        input: 'Income: $4,000/mo, Living Expenses: $3,600, Debt & Savings: $800',
+        result: 'Net Deficit: -$400/mo | Shortfall Warning: Reduce Wants or Refinance Debt'
+      }
     ],
     faqs: [
-      { q: 'What is the 50/30/20 budgeting rule?', a: 'The 50/30/20 rule splits your after-tax income into three categories: 50% for needs (housing, food, utilities, healthcare, transport), 30% for wants (entertainment, dining, shopping, hobbies), and 20% for savings and debt repayment. It provides a simple framework for balanced spending.' },
-      { q: 'How is the savings rate calculated?', a: 'Your savings rate is calculated as: (Remaining Balance / Total Income) × 100. This shows what percentage of your income you are saving after all expenses.' },
-      { q: 'Can I add custom expense categories?', a: 'Yes! Click the "+ Add Category" button to create unlimited custom categories. You can remove them anytime with the delete button.' },
-      { q: 'Does my data get saved?', a: 'Your budget data is saved automatically in your browser\'s local storage. It stays on your device and is never sent to our servers.' },
-      { q: 'Can I export my budget?', a: 'Yes, you can download a PDF summary of your budget, print the page, or share the summary using your device\'s share menu.' },
-    ],
+      {
+        q: 'What is the 50/30/20 rule and how does it work?',
+        a: 'The 50/30/20 rule divides your net take-home pay into three buckets: 50% for essential needs (housing, utilities, groceries, transport, healthcare), 30% for discretionary wants (dining out, entertainment, shopping, travel), and 20% for savings and debt repayment. It serves as an intuitive benchmark for financial stability without complex line-item bookkeeping.'
+      },
+      {
+        q: 'Should debt payments be counted as needs or savings in a budget?',
+        a: 'Minimum debt payments required to maintain good standing are fixed obligations (treated as essential needs). However, extra principal payments designed to eliminate high-interest debt represent positive balance-sheet improvements and are categorized alongside savings and wealth building.'
+      },
+      {
+        q: 'How is the effective savings rate calculated in this planner?',
+        a: 'Your effective savings rate is calculated as ((Emergency Savings + Investments + Unallocated Monthly Surplus) ÷ Total Net Income) × 100. This measures the true proportion of your earnings that increases your net worth each month.'
+      },
+      {
+        q: 'What should I do if my budget shows a monthly deficit?',
+        a: 'A monthly deficit means your planned outflows exceed income, causing debt accumulation or emergency fund depletion. Immediate remedies include auditing subscriptions, cooking at home to reduce dining out, shopping with a list, or refinancing high-interest debt with the GetCalcu Debt Payoff Calculator.'
+      },
+      {
+        q: 'How much should I spend on housing each month?',
+        a: 'Financial advisors widely recommend keeping total housing costs (rent or mortgage principal, interest, taxes, insurance, and HOA dues) below 30% to 33% of your net take-home pay to avoid becoming "house-poor".'
+      },
+      {
+        q: 'Can I compare two different budget scenarios side-by-side?',
+        a: 'Yes! Click the "Compare A vs B" button on the results toolbar. You can model your current budget in Scenario A and an optimized budget (e.g., lower rent or reduced discretionary spending) in Scenario B to view exact dollar differences and savings increases.'
+      },
+      {
+        q: 'How do I download or print a copy of my budget report?',
+        a: 'Click the "PDF" button on the action toolbar to generate an executive, verified GetCalcu PDF report with visual charts and itemized schedules. You can also click "CSV" to export a spreadsheet or "Print" for a clean paper copy.'
+      }
+    ]
   },
 
   // ── Retirement Calculator ─────────────────────────────────────

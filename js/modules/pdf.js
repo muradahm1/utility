@@ -2,7 +2,7 @@
  * PDF Module
  * 
  * Professional PDF report generation with executive branding,
- * metric cards, input summaries, and schedule tables.
+ * metric cards, input summaries, visual charts, and schedule tables.
  * 
  * @module modules/pdf
  */
@@ -125,13 +125,19 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
         // ── 3. Primary Key Metric Callout ──
         if (result.stats && result.stats.length > 0) {
             const primaryStat = result.stats[0];
+            const isWarn = primaryStat.warn;
             
-            doc.setFillColor(238, 242, 255); // #EEF2FF
-            doc.setDrawColor(99, 102, 241); // #6366F1
+            if (isWarn) {
+                doc.setFillColor(254, 242, 242); // #FEF2F2
+                doc.setDrawColor(239, 68, 68); // #EF4444
+            } else {
+                doc.setFillColor(238, 242, 255); // #EEF2FF
+                doc.setDrawColor(99, 102, 241); // #6366F1
+            }
             doc.setLineWidth(0.5);
             doc.roundedRect(margin, y, contentWidth, 18, 2, 2, 'FD');
             
-            doc.setTextColor(79, 70, 229);
+            doc.setTextColor(isWarn ? 185 : 79, isWarn ? 28 : 70, isWarn ? 28 : 229);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(9);
             doc.text((primaryStat.label || 'PRIMARY RESULT').toUpperCase(), margin + 6, y + 6);
@@ -185,28 +191,111 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
         
         // ── 5. Insights & Recommendation ──
         if (result.insight || result.recommendation) {
-            const text = result.insight || result.recommendation;
-            doc.setFillColor(240, 253, 244); // #F0FDF4
-            doc.setDrawColor(34, 197, 94); // #22C55E
-            doc.setLineWidth(0.4);
-            doc.roundedRect(margin, y, contentWidth, 14, 1.5, 1.5, 'FD');
+            const raw = result.insight || result.recommendation;
+            let headline = 'INSIGHT & RECOMMENDATION';
+            let detail = '';
+            let isWarning = false;
             
-            doc.setTextColor(22, 101, 52);
+            if (typeof raw === 'string') {
+                detail = raw;
+            } else if (raw && typeof raw === 'object') {
+                if (raw.headline) headline = raw.headline;
+                detail = raw.detail || raw.text || raw.message || '';
+                if (raw.tone === 'warning') isWarning = true;
+            }
+            
+            const insLines = doc.splitTextToSize(String(detail), contentWidth - 8);
+            const boxHeight = Math.max(14, (insLines.length * 4) + 8);
+            
+            if (y + boxHeight > 270) {
+                doc.addPage();
+                drawHeaderBanner(doc, pageWidth, margin, tool.name);
+                y = 36;
+            }
+            
+            if (isWarning) {
+                doc.setFillColor(254, 242, 242); // #FEF2F2
+                doc.setDrawColor(239, 68, 68); // #EF4444
+                doc.setLineWidth(0.4);
+                doc.roundedRect(margin, y, contentWidth, boxHeight, 1.5, 1.5, 'FD');
+                doc.setTextColor(185, 28, 28);
+            } else {
+                doc.setFillColor(240, 253, 244); // #F0FDF4
+                doc.setDrawColor(34, 197, 94); // #22C55E
+                doc.setLineWidth(0.4);
+                doc.roundedRect(margin, y, contentWidth, boxHeight, 1.5, 1.5, 'FD');
+                doc.setTextColor(22, 101, 52);
+            }
+            
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8);
-            doc.text('INSIGHT & RECOMMENDATION', margin + 4, y + 4.5);
+            doc.text(headline.toUpperCase(), margin + 4, y + 4.5);
             
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(8.5);
-            const insLines = doc.splitTextToSize(String(text), contentWidth - 8);
             doc.text(insLines, margin + 4, y + 9);
             
-            y += 18;
+            y += boxHeight + 4;
+        }
+
+        // ── 5b. Bulleted Insights (if present) ──
+        if (result.insights && Array.isArray(result.insights) && result.insights.length > 0) {
+            if (y > 240) {
+                doc.addPage();
+                drawHeaderBanner(doc, pageWidth, margin, tool.name);
+                y = 36;
+            }
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text('Key Observations & Financial Analysis', margin, y);
+            y += 4.5;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(51, 65, 85);
+
+            result.insights.slice(0, 4).forEach(ins => {
+                const bulletLines = doc.splitTextToSize(`• ${ins}`, contentWidth - 4);
+                doc.text(bulletLines, margin + 2, y);
+                y += (bulletLines.length * 3.8) + 1.5;
+            });
+            y += 2;
+        }
+
+        // ── 5c. Visual Summary / Charts (if present in DOM) ──
+        if (typeof document !== 'undefined') {
+            const chartCanvas = document.getElementById('result-chart') || document.querySelector('.chart-container canvas');
+            if (chartCanvas && typeof chartCanvas.toDataURL === 'function') {
+                try {
+                    const imgData = chartCanvas.toDataURL('image/png');
+                    if (imgData && imgData.length > 500) {
+                        if (y > 210) {
+                            doc.addPage();
+                            drawHeaderBanner(doc, pageWidth, margin, tool.name);
+                            y = 36;
+                        }
+                        doc.setTextColor(15, 23, 42);
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(10);
+                        doc.text('Visual Summary', margin, y);
+                        y += 4;
+
+                        const chartWidth = 90;
+                        const chartHeight = 55;
+                        const chartX = margin + (contentWidth - chartWidth) / 2;
+                        doc.addImage(imgData, 'PNG', chartX, y, chartWidth, chartHeight);
+                        y += chartHeight + 6;
+                    }
+                } catch (chartErr) {
+                    console.warn('[PDF] Chart embedding skipped:', chartErr);
+                }
+            }
         }
         
         // ── 6. Schedule Table (if applicable) ──
         if (result.table && Array.isArray(result.table) && result.table.length > 0) {
-            if (y > 220) {
+            if (y > 210) {
                 doc.addPage();
                 drawHeaderBanner(doc, pageWidth, margin, tool.name);
                 y = 36;
@@ -215,13 +304,23 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             doc.setTextColor(15, 23, 42);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(11);
-            doc.text('Schedule / Breakdown', margin, y);
+            doc.text('Schedule / Itemized Breakdown', margin, y);
             y += 5;
             
             const rows = result.table.slice(0, 36); // first 36 periods
             const headers = Object.keys(rows[0] || {});
             const numCols = headers.length;
-            const tableColWidth = contentWidth / numCols;
+            
+            // Proportional column widths
+            const colWidths = [];
+            if (headers.includes('Category')) {
+                const firstColWidth = contentWidth * 0.35;
+                const otherColWidth = (contentWidth - firstColWidth) / (numCols - 1);
+                headers.forEach((h, i) => colWidths.push(i === 0 ? firstColWidth : otherColWidth));
+            } else {
+                const uniform = contentWidth / numCols;
+                headers.forEach(() => colWidths.push(uniform));
+            }
             
             // Table Header
             doc.setFillColor(51, 65, 85); // #334155
@@ -230,16 +329,15 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(7.5);
             
+            let curColX = margin;
             headers.forEach((h, i) => {
                 const label = h.charAt(0).toUpperCase() + h.slice(1);
-                doc.text(label, margin + (i * tableColWidth) + 3, y + 4.8);
+                doc.text(label, curColX + 3, y + 4.8);
+                curColX += colWidths[i];
             });
             y += 7;
             
             // Table Rows
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7);
-            
             rows.forEach((row, rowIndex) => {
                 if (y > 275) {
                     doc.addPage();
@@ -247,15 +345,29 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
                     y = 36;
                 }
                 
-                if (rowIndex % 2 === 0) {
+                const isSummaryRow = row.Type === 'Summary' || (row.Category && String(row.Category).startsWith('──'));
+                
+                if (isSummaryRow) {
+                    doc.setFillColor(238, 242, 255);
+                    doc.rect(margin, y, contentWidth, 5.5, 'F');
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(79, 70, 229);
+                } else if (rowIndex % 2 === 0) {
                     doc.setFillColor(248, 250, 252);
                     doc.rect(margin, y, contentWidth, 5.5, 'F');
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(51, 65, 85);
+                } else {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(51, 65, 85);
                 }
+                doc.setFontSize(7);
                 
-                doc.setTextColor(51, 65, 85);
+                curColX = margin;
                 headers.forEach((h, i) => {
                     const val = String(row[h] || '');
-                    doc.text(val, margin + (i * tableColWidth) + 3, y + 3.8);
+                    doc.text(val, curColX + 3, y + 3.8);
+                    curColX += colWidths[i];
                 });
                 y += 5.5;
             });
@@ -309,4 +421,3 @@ export function buildPDFButton(options = {}) {
     const { label = 'Download PDF', onclick = '' } = options;
     return `<button class="btn btn-outline btn-sm" id="pdf-btn" ${onclick ? `onclick="${onclick}"` : ''}><i class="fa-solid fa-file-pdf"></i> ${escapeHtml(label)}</button>`;
 }
-
