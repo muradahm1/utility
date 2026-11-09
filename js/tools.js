@@ -9,11 +9,188 @@
         document.getElementById('tool-runner-container') &&
         document.querySelector('#result-chart, #result-chart-2, #result-chart-3, #result-chart-4, .chart-container canvas, #budget-chart, .chart-wrapper canvas')) {
         var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
         s.async = true;
         document.head.appendChild(s);
     }
 })();
+
+const US_TAX_SCHEDULES = {
+  '2026': {
+    name: '2026 Tax Year (Active)',
+    socSecCap: 184500,
+    standardDeduction: {
+      single: 16100,
+      married: 32200,
+      married_joint: 32200,
+      head: 24150,
+      head_household: 24150
+    },
+    brackets: {
+      single: [
+        { cap: 12400, rate: 0.10 },
+        { cap: 50400, rate: 0.12 },
+        { cap: 107450, rate: 0.22 },
+        { cap: 205100, rate: 0.24 },
+        { cap: 260450, rate: 0.32 },
+        { cap: 651050, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married: [
+        { cap: 24800, rate: 0.10 },
+        { cap: 100800, rate: 0.12 },
+        { cap: 214900, rate: 0.22 },
+        { cap: 410200, rate: 0.24 },
+        { cap: 520900, rate: 0.32 },
+        { cap: 781250, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { cap: 24800, rate: 0.10 },
+        { cap: 100800, rate: 0.12 },
+        { cap: 214900, rate: 0.22 },
+        { cap: 410200, rate: 0.24 },
+        { cap: 520900, rate: 0.32 },
+        { cap: 781250, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head: [
+        { cap: 17700, rate: 0.10 },
+        { cap: 67500, rate: 0.12 },
+        { cap: 107450, rate: 0.22 },
+        { cap: 205100, rate: 0.24 },
+        { cap: 260450, rate: 0.32 },
+        { cap: 651050, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head_household: [
+        { cap: 17700, rate: 0.10 },
+        { cap: 67500, rate: 0.12 },
+        { cap: 107450, rate: 0.22 },
+        { cap: 205100, rate: 0.24 },
+        { cap: 260450, rate: 0.32 },
+        { cap: 651050, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ]
+    }
+  },
+  '2025': {
+    name: '2025 Tax Year (Historical)',
+    socSecCap: 176100,
+    standardDeduction: {
+      single: 15000,
+      married: 30000,
+      married_joint: 30000,
+      head: 22500,
+      head_household: 22500
+    },
+    brackets: {
+      single: [
+        { cap: 11925, rate: 0.10 },
+        { cap: 48475, rate: 0.12 },
+        { cap: 103350, rate: 0.22 },
+        { cap: 197300, rate: 0.24 },
+        { cap: 250525, rate: 0.32 },
+        { cap: 626350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married: [
+        { cap: 23850, rate: 0.10 },
+        { cap: 96950, rate: 0.12 },
+        { cap: 206700, rate: 0.22 },
+        { cap: 394600, rate: 0.24 },
+        { cap: 501050, rate: 0.32 },
+        { cap: 751600, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { cap: 23850, rate: 0.10 },
+        { cap: 96950, rate: 0.12 },
+        { cap: 206700, rate: 0.22 },
+        { cap: 394600, rate: 0.24 },
+        { cap: 501050, rate: 0.32 },
+        { cap: 751600, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head: [
+        { cap: 17000, rate: 0.10 },
+        { cap: 64850, rate: 0.12 },
+        { cap: 103350, rate: 0.22 },
+        { cap: 197300, rate: 0.24 },
+        { cap: 250500, rate: 0.32 },
+        { cap: 626350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head_household: [
+        { cap: 17000, rate: 0.10 },
+        { cap: 64850, rate: 0.12 },
+        { cap: 103350, rate: 0.22 },
+        { cap: 197300, rate: 0.24 },
+        { cap: 250500, rate: 0.32 },
+        { cap: 626350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ]
+    }
+  },
+  '2024': {
+    name: '2024 Tax Year (Historical)',
+    socSecCap: 168600,
+    standardDeduction: {
+      single: 14600,
+      married: 29200,
+      married_joint: 29200,
+      head: 21900,
+      head_household: 21900
+    },
+    brackets: {
+      single: [
+        { cap: 11600, rate: 0.10 },
+        { cap: 47150, rate: 0.12 },
+        { cap: 100525, rate: 0.22 },
+        { cap: 191950, rate: 0.24 },
+        { cap: 243725, rate: 0.32 },
+        { cap: 609350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married: [
+        { cap: 23200, rate: 0.10 },
+        { cap: 94300, rate: 0.12 },
+        { cap: 201050, rate: 0.22 },
+        { cap: 383900, rate: 0.24 },
+        { cap: 487450, rate: 0.32 },
+        { cap: 731200, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      married_joint: [
+        { cap: 23200, rate: 0.10 },
+        { cap: 94300, rate: 0.12 },
+        { cap: 201050, rate: 0.22 },
+        { cap: 383900, rate: 0.24 },
+        { cap: 487450, rate: 0.32 },
+        { cap: 731200, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head: [
+        { cap: 16550, rate: 0.10 },
+        { cap: 63100, rate: 0.12 },
+        { cap: 100500, rate: 0.22 },
+        { cap: 191950, rate: 0.24 },
+        { cap: 243700, rate: 0.32 },
+        { cap: 609350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ],
+      head_household: [
+        { cap: 16550, rate: 0.10 },
+        { cap: 63100, rate: 0.12 },
+        { cap: 100500, rate: 0.22 },
+        { cap: 191950, rate: 0.24 },
+        { cap: 243700, rate: 0.32 },
+        { cap: 609350, rate: 0.35 },
+        { cap: Infinity, rate: 0.37 }
+      ]
+    }
+  }
+};
 
 const TOOLS = {
   'mortgage-calculator': {
@@ -53,10 +230,20 @@ const TOOLS = {
           }
     ],
     name: 'Mortgage Calculator',
+    related: [
+      'true-home-buying-system',
+      '15-year-mortgage-calculator',
+      'fha-loan-calculator',
+      'house-affordability-calculator',
+      'refinance-calculator',
+      'rent-vs-buy-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house',
     iconClass: 'icon-home',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.',
     metaDescription: 'Free mortgage calculator — instantly calculate monthly payments, total interest, and amortization schedule for any home loan.',
     fields: [
@@ -93,6 +280,89 @@ const TOOLS = {
       const trueTotalCost = roundTo(safeNum(v.down_payment, 0) + monthlyTotal * n, 2);
 
       const schedule = buildAmortization(principal, r, n, monthlyPI);
+
+      // Multi-view charts
+      const yearsCount = Math.round(n / 12);
+      const trajLabels = ['Year 0'];
+      const balancePoints = [principal];
+      const equityPoints = [safeNum(v.down_payment, 0)];
+
+      const annualLabels = [];
+      const annualPrincipal = [];
+      const annualInterest = [];
+
+      let runningPrincipalPaid = 0;
+      for (let y = 1; y <= yearsCount; y++) {
+        annualLabels.push(`Year ${y}`);
+        let yrPrinc = 0;
+        let yrInt = 0;
+        const endMonth = Math.min(y * 12, schedule.length);
+        const startMonth = (y - 1) * 12;
+        for (let m = startMonth; m < endMonth; m++) {
+          if (schedule[m]) {
+            yrPrinc += schedule[m].principal;
+            yrInt += schedule[m].interest;
+          }
+        }
+        annualPrincipal.push(roundTo(yrPrinc, 2));
+        annualInterest.push(roundTo(yrInt, 2));
+        runningPrincipalPaid += yrPrinc;
+
+        const endBal = schedule[endMonth - 1] ? schedule[endMonth - 1].balance : 0;
+        trajLabels.push(`Year ${y}`);
+        balancePoints.push(roundTo(endBal, 2));
+        equityPoints.push(roundTo(safeNum(v.down_payment, 0) + runningPrincipalPaid, 2));
+      }
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'balance-trajectory',
+          title: 'Loan Balance & Equity',
+          icon: 'fa-chart-area',
+          labels: trajLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Remaining Balance', data: balancePoints, color: '#6366F1', fill: true },
+            { label: 'Home Equity Built', data: equityPoints, color: '#10B981', fill: false }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-breakdown',
+          title: 'Principal vs Interest',
+          icon: 'fa-chart-column',
+          labels: annualLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Principal Paid', data: annualPrincipal, color: '#6366F1', stack: 'payment' },
+            { label: 'Interest Paid', data: annualInterest, color: '#F59E0B', stack: 'payment' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'total-cost-split',
+          title: 'Total Cost Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Loan Principal', 'Total Interest', 'Property Taxes & Insurance'],
+          data: [principal, totalInterest, totalTaxIns],
+          colors: ['#6366F1', '#F59E0B', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'doughnut',
+          id: 'monthly-payment-split',
+          title: 'Monthly Payment PITI',
+          icon: 'fa-wallet',
+          labels: ['Principal & Interest', 'Property Tax', 'Homeowners Insurance'],
+          data: [monthlyPI, roundTo(taxMonthly, 2), roundTo(insMonthly, 2)],
+          colors: ['#6366F1', '#3B82F6', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Monthly Payment',   value: fmt(monthlyTotal), highlight: true  },
@@ -103,48 +373,196 @@ const TOOLS = {
           { label: 'Loan Amount',       value: fmt(principal)                          },
           { label: 'Down Payment',      value: pct(safeNum(v.down_payment, 0) / safeNum(v.home_price, 1)) },
         ],
+        charts,
         chart: { principal, totalInterest },
         table: schedule,
       };
     },
 
-    article: {
-      heading: 'How to Calculate Your Mortgage Payment Accurately',
-      intro: 'Your monthly mortgage payment is more than just principal and interest — it includes property taxes and insurance (PITI). The GetCalcu Mortgage Calculator breaks down every component so you know exactly what you will pay each month and over the life of the loan.',
-      sections: [
-        { heading: 'Principal, Interest, Taxes, and Insurance (PITI)', body: 'Principal is the amount you borrowed, interest is the lender\'s charge for lending it, property taxes fund local services, and homeowners insurance protects your investment. Lenders typically bundle all four into one monthly payment.' },
-        { heading: 'How the Loan Term Affects Total Cost', body: 'A 30-year term keeps monthly payments low but you pay roughly twice as much total interest as a 15-year term. Use the calculator to compare terms side by side and see the lifetime interest difference.' },
+    methodology: {
+      standards: 'This calculator uses the standard monthly compounding amortization equation adopted by the Consumer Financial Protection Bureau (CFPB), Federal Reserve, and mortgage lending institutions worldwide.',
+      summary: 'Our calculation engine computes monthly principal and interest (P&I) using standard actuarial amortization mathematics. Annual property taxes and homeowners insurance are divided evenly across 12 monthly escrow installments.',
+      assumptions: [
+        'Interest compounds monthly on a 360-day or 365-day fixed amortization schedule (12 monthly payments per calendar year).',
+        'Interest rate remains fixed throughout the selected loan term.',
+        'Property taxes and insurance premiums remain constant over time in baseline projections (actual municipal taxes may adjust annually).',
+        'Private Mortgage Insurance (PMI) is not included in baseline P&I and is typically required by lenders when the down payment is below 20%.',
       ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) — Loan Estimate & Closing Disclosure Standards',
+        'Federal Reserve Board — Consumer Handbook on Adjustable-Rate and Fixed Mortgages',
+        'Fannie Mae & Freddie Mac Single-Family Amortization Guidelines',
+      ],
+      lastReviewed: 'September 2026',
     },
+
+    article: {
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Your Mortgage Payment Accurately',
+      intro: 'When financing a home, your monthly housing expenditure is rarely just the principal and interest on the borrowed amount. Most lenders establish an escrow account that bundles local property taxes and homeowners insurance into a single monthly bill (commonly referred to as PITI). Understanding every component of this payment—and how loan terms and down payments alter your lifetime borrowing costs—is essential for making confident home-buying decisions.',
+      sections: [
+        {
+          id: 'piti-breakdown',
+          heading: 'Breaking Down PITI: Principal, Interest, Taxes, and Insurance',
+          body: [
+            'Principal: The actual capital borrowed from the lender to buy the home. Each monthly payment reduces this remaining balance according to the loan amortization schedule.',
+            'Interest: The fee charged by the lender for the capital borrowed, calculated as an annualized percentage (APR) of the outstanding principal balance. Early in a long-term mortgage, interest comprises the dominant portion of your monthly payment.',
+            'Property Taxes: Levied annually by local county and municipal taxing authorities to fund public schools, roads, emergency services, and civic infrastructure. Your lender divides the estimated yearly tax bill by 12 and collects it into an escrow reserve.',
+            'Homeowners Insurance: Casualty and hazard coverage protecting the physical home against damage, fire, and natural disasters. Like property taxes, this premium is escrowed in 12 equal monthly installments.',
+            'Private Mortgage Insurance (PMI): On conventional mortgages, lenders usually require PMI if your down payment is less than 20% (Loan-to-Value greater than 80%). PMI protects the lender in case of default and generally adds 0.5% to 1.5% of the loan balance annually until you reach 20% equity.'
+          ]
+        },
+        {
+          id: 'loan-term-comparison',
+          heading: '30-Year vs. 15-Year Mortgages: The Lifetime Interest Tradeoff',
+          body: [
+            'A 30-year fixed-rate mortgage spreads your repayment over 360 monthly payments. This keeps your regular monthly obligation lower and more manageable, providing greater monthly cash flow flexibility. However, because the loan balance amortizes slowly, you pay significantly more total interest over 30 years—frequently exceeding the original price of the home.',
+            'A 15-year fixed-rate mortgage requires higher monthly payments (typically 25% to 35% higher for the same loan amount), but because lenders take on less duration risk, 15-year rates are often 0.5% to 0.75% lower. Crucially, you pay off the principal in half the time, saving hundreds of thousands of dollars in lifetime interest and building home equity at an accelerated pace.'
+          ]
+        },
+        {
+          id: 'amortization-mechanics',
+          heading: 'The Mathematical Mechanics of Amortization',
+          body: [
+            'Amortization describes the mathematical process of retiring debt through scheduled, equal periodic payments. Although your total monthly principal and interest payment remains constant throughout a fixed-rate loan, the internal split between principal and interest shifts continuously.',
+            'In Month 1 of a $320,000 30-year loan at 7.00% APR, the monthly interest charge is $1,866.67, meaning only $262.30 goes toward reducing your loan balance. By Year 15 (payment 180), the monthly interest has fallen to approximately $1,386, allowing about $743 to go toward principal. By Year 25, the vast majority of each payment directly builds your home equity.'
+          ]
+        },
+        {
+          id: 'down-payment-strategy',
+          heading: 'Down Payment Strategy and Loan-to-Value (LTV)',
+          body: [
+            'Your down payment directly determines your initial Loan-to-Value (LTV) ratio. A larger down payment produces three immediate financial benefits: it reduces the required loan principal, lowers your ongoing monthly payment, and avoids private mortgage insurance (PMI) when you contribute 20% or more.',
+            'Even if you do not have 20% saved upfront, putting down 5% to 10% still lowers your monthly principal balance compared to minimum down payment programs, while allowing you to refinance or request PMI cancellation once your property appreciates or you pay down the balance to 80% LTV.'
+          ]
+        }
+      ]
+    },
+
     howTo: [
-      'Enter the home price and your down payment — the calculator subtracts the down payment to find your loan amount.',
-      'Add the annual interest rate (APR) and choose your loan term in years.',
-      'Include annual property tax and homeowners insurance for a true PITI monthly payment.',
-      'Review your monthly payment, total interest, and full amortization schedule.',
-      'Adjust the down payment or term to see how much interest you can save.',
+      'Enter the purchase price of the property you intend to buy.',
+      'Specify your down payment in dollars (e.g., $80,000 for a 20% down payment on a $400,000 home).',
+      'Input your annual mortgage interest rate (APR) and choose your repayment term (such as 15 or 30 years).',
+      'Add your estimated annual property taxes and homeowners insurance premiums to generate a complete PITI monthly payment.',
+      'Review your monthly payment breakdown, total interest cost, and the full month-by-month amortization schedule below.',
     ],
+
+    formulaTitle: 'Mortgage Amortization Formula',
+    formula: 'M = P × [r(1 + r)^n] / [(1 + r)^n − 1]',
+    formulaExplanation: 'To determine your fixed monthly principal and interest payment (M), the principal loan amount (P) is multiplied by a periodic interest factor derived from your monthly interest rate (r) compounded over the total number of monthly payments (n).',
+    formulaVariables: [
+      { name: 'M', description: 'Monthly principal and interest payment' },
+      { name: 'P', description: 'Principal loan amount (Home Price − Down Payment)' },
+      { name: 'r', description: 'Monthly interest rate (Annual Interest Rate ÷ 12 ÷ 100)' },
+      { name: 'n', description: 'Total number of monthly payments (Loan Term in Years × 12)' },
+      { name: 'Monthly PITI', description: 'M + (Annual Property Tax ÷ 12) + (Annual Insurance ÷ 12)' },
+      { name: 'Total Interest', description: '(M × n) − P' },
+      { name: 'Total Cost', description: 'Down Payment + (Monthly PITI × n)' },
+    ],
+
     examples: [
-      { title: 'Typical 30-Year Fixed Mortgage', input: 'Price: $400,000, Down: $80,000, Rate: 7%, Term: 30 years', result: 'Monthly Payment: ~$2,129 | Total Interest: ~$466,000' },
-      { title: '15-Year Term Saves Interest', input: 'Price: $400,000, Down: $80,000, Rate: 6.5%, Term: 15 years', result: 'Monthly Payment: ~$2,935 | Total Interest: ~$188,000' },
+      {
+        title: 'Standard 30-Year Fixed Mortgage (20% Down)',
+        input: 'Price: $400,000, Down: $80,000 (20%), Rate: 7.00% APR, Term: 30 Years, Tax: $4,800/yr, Ins: $1,200/yr',
+        result: 'Monthly P&I: $2,128.97 | Total Monthly PITI: $2,628.97 | Total Interest: $446,429.20 | Total Cost: $1,026,429.20',
+        explanation: 'Over 30 years, borrowing $320,000 generates $446,429.20 in interest alone—substantially more than the original loan amount.'
+      },
+      {
+        title: '15-Year Accelerated Equity Mortgage (20% Down)',
+        input: 'Price: $400,000, Down: $80,000 (20%), Rate: 6.25% APR, Term: 15 Years, Tax: $4,800/yr, Ins: $1,200/yr',
+        result: 'Monthly P&I: $2,743.75 | Total Monthly PITI: $3,243.75 | Total Interest: $173,875.00 | Total Cost: $663,875.00',
+        explanation: 'Increasing the monthly payment by $614.78 saves $272,554.20 in lifetime interest and pays off the property 15 years sooner.'
+      },
+      {
+        title: 'Starter Home with 5% Down Payment',
+        input: 'Price: $300,000, Down: $15,000 (5%), Rate: 7.00% APR, Term: 30 Years, Tax: $3,600/yr, Ins: $1,080/yr',
+        result: 'Monthly P&I: $1,896.11 | Total Monthly PITI (excl. PMI): $2,286.11 | Total Interest: $397,599.60',
+        explanation: 'Financing $285,000 requires factoring in an estimated $120–$190/mo in private mortgage insurance (PMI) until you reach 20% home equity.'
+      }
     ],
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Monthly Total = M + (Property Tax / 12) + (Insurance / 12) | Total Interest = (M × n) − P',
+
+    additionalSections: [
+      {
+        id: 'common-costs',
+        heading: 'Common Homeownership Costs People Often Forget',
+        intro: 'Your monthly mortgage statement is only one part of total homeownership expenses. When planning a purchase budget, consider these recurring and upfront costs:',
+        items: [
+          {
+            title: 'Upfront Closing Costs',
+            description: 'Lender origination fees, appraisal, credit checks, title search, and title insurance. These typically range from 2% to 5% of the total loan amount at settlement.',
+            note: 'Paid at closing; not included in monthly PITI calculation.'
+          },
+          {
+            title: 'HOA / Condo Association Fees',
+            description: 'Monthly or quarterly fees covering common area maintenance, trash, exterior amenities, and building insurance reserves. Typical ranges are $150 to $600/month.',
+            note: 'Paid directly to association; lenders count this toward debt-to-income ratios.'
+          },
+          {
+            title: 'Ongoing Home Maintenance & Capital Repairs',
+            description: 'General rule of thumb is budgeting 1% to 2% of the home purchase price annually for roof repairs, plumbing, HVAC maintenance, and appliance replacements.',
+            note: 'Essential emergency reserve separate from mortgage escrow.'
+          },
+          {
+            title: 'Escrow Cushion & Property Tax Reassessments',
+            description: 'Municipal property taxes can rise following a reassessment after purchase. Most lenders require an initial 2-month reserve cushion in your escrow account.',
+            note: 'May cause annual adjustments in your total monthly escrow payment.'
+          }
+        ]
+      }
+    ],
+
     faqs: [
-      { q: 'How is a monthly mortgage payment calculated?', a: 'A monthly mortgage payment is calculated using the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the loan principal, r is the monthly interest rate (annual rate ÷ 12), and n is the total number of payments (years × 12). Property taxes and insurance are then added to get your full PITI payment.' },
-      { q: 'What is PITI in a mortgage payment?', a: 'PITI stands for Principal, Interest, Taxes, and Insurance — the four components most lenders bundle into your monthly mortgage payment. Principal and Interest repay the loan, while Taxes and Insurance cover annual property tax and homeowners insurance, divided by 12 and collected each month.' },
-      { q: 'How much down payment do I need to avoid PMI?', a: 'You typically need a down payment of at least 20% of the home price to avoid Private Mortgage Insurance (PMI). PMI protects the lender (not you) when you put down less than 20%, and usually costs 0.5% to 1% of the loan amount per year until your equity reaches 20%.' },
-      { q: 'Is a 15-year or 30-year mortgage better?', a: 'A 15-year mortgage has higher monthly payments but you pay roughly half the total interest of a 30-year loan and build equity faster. A 30-year mortgage keeps payments affordable and offers flexibility, but costs far more over time. Use our calculator to compare the total interest of both terms with your exact numbers.' },
-      { q: 'What is an amortization schedule?', a: 'An amortization schedule is a table showing how each payment splits between principal and interest over the life of the loan. Early payments are mostly interest, while later payments are mostly principal. Our calculator generates a full month-by-month amortization schedule automatically.' },
+      {
+        q: 'How is a monthly mortgage payment calculated?',
+        a: 'A monthly mortgage payment is calculated using the standard amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is your loan principal (home price minus down payment), r is your monthly interest rate (annual APR ÷ 12 ÷ 100), and n is the total number of scheduled monthly payments (years × 12). Monthly property taxes and insurance premiums are then added to establish your total PITI obligation.'
+      },
+      {
+        q: 'What does PITI stand for and why is it important?',
+        a: 'PITI stands for Principal, Interest, Taxes, and Insurance. While principal and interest go toward repaying your loan, taxes and insurance cover local municipal property levies and hazard insurance. Lenders calculate your debt-to-income (DTI) ratio based on your complete PITI payment rather than principal and interest alone.'
+      },
+      {
+        q: 'How much down payment do I need to avoid paying PMI?',
+        a: 'On conventional mortgages, a down payment of at least 20% of the purchase price (80% Loan-to-Value) eliminates the requirement for Private Mortgage Insurance (PMI). If you put down less than 20%, PMI is typically added to your monthly bill until your loan principal reaches 80% of the original purchase price or appraised value.'
+      },
+      {
+        q: 'Is a 15-year or 30-year fixed mortgage better for me?',
+        a: 'A 30-year fixed mortgage provides lower, more predictable monthly payments, making it easier to qualify and providing cash flow buffer for other savings goals. A 15-year mortgage requires a higher monthly commitment but significantly cuts total interest paid over the life of the loan and builds equity much faster.'
+      },
+      {
+        q: 'What is an amortization schedule?',
+        a: 'An amortization schedule is a complete table showing the breakdown of every monthly payment over the entire life of your loan. It specifies exactly how much of each payment goes toward paying down principal balance versus paying accrued interest, as well as your remaining balance after each payment.'
+      },
+      {
+        q: 'Can I make extra payments to pay off my mortgage early?',
+        a: 'Yes, on standard conventional and government loans without prepayment penalties, making extra principal payments directly reduces your remaining loan balance. Because interest is calculated on your outstanding principal, extra payments shorten your loan term and reduce total lifetime interest.'
+      },
+      {
+        q: 'What closing costs should I anticipate when buying a home?',
+        a: 'Beyond your down payment, buyers typically pay 2% to 5% of the loan amount in closing costs. These include loan origination fees, appraisal fees, title searches, title insurance, recording fees, and initial escrow reserves for taxes and insurance.'
+      },
+      {
+        q: 'Why does my total mortgage payment change over time?',
+        a: 'Even with a fixed-rate mortgage where principal and interest never change, your total monthly payment can fluctuate if your local county adjusts property tax rates or if your homeowners insurance premium changes annually upon policy renewal.'
+      }
     ],
+    related: ['15-year-mortgage-calculator', 'loan-calculator', 'rent-vs-buy-calculator', 'house-affordability-calculator', 'amortization-calculator'],
   },
 
   'bmi-calculator': {
     name: 'BMI Calculator',
+    related: [
+      'body-fat-percentage-calculator',
+      'tdee-calculator'
+    ],
     category: 'Health',
     icon: 'fa-heart',
     iconClass: 'icon-health',
     tagClass: 'tag-health',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate your Body Mass Index (BMI) and find out your healthy weight range.',
-    metaDescription: 'Free BMI calculator — instantly calculate your Body Mass Index, health category, and ideal weight range.',
+    metaTitle: 'BMI Calculator – BMI & Healthy Weight Range | GetCalcu',
+    metaDescription: 'Calculate your BMI, see the standard category it falls in, and find the healthy weight range for your height.',
     fields: [
       { id: 'unit',   label: 'Unit System', type: 'select', default: 'metric',
         options: [{ value:'metric', label:'Metric (kg / cm)' }, { value:'imperial', label:'Imperial (lb / in)' }], hint: 'Choose Metric (kilograms / centimeters) or Imperial (pounds / inches).' },
@@ -178,52 +596,219 @@ const TOOLS = {
       const healthyMax = roundTo(24.9 * heightM * heightM, 1);
 
       const weightDisplay = v.unit === 'imperial' ? 'lb' : 'kg';
+      const healthyRangeMin = v.unit === 'imperial' ? roundTo((18.5 * heightM * heightM) / 0.453592, 1) : healthyMin;
+      const healthyRangeMax = v.unit === 'imperial' ? roundTo((24.9 * heightM * heightM) / 0.453592, 1) : healthyMax;
+
+      const charts = [
+        {
+          type: 'bar',
+          id: 'bmi-category-benchmarks',
+          title: 'BMI Category Standards',
+          icon: 'fa-chart-bar',
+          labels: ['Underweight (<18.5)', 'Normal (18.5–24.9)', 'Overweight (25–29.9)', 'Obese (≥30)', 'Your Current BMI'],
+          format: 'number',
+          datasets: [{
+            label: 'BMI Score',
+            data: [18.5, 24.9, 29.9, 35.0, roundTo(clampedBmi, 1)],
+            colors: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', cat.color || '#6366F1'],
+            backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', cat.color || '#6366F1']
+          }]
+        },
+        {
+          type: 'bar',
+          id: 'weight-range-comparison',
+          title: 'Weight Comparison vs Healthy Range',
+          icon: 'fa-scale-balanced',
+          labels: ['Healthy Minimum', 'Healthy Maximum', 'Your Current Weight'],
+          format: 'number',
+          datasets: [{
+            label: 'Weight (' + weightDisplay + ')',
+            data: [healthyRangeMin, healthyRangeMax, roundTo(safeNum(v.weight, 0), 1)],
+            colors: ['#3B82F6', '#10B981', cat.label === 'Normal' ? '#10B981' : '#F59E0B'],
+            backgroundColor: ['#3B82F6', '#10B981', cat.label === 'Normal' ? '#10B981' : '#F59E0B']
+          }]
+        }
+      ];
 
       return {
         stats: [
           { label: 'Your BMI',          value: fmtN(bmi),            highlight: true },
           { label: 'Category',          value: cat.label,            color: cat.color },
-          { label: 'Healthy Weight Range', value: `${healthyMin}–${healthyMax} ${weightDisplay}` },
+          { label: 'Healthy Weight Range', value: `${healthyRangeMin}–${healthyRangeMax} ${weightDisplay}` },
         ],
+        charts,
         bmiGauge: { bmi: clampedBmi, color: cat.color, label: cat.label },
       };
     },
 
-    article: {
-      heading: 'How to Calculate Your BMI and Understand Your Weight Category',
-      intro: 'Body Mass Index (BMI) is a widely used screening tool that estimates body fat from your height and weight. The GetCalcu BMI Calculator instantly computes your BMI, classifies it, and shows your healthy weight range — in metric or imperial units.',
-      sections: [
-        { heading: 'What the BMI Categories Mean', body: 'A BMI below 18.5 is Underweight, 18.5–24.9 is Normal Weight, 25–29.9 is Overweight, and 30 or above is Obese. These ranges are the same for adult men and women of all ages, though BMI does not directly measure body fat or muscle mass.' },
-        { heading: 'Limitations of BMI', body: 'BMI does not distinguish between muscle and fat, so very muscular athletes may score "Overweight" despite low body fat. It is a useful starting point, not a complete health picture — combine it with waist measurement and body fat percentage for a fuller assessment.' },
+    methodology: {
+      standards: 'Thresholds conform to official clinical guidelines established by the World Health Organization (WHO), the Centers for Disease Control and Prevention (CDC), and the National Institutes of Health (NIH).',
+      summary: 'Body Mass Index (BMI) is an anthropometric screening metric defined as body mass divided by the square of body height. It provides an initial population-level estimate of weight categories but is not an individualized medical diagnosis.',
+      assumptions: [
+        'Standard adult weight categories apply to individuals aged 20 years and older.',
+        'The calculation assumes uniform body density and does not distinguish between skeletal muscle mass, bone density, and adipose tissue.',
+        'Clinical assessments should incorporate complementary markers including waist circumference, body fat percentage, and metabolic health panels.',
       ],
+      sources: [
+        'World Health Organization (WHO) — Body Mass Index Classification Guidelines',
+        'Centers for Disease Control and Prevention (CDC) — Defining Adult BMI',
+        'National Heart, Lung, and Blood Institute (NIH) — Clinical Guidelines on Obesity Identification',
+      ],
+      lastReviewed: 'September 2026',
     },
+
+    article: {
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Your BMI and Understand Weight Categories',
+      intro: 'Body Mass Index (BMI) is a standardized screening metric used by healthcare providers and public health agencies globally to assess whether an individual falls within an expected weight range for their height. While it serves as a helpful, accessible baseline, understanding what the numbers indicate—and what limitations exist—is critical for interpreting your results responsibly.',
+      sections: [
+        {
+          id: 'bmi-categories-explained',
+          heading: 'Standard Adult BMI Classifications (WHO & CDC)',
+          body: [
+            'Underweight (BMI below 18.5): Indicates body weight is below the expected range for height. May be associated with nutritional deficits, reduced immune function, or underlying conditions.',
+            'Normal / Healthy Weight (BMI 18.5–24.9): The statistical range associated with the lowest incidence of weight-related cardiovascular and metabolic health conditions in adult populations.',
+            'Overweight (BMI 25.0–29.9): Indicates weight greater than the standard reference range. Healthcare providers generally evaluate lifestyle factors and waist measurements to assess individual risk.',
+            'Obesity Class I (BMI 30.0–34.9), Class II (BMI 35.0–39.9), and Class III (BMI 40.0+): Correlated with elevated risk of hypertension, type 2 diabetes, cardiovascular disease, and sleep apnea.'
+          ]
+        },
+        {
+          id: 'clinical-limitations',
+          heading: 'Important Clinical Limitations of BMI',
+          body: [
+            'Muscle vs. Fat Composition: Because muscle tissue is denser than adipose fat tissue, athletes, weightlifters, and muscular individuals may register an "overweight" or "obese" BMI despite having low body fat and excellent cardiovascular fitness.',
+            'Age and Gender Differences: Women naturally carry higher essential body fat percentages than men at identical BMI levels. Similarly, older adults often experience sarcopenia (loss of muscle mass) while body fat increases, which may mask health risks at a "normal" BMI.',
+            'Ethnicity Considerations: Research endorsed by the WHO indicates that health risks associated with obesity may begin at lower BMI thresholds (such as 23.0 for overweight and 27.5 for obesity) in certain Asian populations.'
+          ]
+        },
+        {
+          id: 'healthy-weight-targets',
+          heading: 'How Healthy Weight Ranges Are Determined',
+          body: [
+            'Your healthy weight range is calculated by applying the normal BMI boundaries (18.5 to 24.9) to your specific height squared: Healthy Min = 18.5 × Height(m)², and Healthy Max = 24.9 × Height(m)². This gives a realistic span of healthy weights rather than a single rigid number.'
+          ]
+        }
+      ]
+    },
+
     howTo: [
-      'Choose your unit system — Metric (kg and cm) or Imperial (lb and in).',
-      'Enter your weight and height in the selected units.',
-      'Optionally add your age for extra context (categories are the same for all adults).',
-      'Read your BMI value and color-coded category on the gauge.',
-      'Use the healthy weight range to set a realistic target.',
+      'Choose your preferred unit system: Metric (kilograms and centimeters) or Imperial (pounds and inches).',
+      'Enter your current body weight and height.',
+      'Optionally specify your age to provide demographic context.',
+      'Review your calculated BMI value, color-coded classification, and customized healthy weight span on the visual gauge.',
+      'Consult a licensed healthcare professional before initiating significant dietary or fitness modifications.',
     ],
+
+    formulaTitle: 'Body Mass Index Formula',
+    formula: 'BMI = Weight (kg) / [Height (m)]² | Imperial: BMI = 703 × Weight (lb) / [Height (in)]²',
+    formulaExplanation: 'BMI divides total body weight by height squared. For imperial measurements, a conversion factor of 703 is applied to reconcile pounds and inches to metric kilograms per square meter.',
+    formulaVariables: [
+      { name: 'BMI', description: 'Body Mass Index (kg/m²)' },
+      { name: 'Weight (kg)', description: 'Body mass in kilograms (or pounds converted via × 0.453592)' },
+      { name: 'Height (m)', description: 'Stature in meters (or inches converted via × 0.0254)' },
+      { name: 'Healthy Min Weight', description: '18.5 × [Height in meters]²' },
+      { name: 'Healthy Max Weight', description: '24.9 × [Height in meters]²' },
+    ],
+
     examples: [
-      { title: 'Average Adult (Metric)', input: 'Weight: 70 kg, Height: 175 cm', result: 'BMI: 22.9 — Normal Weight' },
-      { title: 'Imperial Units', input: 'Weight: 180 lb, Height: 70 in', result: 'BMI: 25.8 — Overweight' },
+      {
+        title: 'Metric Reference Scenario',
+        input: 'Weight: 70.0 kg, Height: 175.0 cm (1.75 m), Age: 30',
+        result: 'BMI: 22.9 (Normal Weight) | Healthy Weight Range: 56.7–76.3 kg',
+        explanation: 'A 70 kg individual at 175 cm falls comfortably in the center of the normal BMI range.'
+      },
+      {
+        title: 'Imperial Reference Scenario',
+        input: 'Weight: 180.0 lb, Height: 70.0 in (5 ft 10 in), Age: 35',
+        result: 'BMI: 25.8 (Overweight) | Healthy Weight Range: 128.9–173.5 lb',
+        explanation: 'At 180 lb, this individual is slightly above the 24.9 BMI cutoff (173.5 lb), indicating a screening recommendation to evaluate lifestyle and waist circumference.'
+      },
+      {
+        title: 'Underweight Screening Scenario',
+        input: 'Weight: 45.0 kg, Height: 162.0 cm (1.62 m), Age: 25',
+        result: 'BMI: 17.1 (Underweight) | Healthy Weight Range: 48.5–65.3 kg',
+        explanation: 'A BMI of 17.1 is below the 18.5 threshold, suggesting the individual is under the expected healthy weight for 162 cm.'
+      }
     ],
-    formula: 'BMI = Weight (kg) / Height (m)² | Imperial: BMI = 703 × Weight (lb) / Height (in)² | Healthy Range: 18.5–24.9',
+
+    additionalSections: [
+      {
+        id: 'holistic-health-markers',
+        heading: 'Comprehensive Health Indicators Beyond BMI',
+        intro: 'To build an accurate assessment of health, clinical professionals typically pair BMI with these complementary metrics:',
+        items: [
+          {
+            title: 'Waist-to-Height Ratio (WHtR)',
+            description: 'Keeping your waist circumference under half your height (ratio < 0.50) is strongly correlated with lower cardiovascular and metabolic risk regardless of total weight.',
+            note: 'Measures central abdominal fat distribution.'
+          },
+          {
+            title: 'Body Fat Percentage',
+            description: 'Direct measurement via DEXA scans, bioelectrical impedance, or calipers separates lean muscle mass from fat tissue.',
+            note: 'Typical healthy ranges: 14–24% for men, 21–31% for women.'
+          },
+          {
+            title: 'Cardiorespiratory Fitness',
+            description: 'Aerobic endurance, muscular strength, resting heart rate, and VO2 max often provide more predictive value for longevity than scale weight alone.',
+            note: 'Physical activity provides health benefits across all BMI tiers.'
+          },
+          {
+            title: 'Metabolic & Blood Lipid Panels',
+            description: 'Fasting blood glucose, HbA1c, triglycerides, HDL/LDL cholesterol, and blood pressure determine metabolic health status.',
+            note: 'Essential clinical data from annual medical checkups.'
+          }
+        ]
+      }
+    ],
+
     faqs: [
-      { q: 'How is BMI calculated?', a: 'BMI is calculated as weight in kilograms divided by height in meters squared (kg/m²). In imperial units, the formula is 703 × weight in pounds ÷ height in inches squared. Our calculator handles both unit systems automatically.' },
-      { q: 'What is a healthy BMI range?', a: 'A healthy BMI for adults is between 18.5 and 24.9 (Normal Weight). A BMI of 25–29.9 is classified as Overweight, and 30 or above as Obese. Below 18.5 is considered Underweight. These thresholds are set by the World Health Organization.' },
-      { q: 'Is BMI accurate for athletes and muscular people?', a: 'BMI does not distinguish muscle from fat, so heavily muscled athletes may register as "Overweight" or "Obese" despite having low body fat. For athletic builds, body fat percentage and waist-to-hip ratio are more accurate indicators of health than BMI alone.' },
-      { q: 'What BMI is considered obese?', a: 'A BMI of 30 or higher is classified as obese. Class I obesity is 30–34.9, Class II is 35–39.9, and Class III (severe) is 40 or above. Obesity is associated with increased risk of heart disease, type 2 diabetes, and other conditions.' },
-      { q: 'Does BMI differ for men and women?', a: 'No — the BMI categories and formula are the same for adult men and women. However, women naturally carry more body fat at the same BMI, and older adults tend to have more body fat at the same BMI than younger adults.' },
+      {
+        q: 'How is Body Mass Index (BMI) calculated?',
+        a: 'BMI is calculated by dividing body weight in kilograms by height in meters squared (kg/m²). For imperial measurements, multiply weight in pounds by 703 and divide by height in inches squared: BMI = (Weight in lb × 703) ÷ (Height in inches)². Our calculator automates these conversions seamlessly.'
+      },
+      {
+        q: 'What are the official adult BMI categories?',
+        a: 'According to the World Health Organization (WHO) and CDC, adult BMI is classified as: Underweight (below 18.5), Normal Weight (18.5 to 24.9), Overweight (25.0 to 29.9), and Obese (30.0 or higher).'
+      },
+      {
+        q: 'Why can BMI be misleading for athletes and bodybuilders?',
+        a: 'BMI does not differentiate between skeletal muscle and body fat. Because muscle is approximately 18% denser than fat by volume, highly trained athletes with substantial muscle mass and low body fat frequently register in the "overweight" or "obese" BMI categories.'
+      },
+      {
+        q: 'How is the healthy weight range determined for my height?',
+        a: 'The healthy weight range corresponds to the minimum (18.5) and maximum (24.9) normal BMI thresholds applied to your height. For example, for someone 175 cm tall, the range is 18.5 × (1.75)² = 56.7 kg to 24.9 × (1.75)² = 76.3 kg.'
+      },
+      {
+        q: 'Do BMI categories differ for men and women?',
+        a: 'Standard clinical BMI classification tables are identical for adult men and women. However, women naturally maintain higher essential body fat levels than men with the same BMI, which is why body composition metrics provide helpful context.'
+      },
+      {
+        q: 'Is BMI used the same way for children and teenagers?',
+        a: 'No. For children and adolescents aged 2 to 19, BMI is calculated the same way but interpreted using age-and-sex-specific growth percentiles (CDC Growth Charts) rather than fixed adult category cutoffs.'
+      },
+      {
+        q: 'What should I do if my BMI is in the overweight or underweight category?',
+        a: 'Use your BMI as an informative initial screening point rather than a definitive diagnosis. Schedule an evaluation with a primary healthcare provider who can evaluate your blood pressure, metabolic markers, lifestyle, and body composition.'
+      }
     ],
+    related: ['calorie-calculator', 'tdee-calculator', 'percentage-calculator'],
   },
 
   'percentage-calculator': {
     name: 'Percentage Calculator',
+    related: [
+      'tip-calculator',
+      'final-grade-calculator',
+      'date-calculator',
+      'unit-converter',
+      'profit-margin-calculator'
+    ],
     category: 'Math',
     icon: 'fa-percent',
     iconClass: 'icon-math',
     tagClass: 'tag-math',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Quickly find what percent one number is of another, calculate percentage increase or decrease, and more.',
     metaDescription: 'Free percentage calculator — find percentages, percent change, and compute values instantly.',
     fields: [
@@ -243,85 +828,362 @@ const TOOLS = {
       return {};
     },
     calculate(v) {
-      const a = safeNum(v.val_a, 0);
-      const b = safeNum(v.val_b, 0);
+      const mode = v.mode || (v.percentage !== undefined ? 'percent-of' : 'what-percent');
+      const a = safeNum(v.val_a !== undefined ? v.val_a : v.percentage, 0);
+      const b = safeNum(v.val_b !== undefined ? v.val_b : v.number, 0);
 
-      if (v.mode === 'what-percent') {
+      if (mode === 'what-percent') {
         if (b === 0) return errorResult('Value B cannot be zero when calculating "X is what % of Y?"');
         const result = (a / b) * 100;
+        const part = Math.abs(a);
+        const whole = Math.abs(b);
+        const remainder = Math.max(0, whole - part);
+
+        const charts = [
+          {
+            id: 'proportional-split',
+            label: 'Proportional Split',
+            icon: 'fa-chart-pie',
+            type: 'doughnut',
+            labels: a <= b ? ['Value A (Part)', 'Remaining of B'] : ['Baseline B (100%)', 'Excess beyond B'],
+            datasets: [{
+              data: a <= b ? [part, remainder] : [whole, Math.abs(part - whole)],
+              backgroundColor: ['#6366F1', '#E2E8F0']
+            }],
+            title: `Proportion: ${fmtN(a)} out of ${fmtN(b)} (${roundTo(result, 2)}%)`
+          },
+          {
+            id: 'value-comparison',
+            label: 'Value Comparison',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: ['Value A', 'Value B (Whole)'],
+            datasets: [{
+              label: 'Value',
+              data: [a, b],
+              backgroundColor: ['#6366F1', '#10B981']
+            }],
+            title: 'Value A vs. Value B'
+          }
+        ];
+
+        const refPercentages = [10, 25, 50, 75, 100, 150];
+        const tableRows = refPercentages.map(pct => ({
+          percent: pct + '%',
+          value: fmtN(roundTo((pct / 100) * b, 2)),
+          description: `${pct}% of ${fmtN(b)}`
+        }));
+
+        const table = makeTableSpec({
+          mode: 'table',
+          title: `Percentage Reference Scale for ${fmtN(b)}`,
+          columns: [
+            { key: 'percent', label: 'Percentage', emphasis: true },
+            { key: 'value', label: 'Equivalent Value' },
+            { key: 'description', label: 'Context' }
+          ],
+          rows: tableRows
+        });
+
         return {
           stats: [
             { label: 'Result',              value: fmtN(result) + '%', highlight: true },
             { label: 'Calculation',         value: `${fmtN(a)} is ${fmtN(result)}% of ${fmtN(b)}` },
+            { label: 'Fractional Ratio',    value: `${roundTo(a / b, 4)}` },
+            { label: 'Remaining Portion',   value: `${roundTo(Math.max(0, 100 - result), 2)}%` }
           ],
+          charts,
+          chart: charts[0],
+          table,
+          insight: {
+            tone: 'positive',
+            icon: 'fa-percent',
+            headline: `${fmtN(a)} represents ${roundTo(result, 2)}% of ${fmtN(b)}.`,
+            detail: result > 100
+              ? `${fmtN(a)} exceeds the base value ${fmtN(b)} by ${roundTo(result - 100, 2)}% (${fmtN(a - b)} units).`
+              : `The remaining ${roundTo(100 - result, 2)}% equals ${fmtN(b - a)} units to complete the whole.`
+          }
         };
       }
 
-      if (v.mode === 'percent-of') {
+      if (mode === 'percent-of') {
         const result = (a / 100) * b;
+        const part = Math.abs(result);
+        const whole = Math.abs(b);
+        const remainder = Math.max(0, whole - part);
+
+        const charts = [
+          {
+            id: 'calculated-split',
+            label: 'Calculated Split',
+            icon: 'fa-chart-pie',
+            type: 'doughnut',
+            labels: [`Calculated ${roundTo(a, 1)}%`, 'Remaining Balance'],
+            datasets: [{
+              data: [part, remainder],
+              backgroundColor: ['#10B981', '#E2E8F0']
+            }],
+            title: `${roundTo(a, 2)}% of ${fmtN(b)} = ${fmtN(result)}`
+          },
+          {
+            id: 'scale-comparison',
+            label: 'Scale Comparison',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: [`${roundTo(a, 1)}% Part`, '100% Whole (B)'],
+            datasets: [{
+              label: 'Amount',
+              data: [result, b],
+              backgroundColor: ['#10B981', '#3B82F6']
+            }],
+            title: 'Calculated Part vs. Total Base'
+          }
+        ];
+
+        const refPercentages = [5, 10, 20, 25, 50, a, 100];
+        const uniquePcts = [...new Set(refPercentages.map(p => roundTo(p, 2)))].sort((x, y) => x - y);
+        const tableRows = uniquePcts.map(pct => ({
+          percent: pct + '%',
+          value: fmtN(roundTo((pct / 100) * b, 2)),
+          description: pct === roundTo(a, 2) ? '★ Your Target' : `${pct}% of ${fmtN(b)}`
+        }));
+
+        const table = makeTableSpec({
+          mode: 'table',
+          title: `Percentage Multipliers of ${fmtN(b)}`,
+          columns: [
+            { key: 'percent', label: 'Rate', emphasis: true },
+            { key: 'value', label: 'Value', emphasis: true },
+            { key: 'description', label: 'Description' }
+          ],
+          rows: tableRows
+        });
+
         return {
           stats: [
             { label: 'Result',              value: fmtN(result),       highlight: true },
             { label: 'Calculation',         value: `${fmtN(a)}% of ${fmtN(b)} = ${fmtN(result)}` },
+            { label: 'Remaining Balance',   value: fmtN(roundTo(b - result, 2)) },
+            { label: 'Decimal Multiplier',  value: roundTo(a / 100, 4).toString() }
           ],
+          charts,
+          chart: charts[0],
+          table,
+          insight: {
+            tone: 'positive',
+            icon: 'fa-calculator',
+            headline: `${fmtN(a)}% of ${fmtN(b)} is ${fmtN(result)}.`,
+            detail: `Multiplying by ${roundTo(a / 100, 4)} yields ${fmtN(result)}. Deducting this from ${fmtN(b)} leaves ${fmtN(roundTo(b - result, 2))}.`
+          }
         };
       }
 
-      if (v.mode === 'change') {
+      if (mode === 'change') {
         if (a === 0) return errorResult('Starting value (From) cannot be zero when calculating percent change.');
         const result = ((b - a) / Math.abs(a)) * 100;
         const direction = result >= 0 ? 'increase' : 'decrease';
+        const diff = b - a;
+
+        const charts = [
+          {
+            id: 'value-trajectory',
+            label: 'Shift Comparison',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: ['Baseline (From)', 'Target (To)', 'Net Shift (Difference)'],
+            datasets: [{
+              label: 'Value',
+              data: [a, b, Math.abs(diff)],
+              backgroundColor: ['#6366F1', '#3B82F6', result >= 0 ? '#10B981' : '#EF4444']
+            }],
+            title: `Percentage Shift: ${result >= 0 ? '+' : ''}${roundTo(result, 2)}%`
+          },
+          {
+            id: 'relative-breakdown',
+            label: 'Relative Proportion',
+            icon: 'fa-chart-pie',
+            type: 'doughnut',
+            labels: ['Starting Base', result >= 0 ? 'Gain (+)' : 'Loss (-)'],
+            datasets: [{
+              data: [Math.abs(a), Math.abs(diff)],
+              backgroundColor: ['#94A3B8', result >= 0 ? '#10B981' : '#EF4444']
+            }],
+            title: `Baseline vs. Absolute Delta (${fmtN(Math.abs(diff))})`
+          }
+        ];
+
+        const steps = [-50, -25, -10, 0, 10, 25, 50, 100];
+        const tableRows = steps.map(pct => {
+          const val = roundTo(a * (1 + pct / 100), 2);
+          return {
+            change: (pct >= 0 ? '+' : '') + pct + '%',
+            resultingValue: fmtN(val),
+            context: pct === 0 ? 'Starting Baseline' : `${pct >= 0 ? '+' : ''}${pct}% from ${fmtN(a)}`
+          };
+        });
+
+        const table = makeTableSpec({
+          mode: 'table',
+          title: `Percentage Change Benchmark Scenarios from ${fmtN(a)}`,
+          columns: [
+            { key: 'change', label: '% Shift', emphasis: true },
+            { key: 'resultingValue', label: 'Resulting Value', emphasis: true },
+            { key: 'context', label: 'Scenario Context' }
+          ],
+          rows: tableRows
+        });
+
         return {
           stats: [
             { label: 'Result',              value: fmtN(Math.abs(result)) + '% ' + direction, highlight: true },
-            { label: 'Difference',          value: fmtN(b - a) },
+            { label: 'Difference',          value: (diff >= 0 ? '+' : '') + fmtN(diff) },
             { label: 'From',                value: fmtN(a) },
             { label: 'To',                  value: fmtN(b) },
+            { label: 'Growth Factor',       value: roundTo(b / a, 4) + 'x' }
           ],
+          charts,
+          chart: charts[0],
+          table,
+          insight: {
+            tone: result >= 0 ? 'positive' : 'warning',
+            icon: result >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down',
+            headline: `Moving from ${fmtN(a)} to ${fmtN(b)} represents a ${roundTo(Math.abs(result), 2)}% ${direction}.`,
+            detail: `The absolute difference is ${diff >= 0 ? '+' : ''}${fmtN(diff)}. The final value is ${roundTo((b / a) * 100, 1)}% of the initial value.`
+          }
         };
       }
 
       return errorResult('Invalid calculation mode.');
     },
 
-    article: {
-      heading: 'How to Calculate Percentages Quickly and Accurately',
-      intro: 'Percentages are everywhere — discounts, tips, taxes, grades, and statistics. The GetCalcu Percentage Calculator handles three common calculations in one tool: "X is what % of Y?", "What is X% of Y?", and percentage change between two values.',
-      sections: [
-        { heading: 'The Three Percentage Modes', body: '"X is what % of Y?" divides X by Y and multiplies by 100. "What is X% of Y?" multiplies Y by X/100. "% Change" subtracts the old value from the new, divides by the old value, and multiplies by 100 — a positive result means increase, negative means decrease.' },
-        { heading: 'Common Percentage Mistakes', body: 'A common error is confusing percentage points with percent change. If a rate rises from 10% to 15%, that is a 5 percentage-point increase but a 50% relative increase. Always confirm which comparison you need before calculating.' },
+    methodology: {
+      standards: 'Mathematical percentage computations adhere to fundamental arithmetic definitions, standard algebraic formulation, and strict IEEE-754 floating-point rounding precision.',
+      summary: 'A percentage represents a dimensionless ratio expressed as a fraction of 100 (per centum). Calculations distinguish between relative proportional parts, multiplicative percentage multipliers, and directional rate of change.',
+      assumptions: [
+        'Divisions by zero are explicitly caught and flagged with informative mathematical guidance.',
+        'Percentage change uses the magnitude of the baseline value (|From|) as the divisor to preserve directional consistency across positive and negative transitions.',
+        'Values are computed in full floating-point precision and formatted to two standard decimal places.',
       ],
+      sources: [
+        'National Institute of Standards and Technology (NIST) — Mathematical and Computational Precision Reference',
+        'Mathematical Association of America (MAA) — Foundations of Proportion and Ratio Analysis',
+      ],
+      lastReviewed: 'September 2026',
     },
+
+    article: {
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Percentages Accurately Across Every Scenario',
+      intro: 'Percentages are fundamental across personal finance, retail pricing, data analysis, and academic testing. While the core concept represents parts per hundred, applying percentage formulas correctly depends entirely on whether you are determining a proportional share, calculating a portion of a whole, or analyzing growth over time.',
+      sections: [
+        {
+          id: 'three-percentage-formulas',
+          heading: 'The Three Core Percentage Calculation Modes',
+          body: [
+            'Proportion Mode (X is what % of Y?): Used when you know the part (X) and the whole (Y) and need to express the relationship as a percentage. The formula is (X ÷ Y) × 100. Examples include test scores (85 out of 100) or equity ownership.',
+            'Portion Mode (What is X% of Y?): Used when you need to calculate the actual quantitative value of a known percentage of a total. The formula is (X ÷ 100) × Y. Examples include calculating sales tax, retail discounts, or restaurant tips.',
+            'Rate of Change Mode (% Change from X to Y): Used to determine the relative percentage growth or contraction between a baseline starting value (X) and a new final value (Y). The formula is ((Y − X) ÷ |X|) × 100.'
+          ]
+        },
+        {
+          id: 'percent-change-vs-percentage-points',
+          heading: 'Critical Distinction: Percent Change vs. Percentage Points',
+          body: [
+            'One of the most frequent errors in financial and statistical analysis is confusing percentage points with percent change.',
+            'Percentage Points represent the direct arithmetic difference between two percentages (e.g., an interest rate rising from 5.0% to 7.0% is an increase of 2.0 percentage points).',
+            'Percent Change represents the relative proportional increase of that change: ((7.0 − 5.0) ÷ 5.0) × 100 = a 40.0% relative increase. In economic reporting and contract agreements, using the correct metric is vital.'
+          ]
+        },
+        {
+          id: 'reverse-percentages',
+          heading: 'Working Backwards: Reverse Percentage Calculations',
+          body: [
+            'When a price includes sales tax or an item has already been discounted, you cannot simply add or subtract that percentage to return to the original price. For example, if an item with 20% tax costs $120, the pre-tax price is $120 ÷ 1.20 = $100 (not $120 − 20% = $96).'
+          ]
+        }
+      ]
+    },
+
     howTo: [
-      'Select the calculation mode you need from the dropdown.',
-      'Enter Value A and Value B as prompted for that mode.',
-      'The result updates instantly — no need to press calculate.',
-      'Switch modes to solve a different type of percentage problem.',
-      'Use negative values when working with losses or decreases.',
+      'Select the appropriate calculation mode from the dropdown menu (What % is X of Y, What is X% of Y, or % Change).',
+      'Input Value A and Value B into the respective fields.',
+      'The calculation executes automatically with instant formula transparency.',
+      'Switch modes freely to evaluate related calculations without reloading.',
     ],
+
+    formulaTitle: 'Percentage Formulas & Derivations',
+    formula: 'Proportion: (X / Y) × 100 | Portion: (X / 100) × Y | % Change: ((New − Old) / |Old|) × 100',
+    formulaExplanation: 'Every percentage formula scales a baseline proportion by 100 to convert a dimensionless decimal fraction into the universally recognized percentage format.',
+    formulaVariables: [
+      { name: 'X is what % of Y', description: 'Part (X) divided by Whole (Y) multiplied by 100' },
+      { name: 'X% of Y', description: 'Percentage rate (X / 100) multiplied by Base Amount (Y)' },
+      { name: 'Percentage Change', description: 'Difference (New − Old) divided by baseline |Old| multiplied by 100' },
+    ],
+
     examples: [
-      { title: 'Test Score to Percentage', input: 'Mode: X is what % of Y? | A: 85, B: 100', result: '85%' },
-      { title: 'Discount on a Price', input: 'Mode: What is X% of Y? | A: 20, B: 250', result: '$50 off — pay $200' },
-      { title: 'Salary Increase', input: 'Mode: % Change | A: 50000, B: 55000', result: '+10% increase' },
+      {
+        title: 'Proportion Scenario (Exam Score)',
+        input: 'Mode: X is what % of Y? | Value A: 45, Value B: 180',
+        result: 'Result: 25.00% | Calculation: 45 is 25.00% of 180',
+        explanation: '45 divided by 180 equals exactly 0.25, which converts to 25.00%.'
+      },
+      {
+        title: 'Portion Scenario (Retail Tip Calculation)',
+        input: 'Mode: What is X% of Y? | Value A: 15 (%), Value B: 120 ($)',
+        result: 'Result: 18.00 | Calculation: 15% of 120 = 18.00',
+        explanation: 'A 15% tip on a $120 bill equals $18.00, resulting in a total payment of $138.00.'
+      },
+      {
+        title: 'Rate of Change Scenario (Business Revenue Growth)',
+        input: 'Mode: % Change | Value A (From): 50,000, Value B (To): 65,000',
+        result: 'Result: 30.00% increase | Difference: 15,000',
+        explanation: 'Revenue grew by $15,000 over a $50,000 baseline, representing a 30.00% relative expansion.'
+      }
     ],
-    formula: 'X is what % of Y = (X / Y) × 100 | X% of Y = (X / 100) × Y | % Change = ((New − Old) / Old) × 100',
+
     faqs: [
-      { q: 'How do I calculate what percent one number is of another?', a: 'To find what percent X is of Y, divide X by Y and multiply by 100: (X ÷ Y) × 100. For example, 25 is what percent of 200? (25 ÷ 200) × 100 = 12.5%. Our calculator does this in the "X is what % of Y?" mode.' },
-      { q: 'How do I calculate a percentage of a number?', a: 'To calculate X% of Y, multiply Y by X divided by 100: Y × (X ÷ 100). For example, 20% of 250 = 250 × 0.20 = 50. Use the "What is X% of Y?" mode for this calculation.' },
-      { q: 'How do I calculate percentage increase or decrease?', a: 'Percentage change is calculated as ((New Value − Old Value) ÷ Old Value) × 100. A positive result is an increase and a negative result is a decrease. For example, a change from 50 to 65 = ((65−50) ÷ 50) × 100 = 30% increase.' },
-      { q: 'How do I calculate a discount percentage?', a: 'To find a discount, calculate the percentage of the original price, then subtract it. For a 25% discount on an $80 item: 25% of $80 = $20, so the sale price is $80 − $20 = $60. Use "What is X% of Y?" mode to find the discount amount.' },
-      { q: 'What is the difference between percentage points and percent change?', a: 'Percentage points measure the absolute difference between two percentages, while percent change measures the relative difference. If an interest rate rises from 5% to 7%, that is a 2 percentage-point increase but a 40% relative increase ((7−5) ÷ 5 × 100).' },
+      {
+        q: 'How do I calculate what percentage one number is of another?',
+        a: 'Divide the specific part (X) by the total whole (Y) and multiply by 100: (X ÷ Y) × 100. For example, 45 is what percent of 180? (45 ÷ 180) × 100 = 25.00%.'
+      },
+      {
+        q: 'How do I find a percentage of a given number?',
+        a: 'Convert the percentage into a decimal by dividing by 100, then multiply by the total number: (X ÷ 100) × Y. For example, 15% of 120 = 0.15 × 120 = 18.00.'
+      },
+      {
+        q: 'How is percentage increase or decrease calculated?',
+        a: 'Subtract the old starting value from the new value, divide by the absolute value of the old starting value, and multiply by 100: ((New − Old) ÷ |Old|) × 100. A positive result indicates an increase; a negative result indicates a decrease.'
+      },
+      {
+        q: 'What is the difference between percentage points and percentage change?',
+        a: 'Percentage points measure the simple arithmetic subtraction between two percentages (e.g., 10% to 15% is a 5 percentage-point increase). Percentage change measures the relative growth: ((15 − 10) ÷ 10) × 100 = a 50% relative increase.'
+      },
+      {
+        q: 'Why can Value B not be zero in proportion mode?',
+        a: 'In mathematics, division by zero is undefined. When calculating "X is what % of Y?", Y serves as the denominator representing the total whole, which cannot be zero.'
+      }
     ],
+    related: ['tip-calculator', 'inflation-calculator', 'compound-interest-calculator'],
   },
 
   'loan-calculator': {
     name: 'Loan Calculator',
+    related: [
+      'loan-interest-calculator',
+      'auto-loan-calculator',
+      'auto-refinance-calculator',
+      'credit-card-payoff-calculator',
+      'amortization-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-sack-dollar',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate monthly loan payments, total interest, and total cost for any personal or auto loan.',
-    metaDescription: 'Free loan calculator — estimate monthly payments, total interest, and total repayment for auto, personal, or student loans.',
+    metaTitle: 'Loan Calculator – Monthly Payment & Total Interest | GetCalcu',
+    metaDescription: 'Estimate the monthly payment, total interest and total repayment for a personal, auto or student loan. Free and private.',
     fields: [
       { id: 'loan_amount', label: 'Loan Amount ($)',      type: 'number', default: 30000,  min: 1,      step: 100,   hint: 'The total amount you are borrowing (the principal).' },
       { id: 'interest_rate', label: 'Annual Interest Rate (%)', type: 'number', default: 6.5,   min: 0.01,   step: 0.05, max: 50, hint: 'The yearly interest rate (APR) charged on the loan.' },
@@ -344,6 +1206,72 @@ const TOOLS = {
       const totalInterest = roundTo(totalPaid - principal, 2);
 
       const schedule = buildAmortization(principal, r, n, monthlyPayment);
+
+      const loanYears = Math.round(n / 12);
+      const loanLabels = ['Start'];
+      const loanBalances = [principal];
+
+      const barLabels = [];
+      const barPrincipal = [];
+      const barInterest = [];
+
+      for (let y = 1; y <= loanYears; y++) {
+        barLabels.push(`Year ${y}`);
+        let yrPrinc = 0;
+        let yrInt = 0;
+        const endMonth = Math.min(y * 12, schedule.length);
+        const startMonth = (y - 1) * 12;
+        for (let m = startMonth; m < endMonth; m++) {
+          if (schedule[m]) {
+            yrPrinc += schedule[m].principal;
+            yrInt += schedule[m].interest;
+          }
+        }
+        barPrincipal.push(roundTo(yrPrinc, 2));
+        barInterest.push(roundTo(yrInt, 2));
+
+        const endBal = schedule[endMonth - 1] ? schedule[endMonth - 1].balance : 0;
+        loanLabels.push(`Year ${y}`);
+        loanBalances.push(roundTo(endBal, 2));
+      }
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'payoff-trajectory',
+          title: 'Balance Trajectory',
+          icon: 'fa-chart-area',
+          labels: loanLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Remaining Balance', data: loanBalances, color: '#6366F1', fill: true }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-breakdown',
+          title: 'Principal vs Interest',
+          icon: 'fa-chart-column',
+          labels: barLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Principal Paid', data: barPrincipal, color: '#6366F1', stack: 'payment' },
+            { label: 'Interest Paid', data: barInterest, color: '#F59E0B', stack: 'payment' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'loan-composition',
+          title: 'Total Cost Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Loan Principal', 'Total Interest'],
+          data: [principal, totalInterest],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Monthly Payment',   value: fmt(monthlyPayment), highlight: true },
@@ -351,48 +1279,114 @@ const TOOLS = {
           { label: 'Total Paid',        value: fmt(totalPaid)                         },
           { label: 'Loan Amount',       value: fmt(principal)                         },
         ],
+        charts,
         chart: { principal, totalInterest },
         table: schedule,
       };
     },
 
+    methodology: {
+      standards: 'Formulas adhere to the federal Truth in Lending Act (Regulation Z, 12 CFR Part 1026) and Consumer Financial Protection Bureau (CFPB) lending disclosure standards.',
+      summary: 'Monthly loan payments are calculated using standard fixed-rate amortization mathematics, which amortizes principal over a set number of monthly installments while computing monthly interest on the remaining unpaid balance.',
+      assumptions: [
+        'Interest is compounded monthly on the remaining unpaid principal balance.',
+        'Payments are made monthly on equal installment dates without late fees or payment deferrals.',
+        'Quoted APR is converted to monthly periodic rate as r = APR ÷ 12.'
+      ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) — Loan Repayment Rules & Regulations',
+        'Federal Reserve Board — Regulation Z (Truth in Lending Act, 12 CFR Part 1026)',
+        'Federal Trade Commission (FTC) — Understanding Vehicle Financing & Personal Loans'
+      ],
+      lastReviewed: 'September 2026',
+    },
+
     article: {
-      heading: 'How to Calculate Loan Payments and Total Interest',
-      intro: 'Whether it is a car, personal, or student loan, knowing your monthly payment and total cost before you borrow is essential. The GetCalcu Loan Calculator uses the standard amortization formula to show your monthly payment, total interest, and full repayment schedule.',
+      id: 'how-to-calculate',
+      heading: 'How to Calculate Loan Payments, Total Interest, and Total Cost',
+      intro: 'Whether you are financing a vehicle, consolidating credit cards with a personal loan, or evaluating student debt, understanding your exact monthly commitment and lifetime interest expense is crucial for financial health.',
       sections: [
-        { heading: 'How Loan Amortization Works', body: 'Most loans are amortized — each fixed monthly payment covers the interest accrued that month plus a portion of principal. Early payments are mostly interest; later payments are mostly principal. By the final payment, the balance reaches zero.' },
-        { heading: 'Why the Interest Rate Matters So Much', body: 'Even a 1% rate difference dramatically changes total cost. On a $30,000 5-year loan, 5% APR costs about $3,968 in interest while 7% costs about $5,640 — a $1,672 difference for the same loan. Always compare offers.' },
+        {
+          id: 'amortization-mechanics',
+          heading: 'How Loan Amortization Functions',
+          body: [
+            'Fixed-rate installment loans amortize each monthly payment between accrued interest and principal reduction. Because interest is charged on the declining loan balance, early payments are interest-heavy, while later payments rapidly pay down principal.',
+            'By the final scheduled installment, the loan balance reaches exactly zero.'
+          ]
+        },
+        {
+          id: 'apr-vs-interest-rate',
+          heading: 'Interest Rate vs. Annual Percentage Rate (APR)',
+          body: [
+            'The interest rate represents the nominal cost of borrowing principal. The APR includes both the interest rate and mandatory lender origination fees, document fees, or points.',
+            'When evaluating competing loan quotes, always compare APR rather than nominal rate to gauge true borrowing cost.'
+          ]
+        },
+        {
+          id: 'loan-term-tradeoffs',
+          heading: 'Loan Term Trade-Offs: Monthly Payment vs. Total Cost',
+          body: [
+            'Extending your loan term (e.g., from 3 years to 5 or 7 years) lowers your required monthly payment, improving immediate cash flow flexibility.',
+            'However, longer terms cause interest to accumulate over significantly more billing cycles, dramatically increasing total lifetime borrowing cost.'
+          ]
+        }
       ],
     },
     howTo: [
-      'Enter the loan amount (the total you are borrowing).',
-      'Add the annual interest rate (APR) quoted by your lender.',
-      'Choose the loan term in years.',
-      'Review your monthly payment, total interest, and total cost.',
-      'Check the amortization schedule to see how each payment splits.',
+      'Enter the loan amount you plan to borrow (the principal).',
+      'Add the quoted Annual Percentage Rate (APR) from your lender.',
+      'Select your desired loan term in years.',
+      'Review your calculated monthly payment, total interest expense, and total repayment amount.',
+      'Inspect the full amortization schedule to see the exact principal and interest split for every monthly installment.'
     ],
     examples: [
-      { title: 'Auto Loan', input: 'Amount: $30,000, Rate: 6.5%, Term: 5 years', result: 'Monthly: ~$587 | Total Interest: ~$5,211' },
-      { title: 'Personal Loan', input: 'Amount: $15,000, Rate: 9%, Term: 3 years', result: 'Monthly: ~$477 | Total Interest: ~$2,180' },
+      {
+        title: '5-Year Auto Loan ($30,000 at 6.5%)',
+        input: 'Loan Amount: $30,000, APR: 6.5%, Term: 5 years (60 months)',
+        result: 'Monthly Payment: $586.98 | Total Interest: $5,218.80 | Total Repayment: $35,218.80'
+      },
+      {
+        title: '3-Year Personal Consolidation Loan ($15,000 at 9.0%)',
+        input: 'Loan Amount: $15,000, APR: 9.0%, Term: 3 years (36 months)',
+        result: 'Monthly Payment: $477.00 | Total Interest: $2,172.00 | Total Repayment: $17,172.00'
+      },
+      {
+        title: '4-Year Used Car Loan ($20,000 at 7.0%)',
+        input: 'Loan Amount: $20,000, APR: 7.0%, Term: 4 years (48 months)',
+        result: 'Monthly Payment: $478.92 | Total Interest: $2,988.16 | Total Repayment: $22,988.16'
+      }
     ],
-    formula: 'M = P × [r(1+r)^n] / [(1+r)^n − 1] | Total Interest = (M × n) − P | Total Cost = M × n',
+    formulaTitle: 'Loan Calculator Formula',
+    formula: 'M = P × [r(1 + r)^n] / [(1 + r)^n − 1]',
+    formulaVariables: [
+      { name: 'M', description: 'monthly payment' },
+      { name: 'P', description: 'loan amount' },
+      { name: 'r', description: 'monthly interest rate = annual rate ÷ 12 ÷ 100' },
+      { name: 'n', description: 'number of monthly payments' },
+    ],
     faqs: [
-      { q: 'How is a loan payment calculated?', a: 'A fixed loan payment is calculated with the amortization formula M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is the principal, r is the monthly interest rate (APR ÷ 12), and n is the number of monthly payments (term in years × 12). This keeps every payment equal while paying off the loan completely.' },
-      { q: 'What is APR versus interest rate?', a: 'The interest rate is the cost of borrowing the principal, while APR (Annual Percentage Rate) includes the interest rate plus fees and other loan costs, giving the true yearly cost. APR is the better figure for comparing loans because it reflects what you actually pay.' },
-      { q: 'How does the loan term affect my payment?', a: 'A longer term lowers your monthly payment but increases total interest because the principal is repaid more slowly and interest accrues over more months. A shorter term raises the monthly payment but saves significantly on total interest. Use our calculator to compare terms.' },
-      { q: 'How much interest will I pay on a loan?', a: 'Total interest equals (monthly payment × number of payments) − principal. For a $20,000 loan at 6% APR over 4 years, the monthly payment is about $469 and total interest is about $2,544. Our calculator shows this automatically along with a payment-by-payment schedule.' },
-      { q: 'Can I pay off my loan early to save interest?', a: 'Yes. Because interest is calculated on the remaining balance, making extra payments or paying off the loan early reduces the principal faster and cuts total interest. Check your loan agreement for prepayment penalties first — many loans allow early repayment with no fee.' },
+      { q: 'How is a loan payment calculated?', a: 'Fixed loan installments are calculated using standard amortization: M = P × [r(1+r)^n] / [(1+r)^n − 1], where P is principal, r is monthly interest (APR ÷ 12), and n is total monthly payments. This ensures equal payments throughout the term that amortize principal to zero.' },
+      { q: 'What is the difference between APR and interest rate?', a: 'The interest rate represents the direct fee for borrowing principal, while APR (Annual Percentage Rate) incorporates the interest rate plus lender origination fees, processing charges, and closing costs. APR is the true metric for comparing loan offers.' },
+      { q: 'How does loan term affect total interest?', a: 'A longer term lowers monthly payments by spreading principal across more months, but increases total interest paid because balance declines more slowly. For example, a $30,000 loan at 6.5% costs $3,100.92 in interest over 3 years versus $5,218.80 over 5 years.' },
+      { q: 'Can I pay off my loan early without penalty?', a: 'Most modern auto and personal loans permit prepayment without penalty, allowing extra principal payments to reduce total interest. However, always review your loan agreement for prepayment penalties or rule-of-78s interest calculation terms before making extra payments.' },
+      { q: 'How does credit score affect loan interest rates?', a: 'Credit scores directly determine lender risk tiers. Borrowers with excellent credit (740+) typically secure APRs several percentage points lower than borrowers in fair or poor tiers, saving thousands in interest over the life of a loan.' },
     ],
   },
 
   'date-calculator': {
     name: 'Date Calculator',
+    related: [
+      'percentage-calculator',
+      'tip-calculator',
+      'loan-calculator'
+    ],
     category: 'Math',
     icon: 'fa-calendar',
     iconClass: 'icon-math',
     tagClass: 'tag-math',
     description: 'Calculate the number of days between two dates, or add/subtract days, weeks, months, or years from a date.',
-    metaDescription: 'Free date calculator — find days between dates, or add/subtract days, weeks, months and years from any date.',
+    metaTitle: 'Date Calculator – Days Between Two Dates | GetCalcu',
+    metaDescription: 'Count the days, weeks and months between two dates, or add and subtract days from any date. Free and works in your browser.',
     fields: [
       { id: 'mode',    type: 'select', default: 'between',
         options: [
@@ -519,6 +1513,12 @@ const TOOLS = {
 
   'loan-interest-calculator': {
     name: 'Loan Interest Calculator',
+    related: [
+      'loan-calculator',
+      'auto-loan-calculator',
+      'credit-card-payoff-calculator',
+      'amortization-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-percent',
     iconClass: 'icon-finance',
@@ -554,6 +1554,49 @@ const TOOLS = {
       const totalInterest = roundTo(totalPaid - principal, 2);
 
       const schedule = buildAmortization(principal, r, n, periodPayment);
+      const trajStep = Math.max(1, Math.floor(schedule.length / 24));
+      const sampleSchedule = schedule.filter((_, idx) => idx % trajStep === 0 || idx === schedule.length - 1);
+      const charts = [
+        {
+          type: 'area',
+          id: 'balance-trajectory',
+          title: 'Loan Payoff Trajectory',
+          icon: 'fa-chart-area',
+          labels: sampleSchedule.map(r => `Period ${r.month}`),
+          format: 'currency',
+          datasets: [{
+            label: 'Remaining Principal Balance',
+            data: sampleSchedule.map(r => r.balance),
+            color: '#6366F1',
+            fill: true
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'cost-composition',
+          title: 'Total Cost Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Principal Borrowed', 'Total Interest Paid'],
+          data: [principal, totalInterest],
+          colors: ['#6366F1', '#EF4444'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'principal-vs-interest',
+          title: 'Principal vs Total Interest',
+          icon: 'fa-scale-balanced',
+          labels: ['Loan Principal', 'Total Interest Cost', 'Total Amount Repaid'],
+          format: 'currency',
+          datasets: [{
+            label: 'Amount ($)',
+            data: [principal, totalInterest, totalPaid],
+            colors: ['#6366F1', '#EF4444', '#10B981'],
+            backgroundColor: ['#6366F1', '#EF4444', '#10B981']
+          }]
+        }
+      ];
       return {
         stats: [
           { label: `Payment (${v.payment_freq})`, value: fmt(periodPayment), highlight: true },
@@ -562,6 +1605,7 @@ const TOOLS = {
           { label: 'Total Paid',                  value: fmt(totalPaid) },
           { label: 'Loan Amount',                 value: fmt(principal) },
         ],
+        charts,
         chart: { principal, totalInterest },
         table: schedule,
       };
@@ -631,10 +1675,18 @@ const TOOLS = {
           }
     ],
     name: 'Compound Interest Calculator',
+    related: [
+      'investment-calculator',
+      'savings-calculator',
+      'retirement-calculator',
+      '401k-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-chart-line',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Project how your savings and investments grow over time with compound interest and recurring monthly contributions.',
     metaDescription: 'Free compound interest calculator — see how your money grows with compounding and monthly contributions. Get year-by-year projections, total interest earned, and charts.',
     fields: [
@@ -699,9 +1751,62 @@ const TOOLS = {
         });
       }
 
-      // Format chart data as simple numbers (not formatted strings)
-      const chartPrincipal = totalContributions;
-      const chartInterest = totalInterest;
+      // Multi-view charts
+      const chartLabels = ['Start'];
+      const balanceData = [principal];
+      const contribData = [principal];
+
+      const barLabels = [];
+      const barContribs = [];
+      const barInterest = [];
+
+      schedule.forEach(row => {
+        chartLabels.push(`Year ${row.month}`);
+        balanceData.push(row.balance);
+        contribData.push(row.principal);
+
+        barLabels.push(`Year ${row.month}`);
+        barContribs.push(row.principal);
+        barInterest.push(Math.max(0, row.interest));
+      });
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'growth-trajectory',
+          title: 'Growth Trajectory',
+          icon: 'fa-chart-area',
+          labels: chartLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Portfolio Balance', data: balanceData, color: '#6366F1', fill: true },
+            { label: 'Total Deposits', data: contribData, color: '#10B981', fill: false }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-accumulation',
+          title: 'Annual Accumulation',
+          icon: 'fa-chart-column',
+          labels: barLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Deposits', data: barContribs, color: '#6366F1', stack: 'portfolio' },
+            { label: 'Compound Interest', data: barInterest, color: '#10B981', stack: 'portfolio' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'portfolio-split',
+          title: 'Portfolio Split',
+          icon: 'fa-chart-pie',
+          labels: ['Total Principal & Deposits', 'Compound Interest Earned'],
+          data: [totalContributions, Math.max(0, totalInterest)],
+          colors: ['#6366F1', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
 
       return {
         stats: [
@@ -709,49 +1814,131 @@ const TOOLS = {
           { label: 'Total Contributions',   value: fmt(totalContributions)                 },
           { label: 'Total Interest Earned', value: fmt(totalInterest)                       },
         ],
-        chart: { principal: chartPrincipal, totalInterest: chartInterest },
+        charts,
+        chart: { principal: totalContributions, totalInterest },
         table: schedule,
       };
     },
 
+    methodology: {
+      standards: 'Calculations adhere to Federal Reserve Regulation DD (Truth in Savings, 12 CFR Part 1030), FINRA investment projection guidelines, and standard continuous and discrete compounding mathematical models.',
+      summary: 'Compound interest computes future investment accumulation by capitalizing interest back into the principal balance at discrete recurring compounding intervals, combined with ordinary annuity contribution mechanics.',
+      assumptions: [
+        'Contributions are added at the conclusion of each period (ordinary annuity model).',
+        'Nominal annual interest rate is assumed uniform across the entire compounding horizon without tax drag or management fee subtractions.',
+        'Daily compounding utilizes a standard 365-day calendar year convention.'
+      ],
+      sources: [
+        'Federal Reserve Board — Regulation DD (Truth in Savings Act, 12 CFR Part 1030)',
+        'Financial Industry Regulatory Authority (FINRA) — Savings & Compound Growth Mathematics',
+        'U.S. Securities and Exchange Commission (SEC) — Compound Interest Calculations Guide'
+      ],
+      lastReviewed: 'September 2026',
+    },
+
     article: {
-      heading: 'How to Calculate Compound Interest and Project Your Savings Growth',
-      intro: 'Compound interest is the engine behind long-term wealth — it earns interest on your interest, accelerating growth over time. The GetCalcu Compound Interest Calculator projects your future balance from a starting sum plus recurring contributions, with flexible compounding frequency and a year-by-year growth schedule.',
+      id: 'how-to-calculate',
+      heading: 'How Compound Interest Works and How to Calculate Future Investment Growth',
+      intro: 'Compound interest is the foundational mathematical engine behind long-term wealth accumulation. Unlike simple interest—which generates yields solely on initial principal—compound interest accrues on both the initial capital and all previously accumulated interest. Over multi-decade investment horizons, the exponential return curve overtakes direct contributions as the primary driver of balance growth.',
       sections: [
-        { heading: 'Why Compounding Frequency Matters', body: 'The more often interest is reinvested, the faster your balance grows. Daily compounding earns slightly more than monthly, which earns more than annual — the difference compounds over decades. For long horizons, even small frequency gains add up.' },
-        { heading: 'The Power of Starting Early', body: 'Time is the most powerful variable in compound interest. Starting 10 years earlier can more than double your final balance, even with smaller contributions — because early gains have more time to compound on themselves.' },
+        {
+          id: 'compounding-frequency-mechanics',
+          heading: 'How Compounding Frequency Affects Effective Annual Yield (APY)',
+          body: [
+            'Compounding frequency specifies how many times each year accrued interest is capitalized into your principal balance. The more frequently interest is credited, the faster that new interest begins generating its own return.',
+            'The exact conversion between nominal annual interest rate (APR) and effective annual percentage yield (APY) is: APY = (1 + r / n)^n - 1, where r is the nominal APR and n is compounding periods per year.',
+            'For a $10,000 balance at 8.0% APR: Annual compounding yields $800.00 (8.00% APY); Monthly compounding yields $830.00 (8.30% APY); Daily compounding yields $832.78 (8.33% APY). Over 30 years, monthly compounding produces $109,357.30 compared to $100,626.57 for annual compounding—a $8,730.73 difference purely from frequency.'
+          ]
+        },
+        {
+          id: 'rule-of-72-doubling-time',
+          heading: 'The Rule of 72: Estimating Doubling Timelines',
+          body: [
+            'The Rule of 72 provides a rapid mathematical approximation for how many years it will take an investment balance to double at a fixed annual return: Doubling Years ≈ 72 / Annual Return Rate (%).',
+            'At a 6% annual return, capital doubles in approximately 12 years (72 / 6). At 8%, it doubles in approximately 9 years (72 / 8). At 10%, it doubles in approximately 7.2 years.',
+            'Over a 36-year horizon: at 6%, an initial sum doubles 3 times (8x); at 8%, it doubles 4 times (16x); at 10%, it doubles 5 times (32x). This demonstrates how small differences in average annual return create exponential divergence in final net worth.'
+          ]
+        },
+        {
+          id: 'contribution-timing-and-annuities',
+          heading: 'Contribution Timing: Ordinary Annuities vs. Annuities Due',
+          body: [
+            'Our calculator utilizes the standard ordinary annuity formula, assuming recurring monthly contributions are deposited at the end of each payment period.',
+            'Depositing contributions at the beginning of each period (annuity due) generates one additional compounding period of interest for each deposit. Over a 30-year timeframe, beginning-of-period deposits generate roughly 0.6–0.8% higher total ending value.'
+          ]
+        },
+        {
+          id: 'inflation-impact-real-vs-nominal',
+          heading: 'Nominal vs. Real Returns: Factoring in Inflation',
+          body: [
+            'Nominal future value represents the raw dollar amount in your future account, but does not reflect future purchasing power.',
+            'To project real purchasing power in today\'s dollars, subtract estimated annual inflation from your nominal expected rate (e.g., 8.0% nominal return minus 2.5% inflation equals a 5.5% real return), or apply the exact Fisher equation: Real Return = (1 + Nominal Rate) / (1 + Inflation Rate) - 1.'
+          ]
+        }
       ],
     },
     howTo: [
-      'Enter your starting balance (a lump sum or current savings).',
-      'Add the annual interest or growth rate you expect.',
-      'Choose how often interest compounds — monthly is common for savings.',
-      'Enter your monthly contribution and the number of years.',
-      'Review the future balance, total interest earned, and year-by-year schedule.',
+      'Enter your starting principal balance (lump sum or existing portfolio balance).',
+      'Input your anticipated annual interest rate or long-term investment return percentage.',
+      'Select your compounding frequency (Monthly is standard for investment accounts; Daily for high-yield cash).',
+      'Specify your recurring monthly contribution amount and target investment horizon in years.',
+      'Review your projected future balance, total out-of-pocket contributions, and cumulative interest earned.',
+      'Inspect the year-by-year schedule and growth breakdown chart to track the tipping point where interest overtakes principal deposits.'
     ],
     examples: [
-      { title: 'Lump Sum Over 30 Years', input: 'Principal: $10,000, Rate: 8%, Monthly compounding, 30 years', result: 'Future Balance: ~$100,627 | Interest: ~$90,627' },
-      { title: 'With Monthly Contributions', input: 'Principal: $10,000, Rate: 8%, $500/mo, 30 years', result: 'Future Balance: ~$811,627 | Interest: ~$621,627' },
+      {
+        title: '30-Year Wealth Accumulation (Default)',
+        input: 'Principal: $10,000, Annual Rate: 8.0%, Monthly compounding, $500/mo contribution, 30 years',
+        result: 'Future Balance: $854,537.02 | Total Contributions: $190,000.00 | Total Interest Earned: $664,537.02'
+      },
+      {
+        title: '20-Year Pure Lump-Sum Growth',
+        input: 'Principal: $25,000, Annual Rate: 7.0%, Monthly compounding, $0/mo contribution, 20 years',
+        result: 'Future Balance: $100,968.47 | Total Contributions: $25,000.00 | Total Interest Earned: $75,968.47'
+      },
+      {
+        title: '5-Year High-Yield Cash Savings',
+        input: 'Principal: $15,000, Annual Rate: 4.5%, Daily compounding (365/yr), $200/mo contribution, 5 years',
+        result: 'Future Balance: $32,240.26 | Total Contributions: $27,000.00 | Total Interest Earned: $5,240.26'
+      }
     ],
-    formula: 'FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)] | Total Interest = FV − P − (PMT × t)',
+    formulaTitle: 'Compound Interest Formula',
+    formula: 'FV = P × (1 + r / n)^(n × t) + PMT × [((1 + r / n)^(n × t) − 1) / (r / n)]',
+    formulaExplanation: 'Future Value (FV) calculates the compound growth of your starting principal (P) combined with periodic recurring contributions (PMT) compounded n times per year across t years.',
+    formulaVariables: [
+      { name: 'FV', description: 'Future Value (total accumulated balance including contributions and compound interest)' },
+      { name: 'P', description: 'Initial Principal balance deposited at inception' },
+      { name: 'r', description: 'Nominal annual interest rate expressed in decimal form (e.g., 8% = 0.08)' },
+      { name: 'n', description: 'Compounding frequency per year (1 for annual, 4 for quarterly, 12 for monthly, 365 for daily)' },
+      { name: 't', description: 'Investment duration in years' },
+      { name: 'PMT', description: 'Periodic recurring contribution amount adjusted to match compounding frequency' }
+    ],
     faqs: [
-      { q: 'How is compound interest calculated?', a: 'Compound interest is calculated as FV = P × (1 + r/n)^(nt), where P is the principal, r is the annual rate, n is the compounding periods per year, and t is years. With recurring contributions, add PMT × [((1 + r/n)^(nt) − 1) / (r/n)]. Our calculator handles both parts automatically.' },
-      { q: 'What is the difference between simple and compound interest?', a: 'Simple interest is calculated only on the original principal, while compound interest is calculated on the principal plus accumulated interest. Over time, compounding grows exponentially while simple interest grows linearly — a $10,000 sum at 8% becomes $46,610 (simple) versus $100,627 (compounded monthly) over 30 years.' },
-      { q: 'How does compounding frequency affect growth?', a: 'More frequent compounding reinvests interest sooner, so your balance grows faster. At 8% over 30 years, $10,000 grows to about $100,627 compounded monthly versus $93,219 compounded semi-annually. The gap widens with larger sums and longer horizons.' },
-      { q: 'How much will I have if I save $500 a month for 30 years?', a: 'Saving $500 per month at an 8% average return compounded monthly for 30 years grows to about $745,000 from contributions alone, plus growth on any starting balance. With a $10,000 starting balance, the total reaches about $811,627. Use our calculator to test your own numbers.' },
-      { q: 'What is a good interest rate to assume for compound interest?', a: 'For a diversified stock portfolio, a realistic long-term assumption is 7–10% (the historical S&P 500 average). For savings accounts expect 3–5%, and for bonds 4–6%. Always use a conservative rate for planning so you are not caught short — our calculator lets you adjust instantly.' },
+      { q: 'How is compound interest calculated?', a: 'Compound interest is calculated with the compound annuity formula FV = P × (1 + r/n)^(nt) + PMT × [((1 + r/n)^(nt) − 1) / (r/n)], where P is initial principal, r is the annual rate, n is compounding frequency per year, t is time in years, and PMT is the periodic contribution. Our calculator computes both lump-sum growth and periodic contributions simultaneously.' },
+      { q: 'What is the difference between simple and compound interest?', a: 'Simple interest is calculated solely on original principal (Interest = P × r × t), meaning annual growth remains flat. Compound interest calculates returns on both initial principal and previously accumulated interest. Over 30 years at 8%, a $10,000 deposit produces $24,000 in simple interest ($34,000 total) versus $99,357.30 in monthly compound interest ($109,357.30 total).' },
+      { q: 'How does compounding frequency affect growth?', a: 'More frequent compounding capitalizes interest sooner, slightly accelerating the compounding curve. At 8% APR over 30 years, a $10,000 lump sum grows to $100,626.57 with annual compounding, $107,370.26 with quarterly compounding, $109,357.30 with monthly compounding, and $110,344.60 with daily compounding.' },
+      { q: 'How much will I accumulate saving $500 a month for 30 years?', a: 'At an 8.0% average annual return compounded monthly with a $10,000 starting deposit, saving $500 per month for 30 years yields a future balance of $854,537.02. Your direct out-of-pocket contributions total $190,000 ($10,000 initial + $180,000 monthly), while total compound interest earned equals $664,537.02.' },
+      { q: 'What is a realistic rate of return to assume?', a: 'For long-term index fund equity investments (15+ years), historical US stock market returns average roughly 7–10% before inflation (or 5–7% after inflation). For diversified bond portfolios, expect 4–6%. For high-yield savings accounts or money market funds, expect 3–5%. Using conservative estimates provides a safer financial margin of error.' },
     ],
   },
 
   // ── Investment Calculator ─────────────────────────────────────
   'investment-calculator': {
     name: 'Investment Calculator',
+    related: [
+      'compound-interest-calculator',
+      'retirement-calculator',
+      'fire-calculator',
+      '401k-calculator',
+      'net-worth-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-chart-line',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Project your investment growth with compound returns and recurring monthly contributions. See how long to reach $100k, $500k, or $1M.',
-    metaDescription: 'Free investment calculator — project future value with compound returns and monthly contributions. See how long to save $100k, when you can retire early, and how much to invest each month to reach $1M.',
+    metaTitle: 'Investment Calculator – Growth & Contributions | GetCalcu',
+    metaDescription: 'See how an investment grows with compound returns and monthly deposits. Set your own rate and years and view a year-by-year projection.',
     fields: [
       { id: 'initial_investment',    label: 'Initial Investment ($)',       type: 'number', default: 10000, min: 0,      step: 1000,  hint: 'Your starting lump-sum amount invested today.' },
       { id: 'monthly_contribution',  label: 'Monthly Contribution ($)',     type: 'number', default: 500,   min: 0,      step: 50,    hint: 'How much you add to your investment each month.' },
@@ -828,7 +2015,85 @@ const TOOLS = {
           highlight: goalReached, warn: !goalReached,
         });
       }
-      return { stats, chart: { principal: totalContributions, totalInterest: totalReturn }, table: schedule };
+      const invLabels = ['Start'];
+      const invBalances = [principal];
+      const invContribs = [principal];
+      const invGoals = goal > 0 ? [goal] : null;
+
+      const invBarLabels = [];
+      const invBarContribs = [];
+      const invBarReturns = [];
+
+      schedule.forEach(row => {
+        invLabels.push(`Year ${row.month}`);
+        invBalances.push(row.balance);
+        invContribs.push(row.principal);
+        if (invGoals) invGoals.push(goal);
+
+        invBarLabels.push(`Year ${row.month}`);
+        invBarContribs.push(row.principal);
+        invBarReturns.push(Math.max(0, row.interest));
+      });
+
+      const trajectoryDatasets = [
+        { label: 'Projected Portfolio Value', data: invBalances, color: '#6366F1', fill: true },
+        { label: 'Total Contributions', data: invContribs, color: '#10B981', fill: false }
+      ];
+      if (invGoals) {
+        trajectoryDatasets.push({ label: 'Savings Goal', data: invGoals, color: '#EF4444', fill: false });
+      }
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'investment-trajectory',
+          title: 'Investment Trajectory',
+          icon: 'fa-chart-area',
+          labels: invLabels,
+          format: 'currency',
+          datasets: trajectoryDatasets
+        },
+        {
+          type: 'stackedBar',
+          id: 'milestone-breakdown',
+          title: 'Annual Accumulation',
+          icon: 'fa-chart-column',
+          labels: invBarLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Contributions', data: invBarContribs, color: '#6366F1', stack: 'investment' },
+            { label: 'Investment Return', data: invBarReturns, color: '#10B981', stack: 'investment' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'return-split',
+          title: 'Return vs Capital',
+          icon: 'fa-chart-pie',
+          labels: ['Total Principal & Deposits', 'Investment Return (Profit)'],
+          data: [totalContributions, Math.max(0, totalReturn)],
+          colors: ['#6366F1', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
+      if (goal > 0) {
+        const goalPct = Math.min(100, roundTo((futureValue / goal) * 100, 1));
+        charts.push({
+          type: 'doughnut',
+          id: 'goal-progress',
+          title: 'Goal Progress',
+          icon: 'fa-bullseye',
+          labels: ['Goal Funded', 'Remaining Gap'],
+          data: [goalPct, roundTo(Math.max(0, 100 - goalPct), 1)],
+          colors: [goalPct >= 100 ? '#10B981' : '#F59E0B', '#E2E8F0'],
+          format: 'percentage',
+          cutout: '72%'
+        });
+      }
+
+      return { stats, charts, chart: { principal: totalContributions, totalInterest: totalReturn }, table: schedule };
     },
 
     article: {
@@ -986,6 +2251,12 @@ const TOOLS = {
       }
     ],
     name: 'Budget Planner & Expense Tracker',
+    related: [
+      'emergency-fund-calculator',
+      'credit-card-payoff-calculator',
+      'savings-calculator',
+      'salary-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-wallet',
     iconClass: 'icon-finance',
@@ -1431,6 +2702,13 @@ const TOOLS = {
   'retirement-calculator': {
     id: 'retirement-calculator',
     name: 'Retirement Calculator',
+    related: [
+      '401k-calculator',
+      'fire-calculator',
+      'investment-calculator',
+      'compound-interest-calculator',
+      'savings-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-umbrella',
     iconClass: 'icon-finance',
@@ -1449,28 +2727,78 @@ const TOOLS = {
       'how to calculate retirement if you start at 25',
       'retirement planner',
     ],
+    presets: [
+      {
+        label: 'Early Career Starter (Age 25, $500/mo)',
+        values: {
+          current_age: 25,
+          retirement_age: 65,
+          current_savings: 0,
+          annual_income: 55000,
+          monthly_contribution: 500,
+          annual_return: 7.0,
+          inflation_rate: 3.0,
+          life_expectancy: 95,
+          income_replacement: 80,
+        },
+      },
+      {
+        label: 'Mid-Career Builder (Age 35, $1,000/mo)',
+        values: {
+          current_age: 35,
+          retirement_age: 65,
+          current_savings: 30000,
+          annual_income: 80000,
+          monthly_contribution: 1000,
+          annual_return: 7.0,
+          inflation_rate: 3.0,
+          life_expectancy: 90,
+          income_replacement: 80,
+        },
+      },
+      {
+        label: 'Aggressive Path to 55 ($1,500/mo @ 8%)',
+        values: {
+          current_age: 28,
+          retirement_age: 55,
+          current_savings: 25000,
+          annual_income: 75000,
+          monthly_contribution: 1500,
+          annual_return: 8.0,
+          inflation_rate: 3.0,
+          life_expectancy: 90,
+          income_replacement: 80,
+        },
+      },
+    ],
     fields: [
-      { id: 'current_age',         label: 'Your Current Age',                    type: 'number', default: 25,   min: 18,    max: 70,  step: 1, hint: 'Your age today. The calculator uses this to find how many years you have until retirement.' },
-      { id: 'current_savings',     label: 'Current Retirement Savings ($)',      type: 'number', default: 0,    min: 0,     step: 1000, hint: 'Total across all retirement accounts: 401k, IRA, Roth IRA, and brokerage investments.' },
-      { id: 'annual_income',       label: 'Annual Income ($)',                   type: 'number', default: 55000, min: 10000, step: 5000, hint: 'Your current yearly pre-tax income. Used to estimate your retirement income target.' },
-      { id: 'monthly_contribution',label: 'Monthly Contribution ($)',            type: 'number', default: 500,   min: 0,     step: 50, hint: 'What you save each month toward retirement (401k, IRA, brokerage). Even small amounts compound over decades.' },
-      { id: 'annual_return',       label: 'Expected Annual Return (%)',          type: 'number', default: 7.0,   min: 0.1,   step: 0.1, max: 30, hint: 'Expected average yearly investment growth. S&P 500 long-term average: about 7-8% after inflation. <a href="#faqs">See realistic return rates ↓</a>' },
-      { id: 'inflation_rate',      label: 'Expected Inflation Rate (%)',         type: 'number', default: 3.0,   min: 0,     step: 0.1, max: 20, hint: 'The annual rate at which prices rise, eroding purchasing power. US historical average: 2.5-3%. <a href="#faqs">See how inflation affects savings ↓</a>' },
-      { id: 'retirement_age',      label: 'Desired Retirement Age',              type: 'number', default: 65,   min: 30,    max: 80,  step: 1, hint: 'The age you plan to stop working and start drawing on your nest egg.' },
-      { id: 'life_expectancy',     label: 'Life Expectancy (years)',             type: 'number', default: 95,   min: 50,    max: 120, step: 1, hint: 'How long you expect to live in retirement. Plan for 90-95 to be safe.' },
-      { id: 'income_replacement',  label: 'Desired Retirement Income (% of current)', type: 'number', default: 80, min: 10, max: 100, step: 5, hint: 'Share of pre-retirement income you will need in retirement. Advisors suggest 70-80%.' },
+      // ── Core Inputs ──
+      { id: 'basic_section', type: 'section', label: 'Primary Inputs', icon: 'fa-user-clock' },
+      { id: 'current_age',          label: 'Your Current Age',                         type: 'number', default: 25,    min: 18,    max: 75,  step: 1,    hint: 'Your age today. The calculator uses this to determine years remaining until retirement.' },
+      { id: 'retirement_age',       label: 'Desired Retirement Age',                   type: 'number', default: 65,    min: 30,    max: 85,  step: 1,    hint: 'The age you plan to stop working and begin drawing upon your nest egg.' },
+      { id: 'current_savings',      label: 'Current Retirement Savings ($)',           type: 'number', default: 0,     min: 0,     step: 1000, hint: 'Total combined balance across all retirement accounts: 401k, IRA, Roth IRA, and taxable brokerage.' },
+      { id: 'monthly_contribution', label: 'Monthly Contribution ($)',                 type: 'number', default: 500,   min: 0,     step: 50,   hint: 'Total monthly savings directed into investments. Even modest contributions compound powerfully over decades.' },
+      { id: 'annual_income',        label: 'Annual Pre-Tax Income ($)',                type: 'number', default: 55000, min: 10000, step: 5000, hint: 'Your current gross yearly salary. Used to benchmark your required retirement replacement income.' },
+
+      // ── Advanced Economic & Longevity Assumptions (Collapsible) ──
+      { id: 'advanced_section', type: 'section', label: 'Advanced Economic & Longevity Assumptions', icon: 'fa-sliders', collapsible: true, open: false },
+      { id: 'annual_return',        label: 'Expected Annual Return (%)',               type: 'number', default: 7.0,   min: 0.1,   max: 30,  step: 0.1,  hint: 'Expected average annual nominal portfolio growth. S&P 500 historical average: ~10% nominal, 7-8% after inflation. <a href="#faqs">See realistic return rates ↓</a>' },
+      { id: 'inflation_rate',       label: 'Expected Inflation Rate (%)',              type: 'number', default: 3.0,   min: 0,     max: 20,  step: 0.1,  hint: 'Expected long-term annual rise in consumer prices. US 30-year historical average: 2.5% to 3.0%. <a href="#faqs">See how inflation affects savings ↓</a>' },
+      { id: 'income_replacement',   label: 'Desired Retirement Income (% of salary)',  type: 'number', default: 80,    min: 10,    max: 120, step: 5,    hint: 'Percentage of pre-retirement income needed to maintain your standard of living. Financial planners typically advise 70% to 80%.' },
+      { id: 'life_expectancy',      label: 'Life Expectancy (years)',                  type: 'number', default: 95,    min: 50,    max: 120, step: 1,    hint: 'How long your portfolio needs to support you in retirement. Modeling to age 90–95 protects against longevity risk.' },
     ],
     calculate(v) {
       // ── Extract & validate inputs
-      const currentAge      = safeNum(v.current_age, 25);
-      const currentSavings  = safeNum(v.current_savings, 0);
-      const annualIncome    = safeNum(v.annual_income, 55000);
-      const monthlyContrib  = safeNum(v.monthly_contribution, 500);
+      const currentAge      = Math.max(1, safeNum(v.current_age, 25));
+      const currentSavings  = Math.max(0, safeNum(v.current_savings, 0));
+      const annualIncome    = Math.max(0, safeNum(v.annual_income, 55000));
+      const monthlyContrib  = Math.max(0, safeNum(v.monthly_contribution, 500));
       const annualReturn    = safeNum(v.annual_return, 7) / 100;
-      const inflationRate   = safeNum(v.inflation_rate, 3) / 100;
+      const rawInflation    = safeNum(v.inflation_rate, 3) / 100;
+      const inflationRate   = rawInflation <= -1 ? -0.99 : rawInflation;
       const retirementAge   = safeNum(v.retirement_age, 65);
       const lifeExpectancy  = safeNum(v.life_expectancy, 95);
-      const incomeReplace   = safeNum(v.income_replacement, 80) / 100;
+      const incomeReplace   = Math.max(0, safeNum(v.income_replacement, 80)) / 100;
 
       if (retirementAge <= currentAge) {
         return errorResult('Retirement age must be greater than your current age.');
@@ -1512,10 +2840,6 @@ const TOOLS = {
       const desiredIncomeToday = annualIncome * incomeReplace;
 
       // ── 4% Rule: target nest egg (25x annual desired income) in TODAY'S dollars
-      // totalNestEgg is projected using the real (inflation-adjusted) return via
-      // the Fisher equation above, so the target must be expressed in the same
-      // real-dollar basis. Previously the target was inflated to nominal future
-      // dollars, producing an apples-to-oranges comparison (ISSUE-004).
       const targetNestEgg   = roundTo(desiredIncomeToday * 25, 2);
 
       // ── Monthly and annual retirement income (4% rule in TODAY's purchasing power)
@@ -1523,23 +2847,38 @@ const TOOLS = {
       const annualRetireIncome  = roundTo(totalNestEgg * 0.04, 2);
 
       // ── Nominal future monthly income (future inflated dollars at retirement age)
-      // Since totalNestEgg is already in constant today's dollars (Fisher real return),
-      // nominal future income scales by inflation factor rather than double-discounting.
       const futureNominalMonthly = roundTo(
         monthlyRetireIncome * Math.pow(1 + inflationRate, yearsToRetire), 2
       );
 
       // ── Achieved replacement rate
-      const achievedReplaceRate = roundTo((annualRetireIncome / annualIncome) * 100, 1);
+      const achievedReplaceRate = annualIncome > 0
+        ? roundTo((annualRetireIncome / annualIncome) * 100, 1)
+        : 0;
 
-      // ── Status assessment
+      // ── Status assessment & funding ratio
+      const fundedRatio = targetNestEgg > 0 ? (totalNestEgg / targetNestEgg) : 1;
+      const fundedPct = Math.round(fundedRatio * 100);
+      const growthSharePct = totalNestEgg > 0 ? Math.round((Math.max(0, totalGrowth) / totalNestEgg) * 100) : 0;
+
       let status;
+      let insightTone = 'positive';
+      let insightIcon = 'fa-circle-check';
+      let insightHeadline = `Retirement Plan On Track (${fundedPct}% of Target)`;
+      let insightDetail = `Your projected nest egg of ${fmt(totalNestEgg)} in today's purchasing power meets your 4% rule target of ${fmt(targetNestEgg)}, providing an estimated ${fmt(monthlyRetireIncome)}/month in real retirement income.`;
+
       if (totalNestEgg >= targetNestEgg) {
         status = 'On Track ✓';
       } else if (totalNestEgg >= targetNestEgg * 0.75) {
         status = 'Close - Increase Savings';
+        insightTone = 'neutral';
+        insightIcon = 'fa-circle-info';
+        insightHeadline = `Within Reach: ${fundedPct}% of Target Funded`;
       } else {
         status = 'Needs Attention - Boost Contributions';
+        insightTone = 'warning';
+        insightIcon = 'fa-triangle-exclamation';
+        insightHeadline = `Savings Shortfall: ${fundedPct}% of Target Funded`;
       }
 
       // ── Additional monthly savings needed to reach target
@@ -1554,8 +2893,54 @@ const TOOLS = {
         }
       }
 
-      // ── Year-by-year projection schedule
+      if (totalNestEgg < targetNestEgg) {
+        if (additionalMonthlyNeeded > 0) {
+          insightDetail = `To reach your ${fmt(targetNestEgg)} target nest egg, consider increasing monthly contributions by ${fmt(additionalMonthlyNeeded)} (to ${fmt(monthlyContrib + additionalMonthlyNeeded)}/mo) or extending your retirement horizon by 2 to 3 years.`;
+        } else {
+          insightDetail = `Your projected nest egg is within reach of your ${fmt(targetNestEgg)} target. A small adjustment to your contribution rate or retirement age will close the gap.`;
+        }
+      }
+
+      // ── Year-by-year projection schedule & timeline chart sampling
       const schedule = [];
+      const interval = yearsToRetire <= 10 ? 1 : (yearsToRetire <= 20 ? 2 : 5);
+      const sampleYears = [];
+      for (let y = 0; y <= yearsToRetire; y += interval) {
+        sampleYears.push(y);
+      }
+      if (sampleYears[sampleYears.length - 1] !== yearsToRetire) {
+        sampleYears.push(yearsToRetire);
+      }
+
+      const chartLabels = [];
+      const chartBalanceData = [];
+      const chartContribsData = [];
+      const chartTargetData = [];
+
+      sampleYears.forEach(y => {
+        const age = currentAge + y;
+        const label = y === 0 ? `Age ${age}` : `Age ${age} (Yr ${y})`;
+        chartLabels.push(label);
+
+        if (y === 0) {
+          chartBalanceData.push(roundTo(currentSavings, 2));
+          chartContribsData.push(roundTo(currentSavings, 2));
+        } else {
+          const periods = y * 12;
+          let val = currentSavings * Math.pow(1 + realReturn, y);
+          if (monthlyRealRet === 0) {
+            val += monthlyContrib * periods;
+          } else {
+            const gf = Math.pow(1 + monthlyRealRet, periods);
+            val += monthlyContrib * (gf - 1) / monthlyRealRet;
+          }
+          chartBalanceData.push(roundTo(val, 2));
+          chartContribsData.push(roundTo(currentSavings + monthlyContrib * 12 * y, 2));
+        }
+        chartTargetData.push(targetNestEgg);
+      });
+
+      const scheduleRows = [];
       for (let y = 1; y <= yearsToRetire; y++) {
         const periods = y * 12;
         let yearValue = currentSavings * Math.pow(1 + realReturn, y);
@@ -1568,16 +2953,240 @@ const TOOLS = {
         yearValue = roundTo(yearValue, 2);
 
         const yrContribs = roundTo(currentSavings + monthlyContrib * 12 * y, 2);
+        const yrGrowth = Math.max(0, roundTo(yearValue - yrContribs, 2));
+        scheduleRows.push({
+          year: `Yr ${y} (Age ${currentAge + y})`,
+          annualContrib: roundTo(monthlyContrib * 12, 2),
+          totalContrib: yrContribs,
+          growth: yrGrowth,
+          balance: yearValue,
+        });
         schedule.push({
           month: y,
           payment: roundTo(monthlyContrib * 12, 2),
           principal: roundTo(yrContribs, 2),
-          interest: roundTo(yearValue - yrContribs, 2),
+          interest: yrGrowth,
           balance: yearValue,
         });
       }
 
+      // ── Primary Chart: Multi-Year Growth Projection Curve
+      const chart = {
+        type: 'area',
+        title: 'Projected Retirement Nest Egg Trajectory',
+        labels: chartLabels,
+        datasets: [
+          {
+            label: 'Projected Portfolio (Today\'s $)',
+            data: chartBalanceData,
+            color: '#6366F1',
+            fill: true,
+            borderColor: '#6366F1',
+            backgroundColor: 'rgba(99, 102, 241, 0.12)',
+          },
+          {
+            label: 'Total Cumulative Contributions',
+            data: chartContribsData,
+            color: '#10B981',
+            fill: false,
+            borderColor: '#10B981',
+          },
+          {
+            label: '4% Rule Target Nest Egg',
+            data: chartTargetData,
+            color: '#EF4444',
+            fill: false,
+            borderColor: '#EF4444',
+          },
+        ],
+      };
+
+      // ── Secondary Chart: Portfolio Composition Doughnut
+      const chart2 = {
+        type: 'doughnut',
+        title: 'Portfolio Composition at Retirement',
+        labels: ['Total Contributions', 'Investment Growth'],
+        data: [totalContribs, Math.max(0, totalGrowth)],
+        colors: ['#6366F1', '#10B981'],
+        cutout: '62%',
+      };
+
+      // ── Tertiary Chart: Progress to 4% Rule Target
+      const progressToTarget = Math.min(100, roundTo((totalNestEgg / targetNestEgg) * 100, 1));
+      const compareChart = {
+        type: 'doughnut',
+        title: 'Progress to 4% Target Nest Egg',
+        labels: ['Target Funded', 'Remaining Gap'],
+        data: [progressToTarget, roundTo(Math.max(0, 100 - progressToTarget), 1)],
+        colors: [progressToTarget >= 100 ? '#10B981' : '#F59E0B', '#E2E8F0'],
+        cutout: '72%',
+      };
+
+      // ── Milestone Bar Chart: Contributions vs Compound Growth
+      const barLabels = [];
+      const barContribs = [];
+      const barGrowth = [];
+
+      sampleYears.forEach(y => {
+        if (y === 0) return;
+        const age = currentAge + y;
+        barLabels.push(`Age ${age}`);
+        const yrContribs = roundTo(currentSavings + monthlyContrib * 12 * y, 2);
+        const periods = y * 12;
+        let yrVal = currentSavings * Math.pow(1 + realReturn, y);
+        if (monthlyRealRet === 0) {
+          yrVal += monthlyContrib * periods;
+        } else {
+          const gf = Math.pow(1 + monthlyRealRet, periods);
+          yrVal += monthlyContrib * (gf - 1) / monthlyRealRet;
+        }
+        const yrGrowth = Math.max(0, roundTo(yrVal - yrContribs, 2));
+        barContribs.push(yrContribs);
+        barGrowth.push(yrGrowth);
+      });
+
+      const breakdownChart = {
+        type: 'stackedBar',
+        title: 'Milestone Balance: Contributions vs Compound Growth',
+        labels: barLabels,
+        datasets: [
+          {
+            label: 'Cumulative Contributions',
+            data: barContribs,
+            color: '#6366F1',
+            stack: 'portfolio',
+          },
+          {
+            label: 'Compound Investment Growth',
+            data: barGrowth,
+            color: '#10B981',
+            stack: 'portfolio',
+          },
+        ],
+      };
+
+      // ── Unified Chart Views Array (Fintech Master Switcher)
+      const charts = [
+        {
+          ...chart,
+          id: 'trajectory',
+          title: 'Growth Trajectory',
+          icon: 'fa-chart-area',
+        },
+        {
+          ...breakdownChart,
+          id: 'breakdown',
+          title: 'Annual Breakdown',
+          icon: 'fa-chart-column',
+        },
+        {
+          ...chart2,
+          id: 'portfolio-split',
+          title: 'Portfolio Split',
+          icon: 'fa-chart-pie',
+        },
+        {
+          ...compareChart,
+          id: 'target-progress',
+          title: 'Target Progress',
+          icon: 'fa-bullseye',
+        },
+      ];
+
+      // ── Year-by-Year Growth Schedule Table Spec
+      const table = {
+        mode: 'schedule',
+        title: 'Year-by-Year Retirement Growth Schedule',
+        columns: [
+          { key: 'year', label: 'Year / Age', format: 'text' },
+          { key: 'annualContrib', label: 'Annual Savings', format: 'currency' },
+          { key: 'totalContrib', label: 'Total Contributed', format: 'currency' },
+          { key: 'growth', label: 'Compound Growth', format: 'currency' },
+          { key: 'balance', label: 'Portfolio Balance', format: 'currency', emphasis: true },
+        ],
+        rows: scheduleRows,
+      };
+
+      // ── Future AI Readiness Data Contract
+      const financialContract = {
+        schemaVersion: '1.0.0',
+        calculator: 'retirement-calculator',
+        timestamp: new Date().toISOString(),
+        currency: 'USD',
+        inputs: {
+          currentAge,
+          retirementAge,
+          yearsToRetire,
+          lifeExpectancy,
+          yearsInRetire,
+          currentSavings,
+          annualIncome,
+          monthlyContribution: monthlyContrib,
+          annualContribution: roundTo(monthlyContrib * 12, 2),
+          nominalAnnualReturn: roundTo(annualReturn * 100, 2),
+          annualInflationRate: roundTo(inflationRate * 100, 2),
+          desiredIncomeReplacementRate: roundTo(incomeReplace * 100, 1),
+        },
+        assumptions: {
+          compoundingFrequency: 'monthly',
+          contributionTiming: 'end_of_period',
+          purchasingPowerBasis: 'today_constant_dollars',
+          fisherRealReturnRate: roundTo(realReturn * 100, 4),
+          safeWithdrawalRate: 4.0,
+          targetNestEggMultiple: 25,
+        },
+        outputs: {
+          projectedNestEggTodayDollars: totalNestEgg,
+          targetNestEggTodayDollars: targetNestEgg,
+          fundingRatioPct: fundedPct,
+          status,
+          totalContributions: totalContribs,
+          totalInvestmentGrowth: totalGrowth,
+          monthlyRetirementIncomeTodayDollars: monthlyRetireIncome,
+          annualRetirementIncomeTodayDollars: annualRetireIncome,
+          futureNominalMonthlyAtRetirement: futureNominalMonthly,
+          achievedReplacementRatePct: achievedReplaceRate,
+          additionalMonthlySavingsNeeded: additionalMonthlyNeeded,
+        },
+        provenance: {
+          realRateEquation: 'r_real = (1 + r_nominal) / (1 + inflation) - 1 (Fisher relation)',
+          annuityFutureValue: 'FV = PMT * (((1 + r_monthly)^n - 1) / r_monthly)',
+          lumpSumFutureValue: 'FV = PV * (1 + r_real)^n',
+          nestEggTarget: 'Target = (Annual Income * Replacement Rate) * 25',
+          monthlyIncome: 'Monthly Income = (Projected Nest Egg * 0.04) / 12',
+        },
+        limitations: [
+          'Deterministic mathematical projection assuming constant return and inflation rates across all periods.',
+          'Does not model sequence of returns risk, market volatility, or black swan drawdown events.',
+          'Does not include taxation on retirement distributions (401k/IRA traditional vs Roth), Social Security benefits, or pension income.',
+          'Estimates are educational planning models and do not constitute personalized financial advice.',
+        ],
+      };
+
       return {
+        insight: {
+          tone: insightTone,
+          icon: insightIcon,
+          headline: insightHeadline,
+          detail: insightDetail,
+        },
+        insights: [
+          {
+            icon: 'fa-chart-line',
+            title: 'Compound Growth Leverage',
+            text: `Compound growth generates ${growthSharePct}% (${fmt(Math.max(0, totalGrowth))}) of your final projected nest egg, while personal contributions account for ${100 - growthSharePct}% (${fmt(totalContribs)}).`,
+          },
+          {
+            icon: 'fa-shield-halved',
+            title: 'Real Purchasing Power Basis',
+            text: `All portfolio figures reflect constant today's dollars via the Fisher equation (${(realReturn * 100).toFixed(2)}% real annual return), safeguarding your forecast against inflation erosion over ${yearsToRetire} years.`,
+          },
+          {
+            icon: 'fa-sack-dollar',
+            title: 'Safe Withdrawal Income',
+            text: `Under the 4% safe withdrawal rule, your nest egg safely yields ${fmt(monthlyRetireIncome)}/month in today's purchasing power, or an estimated ${fmt(futureNominalMonthly)}/month in nominal dollars at age ${retirementAge}.`,
+          },
+        ],
         stats: [
           { label: "Projected Nest Egg (Today's $)",    value: fmt(totalNestEgg),          highlight: true },
           { label: "Target Nest Egg (4% Rule)",         value: fmt(targetNestEgg)                         },
@@ -1590,48 +3199,53 @@ const TOOLS = {
           { label: 'Income Replacement Rate',           value: pct(achievedReplaceRate / 100)             },
           { label: 'Additional Monthly Savings Needed', value: fmt(additionalMonthlyNeeded), warn: additionalMonthlyNeeded > 0 },
         ],
-        chart: { principal: totalContribs, totalInterest: totalGrowth },
-        table: schedule,
+        chart,
+        chart2,
+        compareChart,
+        charts,
+        table,
+        financialContract,
       };
     },
 
     // ── How-To Guide
     howTo: [
-      'Enter your current age and annual income to set a baseline - the calculator uses your age to determine the exact number of years until retirement.',
-      'Add your current retirement savings balance (401k, IRA, brokerage accounts) and your monthly contribution amount.',
-      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and your expected inflation rate (2.5-3% historical average).',
-      'Choose your desired retirement age and life expectancy - the calculator projects how long your nest egg needs to last.',
-      'Review your results: projected nest egg, target savings goal using the 4% rule, monthly retirement income, and any additional savings needed to reach your goal.',
+      'Enter your current age and planned retirement age to establish your savings timeline and compounding horizon.',
+      'Add your current retirement savings balance across all accounts (401k, IRA, Roth IRA, taxable brokerage) and your monthly contribution amount.',
+      'Input your current gross annual income so the calculator can benchmark your target retirement replacement income using the 4% rule.',
+      'Review the Advanced Economic Assumptions section to customize your expected investment return (default: 7%) and expected inflation rate (default: 3%).',
+      'Analyze your results: projected nest egg in today\'s purchasing power, timeline trajectory chart, portfolio composition, and any monthly contribution gap needed to reach full funding.',
     ],
 
-    // ── Real-World Examples
+    // ── Real-World Examples (Mathematically Reconciled to Engine Output)
     examples: [
       {
         title: 'Starting at 25 - The Power of Early Saving',
         input: 'Age: 25, Income: $55,000, Savings: $0, Monthly: $500, Return: 7%, Inflation: 3%, Retire: 65, Live to: 95',
-        result: 'Nest Egg: $1,197,000+ | Monthly Income: ~$3,990 | Replacement Rate: 87%',
+        result: "Nest Egg (Today's $): $574,070 | Monthly Real Income: $1,914 | Future Nominal Value: $1,872,000+ | Status: Add $458/mo to reach full $1.1M target",
       },
       {
         title: 'Mid-Career Catch-Up (Age 35)',
         input: 'Age: 35, Income: $80,000, Savings: $30,000, Monthly: $1,000, Return: 7%, Inflation: 3%, Retire: 65, Live to: 90',
-        result: 'Nest Egg: $1,185,000+ | Monthly Income: ~$3,950 | Replacement Rate: 59%',
+        result: "Nest Egg (Today's $): $773,901 | Monthly Real Income: $2,580 | Target: $1,600,000 (4% Rule) | Additional Savings Needed: $1,068/mo",
       },
       {
         title: 'Aggressive Early Retirement at 55',
-        input: 'Age: 25, Income: $75,000, Savings: $10,000, Monthly: $1,500, Return: 8%, Inflation: 3%, Retire: 55, Live to: 90',
-        result: 'Nest Egg: $1,625,000+ | Monthly Income: ~$5,417 | Replacement Rate: 87%',
+        input: 'Age: 28, Income: $75,000, Savings: $25,000, Monthly: $1,500, Return: 8%, Inflation: 3%, Retire: 55, Live to: 90',
+        result: "Nest Egg (Today's $): $1,262,491 | Monthly Real Income: $4,208 | Target: $1,500,000 | Status: 84% Funded (Add $340/mo to close gap)",
       },
     ],
-    formula: 'Real Return = (1 + Nominal Return) / (1 + Inflation Rate) - 1 | FV = PV x (1 + r)^n | FV = PMT x [((1 + r_monthly)^n - 1) / r_monthly] | 4% Rule: Annual Withdrawal = Nest Egg x 0.04 | Target Nest Egg = Desired Annual Income x 25',
+    formula: 'Fisher Real Return = (1 + Nominal Return) / (1 + Inflation Rate) - 1 | FV_savings = PV x (1 + r_real)^n | FV_contrib = PMT x [((1 + r_monthly)^n - 1) / r_monthly] | Target Nest Egg = (Annual Income x Replacement Rate) x 25 | 4% Safe Withdrawal: Annual Income = Nest Egg x 0.04',
 
     // ── SEO Article Content
     article: {
       heading: 'The Ultimate Early Career Retirement Projection Tool',
-      intro: 'Standard retirement calculators assume a static income, but early-career professionals typically see rapid salary progression over time. Our specialized retirement calculator for early career professionals accounts for inflation-adjusted compound growth, realistic return rates, and the 4% rule to give you a clear roadmap to financial independence - starting from wherever you are today.',
+      intro: 'Standard retirement calculators assume static conditions and often produce misleading nominal dollar projections. Our specialized retirement calculator uses the Fisher real return equation to report your nest egg in constant purchasing power (today\'s dollars), models the 4% safe withdrawal rule, and provides clear benchmarks for financial independence.',
       sections: [
-        { heading: 'Why Standard Calculators Fail Young Professionals', body: 'Most retirement calculators assume your income stays flat for decades. Early-career professionals, however, often see salaries double or triple in their first 10-15 years. Static-income tools underestimate how much you can actually save as your earnings grow, leading to overly conservative projections. Our calculator lets you model rising contributions over a 35-40 year horizon.' },
-        { heading: 'How Compound Growth Works Over 35 Years', body: 'Compounding over 35+ years is extraordinary. At a 7% real return, money doubles roughly every 10 years — so a dollar invested at 25 doubles ~3.5 times by 65. Inflation is the counterforce: at 3%, purchasing power halves over ~24 years. That is why our calculator uses the Fisher equation to report real, inflation-adjusted growth rather than misleading nominal figures.' },
-        { heading: 'The 4% Rule and Your Target Nest Egg', body: 'The 4% rule (from the Trinity Study) says you can safely withdraw 4% of your portfolio in year one of retirement, adjusting for inflation, with a high chance of lasting 30 years. That means your target nest egg is about 25x your desired first-year retirement expenses. Our calculator computes this target from your income and replacement rate, then tells you whether you are on track.' },
+        { heading: 'Why Today\'s Dollars Matter for Retirement Planning', body: 'Projecting money 30 to 40 years into the future without adjusting for inflation produces phantom wealth. A nominal $2,000,000 nest egg in 40 years at 3% inflation buys only what $613,000 buys today. Our calculator uses the classical Fisher equation — (1 + Nominal Return) / (1 + Inflation Rate) - 1 — to ensure your projected nest egg, monthly withdrawal income, and replacement benchmarks reflect real goods and services you can actually afford.' },
+        { heading: 'How Compound Growth Accelerates Over 35+ Years', body: 'Over decades, compound interest does the heavy lifting. In a 40-year savings horizon at a 7% nominal return and 3% inflation, investment returns typically account for over 55% to 65% of your final portfolio balance, far surpassing your out-of-pocket contributions. The earlier you initiate monthly contributions, the more time compounding has to multiply your wealth exponentially.' },
+        { heading: 'The 4% Rule and Target Nest Egg Sizing', body: 'Originating from the Trinity Study, the 4% rule establishes that withdrawing 4% of your diversified retirement portfolio in year one (adjusted annually for inflation) historically provided a 95%+ success rate over a 30-year retirement. Translating this rule backward gives you your target nest egg: multiply your desired annual retirement income by 25. If you need $44,000/year to replace 80% of a $55,000 salary, your target nest egg is $1,100,000 in today\'s purchasing power.' },
+        { heading: 'When to Use a 15-Year vs 30-Year Horizon', body: 'If you plan to retire early (FIRE) in 15 to 20 years, your savings rate must be significantly higher (30% to 50% of take-home pay) because compounding has less time to work. For traditional 30 to 40 year careers, consistent 15% to 20% savings rates combined with employer 401(k) matches typically suffice. Use our quick scenarios above to compare how contribution amounts and retirement age affect your timeline.' },
       ],
     },
 
@@ -1639,31 +3253,31 @@ const TOOLS = {
     faqs: [
       {
         q: 'How much money do I need to retire comfortably?',
-        a: 'A widely accepted guideline is the 4% Rule, which suggests you need approximately 25 times your expected annual retirement expenses saved in investments. For early career professionals, a good rule of thumb is to aim for 1x your annual salary saved by age 30, 3x by 40, 6x by 50, and 8x by 60. Use our retirement calculator to find your personalized target nest egg based on your income, age, and desired retirement lifestyle.',
+        a: 'A widely accepted benchmark is the 4% Rule (from the Trinity Study), which states that you need approximately 25 times your expected annual retirement expenses saved in investments. For example, if you require $48,000 per year ($4,000/month) to maintain your lifestyle, your target nest egg is $1,200,000 in today\'s purchasing power. By age milestones, financial planners suggest aiming for 1x your annual salary saved by 30, 3x by 40, 6x by 50, and 8-10x by 65.',
       },
       {
-        q: 'How much should an early career professional have saved?',
-        a: 'By age 25-30, a common benchmark is to have saved at least 1x your annual salary. If you start saving 15% of your income at age 25 with a 7% average annual return, you could accumulate over $1 million by age 65. The key advantage for early career professionals is time - even small contributions grow exponentially through compound interest over 35-40 year horizons.',
+        q: 'How does this calculator account for inflation?',
+        a: 'Our calculator uses the Fisher equation — Real Return = (1 + Nominal Return) / (1 + Inflation Rate) - 1 — to project your nest egg in constant today\'s dollars. If your investments return 7% and inflation is 3%, your real annual return is 3.88%. This prevents the illusion of inflated future numbers and gives you an accurate view of your actual future purchasing power.',
       },
       {
         q: 'What is a realistic investment return rate over 30 years?',
-        a: 'The S&P 500 has historically returned approximately 10% before inflation and 7-8% after inflation (real return) over long periods. For a balanced portfolio (60% stocks / 40% bonds), a realistic assumption is 6-7% nominal or 4-5% real return. Our calculator uses the Fisher equation - (1 + nominal return) / (1 + inflation rate) - 1 - to compute the inflation-adjusted real return, giving you a more accurate long-term projection.',
+        a: 'Historically, the S&P 500 has delivered approximately 10% average nominal annual returns before inflation and 7% to 8% after inflation over rolling 30-year periods. For a balanced portfolio (e.g. 80% equities / 20% fixed income), conservative financial advisors recommend modeling a 6% to 7% nominal return (3% to 4% real return after a 3% inflation assumption).',
       },
       {
-        q: 'What percentage of my current income should I replace in retirement?',
-        a: 'Most financial advisors recommend aiming to replace 70% to 80% of your pre-retirement annual income to maintain your current lifestyle. This accounts for reduced expenses in retirement (no commuting, lower taxes, no retirement savings contributions) while still covering housing, healthcare, and leisure. Our calculator defaults to 80% and shows your projected replacement rate based on your actual savings trajectory.',
+        q: 'What percentage of my pre-retirement income do I need to replace?',
+        a: 'Most retirement planners recommend replacing 70% to 80% of your pre-retirement gross salary. In retirement, you no longer pay FICA payroll taxes on salary, you stop contributing 10-15% toward retirement accounts, and work-related commuting expenses vanish. Our calculator defaults to 80% to ensure a comfortable safety margin.',
       },
       {
-        q: 'How does inflation impact my retirement savings?',
-        a: 'Inflation erodes purchasing power over time. At an average annual inflation rate of 2.5% to 3%, the real value of money decreases by roughly half over 25-30 years - meaning $1,000,000 in 30 years will only buy what $412,000 buys today. Our retirement calculator automatically adjusts for inflation using the Fisher equation, showing both nominal future values and inflation-adjusted (today\'s dollar) figures so you can plan accurately.',
+        q: 'What should I do if the calculator shows a savings shortfall?',
+        a: 'If your projected nest egg is below your 4% rule target, you have three primary levers: 1) Increase your monthly contribution by the amount shown in the "Additional Monthly Savings Needed" field; 2) Delay your desired retirement age by 2 to 3 years to give your investments more time to compound; or 3) Optimize fees and asset allocation in low-cost index funds to maximize net returns.',
       },
       {
         q: 'What is the 4% rule for retirement planning?',
-        a: 'The 4% rule is a retirement planning guideline developed from the Trinity Study. It suggests you can withdraw 4% of your retirement portfolio in the first year of retirement (adjusting for inflation annually) with a low probability of running out of money over a 30-year retirement. For example, if your portfolio is $1,000,000, you could withdraw $40,000 in your first year. Our calculator applies this rule to your projected nest egg to estimate your monthly retirement income.',
+        a: 'The 4% rule is an empirical guideline developed by financial advisor William Bengen and confirmed by the Trinity Study. It demonstrated that retirees invested in a balanced stock/bond portfolio could safely withdraw 4% in their first year of retirement, adjust subsequent withdrawals for inflation, and have a 95%+ probability of their money lasting at least 30 years.',
       },
       {
         q: 'Can I retire early if I start saving at 25?',
-        a: 'Yes! Starting at 25 gives you a massive advantage due to compound interest. If you save $500 per month with a 7% return, you could accumulate $1.2M by 65. To retire early at 55, you would need to save approximately $1,500-$2,000 per month - but the earlier you start, the less you need to save each month to reach the same goal. Use our retirement calculator to experiment with different retirement ages and see the impact on your monthly contribution needs.',
+        a: 'Yes. Starting at 25 provides a huge structural advantage due to compound growth. If you save $500 monthly with a 7% nominal return, compound growth generates over 58% of your final portfolio. To retire even earlier at age 50 or 55, increasing your savings to $1,200-$1,500/month accelerates your timeline significantly.',
       },
     ],
   },
@@ -1701,13 +3315,19 @@ const TOOLS = {
           }
     ],
     name: 'Savings & Strategy Calculator',
+    related: [
+      'emergency-fund-calculator',
+      'compound-interest-calculator',
+      'investment-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-piggy-bank',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Compare biweekly vs monthly savings growth, calculate exact target dates, analyze High-Yield Savings Account (HYSA) returns after tax and inflation, and model emergency fund durations.',
-    metaTitle: 'Savings Calculator | Biweekly vs Monthly & HYSA Growth — GetCalcu',
-    metaDescription: 'Free online Savings Calculator. Compare biweekly vs monthly deposits, estimate real HYSA returns after tax and inflation, and pinpoint your exact goal completion timeline.',
+    metaTitle: 'Savings Calculator – Goal Date & Interest | GetCalcu',
+    metaDescription: 'Find how long it takes to reach a savings goal, or how much your balance grows with interest and regular deposits.',
     keywords: [
       'biweekly vs monthly savings calculator',
       'hysa inflation calculator',
@@ -1796,7 +3416,45 @@ const TOOLS = {
           { label: 'Biweekly Total Interest Earned', value: fmt(intB) },
           { label: 'Monthly Total Interest Earned', value: fmt(intH) },
           { label: 'Time Horizon', value: t + ' years' },
-        ], chart: { type: 'line', labels, datasets: [ { label: 'Biweekly', data: bData, color: '#10B981' }, { label: 'Monthly', data: mData, color: '#6366F1' } ], yLabel: 'Balance ($)', title: 'Biweekly vs Monthly Growth' },
+        ],
+        charts: [
+          {
+            type: 'area',
+            id: 'savings-growth-trajectory',
+            title: 'Biweekly vs Monthly Growth Trajectory',
+            icon: 'fa-chart-area',
+            labels: labels,
+            format: 'currency',
+            datasets: [
+              { label: 'Biweekly Paycheck Strategy', data: bData, color: '#10B981', fill: true },
+              { label: 'Monthly Deposit Strategy', data: mData, color: '#6366F1', fill: false }
+            ]
+          },
+          {
+            type: 'stackedBar',
+            id: 'deposits-vs-interest',
+            title: 'Deposits vs Compounding Growth',
+            icon: 'fa-chart-column',
+            labels: ['Monthly Strategy', 'Biweekly Strategy'],
+            format: 'currency',
+            datasets: [
+              { label: 'Total Deposits', data: [roundTo(M * 12 * t, 2), roundTo(M / 2 * 26 * t, 2)], color: '#6366F1', stack: 'savings' },
+              { label: 'Compound Interest Earned', data: [roundTo(intH, 2), roundTo(intB, 2)], color: '#10B981', stack: 'savings' }
+            ]
+          },
+          {
+            type: 'doughnut',
+            id: 'biweekly-composition',
+            title: 'Biweekly Wealth Split',
+            icon: 'fa-chart-pie',
+            labels: ['Initial Deposit', 'Ongoing Contributions', 'Compound Interest Earned'],
+            data: [P0, roundTo(M / 2 * 26 * t, 2), roundTo(intB, 2)],
+            colors: ['#6366F1', '#3B82F6', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          }
+        ],
+        chart: { type: 'line', labels, datasets: [ { label: 'Biweekly', data: bData, color: '#10B981' }, { label: 'Monthly', data: mData, color: '#6366F1' } ], yLabel: 'Balance ($)', title: 'Biweekly vs Monthly Growth' },
         table: { mode: 'comparison', title: 'Strategy Comparison (' + t + ' Years)', columns: [
           { key: 'metric', label: 'Metric', format: 'text' }, { key: 'monthly', label: 'Monthly', format: 'currency' },
           { key: 'biweekly', label: 'Biweekly', format: 'currency', emphasis: true }, { key: 'advantage', label: 'Advantage', format: 'currency', emphasis: true } ],
@@ -1957,13 +3615,19 @@ const TOOLS = {
           }
     ],
     name: 'Credit Card Payoff & Strategy Calculator',
+    related: [
+      'debt-snowball-calculator',
+      'emergency-fund-calculator',
+      'budget-planner',
+      'loan-interest-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-credit-card',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Calculate credit card debt payoff dates, expose minimum payment interest traps, analyze 0% APR balance transfer fees, and compare Avalanche vs Snowball payoff strategies.',
-    metaTitle: 'Credit Card Payoff Calculator | Minimum Payment Trap & 0% APR - GetCalcu',
-    metaDescription: 'Free online Credit Card Payoff Calculator. Calculate exact debt-free dates, compare minimum payment costs vs extra monthly deposits, and analyze 0% APR balance transfer savings.',
+    metaTitle: 'Credit Card Payoff Calculator – Debt-Free Date | GetCalcu',
+    metaDescription: 'Enter your balances and rates to see your debt-free date and the interest you save with the snowball or avalanche method.',
     keywords: [
       'credit card payoff calculator',
       'credit card minimum payment trap calculator',
@@ -2131,7 +3795,46 @@ const TOOLS = {
           const saved = roundTo(min.totalInterest - fix.totalInterest, 2);
           insight = { tone: 'positive', icon: 'fa-circle-check', headline: 'Paying ' + fmt(P) + '/mo saves ' + fmt(saved) + ' in interest and ' + yrs(min.months - fix.months) + ' vs minimums.', detail: 'Minimum payments of ' + minPct + '% take ' + yrs(min.months) + ' and cost ' + fmt(min.totalInterest) + ' in interest. Your fixed payment clears it in ' + yrs(fix.months) + ' for ' + fmt(fix.totalInterest) + ' — interest is ' + pctOf(fix.totalInterest, B) + ' of principal instead of ' + pctOf(min.totalInterest, B) + '.' };
         }
-        return { stats, bars, chart, table, insight };
+        const charts = [
+          {
+            type: 'area',
+            id: 'payoff-trajectory-comparison',
+            title: 'Balance Over Time: Minimum vs Fixed',
+            icon: 'fa-chart-area',
+            labels: chartLabels,
+            format: 'currency',
+            datasets: [
+              { label: 'Minimum Payment Only', data: dataMin, color: '#EF4444', fill: false },
+              { label: 'Fixed Monthly Payment', data: dataFix, color: '#10B981', fill: true }
+            ]
+          },
+          {
+            type: 'bar',
+            id: 'interest-trap-comparison',
+            title: 'Lifetime Interest Cost Comparison',
+            icon: 'fa-scale-balanced',
+            labels: ['Minimum Payment Trap', 'Fixed Monthly Payment'],
+            format: 'currency',
+            datasets: [{
+              label: 'Total Interest Paid ($)',
+              data: [min.runaway ? 0 : min.totalInterest, fix.runaway ? 0 : fix.totalInterest],
+              colors: ['#EF4444', '#10B981'],
+              backgroundColor: ['#EF4444', '#10B981']
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'fixed-cost-composition',
+            title: 'Fixed Plan Cost Composition',
+            icon: 'fa-chart-pie',
+            labels: ['Original Card Balance', 'Interest with Fixed Payment', 'Interest Saved vs Minimums'],
+            data: [B, fix.runaway ? 0 : fix.totalInterest, (min.runaway || fix.runaway) ? 0 : Math.max(0, roundTo(min.totalInterest - fix.totalInterest, 2))],
+            colors: ['#6366F1', '#F59E0B', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          }
+        ];
+        return { stats, bars, charts, chart, table, insight };
       }
       if (curMode === 'target-date') {
         if (B <= 0) return errorResult('Enter a credit card balance greater than $0.');
@@ -2326,13 +4029,20 @@ const TOOLS = {
     ],
   },
 
-  // ── Rent vs Buy Calculator ─────────────────────────────────────
   'rent-vs-buy-calculator': {
     name: 'Rent vs. Buy Calculator',
+    related: [
+      'true-home-buying-system',
+      'mortgage-calculator',
+      'house-affordability-calculator',
+      'investment-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house-chimney',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Comprehensive financial comparison of renting versus buying a home. Calculate net costs, equity buildup, break-even points, opportunity costs, and net worth over time with intelligent recommendations.',
     metaTitle: 'Rent vs Buy Calculator | Break-Even Analysis & Net Worth Comparison — GetCalcu',
     metaDescription: 'Free Rent vs Buy Calculator with break-even analysis, net worth comparison, equity buildup, opportunity cost, and intelligent recommendations. Should you rent or buy?',
@@ -2921,9 +4631,37 @@ const TOOLS = {
             { slug: 'inflation-calculator', name: 'Inflation Calculator', icon: 'fa-arrow-trend-up', iconClass: 'icon-finance', description: 'Understand how rising housing costs may affect future affordability.' },
           ];
 
+      const charts = [
+        {
+          id: 'net-worth-timeline',
+          label: 'Net Worth Comparison',
+          icon: 'fa-chart-line',
+          ...chart
+        },
+        {
+          id: 'cumulative-costs',
+          label: 'Cumulative Costs',
+          icon: 'fa-scale-balanced',
+          ...chart2
+        },
+        {
+          id: 'home-equity-growth',
+          label: 'Home Equity Growth',
+          icon: 'fa-chart-area',
+          ...compareChart
+        },
+        {
+          id: 'opportunity-cost',
+          label: 'Opportunity Cost',
+          icon: 'fa-sack-dollar',
+          ...chart3
+        }
+      ];
+
       return {
         stats,
         summary,
+        charts,
         chart,
         chart2,
         compareChart,
@@ -2936,73 +4674,113 @@ const TOOLS = {
       };
     },
 
-    // ── How-To Guide
-    howTo: [
-      'Enter the home purchase price using the slider or type a specific amount.',
-      'Choose your down payment mode — percentage or dollar amount — and set the value.',
-      'Set your mortgage rate, loan term, current rent, and how many years you plan to stay.',
-      'Adjust expected rent increase, home appreciation, and investment return.',
-      'Expand "Advanced Options" to customize property tax, insurance, HOA, PMI, maintenance, closing costs, and more.',
-      'Review the executive dashboard, recommendation, charts, and year-by-year comparison table.',
-      'Read the personalized insights to understand which assumptions matter most.',
-      'Follow the suggested next-step calculators based on your result.',
-    ],
+    methodology: {
+      standards: 'Calculations follow discounted cash flow (DCF) comparative net worth principles and housing economics guidelines from the Consumer Financial Protection Bureau (CFPB), Federal Reserve Economic Data (FRED), and National Association of Realtors (NAR).',
+      summary: 'The Rent vs. Buy model compares cumulative lifecycle housing expenditures and net worth accumulation over a multi-year horizon by contrasting home equity build-up against the compounding opportunity cost of invested capital (down payment, closing costs, and monthly cash flow differentials).',
+      assumptions: [
+        'Mortgage principal and interest payments remain fixed throughout the loan term.',
+        'Renter invests the initial down payment, purchase closing costs, and all monthly cash flow savings into an alternative portfolio compounded annually at the specified investment return rate.',
+        'Maintenance, property taxes, insurance, and rent escalate annually based on user-configured inflation growth rates.',
+        'Net proceeds upon sale reflect cumulative home appreciation minus transaction selling costs and realtor commissions.'
+      ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) — Buying vs. Renting Evaluation Framework',
+        'Federal Reserve Bank of St. Louis (FRED) — Case-Shiller Home Price Indices & Rent Inflation Series',
+        'National Association of Realtors (NAR) — Real Estate Transaction Costs & Historical Appreciation Trends'
+      ],
+      lastReviewed: 'September 2026',
+    },
 
-    // ── Real-World Examples
-    examples: [
-      {
-        title: 'Young Professional (Rent)',
-        input: '$350,000 home, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return',
-        result: 'Renting wins. High upfront costs and a short horizon make buying uneconomical; investing the down payment outperforms.',
-      },
-      {
-        title: 'Growing Family (Buy)',
-        input: '$500,000 home, 20% down, 6% rate, $2,400 rent, 15-year horizon, 3% appreciation',
-        result: 'Buying wins strongly. Long tenure recovers costs and builds substantial equity and appreciation.',
-      },
-      {
-        title: 'High Mortgage Rate Environment',
-        input: '$450,000 home, 20% down, 7.5% rate, $2,200 rent, 8-year horizon',
-        result: 'Higher rates delay break-even. Compare 5%, 6%, 7%, and 8% to see how the recommendation shifts.',
-      },
-      {
-        title: 'Typical 20% Down Purchase',
-        input: '$450,000 home, 20% down, 6.25% rate, 30yr, $2,200 rent, 3.5% appreciation, 7% investment return, 8 years',
-        result: 'Buying wins by ~$36,800. Break-even around Year 4-5. High confidence if staying 7+ years.',
-      },
-      {
-        title: 'Low Down Payment Scenario',
-        input: '$450,000 home, 5% down, PMI required, 6.5% rate, 30yr, $2,200 rent, 8 years',
-        result: 'PMI and higher loan costs delay break-even to Year 6-7. Still favorable long-term with appreciation.',
-      },
-      {
-        title: 'High Rent Growth Market',
-        input: '$450,000 home, 20% down, $2,500 rent, 5% annual rent increases, 8 years',
-        result: 'Buying wins by ~$78,000. Rapid rent growth makes buying advantageous by Year 3.',
-      },
-      {
-        title: 'Short Time Horizon',
-        input: '$450,000 home, 20% down, plan to move in 3 years, $2,200 rent, 8 years',
-        result: 'Renting likely wins. Transaction costs (closing + selling) erase equity gains in under 5 years.',
-      },
-    ],
-    formula: 'Monthly P&I = P × [r(1+r)^n] / [(1+r)^n − 1] | Equity = Home Value − Remaining Balance | Net Proceeds = Equity − Selling Costs | Opportunity Cost = Invested Capital × (1 + Return)^t | Net Worth (Buy) = Equity − Cumulative Costs | Net Worth (Rent) = Investment Portfolio − Cumulative Rent',
-
-    // ── SEO Article Content
     article: {
-      heading: 'The Complete Guide to the Rent vs. Buy Decision',
-      intro: 'The rent vs. buy question is one of the most significant financial decisions most people will make. It involves far more than comparing a monthly rent check to a mortgage payment — it requires understanding equity buildup, opportunity cost, tax implications, transaction costs, and how time in the market changes the math. The GetCalcu Rent vs. Buy Calculator models all of these factors to give you a clear, data-driven answer tailored to your situation.',
+      id: 'how-to-calculate',
+      heading: 'The Complete Guide to the Rent vs. Buy Financial Decision',
+      intro: 'The rent vs. buy question is one of the most consequential personal finance decisions. It extends far beyond comparing a monthly rent check to a mortgage statement—it requires evaluating equity buildup, opportunity cost of capital, transaction fees, property maintenance, tax effects, and how time horizon alters net worth.',
       sections: [
-        { heading: 'When Buying Makes Financial Sense', body: 'Buying typically wins when you plan to stay 7+ years, home appreciation is steady, rent inflation is high, and your mortgage payment is close to your current rent. Over long horizons, fixed mortgage payments stay stable while rents compound upward, and principal payments build equity that you keep when you sell. The calculator shows your exact break-even year.' },
-        { heading: 'When Renting Is the Better Decision', body: 'Renting often wins for short time horizons (under 5 years), when you value flexibility to relocate, when the opportunity cost of your down payment is high, or when home prices are stagnant. Renting avoids transaction costs, maintenance, and property taxes, and frees up capital that can be invested. Our calculator compares both strategies fairly.' },
-        { heading: 'Understanding Opportunity Cost', body: 'When you buy, you tie up a large down payment (often 20% of the home price) plus closing costs. That capital could otherwise be invested. If you invest $90,000 plus $13,500 in closing costs at a 7% annual return, it grows substantially over 10 years. The calculator compares that investment growth against the equity you build in the home, revealing which strategy creates more wealth.' },
-        { heading: 'The 5% Rule Explained', body: 'The 5% rule is a quick heuristic: if the annual cost of owning (mortgage interest + property taxes + insurance + maintenance + transaction costs) is more than 5% of the home value per year, renting may be cheaper. Multiply the home price by 5% and compare to your annual rent. If rent is lower, renting wins on pure cash flow — but this rule ignores equity and appreciation, so use the full calculator for the complete picture.' },
-        { heading: 'Building Home Equity', body: 'Each mortgage payment splits into interest and principal. Early payments are mostly interest; later payments are mostly principal. As you pay down the loan and the home appreciates, your equity grows. When you sell, you keep the equity minus selling costs. The calculator charts your principal, appreciation, and total equity year by year.' },
-        { heading: 'Hidden Costs of Homeownership', body: 'Beyond the mortgage, owners pay closing costs (2-5% of price), property taxes, homeowners insurance, maintenance (1-2% of value annually), HOA fees, PMI if under 20% down, and selling costs (6-10% when you sell). These hidden costs can add tens of thousands of dollars and are why buying is not always cheaper than renting.' },
-        { heading: 'Common Mistakes People Make', body: 'The most common mistakes are buying too early (before you can afford it or before you plan to stay long enough), ignoring opportunity cost, underestimating maintenance, staying too short a time to recover transaction costs, and overestimating appreciation. Our calculator helps you avoid these by modeling realistic assumptions.' },
-        { heading: 'How Home Appreciation and Rent Inflation Affect the Decision', body: 'In hot markets where home values rise 5-7% annually, buying builds wealth faster through appreciation. In markets with high rent growth (5%+ annually), buying provides payment stability while renters face escalating costs. Conversely, in stagnant or declining markets, appreciation may not offset ownership costs, and low rent growth favors renting.' },
+        {
+          id: 'when-buying-makes-sense',
+          heading: 'When Buying Makes Financial Sense',
+          body: [
+            'Buying typically produces superior financial outcomes when you plan to stay in the home for 7 or more years, local property appreciation remains stable, rent inflation is persistent, and monthly ownership outlays are comparable to area rent.',
+            'Fixed-rate mortgages lock in your principal and interest payment for up to 30 years while market rents compound upward. Each payment amortizes loan principal, steadily building home equity that you recapture upon sale.'
+          ]
+        },
+        {
+          id: 'when-renting-makes-sense',
+          heading: 'When Renting and Investing Outperforms',
+          body: [
+            'Renting frequently wins over shorter horizons (under 5 years), when career or life mobility is prized, or when home prices are high relative to rents.',
+            'Renting eliminates closing costs, selling friction, property taxes, and surprise maintenance liabilities. If the capital required for a down payment and transaction fees is invested in diversified index funds, compound market returns can outpace real estate equity gains.'
+          ]
+        },
+        {
+          id: 'opportunity-cost-mechanics',
+          heading: 'Understanding the Opportunity Cost of Capital',
+          body: [
+            'Purchasing a home locks up significant capital in a down payment (e.g., $90,000 on a $450,000 property) plus closing costs (typically $10,000–$15,000).',
+            'Our engine models the opportunity cost by assuming that identical capital is invested at your expected portfolio return rate. The calculator tracks both paths month by month to identify which strategy produces higher ending net worth.'
+          ]
+        },
+        {
+          id: 'the-5-percent-rule',
+          heading: 'The 5% Rule of Thumb for Housing',
+          body: [
+            'The 5% rule provides a rapid heuristic: if the total non-recoverable annual cost of owning (estimated as ~1% property tax + ~1% maintenance + ~3% cost of capital/interest) exceeds your annual rent, renting may be financially advantageous on cash flow.',
+            'Multiply the target home value by 5% and divide by 12. If comparable rent is lower than this break-even threshold, renting allows you to invest the difference.'
+          ]
+        },
+        {
+          id: 'hidden-costs-of-ownership',
+          heading: 'The Friction and Hidden Costs of Ownership',
+          body: [
+            'Homeowners face significant non-equity expenses: purchase closing costs (2–5%), ongoing property taxes (1–2% annually), homeowners insurance, HOA fees, routine maintenance (1–2% annually), and selling commissions (5–6% realtor fees plus transfer taxes upon disposition).',
+            'Because transaction fees are paid at both purchase and sale, short tenure often results in net losses even if property values appreciate slightly.'
+          ]
+        },
+        {
+          id: 'breakeven-timeline-factors',
+          heading: 'Key Factors Determining Your Break-Even Year',
+          body: [
+            'The break-even year is the exact point where cumulative net worth from buying crosses and surpasses renting.',
+            'Higher mortgage rates and higher investment returns extend the break-even timeline further into the future, whereas higher rent inflation and higher home appreciation accelerate the break-even milestone.'
+          ]
+        }
       ],
     },
+    howTo: [
+      'Enter the target home purchase price and choose your down payment (percentage or dollar amount).',
+      'Specify your mortgage interest rate, loan term, current monthly rent, and anticipated tenure in years.',
+      'Set expected annual rent inflation, home appreciation, and investment return percentages.',
+      'Expand "Advanced Options" to refine property taxes, insurance, HOA fees, maintenance reserves, and closing costs.',
+      'Review your financial summary dashboard, break-even year, interactive net worth charts, and year-by-year comparison table.',
+      'Follow personalized recommendations and explore complementary mortgage and affordability tools.'
+    ],
+    examples: [
+      {
+        title: 'Young Professional Short Tenure (Renting Wins)',
+        input: 'Home: $350,000, 10% down, 6.5% rate, $1,800 rent, 3-year horizon, 8% investment return',
+        result: 'Renting wins. High transaction friction (closing + selling fees) and a short horizon make buying uneconomical; investing capital yields higher net worth.'
+      },
+      {
+        title: 'Long-Term Family Purchase (Buying Wins)',
+        input: 'Home: $500,000, 20% down, 6.0% rate, $2,400 rent, 15-year horizon, 3.5% appreciation',
+        result: 'Buying wins decisively. Long tenure amortizes upfront transaction costs and accumulates substantial equity and appreciation.'
+      },
+      {
+        title: 'High Rent Growth Environment (Early Break-Even)',
+        input: 'Home: $450,000, 20% down, 6.25% rate, $2,500 rent, 5.0% annual rent inflation, 8 years',
+        result: 'Buying reaches break-even rapidly by Year 3 as compounding rent hikes outpace fixed mortgage costs.'
+      }
+    ],
+    formulaTitle: 'Rent vs. Buy Comparison Formula',
+    formula: 'Net Worth (Buy) = Home Value − Mortgage Balance − Selling Costs | Net Worth (Rent) = Invested Capital × (1 + r)^t − Cumulative Rent',
+    formulaExplanation: 'Compares total net worth accumulated by purchasing a home (equity + appreciation − remaining debt and selling costs) versus renting and investing the down payment and monthly cash flow savings in financial markets.',
+    formulaVariables: [
+      { name: 'Home Value', description: 'Initial purchase price compounded by annual appreciation rate over t years' },
+      { name: 'Mortgage Balance', description: 'Remaining amortized loan principal balance at year t' },
+      { name: 'Selling Costs', description: 'Realtor commissions and transfer costs deducted upon home disposition (5-7%)' },
+      { name: 'Invested Capital', description: 'Down payment, closing costs, and monthly cash flow differentials invested at portfolio rate r' },
+      { name: 'Cumulative Rent', description: 'Sum of all monthly rent payments compounded by annual rent inflation' }
+    ],
 
     // ── Schema-Ready FAQs (15-20)
     faqs: [
@@ -3092,10 +4870,19 @@ const TOOLS = {
   // ── House Affordability Calculator ─────────────────────────────────────
   'house-affordability-calculator': {
     name: 'House Affordability Calculator',
+    related: [
+      'mortgage-calculator',
+      'rent-vs-buy-calculator',
+      'true-home-buying-system',
+      'fha-loan-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-house',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate how much house you can afford based on your income, debt, and down payment. Get detailed DTI analysis.',
     metaDescription: 'Free house affordability calculator — determine your maximum home purchase price based on DTI ratios, income, debt, and down payment.',
     keywords: ['house affordability calculator', 'how much house can i afford', 'dti calculator', '28 36 rule', 'fha loan calculator'],
@@ -3213,6 +5000,44 @@ const TOOLS = {
           { label: 'Down Payment', value: fmt(downPayment) },
           { label: 'Gross Monthly Income', value: fmt(grossMonthlyIncome) },
         ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'monthly-piti',
+            title: 'Monthly Housing Payment (PITI)',
+            icon: 'fa-wallet',
+            labels: ['Principal & Interest', 'Property Taxes', 'Homeowners Insurance', 'HOA / Co-op Fees'],
+            data: [monthlyPI, roundTo(monthlyPropertyTax, 2), roundTo(monthlyInsurance, 2), hoaFees],
+            colors: ['#6366F1', '#F59E0B', '#10B981', '#8B5CF6'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'scenario-comparison',
+            title: 'Home Price Capability Scenarios',
+            icon: 'fa-scale-balanced',
+            labels: ['Conservative (25/35 DTI)', 'Target (28/36 DTI) - Recommended', 'Aggressive (33/43 DTI)'],
+            format: 'currency',
+            datasets: [{
+              label: 'Max Home Price ($)',
+              data: [conservativePrice, recommendedHomePrice, aggressivePrice],
+              colors: ['#10B981', '#6366F1', '#F59E0B'],
+              backgroundColor: ['#10B981', '#6366F1', '#F59E0B']
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'capital-structure',
+            title: 'Financing vs Down Payment',
+            icon: 'fa-house-circle-check',
+            labels: ['Mortgage Loan Financed', 'Cash Down Payment'],
+            data: [maxLoanAmount, downPayment],
+            colors: ['#6366F1', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          }
+        ],
         chart: {
           principal: monthlyPI,
           propertyTax: roundTo(monthlyPropertyTax, 2),
@@ -3239,32 +5064,99 @@ const TOOLS = {
       };
     },
 
-    howTo: [
-      'Enter your annual gross household income and monthly debt payments (car loans, student loans, credit cards).',
-      'Add your down payment savings, loan term, and estimated mortgage rate.',
-      'Set your property tax rate, home insurance, and any HOA fees.',
-      'Choose your lender rule preference — Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45.',
-      'Review your recommended affordable home price, max loan amount, and monthly payment breakdown.',
-      'Check the three-scenario comparison table to see conservative, target, and aggressive purchase limits.',
-    ],
-
-    examples: [
-      { title: 'Typical First-Time Buyer', input: 'Income: $105,000, Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr', result: 'Affordable home: ~$350,000 | Monthly PITI: ~$2,400 | Front DTI: 28% | Back DTI: 36%' },
-      { title: 'FHA Loan with Higher DTI', input: 'Income: $80,000, Debt: $800/mo, Down: $20,000, Rate: 6.5%, 30yr, FHA', result: 'Affordable home: ~$280,000 | Monthly PITI: ~$1,900 | Front DTI: 31% | Back DTI: 43%' },
-      { title: 'VA Loan Zero Down', input: 'Income: $90,000, Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA', result: 'Affordable home: ~$320,000 | Monthly PITI: ~$2,100 | Back DTI: 41%' },
-    ],
-    formula: 'Max Housing Payment = Gross Monthly Income × Front-End Ratio | Available for Housing = (Gross Monthly Income × Back-End Ratio) − Monthly Debt | Max Loan = PV of Available for PI | Recommended Price = Max Loan + Down Payment',
+    methodology: {
+      standards: 'Underwriting models conform to Fannie Mae (Desktop Underwriter), Freddie Mac (Loan Product Advisor), Federal Housing Administration (FHA Handbook 4000.1), and Department of Veterans Affairs (VA Lenders Handbook M26-7) debt-to-income underwriting ratios.',
+      summary: 'House affordability is calculated by determining the binding maximum allowable monthly housing expenditure under dual front-end and back-end debt-to-income (DTI) constraints, subtracting taxes, insurance, and HOA dues, and solving for the maximum amortized mortgage loan capacity based on present value formulas.',
+      assumptions: [
+        'Gross monthly income serves as the baseline for all qualifying ratio calculations.',
+        'Front-end ratio includes Principal, Interest, Property Taxes, Homeowners Insurance (PITI), and HOA fees.',
+        'Back-end ratio encompasses total housing costs plus recurring monthly minimum debt obligations (auto loans, student debt, credit card minimums).',
+        'Final purchase power equals calculated maximum borrowing capacity plus available cash down payment.'
+      ],
+      sources: [
+        'Fannie Mae — Selling Guide: B3-6-02, Debt-to-Income Ratios',
+        'U.S. Department of Housing and Urban Development (HUD) — FHA Single Family Housing Policy Handbook 4000.1',
+        'Consumer Financial Protection Bureau (CFPB) — Qualified Mortgage Rule & DTI Standards'
+      ],
+      lastReviewed: 'September 2026',
+    },
 
     article: {
-      heading: 'The Complete Guide to House Affordability and DTI Ratios',
-      intro: 'Lenders use two key ratios to determine how much house you can afford: the front-end DTI (housing ratio) and back-end DTI (total debt ratio). The GetCalcu House Affordability Calculator applies these rules — including the 28/36 conventional standard, FHA 31/43 limits, VA 41% back-end focus, and aggressive 36/45 scenarios — to show you exactly what home price fits your financial situation.',
+      id: 'how-to-calculate',
+      heading: 'How to Calculate How Much House You Can Afford',
+      intro: 'Determining your home purchasing power requires balancing how much a lender will legally approve against what your monthly budget can comfortably sustain. Mortgage lenders evaluate affordability primarily through Debt-to-Income (DTI) ratios.',
       sections: [
-        { heading: 'Understanding Front-End vs Back-End DTI', body: 'Front-end DTI measures housing costs (principal, interest, taxes, insurance, HOA) as a percentage of gross monthly income. Back-end DTI measures all monthly debt obligations — including the new mortgage payment — as a percentage of gross monthly income. Lenders use the more restrictive of the two to ensure you are not overextended.' },
-        { heading: 'The 28/36 Rule (Conventional Loans)', body: 'Conventional loans typically require front-end DTI ≤ 28% and back-end DTI ≤ 36%. That means your total housing payment should not exceed 28% of your gross monthly income, and all debt combined (housing plus car loans, student loans, credit cards) should not exceed 36%. If your existing debt is high, the back-end ratio becomes the binding constraint.' },
-        { heading: 'FHA 31/43 and VA 41% Rules', body: 'FHA loans allow higher ratios — 31% front-end and 43% back-end — making them accessible for buyers with higher debt loads or smaller down payments (as low as 3.5%). VA loans focus primarily on the back-end DTI (41%) and do not require a down payment, but they do require the residual income test to ensure you can cover living expenses after paying the mortgage.' },
-        { heading: 'How Down Payment and Interest Rate Affect Affordability', body: 'A larger down payment directly increases your affordable home price by reducing the loan amount. A lower interest rate increases your purchasing power by lowering the monthly payment for a given loan size. Use the calculator to test different down-payment and rate scenarios to find your optimal buying window.' },
+        {
+          id: 'front-end-vs-back-end-dti',
+          heading: 'Front-End vs. Back-End DTI Ratios',
+          body: [
+            'Front-End DTI (Housing Ratio): The percentage of your gross monthly income dedicated exclusively to housing expenses (Principal, Interest, Property Taxes, Homeowners Insurance, and HOA dues).',
+            'Back-End DTI (Total Debt Ratio): The percentage of gross monthly income required to service all recurring debt obligations combined—including housing, car payments, student loans, and credit card minimums.',
+            'Lenders enforce the more restrictive of the two limits to ensure borrowers do not become house-poor.'
+          ]
+        },
+        {
+          id: 'conventional-28-36-rule',
+          heading: 'The Conventional 28/36 Underwriting Standard',
+          body: [
+            'Conventional conforming loans backed by Fannie Mae and Freddie Mac traditionally cap front-end housing costs at 28% and total back-end debt at 36% of gross monthly income.',
+            'If you carry significant consumer or auto debt, the 36% back-end ceiling will reduce your allowable housing payment even if your front-end ratio is well below 28%.'
+          ]
+        },
+        {
+          id: 'fha-va-guidelines',
+          heading: 'FHA 31/43 and VA Loan Guidelines',
+          body: [
+            'FHA loans allow more generous underwriting thresholds—typically 31% front-end and 43% back-end—allowing buyers with higher existing debt or lower down payments (as low as 3.5%) to qualify.',
+            'VA loans for qualifying military service members and veterans generally evaluate a 41% back-end DTI benchmark combined with a mandatory residual income test to verify sufficient living capital after debt service.'
+          ]
+        },
+        {
+          id: 'down-payment-interest-rate-impact',
+          heading: 'How Down Payments and Interest Rates Shape Buying Power',
+          body: [
+            'Every dollar added to your down payment directly expands your top-line purchase price without increasing your monthly borrowing obligation.',
+            'Conversely, higher interest rates consume a larger share of your qualifying monthly payment in interest, reducing maximum loan size. For example, a 1% rate increase reduces maximum loan affordability by approximately 9–11%.'
+          ]
+        }
       ],
     },
+    howTo: [
+      'Enter your annual gross household income (before taxes) and total monthly recurring debt payments.',
+      'Input your total cash saved for a down payment.',
+      'Specify your loan term in years and estimated mortgage interest rate.',
+      'Enter expected property tax rate, homeowners insurance, and monthly HOA or condo fees.',
+      'Choose your lender qualification rule (Conventional 28/36, FHA 31/43, VA 41%, or Aggressive 36/45).',
+      'Review your recommended target home price, maximum loan balance, and itemized monthly PITI payment.',
+      'Examine the purchase capability comparison table to view conservative, target, and aggressive borrowing limits.'
+    ],
+    examples: [
+      {
+        title: 'Conventional First-Time Homebuyer (Default)',
+        input: 'Gross Income: $105,000/yr ($8,750/mo), Debt: $500/mo, Down: $60,000, Rate: 6.75%, 30yr, 28/36 Rule',
+        result: 'Affordable Home Price: $354,821 | Max Loan: $294,821 | Monthly PITI: $2,450.00 | Front DTI: 28.0% | Back DTI: 33.7%'
+      },
+      {
+        title: 'FHA Buyer with Moderate Debt',
+        input: 'Gross Income: $80,000/yr ($6,667/mo), Debt: $600/mo, Down: $25,000, Rate: 6.50%, 30yr, FHA 31/43 Rule',
+        result: 'Affordable Home Price: $297,419 | Max Loan: $272,419 | Monthly PITI: $2,066.67 | Front DTI: 31.0% | Back DTI: 40.0%'
+      },
+      {
+        title: 'VA Buyer Zero-Down Purchase',
+        input: 'Gross Income: $90,000/yr ($7,500/mo), Debt: $300/mo, Down: $0, Rate: 6.25%, 30yr, VA 41% Rule',
+        result: 'Affordable Home Price: $419,268 | Max Loan: $419,268 | Monthly PITI: $2,775.00 | Back DTI: 41.0%'
+      }
+    ],
+    formulaTitle: 'Home Affordability Formula',
+    formula: 'Max Housing Payment = min(Gross Monthly Income × Front-End %, (Gross Monthly Income × Back-End %) − Monthly Debt) | Max Loan = PV(Rate / 12, Term × 12, Available for P&I) | Affordable Price = Max Loan + Down Payment',
+    formulaExplanation: 'Calculates maximum home purchasing power by evaluating front-end and back-end debt-to-income (DTI) underwriting thresholds, determining the amortized loan capacity plus your down payment.',
+    formulaVariables: [
+      { name: 'Front-End %', description: 'Maximum allowable percentage of gross income for housing costs (e.g., 28% for conventional)' },
+      { name: 'Back-End %', description: 'Maximum allowable percentage of gross income for all debt service (e.g., 36% for conventional)' },
+      { name: 'Available for P&I', description: 'Max housing payment minus monthly property taxes, insurance, and HOA fees' },
+      { name: 'Max Loan', description: 'Present value of the amortized loan supported by Available for P&I' },
+      { name: 'Affordable Price', description: 'Total purchase price (Max Loan amount + Cash Down Payment)' }
+    ],
 
     faqs: [
       { q: 'Can I afford a $500k house on $100k income?', a: 'With $100k annual income ($8,333/month gross), the conventional 28/36 rule suggests a maximum housing payment of about $2,333/month (28% front-end). At current rates (6-7%), that supports a loan of roughly $350,000–$380,000. Adding a down payment of $120,000–$150,000 would be needed to reach a $500k purchase price. Use our house affordability calculator to test your exact down payment, debt, and rate scenario.' },
@@ -3452,6 +5344,12 @@ const TOOLS = {
   'inflation-calculator': {
     id: 'inflation-calculator',
     name: 'Inflation Calculator',
+    related: [
+      'investment-calculator',
+      'retirement-calculator',
+      'savings-calculator',
+      'salary-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-arrow-trend-up',
     iconClass: 'icon-finance',
@@ -3554,8 +5452,56 @@ const TOOLS = {
         ];
       }
 
+      const sampleStep = Math.max(1, Math.floor(labels.length / 25));
+      const filteredLabels = labels.filter((_, idx) => idx % sampleStep === 0 || idx === labels.length - 1);
+      const filteredErosion = erosionData.filter((_, idx) => idx % sampleStep === 0 || idx === erosionData.length - 1);
+      const filteredNominal = nominalData.filter((_, idx) => idx % sampleStep === 0 || idx === nominalData.length - 1);
+      const filteredFuture = realData.filter((_, idx) => idx % sampleStep === 0 || idx === realData.length - 1);
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'purchasing-power-trajectory',
+          title: 'Purchasing Power Erosion Trajectory',
+          icon: 'fa-chart-area',
+          labels: filteredLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Real Purchasing Power Remaining', data: filteredErosion, color: '#EF4444', fill: true },
+            { label: 'Nominal Face Value', data: filteredNominal, color: '#3B82F6', fill: false },
+            { label: 'Future Equivalent Cost', data: filteredFuture, color: '#10B981', fill: false }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'purchasing-power-split',
+          title: 'Purchasing Power Loss Split',
+          icon: 'fa-chart-pie',
+          labels: ['Remaining Real Value', 'Purchasing Power Lost to Inflation'],
+          data: [realValue, purchasingPowerLoss],
+          colors: ['#10B981', '#EF4444'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'future-cost-growth',
+          title: 'Future Cost by Milestone Year',
+          icon: 'fa-chart-column',
+          labels: filteredLabels,
+          format: 'currency',
+          datasets: [{
+            label: 'Cost Needed ($)',
+            data: filteredFuture,
+            colors: filteredFuture.map(() => '#6366F1'),
+            backgroundColor: filteredFuture.map(() => '#6366F1')
+          }]
+        }
+      ];
+
       return {
         stats,
+        charts,
         chart: {
           type: 'line',
           labels,
@@ -3633,6 +5579,12 @@ const TOOLS = {
   // ── Net Worth Calculator ─────────────────────────────────────
   'net-worth-calculator': {
     name: 'Net Worth Calculator',
+    related: [
+      'investment-calculator',
+      'budget-planner',
+      'fire-calculator',
+      'retirement-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-scale-balanced',
     iconClass: 'icon-finance',
@@ -3735,6 +5687,44 @@ const TOOLS = {
           { label: 'Liquid-to-Debt Ratio', value: liquidRatio + '%' },
         ],
         insight,
+        charts: [
+          {
+            type: 'bar',
+            id: 'balance-sheet-overview',
+            title: 'Assets vs Liabilities',
+            icon: 'fa-scale-balanced',
+            labels: ['Total Assets', 'Total Liabilities', 'Net Worth'],
+            format: 'currency',
+            datasets: [{
+              label: 'Amount ($)',
+              data: [totalAssets, totalLiabilities, Math.max(0, netWorth)],
+              colors: ['#10B981', '#EF4444', netWorth >= 0 ? '#6366F1' : '#EF4444'],
+              backgroundColor: ['#10B981', '#EF4444', netWorth >= 0 ? '#6366F1' : '#EF4444']
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'asset-allocation',
+            title: 'Asset Allocation',
+            icon: 'fa-chart-pie',
+            labels: assetLabels,
+            data: assetData,
+            colors: assetColors,
+            format: 'currency',
+            cutout: '58%'
+          },
+          {
+            type: 'doughnut',
+            id: 'liability-split',
+            title: 'Debt Breakdown',
+            icon: 'fa-credit-card',
+            labels: liabilityLabels,
+            data: liabilityData,
+            colors: liabilityColors,
+            format: 'currency',
+            cutout: '58%'
+          }
+        ],
         chart: { labels: assetLabels, data: assetData, colors: assetColors, cutout: '58%' },
         chart2: { labels: liabilityLabels, data: liabilityData, colors: liabilityColors, cutout: '58%' },
         compareChart,
@@ -3780,10 +5770,18 @@ const TOOLS = {
   'fire-calculator': {
     id: 'fire-calculator',
     name: 'FIRE Calculator',
+    related: [
+      'retirement-calculator',
+      'investment-calculator',
+      'savings-calculator',
+      'net-worth-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-fire',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
+    lastReviewed: 'September 2026',
+    revisionDate: '2026-09-20',
     description: 'Calculate your Financial Independence target, estimate when you can retire early, and visualize your journey toward financial freedom.',
     metaTitle: 'FIRE Calculator – Financial Independence & Early Retirement',
     metaDescription: 'Free FIRE Calculator. Calculate your FIRE number, retirement timeline, investment growth, passive income, and financial independence progress with interactive charts.',
@@ -3996,6 +5994,44 @@ const TOOLS = {
         cutout: '70%',
       };
 
+      const charts = [
+        {
+          type: 'area',
+          id: 'portfolio-growth',
+          title: 'Portfolio Growth Timeline',
+          icon: 'fa-chart-area',
+          labels: chartLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Projected Portfolio', data: portfolioData, color: '#6366F1', fill: true },
+            { label: 'FIRE Target Number', data: fireTargetData, color: '#EF4444', fill: false },
+            { label: 'Total Principal Invested', data: contributionsData, color: '#10B981', fill: false }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'portfolio-composition',
+          title: 'Wealth Composition Split',
+          icon: 'fa-chart-pie',
+          labels: ['Your Contributions', 'Compound Investment Gains'],
+          data: [roundTo(totalContributions, 2), roundTo(Math.max(0, totalGains), 2)],
+          colors: ['#6366F1', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'doughnut',
+          id: 'fire-progress',
+          title: 'Progress to Financial Independence',
+          icon: 'fa-bullseye',
+          labels: ['Progress Built', 'Remaining to FIRE Target'],
+          data: [roundTo(progressPct, 2), roundTo(Math.max(0, 100 - progressPct), 2)],
+          colors: ['#10B981', '#E2E8F0'],
+          format: 'percentage',
+          cutout: '70%'
+        }
+      ];
+
       // ── Scenario Comparison Table
       // Optimized plan: 25% higher contributions, 1% higher return, 10% lower expenses
       const altMonthlyContrib = monthlyContrib * 1.25;
@@ -4075,78 +6111,109 @@ const TOOLS = {
         { label: 'Retirement Readiness', value: readinessLabel + ' (' + readinessScore + '/100)', color: readinessColor },
       ];
 
-      return { stats, chart, chart2, compareChart, table, insight };
+      return { stats, charts, chart, chart2, compareChart, table, insight };
     },
 
-    // ── How-To Guide
-    howTo: [
-      'Enter your annual after-tax income and annual expenses — the calculator instantly computes your savings rate.',
-      'Add your current investment portfolio value and monthly contribution amount.',
-      'Set your expected annual return (7-8% is a realistic long-term average for a diversified stock portfolio) and inflation rate (2.5-3% historical average).',
-      'Choose your safe withdrawal rate — the 4% rule is the standard benchmark for a 30-year retirement.',
-      'Select your retirement spending adjustment and FIRE mode (Standard, Lean, Fat, Coast, or Barista) to match your lifestyle goals.',
-      'Review your FIRE number, years until financial independence, passive income projections, and readiness score.',
-      'Use the scenario comparison table to see how increasing contributions, boosting returns, or cutting expenses accelerates your timeline.',
-    ],
+    methodology: {
+      standards: 'Methodology incorporates empirical data from the Trinity Study (Cooley, Hubbard, and Walz, 1998), William Bengen\'s Safe Withdrawal Rate framework, and standard capital decumulation actuarial principles.',
+      summary: 'The FIRE model determines the capital reserve required to sustain perpetual living expenditures based on safe withdrawal rates, calculating the exact timeline to financial independence via monthly compound growth simulations.',
+      assumptions: [
+        'The standard 4% withdrawal rate assumes a balanced portfolio (50–75% equities, remainder fixed income) across a 30-year retirement horizon.',
+        'Accumulation phase assumes recurring monthly investments compounding continuously at constant nominal rates.',
+        'Inflation projections escalate nominal target expenses to reflect future purchasing power requirements.'
+      ],
+      sources: [
+        'Trinity University — Retirement Savings: Choosing a Withdrawal Rate That Is Sustainable (1998)',
+        'Journal of Financial Planning — William Bengen: Determining Withdrawal Rates Using Historical Data',
+        'Center for Retirement Research at Boston College — Financial Independence & Decumulation Models'
+      ],
+      lastReviewed: 'September 2026',
+    },
 
-    // ── Real-World Examples
-    examples: [
-      {
-        title: 'Standard FIRE at 45',
-        input: 'Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7%, Inflation: 2.5%, Withdrawal: 4%',
-        result: 'FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50%',
-      },
-      {
-        title: 'Lean FIRE with Minimalist Lifestyle',
-        input: 'Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Lean FIRE',
-        result: 'FIRE Number: ~$468,750 | Years to FIRE: ~14 years | Savings Rate: 58%',
-      },
-      {
-        title: 'Coast FIRE — Let Compounding Do the Work',
-        input: 'Income: $100,000, Expenses: $50,000, Portfolio: $200,000, Monthly: $2,500, Return: 7%, Inflation: 2.5%, Withdrawal: 4%, Coast FIRE',
-        result: 'Coast Number: ~$131,000 | Current portfolio exceeds coast number — compounding alone reaches FIRE',
-      },
-      {
-        title: 'Aggressive Early Retirement at 40',
-        input: 'Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8%, Inflation: 2.5%, Withdrawal: 4%',
-        result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12 years | Savings Rate: 62.5%',
-      },
-    ],
-    formula: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r] | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years | Monthly Passive Income = Portfolio × Withdrawal Rate ÷ 12',
-
-    // ── SEO Article Content
     article: {
+      id: 'how-to-calculate',
       heading: 'The Complete Guide to FIRE: Financial Independence, Retire Early',
-      intro: 'The FIRE (Financial Independence, Retire Early) movement has transformed how millions of people think about work, savings, and life. Instead of working until 65, FIRE practitioners aggressively save and invest a large portion of their income — often 50% or more — to build a portfolio large enough to fund their lifestyle indefinitely. The GetCalcu FIRE Calculator helps you determine your FIRE number, estimate how long it will take to reach financial independence, and visualize your journey with interactive charts.',
+      intro: 'The FIRE (Financial Independence, Retire Early) movement centers on achieving financial freedom through intentional living, aggressive saving, and disciplined investing in income-generating assets. Rather than retiring at traditional milestones, FIRE allows individuals to fund their living expenses indefinitely through investment returns.',
       sections: [
-        { heading: 'What is FIRE?', body: 'FIRE stands for Financial Independence, Retire Early. It is a lifestyle movement focused on saving aggressively (typically 50-70% of income) and investing those savings in low-cost index funds or other growth assets. The goal is to build a portfolio large enough that its investment returns can cover your living expenses indefinitely — giving you the freedom to retire decades earlier than the traditional retirement age of 65.' },
-        { heading: 'How FIRE Works', body: 'FIRE works through three interconnected principles: saving aggressively, investing consistently, and letting compound growth do the heavy lifting. By saving 50% or more of your income, you dramatically shorten the time needed to reach financial independence. Your investments grow through compound returns — each year\'s gains earn gains in future years. Once your portfolio reaches roughly 25 times your annual expenses (the 4% rule), you can safely withdraw 4% per year indefinitely.' },
-        { heading: 'Understanding the 4% Rule', body: 'The 4% rule originated from the Trinity Study, a landmark 1998 research paper that analyzed historical stock and bond returns. It found that withdrawing 4% of your portfolio in the first year of retirement, then adjusting for inflation each year, had a high probability of lasting 30 years. This translates to a FIRE number of 25 times your annual expenses. While the 4% rule has limitations — it assumes a 30-year retirement and historical market conditions — it remains the most widely used benchmark in the FIRE community.' },
-        { heading: 'Types of FIRE', body: 'The FIRE movement has evolved into several distinct strategies. Standard FIRE targets your current lifestyle with a 4% withdrawal rate. Lean FIRE assumes a minimalist lifestyle with significantly lower expenses (often 25-50% less). Fat FIRE targets a more luxurious retirement with higher spending. Coast FIRE means your current portfolio will grow to your FIRE number without additional contributions — you just need to cover current expenses. Barista FIRE combines part-time work with a smaller portfolio, where part-time income covers a portion of expenses.' },
-        { heading: 'How to Reach FIRE Faster', body: 'Accelerating your path to FIRE requires a multi-pronged approach. Increasing your income through career advancement, side hustles, or freelancing gives you more to save. Reducing expenses through mindful spending, downsizing, or geo-arbitrage (living in lower-cost areas) boosts your savings rate. Investing in low-cost index funds with 7-10% historical returns maximizes compound growth. Tax efficiency — using 401(k)s, IRAs, HSAs, and taxable accounts strategically — keeps more of your returns. Diversification across asset classes reduces risk. Automating your savings ensures consistency. And taking advantage of employer retirement plan matches is essentially free money.' },
-        { heading: 'Common FIRE Mistakes', body: 'Even well-intentioned FIRE practitioners make mistakes. Ignoring inflation can leave you short in retirement — always use inflation-adjusted returns. Unrealistic return assumptions (expecting 12%+ annually) can derail your plan. Spending creep — gradually increasing expenses as income rises — undermines your savings rate. Poor diversification concentrates risk in a single asset class. Early withdrawals from retirement accounts trigger penalties and taxes. And underestimating healthcare costs — especially before Medicare eligibility — is one of the most common FIRE planning errors.' },
-        { heading: 'FIRE Calculation Formula', body: 'The core FIRE formula is: FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate. For example, if your annual expenses are $50,000 and you use a 4% withdrawal rate, your FIRE number is $1,250,000. To project portfolio growth, use the compound interest formula: FV = P(1+r)^n + PMT × [((1+r)^n − 1) / r], where P is your current portfolio, r is the monthly return rate, n is the number of months, and PMT is your monthly contribution. The inflation-adjusted FIRE number accounts for rising costs: Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation Rate)^Years.' },
-        { heading: 'Example Calculation', body: 'Consider a realistic scenario: You earn $80,000 after taxes, spend $40,000 annually, have $100,000 invested, and contribute $2,000 monthly. Your savings rate is 50%. Using a 4% withdrawal rate, your FIRE number is $1,000,000. With a 7% annual return, your portfolio grows to $1,000,000 in approximately 17.5 years. At that point, your portfolio generates $40,000 per year in passive income — exactly matching your expenses. Adjusting for 2.5% inflation, you would need approximately $1,540,000 in future dollars to maintain the same purchasing power.' },
+        {
+          id: 'how-fire-works',
+          heading: 'How FIRE Works: The Savings Rate Engine',
+          body: [
+            'The core lever of financial independence is your savings rate—the percentage of after-tax income retained and invested rather than consumed.',
+            'While traditional retirement plans assume a 10–15% savings rate over 40+ working years, saving 50% of income allows you to fund one year of living expenses for every year worked. At a 70% savings rate, financial independence can be achieved in under a decade.'
+          ]
+        },
+        {
+          id: 'safe-withdrawal-rate-trinity',
+          heading: 'The 4% Rule and the Trinity Study',
+          body: [
+            'The 4% rule originated from the 1998 Trinity Study, which backtested historical US market returns across various asset allocations. It concluded that an initial 4% withdrawal from a diversified stock/bond portfolio, adjusted annually for inflation, sustained a 95%+ success rate over a 30-year horizon.',
+            'Mathematically, a 4% withdrawal rate requires a portfolio equal to 25 times your annual living expenses (FIRE Number = Annual Expenses × 25). For longer retirement spans (40–50 years), many planners recommend a conservative 3.25–3.5% withdrawal rate (28.5x to 30.7x expenses).'
+          ]
+        },
+        {
+          id: 'fire-strategies-compared',
+          heading: 'Understanding FIRE Variations: Lean, Fat, Coast, and Barista',
+          body: [
+            'Standard FIRE: Targets your existing lifestyle with a 4% withdrawal rate (typically 25x current expenses).',
+            'Lean FIRE: Targets a minimalist lifestyle with expenses typically 25–40% below average (under $40,000/year), requiring a lower target portfolio.',
+            'Fat FIRE: Targets an abundant retirement with higher spending (often $100,000+/year) to support extensive travel and luxury.',
+            'Coast FIRE: The milestone where your existing investment portfolio will compound to your full retirement number by age 65 without requiring further contributions; you only need to earn enough to cover current living costs.',
+            'Barista FIRE: A hybrid model where part-time or freelance work covers a portion of living expenses and health insurance, significantly reducing the portfolio size needed.'
+          ]
+        },
+        {
+          id: 'sequence-of-returns-risk',
+          heading: 'Sequence of Returns Risk in Early Retirement',
+          body: [
+            'Sequence of returns risk refers to the danger of experiencing a major market downturn in the first 3 to 5 years of retirement. Selling depreciated assets to fund living expenses permanently depletes the portfolio base.',
+            'Mitigation strategies include maintaining a 1- to 2-year cash buffer, utilizing a dynamic withdrawal strategy (reducing withdrawals during market corrections), or implementing a bond tent during the retirement transition.'
+          ]
+        }
       ],
     },
-
-    // ── Schema-Ready FAQs
+    howTo: [
+      'Enter your annual after-tax income and annual living expenses to determine your current savings rate.',
+      'Specify your current investment portfolio balance and recurring monthly contribution.',
+      'Set your expected annual investment return rate (7–8% nominal long-term average) and inflation rate.',
+      'Select your target Safe Withdrawal Rate (4% is standard; 3.5% for extended early retirement).',
+      'Choose your preferred FIRE strategy mode (Standard, Lean, Fat, Coast, or Barista) and spending adjustment.',
+      'Review your calculated FIRE number, years to financial independence, estimated retirement date, and readiness score.',
+      'Compare your current trajectory against the optimized scenario table to discover how minor adjustments accelerate your timeline.'
+    ],
+    examples: [
+      {
+        title: 'Standard FIRE Trajectory',
+        input: 'Income: $80,000, Expenses: $40,000, Portfolio: $100,000, Monthly: $2,000, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%',
+        result: 'FIRE Number: $1,000,000 | Years to FIRE: ~17.5 years | Savings Rate: 50.0%'
+      },
+      {
+        title: 'Lean FIRE Minimalist Plan',
+        input: 'Income: $60,000, Expenses: $25,000, Portfolio: $50,000, Monthly: $1,500, Return: 7.0%, Inflation: 2.5%, Withdrawal: 4.0%, Lean FIRE',
+        result: 'FIRE Number: $468,750 | Years to FIRE: ~14.0 years | Savings Rate: 58.3%'
+      },
+      {
+        title: 'Aggressive Early Retirement',
+        input: 'Income: $120,000, Expenses: $45,000, Portfolio: $150,000, Monthly: $4,000, Return: 8.0%, Inflation: 2.5%, Withdrawal: 4.0%',
+        result: 'FIRE Number: $1,125,000 | Years to FIRE: ~12.0 years | Savings Rate: 62.5%'
+      }
+    ],
+    formulaTitle: 'FIRE Number & Target Horizon Formula',
+    formula: 'FIRE Number = Annual Retirement Expenses ÷ Safe Withdrawal Rate | Savings Rate = (Income − Expenses) ÷ Income × 100 | Inflation-Adjusted FIRE = FIRE Number × (1 + Inflation)^Years',
+    formulaExplanation: 'Determines the financial independence portfolio target (FIRE Number) required to sustain living expenses, along with the savings rate driving your retirement horizon.',
+    formulaVariables: [
+      { name: 'FIRE Number', description: 'Total portfolio capital required to sustain living expenses indefinitely' },
+      { name: 'Safe Withdrawal Rate', description: 'Annual percentage withdrawn from portfolio (typically 3.5%–4.0%)' },
+      { name: 'Savings Rate', description: 'Percentage of net income invested toward wealth accumulation' },
+      { name: 'Annual Retirement Expenses', description: 'Projected annual living expenditures adjusted for lifestyle mode' },
+      { name: 'Inflation-Adjusted FIRE', description: 'Future nominal dollar value required to maintain equivalent purchasing power' }
+    ],
     faqs: [
-      { q: 'What is a good FIRE number?', a: 'A good FIRE number is typically 25 times your annual retirement expenses, based on the 4% rule. For example, if you plan to spend $40,000 per year in retirement, your FIRE number is $1,000,000. However, your specific FIRE number depends on your lifestyle, withdrawal rate, and expected retirement duration. Use our FIRE Calculator to find your personalized number.' },
-      { q: 'Is the 4% rule still valid?', a: 'The 4% rule, derived from the Trinity Study, remains a widely used benchmark but has limitations. It assumes a 30-year retirement, a 50/50 stock-bond portfolio, and historical market conditions. Some financial experts suggest a 3-3.5% withdrawal rate for longer retirements (40+ years) or conservative portfolios. The 4% rule is a useful starting point, but you should stress-test your plan with different scenarios.' },
-      { q: 'How much should I save for FIRE?', a: 'The amount you need to save depends on your target FIRE number and timeline. A common benchmark is saving 50% of your after-tax income, which typically allows FIRE in 15-20 years. Saving 25% takes about 30 years, while saving 70% can achieve FIRE in under 10 years. Use our FIRE Calculator to see how your savings rate affects your timeline.' },
-      { q: 'Can I retire at 40?', a: 'Yes, retiring at 40 is achievable with aggressive saving and investing. To retire at 40, you typically need a savings rate of 50-70% of your income and a portfolio of 25-30 times your annual expenses. For example, with $50,000 annual expenses, you would need $1.25-1.5 million. Starting early, maximizing income, and keeping expenses low are the keys to early retirement.' },
-      { q: 'What is Coast FIRE?', a: 'Coast FIRE is a FIRE strategy where your current portfolio is large enough that it will grow to your FIRE number by retirement age without any additional contributions. You "coast" on compound growth while working to cover current expenses. For example, if you need $1,000,000 at age 60 and have 30 years to grow at 7%, you only need about $131,000 today to reach that goal.' },
-      { q: 'What is Lean FIRE?', a: 'Lean FIRE is a FIRE strategy that targets a minimalist lifestyle with significantly lower expenses — often 25-50% less than a standard lifestyle. Lean FIRE practitioners typically aim for a FIRE number of $500,000-$750,000, which supports $20,000-$30,000 in annual spending at a 4% withdrawal rate. This approach requires frugal living but can be achieved much faster.' },
-      { q: 'How accurate is this calculator?', a: 'This FIRE Calculator uses standard financial formulas (compound interest, the 4% rule, inflation adjustment) and provides accurate projections based on your inputs. However, all financial projections involve uncertainty — actual market returns, inflation, and expenses will vary. Use conservative assumptions and review your plan regularly. The calculator is a planning tool, not a guarantee.' },
-      { q: 'Should inflation be included in FIRE calculations?', a: 'Yes, absolutely. Inflation erodes purchasing power over time — at 2.5% annual inflation, $1,000,000 today will only buy about $477,000 worth of goods in 30 years. Our FIRE Calculator shows both your nominal FIRE number and the inflation-adjusted amount you will actually need in future dollars.' },
-      { q: 'What investment return should I assume?', a: 'For long-term stock market investments (15+ years), historical S&P 500 returns average 7-10% annually before inflation, or 4-7% after inflation. A conservative planning assumption is 6-7% nominal or 4-5% real return. For a balanced 60/40 portfolio, use 5-7%. Always use a rate you are comfortable with and stress-test with lower returns.' },
-      { q: 'What happens if markets decline?', a: 'Market declines are normal and expected — the stock market has experienced 10-20% drawdowns roughly every 3-5 years. During the accumulation phase, market declines are actually beneficial because your contributions buy more shares at lower prices. The risk is highest during the withdrawal phase, which is why the 4% rule and having a cash buffer are important. Consider a bond tent or cash reserve to weather early-retirement market downturns.' },
-      { q: 'What is Barista FIRE?', a: 'Barista FIRE is a hybrid strategy where you retire from your full-time career but continue working part-time (like at a coffee shop, hence the name) to cover a portion of your expenses. This reduces the FIRE number you need, since part-time income covers some costs. It also provides health insurance benefits in some cases, which can be a significant advantage before Medicare eligibility.' },
-      { q: 'How does the savings rate affect my FIRE timeline?', a: 'Your savings rate is the single most powerful factor in your FIRE timeline. At a 10% savings rate, FIRE takes about 51 years. At 25%, it takes about 32 years. At 50%, it takes about 17 years. At 70%, it takes about 9 years. The relationship is exponential — small increases in savings rate near the high end dramatically shorten your timeline.' },
-      { q: 'What is the difference between FIRE and traditional retirement?', a: 'Traditional retirement typically means working until age 65-67, relying on Social Security, pensions, and retirement accounts. FIRE means achieving financial independence much earlier — often in your 30s, 40s, or 50s — by saving aggressively and living on investment income. FIRE gives you the freedom to choose how you spend your time, whether that means retiring completely, working part-time, or pursuing passion projects.' },
-      { q: 'How do taxes affect my FIRE plan?', a: 'Taxes can significantly impact your FIRE journey. Using tax-advantaged accounts (401(k), IRA, HSA) reduces your current tax burden and accelerates growth. In retirement, strategically withdrawing from taxable, tax-deferred, and tax-free accounts can minimize your tax bill. Consider Roth conversion ladders to access retirement funds before age 59.5 without penalties. Our calculator uses after-tax income, so your savings rate already reflects your tax situation.' },
-      { q: 'What is the 25x rule?', a: 'The 25x rule is a quick way to estimate your FIRE number: multiply your annual expenses by 25. This is derived from the 4% rule — if you can withdraw 4% of your portfolio annually, you need 25 times your annual expenses (1 ÷ 0.04 = 25). For example, $40,000 in annual expenses × 25 = $1,000,000 FIRE number.' },
+      { q: 'What is a good FIRE number?', a: 'A standard FIRE number is 25 times your expected annual retirement expenses, derived from the 4% safe withdrawal rule. For example, spending $40,000 per year requires a $1,000,000 portfolio ($40,000 ÷ 0.04). If you want greater safety or plan to retire before age 40, using a 3.3% withdrawal rate requires 30 times annual expenses ($1,200,000).' },
+      { q: 'Is the 4% rule still valid for early retirement?', a: 'The 4% rule was modeled on a 30-year horizon. For an early retirement spanning 40 to 50 years, academic research suggests aiming for a 3.25% to 3.75% withdrawal rate to account for longer market exposure and potential low-return decades. Combining a 3.5% initial rate with flexible spending in down markets provides high longevity confidence.' },
+      { q: 'How much should I save each month to retire early?', a: 'Your savings rate matters more than absolute dollar amounts. Saving 50% of your take-home pay puts you on track to retire in roughly 15–17 years; saving 65% cuts the timeline to approximately 10 years. Our calculator projects your exact timeline based on your starting portfolio, return rate, and monthly contribution.' },
+      { q: 'What is Coast FIRE vs Barista FIRE?', a: 'Coast FIRE means your existing portfolio is large enough that, without another dollar contributed, it will grow via compound interest to your full retirement number by age 65. You only need to work enough to cover immediate expenses. Barista FIRE means you work part-time or in low-stress employment to cover part of your living costs and health insurance, supplementing your income with smaller portfolio withdrawals.' },
+      { q: 'How does inflation affect my FIRE target?', a: 'Inflation raises the nominal cost of living over time. If your annual expenses are $40,000 today, at 2.5% inflation you will need approximately $61,700 in nominal dollars in 17.5 years to maintain the same purchasing power. Our calculator displays both your real baseline FIRE number and your inflation-adjusted future target.' },
     ],
   },
 
@@ -4154,6 +6221,13 @@ const TOOLS = {
   'amortization-calculator': {
     id: 'amortization-calculator',
     name: 'Amortization Calculator',
+    related: [
+      'mortgage-calculator',
+      '15-year-mortgage-calculator',
+      'refinance-calculator',
+      'loan-calculator',
+      'loan-interest-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-chart-simple',
     iconClass: 'icon-finance',
@@ -4552,8 +6626,57 @@ const TOOLS = {
       }
 
       // ── Build return object ──
+      const charts = [
+        {
+          type: 'area',
+          id: 'balance-trajectory',
+          title: 'Balance Trajectory',
+          icon: 'fa-chart-area',
+          labels: balanceChartLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Remaining Balance', data: balanceChartData, color: '#6366F1', fill: true },
+          ],
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-breakdown',
+          title: 'Annual Breakdown',
+          icon: 'fa-chart-column',
+          labels: yearLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Principal', data: principalData, color: '#6366F1', stack: 'payment' },
+            { label: 'Interest', data: interestData, color: '#F59E0B', stack: 'payment' },
+          ],
+        },
+        {
+          type: 'doughnut',
+          id: 'payment-composition',
+          title: 'Payment Breakdown',
+          icon: 'fa-chart-pie',
+          labels: doughnutLabels,
+          data: doughnutData,
+          colors: doughnutColors,
+          format: 'currency',
+          cutout: '62%',
+        },
+        {
+          type: 'area',
+          id: 'cumulative-interest',
+          title: 'Cumulative Interest',
+          icon: 'fa-arrow-trend-up',
+          labels: cumLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Cumulative Interest', data: cumInterestData, color: '#EF4444', fill: true },
+          ],
+        },
+      ];
+
       const result = {
         stats,
+        charts,
         chart: {
           type: 'line',
           labels: balanceChartLabels,
@@ -4701,6 +6824,11 @@ const TOOLS = {
   // ── Tip Calculator ───────────────────────────────────────────────
   'tip-calculator': {
     name: 'Tip Calculator',
+    related: [
+      'percentage-calculator',
+      'budget-planner',
+      'date-calculator'
+    ],
     category: 'Math',
     icon: 'fa-receipt',
     iconClass: 'icon-math',
@@ -4724,6 +6852,54 @@ const TOOLS = {
       const total = roundTo(bill + taxAmount + tipAmount, 2);
       const perPerson = roundTo(total / people, 2);
       const tipPerPerson = roundTo(tipAmount / people, 2);
+
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'bill-breakdown',
+          title: 'Total Outflow Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Pre-Tax Bill', 'Tip Amount', 'Sales Tax'],
+          data: [bill, tipAmount, taxAmount],
+          colors: ['#6366F1', '#10B981', '#F59E0B'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'tip-rate-scenarios',
+          title: 'Tip Percentage Scenarios',
+          icon: 'fa-scale-balanced',
+          labels: ['15% (Fair)', '18% (Standard)', '20% (Great)', '25% (Exceptional)', `Selected (${tipPct}%)`],
+          format: 'currency',
+          datasets: [{
+            label: 'Tip Amount ($)',
+            data: [
+              roundTo(bill * 0.15, 2),
+              roundTo(bill * 0.18, 2),
+              roundTo(bill * 0.20, 2),
+              roundTo(bill * 0.25, 2),
+              tipAmount
+            ],
+            colors: ['#94A3B8', '#3B82F6', '#10B981', '#8B5CF6', '#6366F1'],
+            backgroundColor: ['#94A3B8', '#3B82F6', '#10B981', '#8B5CF6', '#6366F1']
+          }]
+        },
+        {
+          type: 'stackedBar',
+          id: 'per-person-split',
+          title: 'Individual Share per Person',
+          icon: 'fa-users',
+          labels: people > 1 ? Array.from({ length: Math.min(people, 6) }, (_, i) => `Person ${i + 1}`) : ['Solo Diner'],
+          format: 'currency',
+          datasets: [
+            { label: 'Bill Share', data: Array(Math.min(people, 6)).fill(roundTo(bill / people, 2)), color: '#6366F1', stack: 'split' },
+            { label: 'Tip Share', data: Array(Math.min(people, 6)).fill(tipPerPerson), color: '#10B981', stack: 'split' },
+            { label: 'Tax Share', data: Array(Math.min(people, 6)).fill(roundTo(taxAmount / people, 2)), color: '#F59E0B', stack: 'split' }
+          ]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Tip Amount', value: fmt(tipAmount), highlight: true },
@@ -4732,6 +6908,7 @@ const TOOLS = {
           { label: 'Per Person', value: fmt(perPerson) },
           { label: 'Tip Per Person', value: fmt(tipPerPerson) },
         ],
+        charts,
       };
     },
     article: {
@@ -4765,6 +6942,13 @@ const TOOLS = {
   'true-home-buying-system': {
     id: 'true-home-buying-system',
     name: 'True Home Buying System',
+    related: [
+      'mortgage-calculator',
+      'rent-vs-buy-calculator',
+      'house-affordability-calculator',
+      'fha-loan-calculator',
+      '15-year-mortgage-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house-circle-check',
     iconClass: 'icon-finance',
@@ -5493,10 +7677,32 @@ const TOOLS = {
         { label: '10-Year Equity vs Index Fund', value: sym + y10.equity.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' vs ' + sym + y10.indexFundValue.toLocaleString('en-US', { maximumFractionDigits: 0 }), highlight: true }
       ];
 
+      const charts = [
+        {
+          id: 'monthly-pitia-split',
+          label: 'Monthly PITIA Breakdown',
+          icon: 'fa-chart-pie',
+          ...chart
+        },
+        {
+          id: 'equity-vs-sp500',
+          label: 'Home Equity vs S&P 500',
+          icon: 'fa-chart-line',
+          ...chart2
+        },
+        {
+          id: 'amortization-home-value',
+          label: 'Amortization & Equity Curve',
+          icon: 'fa-chart-area',
+          ...chart3
+        }
+      ];
+
       return {
         summary,
         stats,
         table: matrixTable,
+        charts,
         chart,
         chart2,
         chart3,
@@ -5570,7 +7776,7 @@ const TOOLS = {
     iconClass: 'icon-business',
     tagClass: 'tag-business',
     description: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
-    metaTitle: 'True Freelance Hourly Rate Calculator (After Taxes & Expenses)',
+    metaTitle: 'Freelance True Rate System | Platform Fees & Billable Utilization Calculator — GetCalcu',
     metaDescription: 'Calculate your true freelance hourly rate, required gross billing, billable utilization, and take-home pay after taxes, platform fees, and business expenses.',
     keywords: [
       'freelance true hourly rate calculator',
@@ -5589,8 +7795,7 @@ const TOOLS = {
       'self-employment-tax-calculator',
       'salary-calculator',
       'break-even-calculator',
-      'profit-margin-calculator',
-      'budget-planner'
+      'profit-margin-calculator'
     ],
     presets: [
       {
@@ -5906,10 +8111,32 @@ const TOOLS = {
         { label: 'Annual Platform & Gateway Fees', value: '$' + annualPlatformFees.toLocaleString('en-US', { minimumFractionDigits: 2 }) }
       ];
 
+      const charts = [
+        {
+          id: 'revenue-waterfall',
+          label: 'Annual Revenue Waterfall',
+          icon: 'fa-chart-column',
+          ...chart
+        },
+        {
+          id: 'working-time-split',
+          label: 'Working Time Allocation',
+          icon: 'fa-chart-pie',
+          ...chart2
+        },
+        {
+          id: 'hourly-rate-decay',
+          label: 'Hourly Rate Decay',
+          icon: 'fa-sliders',
+          ...chart3
+        }
+      ];
+
       return {
         summary,
         stats,
         table: waterfallTable,
+        charts,
         chart,
         chart2,
         chart3,
@@ -5974,6 +8201,11 @@ const TOOLS = {
   'beam-deflection-calculator': {
     id: 'beam-deflection-calculator',
     name: 'Beam Deflection Calculator',
+    related: [
+      'ohms-law-calculator',
+      'pressure-calculator',
+      'concrete-calculator'
+    ],
     category: 'Engineering',
     icon: 'fa-ruler-combined',
     iconClass: 'icon-engineering',
@@ -6002,13 +8234,105 @@ const TOOLS = {
       } else {
         deflection = (P * L * L * L) / (3 * E * I);
       }
+
+      // Generate Deflection Curve Profile across span
+      const spanLabels = [];
+      const deflectionCurve = [];
+      for (let i = 0; i <= 10; i++) {
+        const fraction = i / 10;
+        const x = fraction * L;
+        spanLabels.push(`${Math.round(fraction * 100)}% (${roundTo(x / 12, 1)}ft)`);
+        let y = 0;
+        if (beamType === 'simply') {
+          const symX = x <= L / 2 ? x : L - x;
+          y = (P * symX * (3 * L * L - 4 * symX * symX)) / (48 * E * I);
+        } else {
+          y = (P * x * x * (3 * L - x)) / (6 * E * I);
+        }
+        deflectionCurve.push(roundTo(y, 4));
+      }
+
+      const limit360 = roundTo(L / 360, 4);
+      const limit240 = roundTo(L / 240, 4);
+      const limit180 = roundTo(L / 180, 4);
+
+      const charts = [
+        {
+          id: 'deflection-profile',
+          label: 'Deflection Profile',
+          icon: 'fa-chart-area',
+          type: 'line',
+          labels: spanLabels,
+          datasets: [{
+            label: 'Deflection (in)',
+            data: deflectionCurve,
+            color: '#6366F1',
+            borderColor: '#6366F1',
+            fill: true
+          }],
+          yLabel: 'Deflection (in)',
+          title: `Deflection Curve along Span (${beamType === 'simply' ? 'Simply Supported' : 'Cantilever'})`
+        },
+        {
+          id: 'code-limits-comparison',
+          label: 'Code Limits Comparison',
+          icon: 'fa-chart-column',
+          type: 'bar',
+          labels: ['Actual Max Deflection', 'L/360 (Floors/Live)', 'L/240 (Total Load)', 'L/180 (Roof/Cantilever)'],
+          datasets: [{
+            label: 'Inches',
+            data: [roundTo(deflection, 4), limit360, limit240, limit180],
+            backgroundColor: [
+              deflection <= limit360 ? '#10B981' : '#EF4444',
+              '#3B82F6',
+              '#F59E0B',
+              '#94A3B8'
+            ]
+          }],
+          yLabel: 'Inches',
+          title: 'Actual Deflection vs. Standard Building Code Thresholds'
+        }
+      ];
+
+      const complianceRows = [
+        { code: 'L/360 Limit', standard: 'Floors under live load', allowable: limit360 + ' in', actual: roundTo(deflection, 4) + ' in', status: deflection <= limit360 ? 'PASS (Compliant)' : 'FAIL (Excessive)' },
+        { code: 'L/240 Limit', standard: 'Total load deflection', allowable: limit240 + ' in', actual: roundTo(deflection, 4) + ' in', status: deflection <= limit240 ? 'PASS (Compliant)' : 'FAIL (Excessive)' },
+        { code: 'L/180 Limit', standard: 'Roofs without plaster', allowable: limit180 + ' in', actual: roundTo(deflection, 4) + ' in', status: deflection <= limit180 ? 'PASS (Compliant)' : 'FAIL (Excessive)' }
+      ];
+
+      const complianceTable = makeTableSpec({
+        mode: 'table',
+        title: 'Building Code Deflection Compliance Check',
+        columns: [
+          { key: 'code', label: 'Standard Limit', emphasis: true },
+          { key: 'standard', label: 'Application Scope' },
+          { key: 'allowable', label: 'Allowable Deflection' },
+          { key: 'actual', label: 'Calculated Deflection', emphasis: true },
+          { key: 'status', label: 'Compliance Status' }
+        ],
+        rows: complianceRows
+      });
+
+      const pass360 = deflection <= limit360;
+
       return {
         stats: [
           { label: 'Beam Type', value: beamType === 'simply' ? 'Simply Supported' : 'Cantilever' },
           { label: 'Max Deflection', value: roundTo(deflection, 4) + ' in', highlight: true },
           { label: 'Deflection (in)', value: roundTo(deflection, 4) },
           { label: 'L/Δ Ratio', value: 'L/' + roundTo(L / deflection, 1) },
+          { label: 'Span Length', value: `${roundTo(L / 12, 1)} ft (${roundTo(L, 1)} in)` },
+          { label: 'L/360 Allowable', value: limit360 + ' in' }
         ],
+        charts,
+        chart: charts[0],
+        table: complianceTable,
+        insight: {
+          tone: pass360 ? 'positive' : 'warning',
+          icon: pass360 ? 'fa-circle-check' : 'fa-triangle-exclamation',
+          headline: `Maximum deflection is ${roundTo(deflection, 4)} inches (${pass360 ? 'Meets L/360 standard' : 'Exceeds standard L/360 limit'}).`,
+          detail: `Under a ${P.toLocaleString('en-US')} lb point load, the beam achieves an L/${roundTo(L / deflection, 1)} span ratio. The allowable L/360 limit is ${limit360} inches. ${pass360 ? 'The member demonstrates adequate structural stiffness under standard serviceability criteria.' : 'Consider selecting a section with higher moment of inertia (I) or decreasing the unbraced span length.'}`
+        },
         formula: 'δ = (P × L³) / (48 × E × I) [simply] | δ = (P × L³) / (3 × E × I) [cantilever]',
       };
     },
@@ -6034,6 +8358,11 @@ const TOOLS = {
     id: 'ohms-law-calculator',
     name: "Ohm's Law Calculator",
     category: 'Engineering',
+    related: [
+      'beam-deflection-calculator',
+      'pressure-calculator',
+      'unit-converter'
+    ],
     icon: 'fa-bolt',
     iconClass: 'icon-engineering',
     tagClass: 'tag-engineering',
@@ -6069,13 +8398,74 @@ const TOOLS = {
 
       P = V * I;
 
+      const charts = [
+        {
+          id: 'circuit-parameters',
+          label: 'Circuit Quantities',
+          icon: 'fa-chart-column',
+          type: 'bar',
+          labels: ['Voltage (V)', 'Current (A)', 'Resistance (Ω)', 'Power (W)'],
+          datasets: [{
+            label: 'Value',
+            data: [roundTo(V, 2), roundTo(I, 4), roundTo(R, 2), roundTo(P, 2)],
+            backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444']
+          }],
+          title: "Ohm's Law Operating Parameters"
+        },
+        {
+          id: 'power-curve',
+          label: 'Power vs. Current Curve',
+          icon: 'fa-chart-line',
+          type: 'line',
+          labels: ['0.25x I', '0.5x I', '0.75x I', '1.0x I (Active)', '1.25x I', '1.5x I', '2.0x I'],
+          datasets: [{
+            label: 'Power Dissipation P = I²R (Watts)',
+            data: [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(m => roundTo((m * I) * (m * I) * R, 2)),
+            color: '#EF4444',
+            borderColor: '#EF4444',
+            fill: true
+          }],
+          yLabel: 'Watts (W)',
+          title: 'Power Dissipation Scaling with Current'
+        }
+      ];
+
+      const energy1h = roundTo(P, 2);
+      const energy24h = roundTo((P * 24) / 1000, 3);
+      const energyMonth = roundTo((P * 24 * 30) / 1000, 2);
+
+      const circuitTable = makeTableSpec({
+        mode: 'table',
+        title: 'Circuit Energy Consumption & Power Dissipation',
+        columns: [
+          { key: 'duration', label: 'Operating Duration', emphasis: true },
+          { key: 'energy', label: 'Energy Consumed', emphasis: true },
+          { key: 'estCost', label: 'Est. Cost (@ $0.16/kWh)' }
+        ],
+        rows: [
+          { duration: '1 Hour Continuous', energy: energy1h + ' Wh', estCost: '$' + roundTo((energy1h / 1000) * 0.16, 4) },
+          { duration: '24 Hours (1 Day)', energy: energy24h + ' kWh', estCost: '$' + roundTo(energy24h * 0.16, 3) },
+          { duration: '30 Days (1 Month)', energy: energyMonth + ' kWh', estCost: '$' + roundTo(energyMonth * 0.16, 2) }
+        ]
+      });
+
       return {
         stats: [
           { label: 'Voltage (V)', value: roundTo(V, 2) + ' V', highlight: calculatedField === 'Voltage' },
           { label: 'Current (I)', value: roundTo(I, 4) + ' A', highlight: calculatedField === 'Current' },
           { label: 'Resistance (R)', value: roundTo(R, 2) + ' Ω', highlight: calculatedField === 'Resistance' || calculatedField.includes('Resistance') },
           { label: 'Power (P)', value: roundTo(P, 2) + ' W', highlight: true },
+          { label: 'Daily Energy', value: energy24h + ' kWh/day' }
         ],
+        charts,
+        chart: charts[0],
+        table: circuitTable,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-bolt',
+          headline: `Circuit dissipates ${roundTo(P, 2)} Watts at ${roundTo(V, 2)}V and ${roundTo(I, 4)}A.`,
+          detail: `With a resistance of ${roundTo(R, 2)} Ω, current flow is ${roundTo(I, 4)} Amps. Over 24 hours of continuous operation, this circuit consumes ${energy24h} kWh of electrical energy.`
+        },
         formula: 'V = I × R | I = V ÷ R | R = V ÷ I | P = V × I = I² × R',
       };
     },
@@ -6094,6 +8484,11 @@ const TOOLS = {
   'pressure-calculator': {
     id: 'pressure-calculator',
     name: 'Pressure Calculator',
+    related: [
+      'ohms-law-calculator',
+      'beam-deflection-calculator',
+      'unit-converter'
+    ],
     category: 'Engineering',
     icon: 'fa-gauge-high',
     iconClass: 'icon-engineering',
@@ -6133,13 +8528,73 @@ const TOOLS = {
         atm = psi * 0.068046;
       }
 
+      const charts = [
+        {
+          id: 'pressure-comparison',
+          label: 'Unit Comparison',
+          icon: 'fa-chart-column',
+          type: 'bar',
+          labels: ['PSI (lbf/in²)', 'kPa (kN/m²)', 'Bar (x10 scale)', 'Atmospheres (x10 scale)'],
+          datasets: [{
+            label: 'Equivalent Pressure',
+            data: [roundTo(psi, 2), roundTo(kpa, 2), roundTo(bar * 10, 2), roundTo(atm * 10, 2)],
+            backgroundColor: ['#6366F1', '#3B82F6', '#10B981', '#F59E0B']
+          }],
+          title: 'Pressure Values Across Engineering Units'
+        },
+        {
+          id: 'area-sensitivity',
+          label: 'Area Sensitivity Curve',
+          icon: 'fa-chart-line',
+          type: 'line',
+          labels: ['0.5x Area', '0.75x Area', '1.0x Area (Current)', '1.25x Area', '1.5x Area', '2.0x Area'],
+          datasets: [{
+            label: isMetric ? 'Pressure (kPa)' : 'Pressure (PSI)',
+            data: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(m => roundTo((isMetric ? kpa : psi) / m, 2)),
+            color: '#6366F1',
+            borderColor: '#6366F1',
+            fill: true
+          }],
+          yLabel: isMetric ? 'kPa' : 'PSI',
+          title: 'Pressure vs Contact Area (Constant Force)'
+        }
+      ];
+
+      const pressureTable = makeTableSpec({
+        mode: 'table',
+        title: 'Comprehensive Pressure Unit Equivalencies',
+        columns: [
+          { key: 'unit', label: 'Unit System', emphasis: true },
+          { key: 'val', label: 'Calculated Magnitude', emphasis: true },
+          { key: 'standardAtm', label: 'Atmospheric Ratio' }
+        ],
+        rows: [
+          { unit: 'Pounds per Square Inch (PSI)', val: roundTo(psi, 2) + ' psi', standardAtm: roundTo(psi / 14.6959, 3) + ' x 1 atm' },
+          { unit: 'Kilopascals (kPa)', val: roundTo(kpa, 2) + ' kPa', standardAtm: roundTo(kpa / 101.325, 3) + ' x 1 atm' },
+          { unit: 'Bar', val: roundTo(bar, 4) + ' bar', standardAtm: roundTo(bar / 1.01325, 3) + ' x 1 atm' },
+          { unit: 'Standard Atmospheres (atm)', val: roundTo(atm, 4) + ' atm', standardAtm: roundTo(atm, 3) + ' x 1 atm' },
+          { unit: 'Megapascals (MPa)', val: roundTo(kpa / 1000, 4) + ' MPa', standardAtm: roundTo(kpa / 1000 / 0.101325, 3) + ' x 1 atm' },
+          { unit: 'Torr / mmHg', val: roundTo(atm * 760, 1) + ' mmHg', standardAtm: roundTo(atm, 3) + ' x 1 atm' }
+        ]
+      });
+
       return {
         stats: [
           { label: 'Pressure (PSI)', value: roundTo(psi, 2) + ' psi', highlight: !isMetric },
           { label: 'Pressure (kPa)', value: roundTo(kpa, 2) + ' kPa', highlight: isMetric },
           { label: 'Pressure (Bar)', value: roundTo(bar, 4) + ' bar' },
           { label: 'Atmospheres (atm)', value: roundTo(atm, 4) + ' atm' },
+          { label: 'Megapascals (MPa)', value: roundTo(kpa / 1000, 4) + ' MPa' }
         ],
+        charts,
+        chart: charts[0],
+        table: pressureTable,
+        insight: {
+          tone: 'positive',
+          icon: 'fa-gauge-high',
+          headline: `Calculated pressure is ${roundTo(isMetric ? kpa : psi, 2)} ${isMetric ? 'kPa' : 'PSI'} (${roundTo(atm, 3)} atmospheres).`,
+          detail: `Distributing a force of ${force} ${isMetric ? 'N' : 'lbf'} across an area of ${area} ${isMetric ? 'm²' : 'in²'} produces ${roundTo(bar, 4)} bar. This is equivalent to ${roundTo(atm, 2)}x standard atmospheric pressure at sea level.`
+        },
         formula: 'P = Force / Area | 1 PSI = 6.89476 kPa | 1 Bar = 100 kPa ≈ 14.5038 PSI',
       };
     },
@@ -6158,6 +8613,12 @@ const TOOLS = {
   'concrete-calculator': {
     id: 'concrete-calculator',
     name: 'Concrete Calculator',
+    related: [
+      'paint-calculator',
+      'tile-calculator',
+      'stair-calculator',
+      'unit-converter'
+    ],
     category: 'Construction',
     icon: 'fa-truck-ramp-box',
     iconClass: 'icon-construction',
@@ -6203,6 +8664,36 @@ const TOOLS = {
       const bags60 = Math.ceil(totalCF / 0.45);
       const bags80 = Math.ceil(totalCF / 0.60);
 
+      const netVolumeCF = roundTo(volumeCF * qty, 2);
+      const wasteCF = roundTo(totalCF - netVolumeCF, 2);
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'concrete-volume-split',
+          title: 'Concrete Volume Breakdown',
+          icon: 'fa-chart-pie',
+          labels: ['Net Structural Volume', `${waste}% Waste & Spillage Buffer`],
+          data: [netVolumeCF, wasteCF],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'bag-options-comparison',
+          title: 'Pre-Mix Bag Count by Weight',
+          icon: 'fa-cubes-stacked',
+          labels: ['80-lb Bags (0.60 cu ft)', '60-lb Bags (0.45 cu ft)'],
+          format: 'number',
+          datasets: [{
+            label: 'Total Bags to Purchase',
+            data: [bags80, bags60],
+            colors: ['#10B981', '#3B82F6'],
+            backgroundColor: ['#10B981', '#3B82F6']
+          }]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Concrete Needed (Cubic Yards)', value: totalCY + ' yd³', highlight: true },
@@ -6212,6 +8703,7 @@ const TOOLS = {
           { label: '60lb Pre-mix Bags', value: bags60 + ' bags' },
           { label: 'Total Weight', value: Math.round(totalCF * 145).toLocaleString('en-US') + ' lbs' },
         ],
+        charts,
         formula: 'Volume (yd³) = (Length × Width × (Depth ÷ 12)) ÷ 27 × (1 + Waste%)',
       };
     },
@@ -6230,6 +8722,12 @@ const TOOLS = {
   'paint-calculator': {
     id: 'paint-calculator',
     name: 'Paint Calculator',
+    related: [
+      'concrete-calculator',
+      'tile-calculator',
+      'stair-calculator',
+      'unit-converter'
+    ],
     category: 'Construction',
     icon: 'fa-paint-roller',
     iconClass: 'icon-construction',
@@ -6270,6 +8768,38 @@ const TOOLS = {
       const gallonsToBuy = Math.ceil(gallonsNeeded);
       const litersNeeded = roundTo(gallonsNeeded * 3.78541, 2);
 
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'surface-area-composition',
+          title: 'Wall Surface Area Composition',
+          icon: 'fa-chart-pie',
+          labels: ['Net Paintable Wall Area', 'Doors & Windows Deductions', ...(incCeiling ? ['Ceiling Area'] : [])],
+          data: [Math.max(0, wallArea - deductions), deductions, ...(incCeiling ? [L * W] : [])],
+          colors: ['#10B981', '#94A3B8', '#6366F1'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'coats-paint-needed',
+          title: 'Paint Volume Needed by Coat Count',
+          icon: 'fa-paint-roller',
+          labels: ['1 Single Coat', '2 Standard Coats', '3 Primer/Deep Coats'],
+          format: 'number',
+          datasets: [{
+            label: 'Gallons Needed',
+            data: [
+              roundTo(netArea / 350, 2),
+              roundTo((netArea * 2) / 350, 2),
+              roundTo((netArea * 3) / 350, 2)
+            ],
+            colors: ['#3B82F6', '#10B981', '#6366F1'],
+            backgroundColor: ['#3B82F6', '#10B981', '#6366F1']
+          }]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Paint Needed (Gallons)', value: gallonsNeeded + ' gal (' + gallonsToBuy + ' to buy)', highlight: true },
@@ -6277,6 +8807,7 @@ const TOOLS = {
           { label: 'Total Wall Area', value: roundTo(netArea, 0) + ' sq ft' },
           { label: 'Total Coverage with Coats', value: roundTo(totalPaintArea, 0) + ' sq ft' },
         ],
+        charts,
         formula: 'Gallons = ((2 × (L + W) × H − (Doors × 21 + Windows × 15)) × Coats) ÷ 350 sq ft/gal',
       };
     },
@@ -6295,6 +8826,12 @@ const TOOLS = {
   'tile-calculator': {
     id: 'tile-calculator',
     name: 'Tile Calculator',
+    related: [
+      'concrete-calculator',
+      'paint-calculator',
+      'stair-calculator',
+      'unit-converter'
+    ],
     category: 'Construction',
     icon: 'fa-table-cells-large',
     iconClass: 'icon-construction',
@@ -6339,6 +8876,36 @@ const TOOLS = {
       const totalBoxes = Math.ceil(totalTiles / perBox);
       const sqFtWithWaste = roundTo(totalSqFt * (1 + waste / 100), 2);
 
+      const netTileCount = Math.ceil(rawTiles);
+      const wasteTileCount = Math.max(0, totalTiles - netTileCount);
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'tile-area-composition',
+          title: 'Tile Square Footage Split',
+          icon: 'fa-chart-pie',
+          labels: ['Net Floor Surface Area', `${waste}% Cutting & Waste Allowance`],
+          data: [roundTo(totalSqFt, 2), roundTo(sqFtWithWaste - totalSqFt, 2)],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'tile-count-breakdown',
+          title: 'Required Tiles vs Purchase Boxes',
+          icon: 'fa-boxes-stacked',
+          labels: ['Net Tiles Needed', 'Waste Margin Tiles', 'Total Tiles to Order', 'Boxes to Buy'],
+          format: 'number',
+          datasets: [{
+            label: 'Quantity',
+            data: [netTileCount, wasteTileCount, totalTiles, totalBoxes],
+            colors: ['#3B82F6', '#F59E0B', '#10B981', '#6366F1'],
+            backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#6366F1']
+          }]
+        }
+      ];
+
       return {
         stats: [
           { label: 'Tiles Needed (with waste)', value: totalTiles + ' tiles', highlight: true },
@@ -6346,6 +8913,7 @@ const TOOLS = {
           { label: 'Raw Area', value: roundTo(totalSqFt, 2) + ' sq ft' },
           { label: 'Area with ' + waste + '% Waste', value: sqFtWithWaste + ' sq ft' },
         ],
+        charts,
         formula: 'Tiles = (Area sq ft ÷ Tile sq ft) × (1 + Waste%)',
       };
     },
@@ -6362,7 +8930,252 @@ const TOOLS = {
     ]
   },
 
+  'stair-calculator': {
+    id: 'stair-calculator',
+    name: 'Stair Calculator',
+    related: [
+      'concrete-calculator',
+      'paint-calculator',
+      'tile-calculator',
+      'unit-converter'
+    ],
+    category: 'Construction',
+    icon: 'fa-route',
+    iconClass: 'icon-construction',
+    tagClass: 'tag-construction',
+    description: 'Design a staircase with the correct number of risers and treads from your total rise — includes even riser heights, comfortable tread depth, total run, stringer length, and an IRC code-compliance check.',
+    metaDescription: 'Free stair calculator — design a staircase with the right number of risers and treads from your total rise, including even riser heights, comfortable tread depth, total run, stringer length, stringer count, and an IRC code-compliance check.',
+    keywords: ['stair calculator', 'staircase calculator', 'risers and treads calculator', 'stringer calculator'],
+    fields: [
+      { id: 'sec_basic', type: 'section', label: 'Stair Dimensions', icon: 'fa-route' },
+      { id: 'total_height', label: 'Total Rise (in)', type: 'number', default: 108, min: 1, max: 480, step: 1,
+        hint: 'The total vertical height the staircase must climb — normally the floor-to-floor height.' },
+      { id: 'preferred_riser', label: 'Preferred Riser Height (in)', type: 'number', default: 7, min: 3, max: 10, step: 0.25,
+        hint: 'Your target riser height. 7 in is ideal; the calculator keeps every riser identical.' },
+      { id: 'stair_width', label: 'Stair Width (in)', type: 'number', default: 36, min: 12, max: 240, step: 6,
+        hint: 'Inside-to-inside width of the stair opening. Used to estimate stringer count.' },
+      { id: 'sec_adv', type: 'section', label: 'Advanced Options', icon: 'fa-gear', collapsible: true },
+      { id: 'tread_mode', label: 'Tread Depth Mode', type: 'select', default: 'comfort',
+        options: [
+          { value: 'comfort', label: 'Comfort rule (2R + T = 25 in)' },
+          { value: 'custom',  label: 'Use my own tread depth' },
+        ],
+        hint: 'Comfort mode auto-sizes the tread from the riser height; choose custom to set it exactly.' },
+      { id: 'target_tread', label: 'Custom Tread Depth (in)', type: 'number', default: 10, min: 6, max: 16, step: 0.25,
+        hint: 'Exact tread depth to use when "Custom" tread mode is selected.',
+        condition: (v) => v.tread_mode === 'custom' },
+      { id: 'building_code', label: 'Building Code Target', type: 'select', default: 'irc',
+        options: [
+          { value: 'irc',  label: 'IRC (max riser 7.75 in, min tread 10 in)' },
+          { value: 'none', label: 'No code limits (bare minimum design)' },
+        ],
+        hint: 'IRC (International Residential Code) is the default US residential standard.' },
+      { id: 'landing', label: 'Landing Configuration', type: 'select', default: 'none',
+        options: [
+          { value: 'none',   label: 'None' },
+          { value: 'top',    label: 'Landing at top' },
+          { value: 'bottom', label: 'Landing at bottom' },
+          { value: 'both',   label: 'Landing at top and bottom' },
+        ],
+        hint: 'A level landing adds depth and material; note it in your framing plan.' },
+      { id: 'headroom', label: 'Headroom Clearance (in)', type: 'number', default: 84, min: 60, max: 120, step: 1,
+        hint: 'Vertical clearance above the stair tread nose. IRC requires at least 80 in.' },
+      { id: 'material_waste', label: 'Material Waste (%)', type: 'number', default: 10, min: 0, max: 30, step: 1,
+        hint: 'Extra material for cuts and errors when purchasing lumber and tread stock.' },
+    ],
+    calculate(v) {
+      const totalRise = safeNum(v.total_height, 108);
+      const preferred = safeNum(v.preferred_riser, 7);
+      const width = safeNum(v.stair_width, 36);
+      const treadMode = v.tread_mode || 'comfort';
+      const customTread = safeNum(v.target_tread, 10);
+      const code = v.building_code || 'irc';
+      const landing = v.landing || 'none';
+      const headroom = safeNum(v.headroom, 84);
+      const waste = safeNum(v.material_waste, 10);
+
+      if (totalRise <= 0 || preferred <= 0 || width <= 0) {
+        return errorResult('Enter valid positive dimensions for total rise, riser height, and stair width.');
+      }
+
+      let numRisers = Math.max(1, Math.round(totalRise / preferred));
+      const riser = roundTo(totalRise / numRisers, 2);
+      const numTreads = numRisers - 1;
+
+      if (numTreads < 1) {
+        return errorResult('Total rise is too small to build a staircase at the given riser height. Increase the rise or lower the preferred riser.');
+      }
+
+      let tread;
+      if (treadMode === 'custom' && customTread > 0) {
+        tread = roundTo(Math.min(16, Math.max(6, customTread)), 2);
+      } else {
+        tread = roundTo(Math.min(14, Math.max(6, 25 - 2 * riser)), 2);
+      }
+
+      const totalRun = roundTo(numTreads * tread, 2);
+      const stringerLength = roundTo(Math.sqrt(totalRun * totalRun + totalRise * totalRise), 2);
+      const stringers = Math.max(2, Math.ceil(width / 16));
+      const stairAngle = roundTo(Math.atan(totalRise / totalRun) * 180 / Math.PI, 1);
+
+      const maxRiser = code === 'irc' ? 7.75 : Infinity;
+      const minTread = code === 'irc' ? 10 : 0;
+      const riserOk = riser <= maxRiser;
+      const treadOk = tread >= minTread;
+      const compliant = riserOk && treadOk;
+      const headroomOk = headroom >= 80;
+
+      const insights = [];
+      if (!riserOk) insights.push('Your riser height of ' + riser + ' in exceeds the IRC maximum of 7.75 in. Add another step so each riser is shorter.');
+      if (!treadOk) insights.push('Your tread depth of ' + tread + ' in is shallower than the IRC minimum of 10 in. Use "Custom" tread mode to set a deeper, safer tread.');
+      if (code === 'irc' && compliant) insights.push('Your risers and treads are within IRC limits — a compliant single-family residential stair.');
+      if (landing !== 'none') insights.push('The ' + landing + ' landing adds a level walk-out depth of roughly 36 in and extra framing material beyond the stair run itself.');
+      insights.push('For a ' + width + ' in wide stair, plan on about ' + stringers + ' stringers spaced roughly 16 in apart.');
+      if (!headroomOk) insights.push('Your ' + headroom + ' in headroom is below the 80 in IRC minimum. Open up the stairwell or move the upper-floor opening.');
+
+      const tableRows = [];
+      const riserArr = [];
+      const treadArr = [];
+      for (let s = 1; s <= numTreads; s++) {
+        tableRows.push({
+          step: s,
+          riser,
+          tread,
+          cumHeight: roundTo(s * riser, 2),
+          cumRun: roundTo(s * tread, 2),
+        });
+        riserArr.push(riser);
+        treadArr.push(tread);
+      }
+
+      const chartLabels = Array.from({ length: numTreads }, (_, s) => 'Step ' + (s + 1));
+
+      return {
+        stats: [
+          { label: 'Risers Needed', value: numRisers + ' risers' },
+          { label: 'Riser Height', value: riser + ' in', highlight: true },
+          { label: 'Treads Needed', value: numTreads + ' treads' },
+          { label: 'Tread Depth', value: tread + ' in', highlight: true },
+          { label: 'Total Run', value: totalRun + ' in (' + roundTo(totalRun / 12, 2) + ' ft)' },
+          { label: 'Stringer Length', value: stringerLength + ' in' },
+          { label: 'Stringers Needed', value: stringers + ' stringers' },
+          { label: 'Stair Angle', value: stairAngle + '°' },
+        ],
+        insight: {
+          tone: compliant ? 'positive' : 'warning',
+          icon: 'fa-route',
+          headline: 'A ' + numRisers + '-riser staircase with ' + riser + ' in risers and ' + tread + ' in treads.',
+          detail: compliant
+            ? ('Spans ' + totalRun + ' in across ' + numTreads + ' treads with a ' + stringerLength + ' in stringer. Add ~' + waste + '% material waste when buying lumber.')
+            : 'Check your riser and tread sizes against your local code before framing — the calculator flags which value is out of range.',
+        },
+        insights,
+        chart: {
+          type: 'bar',
+          labels: chartLabels,
+          datasets: [
+            { label: 'Riser (in)', data: riserArr, color: '#6366F1' },
+            { label: 'Tread (in)', data: treadArr, color: '#10B981' },
+          ],
+          legendPosition: 'bottom',
+          format: 'number',
+          title: 'Step Dimensions (Riser Height vs Tread Depth)'
+        },
+        charts: [
+          {
+            id: 'step-dimensions',
+            label: 'Step Dimensions',
+            icon: 'fa-chart-column',
+            type: 'bar',
+            labels: chartLabels,
+            datasets: [
+              { label: 'Riser (in)', data: riserArr, color: '#6366F1' },
+              { label: 'Tread (in)', data: treadArr, color: '#10B981' },
+            ],
+            legendPosition: 'bottom',
+            format: 'number',
+            title: 'Step Dimensions (Riser Height vs Tread Depth)'
+          },
+          {
+            id: 'stair-slope',
+            label: 'Rise & Run Trajectory',
+            icon: 'fa-chart-line',
+            type: 'line',
+            labels: tableRows.map(r => r.step),
+            datasets: [
+              { label: 'Cumulative Rise (in)', data: tableRows.map(r => r.cumHeight), color: '#6366F1', borderColor: '#6366F1' },
+              { label: 'Cumulative Run (in)', data: tableRows.map(r => r.cumRun), color: '#10B981', borderColor: '#10B981' }
+            ],
+            yLabel: 'Inches',
+            title: 'Cumulative Stair Rise & Run Trajectory'
+          }
+        ],
+        table: makeTableSpec({
+          mode: 'table',
+          title: 'Step-by-Step Stair Detail',
+          columns: [
+            { key: 'step', label: 'Step' },
+            { key: 'riser', label: 'Riser (in)', format: 'number' },
+            { key: 'tread', label: 'Tread (in)', format: 'number' },
+            { key: 'cumHeight', label: 'Cumulative Height (in)', format: 'number' },
+            { key: 'cumRun', label: 'Cumulative Run (in)', format: 'number' },
+          ],
+          rows: tableRows,
+          footer: {
+            step: 'Totals',
+            riser: roundTo(totalRise, 2),
+            tread: '—',
+            cumHeight: roundTo(totalRise, 2),
+            cumRun: totalRun,
+          },
+        }),
+      };
+    },
+    article: {
+      heading: 'How to Calculate Stair Risers and Treads',
+      intro: 'Good stairs feel effortless because every riser is identical and every tread is deep enough for a confident step. The GetCalcu Stair Calculator turns a single measurement — your total rise — into a full, code-compliant design: the number of risers, exact riser height, comfortable tread depth, total run, stringer length, and a step-by-step breakdown.',
+      sections: [
+        { heading: 'Start With Your Total Rise', body: 'Total rise is the vertical distance between the two finished floors. Measure it precisely — a quarter-inch error multiplied across eight risers is a two-inch problem at the top step. Once you have the rise, divide by your preferred riser height and round to a whole number of risers, then divide the total rise by that count so every step is exactly the same.' },
+        { heading: 'The Comfort Rule: 2R + T = 25', body: 'Decades of stair design have produced a simple rule of thumb: two riser heights plus one tread depth should land near 25 inches. For a 7-inch riser that gives a 10-to-11-inch tread, which feels natural for an average stride. The GetCalcu Stair Calculator applies this automatically, or you can override it with your own tread depth.' },
+        { heading: 'Meeting Building Code', body: 'The International Residential Code (IRC) caps risers at 7.75 inches and requires treads of at least 10 inches, with 80 inches of headroom measured vertically above the tread nose. Any interior stair (and most exterior ones) must meet these limits to pass inspection, so our calculator compares your design against them and flags violations.' },
+        { heading: 'Framing the Stringers', body: 'Stringers are the inclined boards that carry the treads. Space them roughly every 16 inches across the stair width in addition to the two outer ones, and cut each one from a board at least as long as the diagonal distance between the top and bottom of the stair run.' },
+      ],
+    },
+    howTo: [
+      'Measure the total vertical rise between the two floors and enter it in inches.',
+      'Enter a preferred riser height — 7 in is comfortable — and the stair width.',
+      'Choose "Comfort rule" for an automatic tread depth, or "Custom" to set your own.',
+      'Pick a building code target (IRC is the US default) and any landing/headroom requirements.',
+      'Press Calculate to see the full design plus a step-by-step dimension table.',
+    ],
+    formula: 'Risers = round(Total Rise ÷ Preferred Riser) | Riser = Total Rise ÷ Risers | Treads = Risers − 1 | Tread = 25 − (2 × Riser) [comfort] | Total Run = Treads × Tread | Stringer = √(Run² + Rise²)',
+    formulaVariables: [
+      { name: 'Total Rise', description: 'Total vertical height between finished lower and upper floor levels' },
+      { name: 'Riser Height', description: 'Height of each vertical step face (maximum 7.75 inches under IRC)' },
+      { name: 'Tread Depth', description: 'Horizontal depth of each step surface (minimum 10 inches under IRC)' },
+      { name: 'Total Run', description: 'Total horizontal floor distance spanned by all stair treads combined' },
+      { name: 'Stringer Length', description: 'Diagonal length of structural support beams carrying the treads' }
+    ],
+    examples: [
+      { title: '9 ft Floor-to-Floor', input: 'Total rise 108 in, preferred riser 7 in, width 36 in', result: '15 risers @ 7.2 in, 14 treads @ 10.6 in, run 148.4 in' },
+      { title: 'Basement Stairs', input: 'Total rise 96 in, preferred riser 7 in, width 30 in', result: '14 risers @ 6.86 in, 13 treads @ 11.29 in, run 146.7 in' },
+      { title: 'Deck Steps', input: 'Total rise 36 in, preferred riser 7 in, width 48 in', result: '5 risers @ 7.2 in, 4 treads @ 10.6 in, run 42.4 in' },
+    ],
+    faqs: [
+      { q: 'How many steps do I need for a 9-foot ceiling?', a: 'Measure the total rise between finished floors (usually about 108-110 inches). Divide by a 7-inch riser and round: 108 ÷ 7 = 15.4, so 15 risers at 7.2 inches each. That gives 14 treads running about 148 inches out from the top step.' },
+      { q: 'What is the maximum riser height allowed by code?', a: 'Under the International Residential Code (IRC), a single-family residential stair riser may not exceed 7.75 inches, and all risers in one flight must be within a tiny tolerance of each other. Treads must be at least 10 inches deep.' },
+      { q: 'How do I find the comfortable tread depth?', a: 'Use the 2R + T rule: two riser heights plus the tread depth should equal about 25 inches. So for a 7-inch riser, a 10-to-11-inch tread feels natural. Too-shallow treads cause toe-catching; too-deep ones make the stride awkward.' },
+      { q: 'How long should my stair stringers be?', a: 'A stringer is the hypotenuse of the right triangle formed by the total rise and the total run. For a 15-riser stair that is 108 inches high and 148 inches of run, the stringer is about 183 inches (15 feet 3 inches) on the long edge.' },
+    ],
+  },
+
   'auto-loan-calculator': {
+    related: [
+      'auto-refinance-calculator',
+      'loan-calculator',
+      'loan-interest-calculator',
+      'budget-planner'
+    ],
     presets: [
           {
                 "label": "New Vehicle (60 Mo @ 6.5%)",
@@ -6481,6 +9294,47 @@ const TOOLS = {
           { label: 'Total Amount Paid (Loan)', value: fmt(totalPaid) },
           { label: 'Total All-in Vehicle Cost', value: fmt(totalVehicleCost) },
         ],
+        charts: [
+          {
+            type: 'area',
+            id: 'loan-payoff-trajectory',
+            title: 'Auto Loan Balance Trajectory',
+            icon: 'fa-chart-area',
+            labels: schedule.filter((_, idx) => idx % Math.max(1, Math.floor(months / 24)) === 0 || idx === schedule.length - 1).map(r => `Month ${r.month}`),
+            format: 'currency',
+            datasets: [{
+              label: 'Remaining Vehicle Loan Balance',
+              data: schedule.filter((_, idx) => idx % Math.max(1, Math.floor(months / 24)) === 0 || idx === schedule.length - 1).map(r => r.balance),
+              color: '#6366F1',
+              fill: true
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'cost-composition',
+            title: 'Total Vehicle Cost Composition',
+            icon: 'fa-chart-pie',
+            labels: ['Vehicle Principal Financed', 'Financing Interest Paid', 'Sales Tax & Fees'],
+            data: [Math.max(0, price - down - Math.max(0, netTradeIn)), totalInterest, salesTax + fees],
+            colors: ['#6366F1', '#EF4444', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'all-in-vs-sticker',
+            title: 'Sticker Price vs All-in Financed Cost',
+            icon: 'fa-car',
+            labels: ['Vehicle Sticker Price', 'All-in Lifetime Vehicle Cost'],
+            format: 'currency',
+            datasets: [{
+              label: 'Cost ($)',
+              data: [price, totalVehicleCost],
+              colors: ['#6366F1', '#EF4444'],
+              backgroundColor: ['#6366F1', '#EF4444']
+            }]
+          }
+        ],
         chart: {
           type: 'doughnut',
           labels: ['Principal (Vehicle)', 'Interest Paid', 'Sales Tax & Fees'],
@@ -6563,6 +9417,12 @@ const TOOLS = {
           }
     ],
     name: 'Salary & Paycheck Calculator',
+    related: [
+      'self-employment-tax-calculator',
+      'freelance-hourly-rate-calculator',
+      '401k-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-wallet',
     iconClass: 'icon-finance',
@@ -6586,6 +9446,11 @@ const TOOLS = {
       ], hint: 'Your tax filing status for federal tax bracket calculation.' },
       { id: 'state_tax_rate', label: 'Estimated State Tax Rate (%)', type: 'number', default: 5.0, min: 0, max: 15, step: 0.1, hint: 'State income tax rate (e.g. 0% in TX/FL/WA, ~5% average, up to 13% in CA).' },
       { id: 'pretax_401k', label: '401(k) / Retirement Deduction ($/yr)', type: 'number', default: 4000, min: 0, step: 500, hint: 'Annual pre-tax retirement contribution.' },
+      { id: 'tax_year', label: 'Tax Year', type: 'select', default: '2026', options: [
+        { value: '2026', label: '2026 (Active — $184,500 SS Wage Base, $16,100 Std Ded)' },
+        { value: '2025', label: '2025 (Historical — $176,100 SS Wage Base, $15,000 Std Ded)' },
+        { value: '2024', label: '2024 (Historical — $168,600 SS Wage Base, $14,600 Std Ded)' }
+      ], hint: 'IRS statutory tax year parameters.' },
       { id: 'pretax_health', label: 'Health Insurance Pre-tax ($/mo)', type: 'number', default: 200, min: 0, step: 25, hint: 'Monthly pre-tax health and dental insurance premium.' },
     ],
     calculate(v) {
@@ -6608,7 +9473,10 @@ const TOOLS = {
       const pretaxHealthAnnual = safeNum(v.pretax_health, 0) * 12;
       const totalPretax = roundTo(pretax401k + pretaxHealthAnnual, 2);
 
-      const socSecCap = 168600;
+      const taxYear = v.tax_year || '2026';
+      const sched = US_TAX_SCHEDULES[taxYear] || US_TAX_SCHEDULES['2026'];
+
+      const socSecCap = sched.socSecCap;
       const socSecTaxable = Math.min(annualGross, socSecCap);
       const socSecTax = roundTo(socSecTaxable * 0.062, 2);
 
@@ -6620,29 +9488,11 @@ const TOOLS = {
       medTax = roundTo(medTax, 2);
       const totalFica = roundTo(socSecTax + medTax, 2);
 
-      const stdDeduction = status === 'married' ? 29200 : status === 'head' ? 21900 : 14600;
+      const stdDeduction = sched.standardDeduction[status] || sched.standardDeduction.single;
       const taxableFedIncome = Math.max(0, annualGross - totalPretax - stdDeduction);
 
       let fedTax = 0;
-      const brackets = status === 'married'
-        ? [
-            { cap: 23200, rate: 0.10 },
-            { cap: 94300, rate: 0.12 },
-            { cap: 201050, rate: 0.22 },
-            { cap: 383900, rate: 0.24 },
-            { cap: 487450, rate: 0.32 },
-            { cap: 731200, rate: 0.35 },
-            { cap: Infinity, rate: 0.37 },
-          ]
-        : [
-            { cap: 11600, rate: 0.10 },
-            { cap: 47150, rate: 0.12 },
-            { cap: 100525, rate: 0.22 },
-            { cap: 191950, rate: 0.24 },
-            { cap: 243725, rate: 0.32 },
-            { cap: 609350, rate: 0.35 },
-            { cap: Infinity, rate: 0.37 },
-          ];
+      const brackets = sched.brackets[status] || sched.brackets.single;
 
       let prevCap = 0;
       for (const b of brackets) {
@@ -6677,6 +9527,47 @@ const TOOLS = {
           { label: 'FICA (Social Security & Medicare)', value: fmt(totalFica) },
           { label: 'Estimated State Tax', value: fmt(stateTax) },
           { label: 'Total Pre-tax Deductions', value: fmt(totalPretax) },
+        ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'take-home-split',
+            title: 'Gross Salary Allocation',
+            icon: 'fa-chart-pie',
+            labels: ['Net Take-Home Pay', 'Federal Income Tax', 'FICA (Social Security & Medicare)', 'State Income Tax', 'Pre-Tax Deductions'],
+            data: [netTakeHomeAnnual, fedTax, totalFica, stateTax, totalPretax],
+            colors: ['#10B981', '#6366F1', '#3B82F6', '#F59E0B', '#8B5CF6'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'tax-deductions-breakdown',
+            title: 'Annual Income & Deductions Breakdown',
+            icon: 'fa-receipt',
+            labels: ['Gross Income', 'Net Take-Home', 'Federal Tax', 'FICA Tax', 'State Tax', 'Pre-Tax Deductions'],
+            format: 'currency',
+            datasets: [{
+              label: 'Amount ($)',
+              data: [annualGross, netTakeHomeAnnual, fedTax, totalFica, stateTax, totalPretax],
+              colors: ['#3B82F6', '#10B981', '#6366F1', '#F59E0B', '#EC4899', '#8B5CF6'],
+              backgroundColor: ['#3B82F6', '#10B981', '#6366F1', '#F59E0B', '#EC4899', '#8B5CF6']
+            }]
+          },
+          {
+            type: 'bar',
+            id: 'paycheck-cadence',
+            title: 'Net Take-Home Pay by Frequency',
+            icon: 'fa-wallet',
+            labels: ['Monthly Take-Home', 'Biweekly Take-Home', 'Weekly Take-Home'],
+            format: 'currency',
+            datasets: [{
+              label: 'Net Paycheck ($)',
+              data: [netMonthly, netBiweekly, netWeekly],
+              colors: ['#10B981', '#3B82F6', '#6366F1'],
+              backgroundColor: ['#10B981', '#3B82F6', '#6366F1']
+            }]
+          }
         ],
         chart: {
           type: 'doughnut',
@@ -6759,6 +9650,10 @@ const TOOLS = {
           }
     ],
     name: 'TDEE & Daily Calorie Calculator',
+    related: [
+      'bmi-calculator',
+      'body-fat-percentage-calculator'
+    ],
     category: 'Health',
     icon: 'fa-fire',
     iconClass: 'icon-health',
@@ -6850,6 +9745,44 @@ const TOOLS = {
           { label: 'Daily Carbohydrates Target', value: `${carbsGrams}g (40%)` },
           { label: 'Daily Fats Target', value: `${fatGrams}g (30%)` },
         ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'macro-split',
+            title: 'Target Macronutrient Calorie Split',
+            icon: 'fa-chart-pie',
+            labels: [`Protein (${proteinGrams}g - 30%)`, `Carbohydrates (${carbsGrams}g - 40%)`, `Fats (${fatGrams}g - 30%)`],
+            data: [proteinGrams * 4, carbsGrams * 4, fatGrams * 9],
+            colors: ['#3B82F6', '#10B981', '#F59E0B'],
+            format: 'number',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'calorie-benchmarks',
+            title: 'Daily Calorie Expenditure & Goals',
+            icon: 'fa-fire',
+            labels: ['Basal Metabolic Rate (BMR)', 'Maintenance TDEE', 'Target Daily Intake'],
+            format: 'number',
+            datasets: [{
+              label: 'Calories (kcal / day)',
+              data: [bmr, tdee, targetCalories],
+              colors: ['#3B82F6', '#10B981', targetCalories < tdee ? '#F59E0B' : '#6366F1'],
+              backgroundColor: ['#3B82F6', '#10B981', targetCalories < tdee ? '#F59E0B' : '#6366F1']
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'burn-composition',
+            title: 'Daily Calorie Burn Components',
+            icon: 'fa-heart-pulse',
+            labels: ['Basal Metabolism (Resting)', 'Daily Activity & Exercise'],
+            data: [bmr, Math.max(0, tdee - bmr)],
+            colors: ['#6366F1', '#10B981'],
+            format: 'number',
+            cutout: '62%'
+          }
+        ],
         chart: {
           type: 'doughnut',
           labels: [`Protein (${proteinGrams}g)`, `Carbohydrates (${carbsGrams}g)`, `Fats (${fatGrams}g)`],
@@ -6892,6 +9825,11 @@ const TOOLS = {
 
   'unit-converter': {
     name: 'Universal Unit Converter',
+    related: [
+      'percentage-calculator',
+      'pressure-calculator',
+      'concrete-calculator'
+    ],
     category: 'Math',
     icon: 'fa-scale-balanced',
     iconClass: 'icon-math',
@@ -7231,6 +10169,12 @@ const TOOLS = {
   // ── Business: Profit Margin Calculator ──────────────────────────────────
   'profit-margin-calculator': {
     name: 'Profit Margin Calculator',
+    related: [
+      'break-even-calculator',
+      'customer-lifetime-value-calculator',
+      'freelance-hourly-rate-calculator',
+      'freelance-true-rate-system'
+    ],
     category: 'Business',
     icon: 'fa-chart-line',
     iconClass: 'icon-business',
@@ -7293,6 +10237,48 @@ const TOOLS = {
         { label: 'Net Margin', value: pct(netMargin / 100), warn: netMargin < 0 }
       ];
 
+      const charts = [
+        {
+          type: 'doughnut',
+          id: 'profit-split',
+          title: 'Gross Revenue Allocation Split',
+          icon: 'fa-chart-pie',
+          labels: ['Cost of Goods Sold (COGS)', 'Operating Overhead (OpEx)', 'Net Profit'],
+          data: [cost, opex, Math.max(0, netProfit)],
+          colors: ['#EF4444', '#F59E0B', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'income-statement-waterfall',
+          title: 'Revenue & Profit Metrics',
+          icon: 'fa-scale-balanced',
+          labels: ['Selling Price (Revenue)', 'Cost of Goods (COGS)', 'Gross Profit', 'Net Bottom-Line Profit'],
+          format: 'currency',
+          datasets: [{
+            label: 'Amount ($)',
+            data: [revenue, cost, grossProfit, netProfit],
+            colors: ['#3B82F6', '#EF4444', '#6366F1', netProfit >= 0 ? '#10B981' : '#EF4444'],
+            backgroundColor: ['#3B82F6', '#EF4444', '#6366F1', netProfit >= 0 ? '#10B981' : '#EF4444']
+          }]
+        },
+        {
+          type: 'bar',
+          id: 'margin-vs-markup-rates',
+          title: 'Margin vs Markup Rates',
+          icon: 'fa-percent',
+          labels: ['Gross Profit Margin', 'Markup Percentage', 'Net Margin'],
+          format: 'percentage',
+          datasets: [{
+            label: 'Rate (%)',
+            data: [margin, markup, netMargin],
+            colors: ['#6366F1', '#3B82F6', netMargin >= 0 ? '#10B981' : '#EF4444'],
+            backgroundColor: ['#6366F1', '#3B82F6', netMargin >= 0 ? '#10B981' : '#EF4444']
+          }]
+        }
+      ];
+
       const chart = {
         type: 'doughnut',
         labels: ['COGS (Direct Cost)', 'Operating Expenses', 'Net Profit'],
@@ -7319,6 +10305,7 @@ const TOOLS = {
 
       return {
         stats,
+        charts,
         chart,
         table,
         insight: {
@@ -7357,6 +10344,12 @@ const TOOLS = {
   // ── Business: Break-Even Calculator ─────────────────────────────────────
   'break-even-calculator': {
     name: 'Break-Even Calculator',
+    related: [
+      'profit-margin-calculator',
+      'customer-lifetime-value-calculator',
+      'freelance-true-rate-system',
+      'freelance-hourly-rate-calculator'
+    ],
     category: 'Business',
     icon: 'fa-scale-balanced',
     iconClass: 'icon-business',
@@ -7439,6 +10432,44 @@ const TOOLS = {
       const revData = mults.map(m => roundTo(Math.round(breakEvenUnits * m) * price, 2));
       const costData = mults.map(m => roundTo(fixed + (Math.round(breakEvenUnits * m) * varCost), 2));
 
+      const charts = [
+        {
+          type: 'line',
+          id: 'break-even-crossover',
+          title: 'Revenue vs Cost Crossover Curve',
+          icon: 'fa-chart-line',
+          labels: chartLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Total Gross Revenue', data: revData, color: '#10B981' },
+            { label: 'Total Operating Costs', data: costData, color: '#EF4444' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'cost-structure-breakdown',
+          title: 'Cost Structure at Break-Even',
+          icon: 'fa-chart-pie',
+          labels: ['Fixed Overhead Costs', 'Total Variable Costs'],
+          data: [fixed, roundTo(breakEvenUnits * varCost, 2)],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'stackedBar',
+          id: 'unit-contribution-split',
+          title: 'Unit Price Economics',
+          icon: 'fa-chart-column',
+          labels: ['Unit Selling Price'],
+          format: 'currency',
+          datasets: [
+            { label: 'Variable Cost per Unit', data: [varCost], color: '#EF4444', stack: 'unit' },
+            { label: 'Contribution Margin per Unit', data: [cmUnit], color: '#10B981', stack: 'unit' }
+          ]
+        }
+      ];
+
       const chart = {
         type: 'line',
         labels: chartLabels,
@@ -7450,6 +10481,7 @@ const TOOLS = {
 
       return {
         stats,
+        charts,
         chart,
         table,
         insight: {
@@ -7488,6 +10520,11 @@ const TOOLS = {
   // ── Business: Customer Lifetime Value Calculator ────────────────────────
   'customer-lifetime-value-calculator': {
     name: 'Customer Lifetime Value (LTV / CAC) Calculator',
+    related: [
+      'profit-margin-calculator',
+      'break-even-calculator',
+      'freelance-true-rate-system'
+    ],
     category: 'Business',
     icon: 'fa-chart-line',
     iconClass: 'icon-business',
@@ -7547,6 +10584,60 @@ const TOOLS = {
         { label: 'Gross Lifetime Revenue', value: fmt(lifetimeRevenue) }
       ];
 
+      const charts = [
+        {
+          type: 'bar',
+          id: 'ltv-vs-cac-comparison',
+          title: 'Customer Lifetime Value vs Acquisition Cost',
+          icon: 'fa-scale-balanced',
+          labels: ['Customer Lifetime Value (LTV)', 'Customer Acquisition Cost (CAC)', 'Net Profit per Customer'],
+          format: 'currency',
+          datasets: [{
+            label: 'Amount ($)',
+            data: [ltv, cac, netLifetimeProfit],
+            colors: ['#10B981', '#EF4444', '#6366F1'],
+            backgroundColor: ['#10B981', '#EF4444', '#6366F1']
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'customer-unit-economics',
+          title: 'Unit Economics Margin Split',
+          icon: 'fa-chart-pie',
+          labels: ['Net Lifetime Profit per Customer', 'Customer Acquisition Cost (CAC)'],
+          data: [Math.max(0, netLifetimeProfit), cac],
+          colors: ['#10B981', '#EF4444'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'area',
+          id: 'profit-recovery-curve',
+          title: 'Cumulative Profit & CAC Payback Horizon',
+          icon: 'fa-chart-area',
+          labels: [
+            'Month 0',
+            `Payback (${paybackMonths} mo)`,
+            `Year 1 (12 mo)`,
+            `Year 2 (24 mo)`,
+            `Lifespan (${Math.round(lifespan * 12)} mo)`
+          ],
+          format: 'currency',
+          datasets: [{
+            label: 'Cumulative Gross Profit vs CAC',
+            data: [
+              -cac,
+              0,
+              roundTo(monthlyProfit * 12 - cac, 2),
+              roundTo(monthlyProfit * 24 - cac, 2),
+              roundTo(ltv - cac, 2)
+            ],
+            color: '#10B981',
+            fill: true
+          }]
+        }
+      ];
+
       const bars = [
         { label: 'LTV vs Acquisition Cost (CAC)', value: ltv, target: Math.max(ltv, cac * 3), color: '#10B981', caption: 'LTV: ' + fmt(ltv) + ' | CAC: ' + fmt(cac) }
       ];
@@ -7554,6 +10645,7 @@ const TOOLS = {
       return {
         stats,
         bars,
+        charts,
         insight: {
           tone: healthTone,
           icon: 'fa-users',
@@ -7588,6 +10680,10 @@ const TOOLS = {
   // ── Education: GPA Calculator ───────────────────────────────────────────
   'gpa-calculator': {
     name: 'College & High School GPA Calculator',
+    related: [
+      'final-grade-calculator',
+      'student-loan-calculator'
+    ],
     category: 'Education',
     icon: 'fa-graduation-cap',
     iconClass: 'icon-education',
@@ -7730,8 +10826,49 @@ const TOOLS = {
         }
       });
 
+      const charts = [
+        {
+          type: 'bar',
+          id: 'gpa-honors-ladder',
+          title: 'Academic Honors & Standings',
+          icon: 'fa-award',
+          labels: ['Good Standing (2.0)', "Dean's List (3.0)", 'Cum Laude (3.5)', 'Magna Cum Laude (3.8)', 'Summa Cum Laude (3.9)', 'Your Semester GPA'],
+          format: 'number',
+          datasets: [{
+            label: 'Grade Point Average',
+            data: [2.0, 3.0, 3.5, 3.8, 3.9, semesterGpa],
+            colors: ['#94A3B8', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#6366F1'],
+            backgroundColor: ['#94A3B8', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#6366F1']
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'credits-distribution',
+          title: 'Credit Hours by Course',
+          icon: 'fa-chart-pie',
+          labels: rows.map(r => `${r.course} (${r.grade})`),
+          data: rows.map(r => r.credits),
+          colors: ['#6366F1', '#3B82F6', '#10B981', '#F59E0B', '#EC4899'],
+          format: 'number',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'course-grade-points',
+          title: 'Grade Points per Course',
+          icon: 'fa-chart-column',
+          labels: rows.map(r => r.course),
+          format: 'number',
+          datasets: [
+            { label: 'Unweighted Points (4.0)', data: rows.map(r => parseFloat(r.unweighted)), color: '#3B82F6', backgroundColor: '#3B82F6' },
+            { label: 'Weighted Points (5.0)', data: rows.map(r => parseFloat(r.weighted)), color: '#10B981', backgroundColor: '#10B981' }
+          ]
+        }
+      ];
+
       return {
         stats,
+        charts,
         table,
         insight: {
           tone: semesterGpa >= 3.5 ? 'positive' : semesterGpa >= 2.5 ? 'neutral' : 'warning',
@@ -7766,6 +10903,12 @@ const TOOLS = {
   // ── Education: Final Grade Calculator ───────────────────────────────────
   'final-grade-calculator': {
     name: 'Final Grade Calculator',
+    related: [
+      'gpa-calculator',
+      'percentage-calculator',
+      'student-loan-calculator',
+      'date-calculator'
+    ],
     category: 'Education',
     icon: 'fa-graduation-cap',
     iconClass: 'icon-education',
@@ -7840,8 +10983,37 @@ const TOOLS = {
         })
       });
 
+      const charts = [
+        {
+          type: 'bar',
+          id: 'letter-grade-targets',
+          title: 'Required Final Exam Score by Target Grade',
+          icon: 'fa-chart-column',
+          labels: letterGoals.map(g => g.grade),
+          format: 'percentage',
+          datasets: [{
+            label: 'Score Needed on Final (%)',
+            data: letterGoals.map(g => Math.max(0, roundTo((g.target - current * (1 - weight)) / weight, 1))),
+            colors: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+            backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444']
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'course-weight-split',
+          title: 'Total Course Weight Distribution',
+          icon: 'fa-chart-pie',
+          labels: ['Prior Coursework Weight', 'Final Exam Weight'],
+          data: [roundTo((1 - weight) * 100, 1), roundTo(weight * 100, 1)],
+          colors: ['#6366F1', '#F59E0B'],
+          format: 'percentage',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats,
+        charts,
         table,
         insight: {
           tone,
@@ -7855,11 +11027,31 @@ const TOOLS = {
         }
       };
     },
+    formula: 'Final Exam Score = (Target - (Current × (1 - Weight))) ÷ Weight',
+    methodology: {
+      standards: 'Calculations use standard linear weighted mean arithmetic commonly applied across secondary and post-secondary educational institutions.',
+      assumptions: [
+        'Grading Model: Assumes a percentage-based grading system (0% to 100%), where all previous assignments, midterms, and participation constitute (100% - Final Exam Weight).',
+        'International Grading Scale Variation: Grading scales differ significantly across countries and educational systems—such as the UK degree classifications (1st/2:1/2:2), the German 1.0–5.0 system, the French 20-point scale, and the Australian 7-point GPA—so non-percentage marks must first be converted into equivalent percentage terms.',
+        'Linear Distribution: Assumes no unannounced curves, drops, or penalty deductions are retroactively applied to prior coursework.'
+      ],
+      sources: [
+        'AACRAO (American Association of Collegiate Registrars and Admissions Officers) Evaluation Guidelines',
+        'Standard Weighted Mean Equation: W = (Target - Current × (1 - Weight)) ÷ Weight'
+      ]
+    },
     article: {
       heading: 'How to Calculate Your Required Final Exam Grade',
-      intro: 'Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.',
+      intro: 'Knowing what you need on your final exam allows you to prioritize study time strategically across your courses. This calculator assumes a standard percentage-based grading system (0% to 100%) where prior coursework and the final exam combine to form 100% of your total score. Note that grading scales differ across other countries and international universities—such as the UK honors classification, the German 1-to-5 scale, or the French 20-point system—so international students should convert their letter or scale marks into proportional percentage equivalents before calculating.',
       sections: [
-        { heading: 'Weighted Grading Formula', body: 'Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight.' }
+        {
+          heading: 'Weighted Grading Formula',
+          body: 'Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight. This formula isolates the remaining points required on your syllabus and divides them by the exam weight.'
+        },
+        {
+          heading: 'Percentage Assumptions and International Grading Scales',
+          body: 'Calculations assume continuous percentage scoring. If your syllabus uses letter cutoffs (e.g. 90% for an A, 80% for a B, 70% for a C), input the minimum percentage required for that letter grade. Because grading scales differ in other countries and curricula, always reference your institution-specific grading conversion rubric when translating foreign credits or non-percentage marks.'
+        }
       ]
     },
     howTo: [
@@ -7871,15 +11063,22 @@ const TOOLS = {
     examples: [
       { title: '85% Current, Aiming for 90% A (20% Final)', input: 'Current: 85%, Target: 90%, Weight: 20%', result: 'Required on Final: 110% (Needs Extra Credit)' }
     ],
-    formula: 'Final Exam Score = (Target - (Current × (1 - Weight))) ÷ Weight',
     faqs: [
-      { q: 'What if I need over 100% on the final?', a: 'If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.' }
+      { q: 'What if I need over 100% on the final?', a: 'If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.' },
+      { q: 'How do I figure out the weight of my final exam if my syllabus uses points?', a: 'If your class uses a total-points system rather than percentages, divide the total points possible on the final exam by the total possible points for the entire course, then multiply by 100. For example, if your final is worth 250 points out of 1,000 total course points, the final exam weight is 25% (250 ÷ 1,000 × 100).' }
     ]
   },
 
   // ── Education: Student Loan Calculator ──────────────────────────────────
   'student-loan-calculator': {
     name: 'Student Loan Calculator',
+    related: [
+      'loan-calculator',
+      'final-grade-calculator',
+      'budget-planner',
+      'salary-calculator',
+      'gpa-calculator'
+    ],
     category: 'Education',
     icon: 'fa-bookmark',
     iconClass: 'icon-education',
@@ -7959,6 +11158,48 @@ const TOOLS = {
         { label: 'Total Amount Repaid', value: fmt(roundTo(P + totalInterestWithExtra, 2)) }
       ];
 
+      const schedStep = Math.max(1, Math.floor(schedule.length / 24));
+      const sampleSched = schedule.filter((_, idx) => idx % schedStep === 0 || idx === schedule.length - 1);
+      const charts = [
+        {
+          type: 'area',
+          id: 'student-payoff-trajectory',
+          title: 'Accelerated Payoff Trajectory',
+          icon: 'fa-chart-area',
+          labels: sampleSched.map(r => `Month ${r.month}`),
+          format: 'currency',
+          datasets: [{
+            label: 'Remaining Principal Balance',
+            data: sampleSched.map(r => r.balance),
+            color: '#6366F1',
+            fill: true
+          }]
+        },
+        {
+          type: 'doughnut',
+          id: 'student-cost-composition',
+          title: 'Total Student Loan Repayment Split',
+          icon: 'fa-chart-pie',
+          labels: ['Original Principal Borrowed', 'Total Interest with Extra Payment', 'Interest Saved by Extra Payments'],
+          data: [P, totalInterestWithExtra, Math.max(0, interestSaved)],
+          colors: ['#6366F1', '#EF4444', '#10B981'],
+          format: 'currency',
+          cutout: '62%'
+        },
+        {
+          type: 'bar',
+          id: 'standard-vs-accelerated',
+          title: 'Standard vs Accelerated Repayment Cost',
+          icon: 'fa-scale-balanced',
+          labels: ['Standard Plan Total Cost', 'Accelerated Plan Total Cost'],
+          format: 'currency',
+          datasets: [
+            { label: 'Principal', data: [P, P], color: '#6366F1', backgroundColor: '#6366F1' },
+            { label: 'Interest', data: [roundTo(stdTotalInterest, 2), totalInterestWithExtra], color: '#EF4444', backgroundColor: '#EF4444' }
+          ]
+        }
+      ];
+
       const chart = {
         type: 'doughnut',
         labels: ['Original Principal', 'Total Interest Paid'],
@@ -7971,6 +11212,7 @@ const TOOLS = {
 
       return {
         stats,
+        charts,
         chart,
         table: schedule,
         insight: {
@@ -8008,6 +11250,12 @@ const TOOLS = {
   'emergency-fund-calculator': {
     id: 'emergency-fund-calculator',
     name: 'Emergency Fund Calculator',
+    related: [
+      'savings-calculator',
+      'budget-planner',
+      'credit-card-payoff-calculator',
+      'debt-snowball-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-shield-halved',
     iconClass: 'icon-finance',
@@ -8106,6 +11354,45 @@ const TOOLS = {
           { label: 'Months to Reach Goal', value: monthsNeeded > 0 ? `${monthsNeeded} months` : 'Target Achieved' },
           { label: 'Annual Interest in HYSA', value: fmt(annualHYSAInterest) },
         ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'fund-progress',
+            title: 'Emergency Fund Progress',
+            icon: 'fa-shield-halved',
+            labels: ['Current Savings In Bank', shortfall > 0 ? 'Funding Shortfall' : 'Funding Surplus'],
+            data: [savings, shortfall > 0 ? shortfall : surplus],
+            colors: [shortfall > 0 ? '#10B981' : '#10B981', shortfall > 0 ? '#F59E0B' : '#6366F1'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'runway-benchmarks',
+            title: 'Safety Net Buffer Benchmarks',
+            icon: 'fa-scale-balanced',
+            labels: ['Current Savings', '3-Month Starter Buffer', '6-Month Recommended Buffer', `${runwayMonths}-Month Target`],
+            format: 'currency',
+            datasets: [{
+              label: 'Buffer Amount ($)',
+              data: [savings, roundTo(monthlyExpenses * 3, 2), roundTo(monthlyExpenses * 6, 2), targetFund],
+              colors: ['#3B82F6', '#F59E0B', '#10B981', '#6366F1'],
+              backgroundColor: ['#3B82F6', '#F59E0B', '#10B981', '#6366F1']
+            }]
+          },
+          {
+            type: 'area',
+            id: 'runway-trajectory',
+            title: 'Savings Accumulation Runway',
+            icon: 'fa-chart-area',
+            labels: table.rows.map(r => r.month),
+            format: 'currency',
+            datasets: [
+              { label: 'Projected Balance with Deposits', data: table.rows.map(r => r.balance), color: '#10B981', fill: true },
+              { label: 'Target Safety Net Fund', data: new Array(table.rows.length).fill(targetFund), color: '#6366F1', fill: false }
+            ]
+          }
+        ],
         chart: {
           type: 'doughnut',
           labels: ['Current Savings', 'Funding Shortfall'],
@@ -8155,6 +11442,12 @@ const TOOLS = {
   '401k-calculator': {
     id: '401k-calculator',
     name: '401(k) Retirement Growth Calculator',
+    related: [
+      'retirement-calculator',
+      'salary-calculator',
+      'investment-calculator',
+      'compound-interest-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-piggy-bank',
     iconClass: 'icon-finance',
@@ -8211,8 +11504,8 @@ const TOOLS = {
       });
 
       for (let y = 1; y <= yearsToRetire; y++) {
-        // Annual employee contribution (capped at $23,500 statutory 2026 baseline limit)
-        const empContrib = Math.min(salary * empPct, 23500);
+        // Annual employee contribution (capped at $24,500 statutory 2026 limit)
+        const empContrib = Math.min(salary * empPct, 24500);
         // Company match: matches employee contribution up to employer_match_limit_pct of salary
         const eligibleSalary = salary * Math.min(empPct, matchLimitPct);
         const matchContrib = eligibleSalary * matchPct;
@@ -8240,6 +11533,72 @@ const TOOLS = {
       const monthly4PctIncome = roundTo((balance * 0.04) / 12, 2);
       const annual4PctIncome = roundTo(balance * 0.04, 2);
 
+      const k401Labels = [`Age ${currentAge}`];
+      const k401Balances = [safeNum(v.current_balance, 25000)];
+      const k401EmpContribs = [safeNum(v.current_balance, 25000)];
+      const k401MatchContribs = [0];
+
+      const k401BarLabels = [];
+      const k401BarEmp = [];
+      const k401BarMatch = [];
+      const k401BarGrowth = [];
+
+      let runningEmp = safeNum(v.current_balance, 25000);
+      let runningMatch = 0;
+      table.rows.forEach(r => {
+        k401Labels.push(r.age);
+        k401Balances.push(r.balance);
+        runningEmp += r.employeeContrib;
+        runningMatch += r.employerMatch;
+        k401EmpContribs.push(roundTo(runningEmp, 2));
+        k401MatchContribs.push(roundTo(runningMatch, 2));
+
+        k401BarLabels.push(r.age);
+        k401BarEmp.push(r.employeeContrib);
+        k401BarMatch.push(r.employerMatch);
+        k401BarGrowth.push(r.growth);
+      });
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'k401-trajectory',
+          title: '401(k) Growth Trajectory',
+          icon: 'fa-chart-area',
+          labels: k401Labels,
+          format: 'currency',
+          datasets: [
+            { label: 'Projected 401(k) Balance', data: k401Balances, color: '#6366F1', fill: true },
+            { label: 'Cumulative Employee Deposits', data: k401EmpContribs, color: '#10B981', fill: false },
+            { label: 'Employer Match ("Free Money")', data: k401MatchContribs, color: '#F59E0B', fill: false }
+          ]
+        },
+        {
+          type: 'stackedBar',
+          id: 'annual-contributions',
+          title: 'Annual Contributions & Growth',
+          icon: 'fa-chart-column',
+          labels: k401BarLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Employee Contribution', data: k401BarEmp, color: '#6366F1', stack: 'k401' },
+            { label: 'Employer Match', data: k401BarMatch, color: '#10B981', stack: 'k401' },
+            { label: 'Investment Growth', data: k401BarGrowth, color: '#F59E0B', stack: 'k401' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'source-split',
+          title: 'Wealth Accumulation Split',
+          icon: 'fa-chart-pie',
+          labels: ['Your Contributions', 'Employer Company Match', 'Compound Investment Growth'],
+          data: [totalEmpContribs, totalMatchContribs, Math.max(0, totalGrowth)],
+          colors: ['#6366F1', '#10B981', '#F59E0B'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Projected 401(k) Balance', value: fmt(balance), highlight: true },
@@ -8251,6 +11610,7 @@ const TOOLS = {
           { label: 'Total Years of Compounding', value: `${yearsToRetire} years` },
           { label: 'Final Salary at Retirement', value: fmt(salary) },
         ],
+        charts,
         chart: {
           type: 'doughnut',
           labels: ['Your Contributions', 'Employer Match', 'Compound Investment Growth'],
@@ -8288,11 +11648,22 @@ const TOOLS = {
     ],
     formula: 'Future Balance = PV(1+r)^n + ∑ [Annual Contribs × (1+r)^(n-t)]',
     faqs: [
-      { q: 'What is the 401(k) contribution limit?', a: 'For 2026, the IRS employee elective deferral limit is $23,500 ($31,000 for workers aged 50 and older utilizing catch-up contributions).' },
+      { q: 'What is the 401(k) contribution limit?', a: 'For 2026, the IRS employee elective deferral limit is $24,500 ($32,500 for workers aged 50 and older utilizing catch-up contributions).' },
       { q: 'What is the difference between Traditional and Roth 401(k)?', a: 'Traditional 401(k) contributions are made with pre-tax dollars, lowering your taxable income today and taxing withdrawals in retirement. Roth 401(k) contributions are made with post-tax dollars, allowing completely tax-free withdrawals in retirement.' }
     ]
   },
   'debt-snowball-calculator': {
+    name: 'Debt Payoff & Snowball Calculator',
+    category: 'Finance',
+    icon: 'fa-arrow-trend-down',
+    iconClass: 'icon-finance',
+    tagClass: 'tag-finance',
+    related: [
+      'credit-card-payoff-calculator',
+      'budget-planner',
+      'emergency-fund-calculator',
+      'savings-calculator'
+    ],
     presets: [
       {
         label: 'Standard Consumer Debt ($15k)',
@@ -8530,6 +11901,44 @@ const TOOLS = {
           { label: 'Total Interest Paid', value: fmt(activeTotalInterest) },
           { label: 'Payoff Strategy Chosen', value: strategy === 'snowball' ? 'Snowball (Lowest Balance First)' : 'Avalanche (Highest APR First)' }
         ],
+        charts: [
+          {
+            type: 'bar',
+            id: 'savings-comparison',
+            title: 'Interest Savings Comparison',
+            icon: 'fa-scale-balanced',
+            labels: ['Total Debt Principal', 'Interest with Strategy', 'Interest without Strategy (Baseline)'],
+            format: 'currency',
+            datasets: [{
+              label: 'Total Cost ($)',
+              data: [totalInitialDebt, activeTotalInterest, baselineTotalInterest],
+              colors: ['#6366F1', '#10B981', '#EF4444'],
+              backgroundColor: ['#6366F1', '#10B981', '#EF4444']
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'debt-composition',
+            title: 'Total Debt Outflow Split',
+            icon: 'fa-chart-pie',
+            labels: ['Principal Repaid', 'Total Interest Paid', 'Interest Saved by Strategy'],
+            data: [totalInitialDebt, activeTotalInterest, Math.max(0, interestSaved)],
+            colors: ['#6366F1', '#EF4444', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'doughnut',
+            id: 'account-balances',
+            title: 'Debt Balances by Account',
+            icon: 'fa-credit-card',
+            labels: rawDebts.map(d => d.name),
+            data: rawDebts.map(d => d.balance),
+            colors: ['#EF4444', '#F97316', '#F59E0B', '#6366F1', '#8B5CF6'],
+            format: 'currency',
+            cutout: '62%'
+          }
+        ],
         chart: {
           type: 'bar',
           labels: ['Total Principal Repaid', 'Strategy Total Interest', 'Baseline Min Pay Interest'],
@@ -8637,6 +12046,12 @@ const TOOLS = {
       }
     ],
     name: 'Mortgage Refinance Break-Even Calculator',
+    related: [
+      'mortgage-calculator',
+      '15-year-mortgage-calculator',
+      'amortization-calculator',
+      'house-affordability-calculator'
+    ],
     description: 'Evaluate mortgage refinancing viability by calculating payment reductions, upfront closing cost break-even horizons, and net cash savings.',
     metaTitle: 'Mortgage Refinance Calculator — Break-Even Horizon & Net Savings | GetCalcu',
     metaDescription: 'Free mortgage refinance calculator. Calculate monthly payment reduction, exact break-even timeline in months, and cumulative net savings after closing costs.',
@@ -8735,6 +12150,62 @@ const TOOLS = {
         insightDetail = `Monthly payment decreases by ${fmt(monthlySavings)}. Over your ${yearsInHome}-year occupancy horizon, you recover ${fmt(closingCosts)} in closing fees and generate ${fmt(netSavingsInHome)} in net cumulative cash savings.`;
       }
 
+      const refLabels = ['Month 0'];
+      const refNetSavings = [-closingCosts];
+      const refGrossSavings = [0];
+
+      const refBarLabels = [];
+      const refCurrentOutflows = [];
+      const refNewOutflows = [];
+
+      table.rows.forEach(r => {
+        refLabels.push(r.period);
+        refNetSavings.push(r.netSavings);
+        refGrossSavings.push(r.grossSavings);
+
+        refBarLabels.push(r.period);
+        refCurrentOutflows.push(r.currentOutflow);
+        refNewOutflows.push(r.newOutflow);
+      });
+
+      const charts = [
+        {
+          type: 'area',
+          id: 'cumulative-savings',
+          title: 'Cumulative Savings & Break-Even',
+          icon: 'fa-chart-area',
+          labels: refLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Net Savings (After Closing Costs)', data: refNetSavings, color: '#10B981', fill: true },
+            { label: 'Cumulative Gross Payment Savings', data: refGrossSavings, color: '#6366F1', fill: false }
+          ]
+        },
+        {
+          type: 'bar',
+          id: 'outflow-comparison',
+          title: 'Cumulative Outflow Comparison',
+          icon: 'fa-chart-column',
+          labels: refBarLabels,
+          format: 'currency',
+          datasets: [
+            { label: 'Current Loan Outflow', data: refCurrentOutflows, color: '#EF4444' },
+            { label: 'Refinanced Outflow', data: refNewOutflows, color: '#6366F1' }
+          ]
+        },
+        {
+          type: 'doughnut',
+          id: 'refinance-cost-split',
+          title: 'New Loan Structure',
+          icon: 'fa-chart-pie',
+          labels: ['Refinanced Principal', 'New Total Interest', 'Closing Costs'],
+          data: [balance, newTotalInterest, closingCosts],
+          colors: ['#6366F1', '#F59E0B', '#EF4444'],
+          format: 'currency',
+          cutout: '62%'
+        }
+      ];
+
       return {
         stats: [
           { label: 'Monthly Payment Savings', value: monthlySavings > 0 ? `+${fmt(monthlySavings)} / mo` : `-${fmt(Math.abs(monthlySavings))} / mo`, highlight: true },
@@ -8746,6 +12217,7 @@ const TOOLS = {
           { label: 'Upfront Closing Costs', value: fmt(closingCosts) },
           { label: 'Total Lifetime Interest Saved', value: fmt(lifetimeInterestDiff) }
         ],
+        charts,
         chart: {
           principal: balance,
           totalInterest: newTotalInterest
@@ -8842,6 +12314,12 @@ const TOOLS = {
       }
     ],
     name: '1099 Self-Employment Tax Calculator',
+    related: [
+      'freelance-hourly-rate-calculator',
+      'freelance-true-rate-system',
+      'salary-calculator',
+      'profit-margin-calculator'
+    ],
     description: 'Calculate federal self-employment tax (SECA), effective tax brackets, and quarterly estimated IRS 1040-ES payments for independent contractors and sole proprietors.',
     metaTitle: '1099 Tax Calculator — Self-Employment Tax & Estimated Quarterly Payments | GetCalcu',
     metaDescription: 'Free 1099 self-employment tax calculator. Calculate 15.3% SECA tax, progressive federal and state income taxes, Schedule SE deductions, and quarterly 1040-ES payments.',
@@ -8858,7 +12336,12 @@ const TOOLS = {
         { value: 'head_household', label: 'Head of Household' }
       ], hint: 'IRS tax filing status determining progressive bracket thresholds and standard deductions.' },
       { id: 'state_tax_rate', label: 'Applicable State Income Tax Rate (%)', type: 'number', default: 4.5, min: 0, max: 15, step: 0.5, hint: 'State income tax rate (0% for states without individual income tax including TX, FL, WA, TN).' },
-      { id: 'other_w2_income', label: 'Concurrent W-2 Compensation ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'W-2 wage earnings subject to mandatory FICA withholding (adjusts Social Security wage cap).' }
+      { id: 'other_w2_income', label: 'Concurrent W-2 Compensation ($)', type: 'number', default: 0, min: 0, step: 1000, hint: 'W-2 wage earnings subject to mandatory FICA withholding (adjusts Social Security wage cap).' },
+      { id: 'tax_year', label: 'Tax Year', type: 'select', default: '2026', options: [
+        { value: '2026', label: '2026 (Active — $184,500 SS Wage Base, $16,100 Std Ded)' },
+        { value: '2025', label: '2025 (Historical — $176,100 SS Wage Base, $15,000 Std Ded)' },
+        { value: '2024', label: '2024 (Historical — $168,600 SS Wage Base, $14,600 Std Ded)' }
+      ], hint: 'IRS statutory tax year parameters.' }
     ],
     calculate(v) {
       const gross = Math.max(0, safeNum(v.gross_income, 0));
@@ -8866,6 +12349,8 @@ const TOOLS = {
       const filingStatus = safeStr(v.filing_status) || 'single';
       const stateRate = Math.max(0, safeNum(v.state_tax_rate, 0));
       const w2Income = Math.max(0, safeNum(v.other_w2_income, 0));
+      const taxYear = v.tax_year || '2026';
+      const sched = US_TAX_SCHEDULES[taxYear] || US_TAX_SCHEDULES['2026'];
 
       if (gross <= 0 && w2Income <= 0) {
         return errorResult('Please specify gross freelance revenue or employment compensation.');
@@ -8877,9 +12362,9 @@ const TOOLS = {
       // 2. Schedule SE Net Earnings (IRS 92.35% statutory rule)
       const seEarnings = netProfit * 0.9235;
 
-      // 3. Social Security Tax (12.4% up to 2026 cap of $176,100)
-      const SS_CAP_2026 = 176100;
-      const ssCapRemaining = Math.max(0, SS_CAP_2026 - w2Income);
+      // 3. Social Security Tax (12.4% up to statutory cap: $184,500 for 2026)
+      const ssCap = sched.socSecCap;
+      const ssCapRemaining = Math.max(0, ssCap - w2Income);
       const ssTaxableIncome = Math.min(seEarnings, ssCapRemaining);
       const ssTax = roundTo(ssTaxableIncome * 0.124, 2);
 
@@ -8887,7 +12372,7 @@ const TOOLS = {
       const medicareTax = roundTo(seEarnings * 0.029, 2);
 
       // 5. Additional Medicare Tax (0.9% above statutory thresholds)
-      const addlThreshold = filingStatus === 'married_joint' ? 250000 : 200000;
+      const addlThreshold = (filingStatus === 'married_joint' || filingStatus === 'married') ? 250000 : 200000;
       const totalCombinedEarned = netProfit + w2Income;
       let addlMedicareTax = 0;
       if (totalCombinedEarned > addlThreshold) {
@@ -8900,61 +12385,24 @@ const TOOLS = {
       // 6. Above-the-line deduction for 50% of self-employment tax
       const seDeduction = roundTo(totalSETax * 0.5, 2);
 
-      // 7. Standard Deductions (IRS 2026 baseline)
-      const standardDeductions = {
-        single: 15000,
-        married_joint: 30000,
-        head_household: 22500
-      };
-      const standardDeduction = standardDeductions[filingStatus] || 15000;
+      // 7. Standard Deductions
+      const standardDeduction = sched.standardDeduction[filingStatus] || sched.standardDeduction.single;
 
       // 8. Federal Taxable Income
       const adjustedGrossIncome = Math.max(0, (netProfit + w2Income) - seDeduction);
       const federalTaxableIncome = Math.max(0, adjustedGrossIncome - standardDeduction);
 
-      // 9. Progressive Federal Income Tax Calculation (2026 baseline brackets)
+      // 9. Progressive Federal Income Tax Calculation
       const calcFederalTax = (taxable, status) => {
         if (taxable <= 0) return 0;
-        let brackets;
-        if (status === 'married_joint') {
-          brackets = [
-            { limit: 23850, rate: 0.10 },
-            { limit: 96950, rate: 0.12 },
-            { limit: 206700, rate: 0.22 },
-            { limit: 394600, rate: 0.24 },
-            { limit: 501050, rate: 0.32 },
-            { limit: 751600, rate: 0.35 },
-            { limit: Infinity, rate: 0.37 }
-          ];
-        } else if (status === 'head_household') {
-          brackets = [
-            { limit: 17000, rate: 0.10 },
-            { limit: 64850, rate: 0.12 },
-            { limit: 103350, rate: 0.22 },
-            { limit: 197300, rate: 0.24 },
-            { limit: 250500, rate: 0.32 },
-            { limit: 626350, rate: 0.35 },
-            { limit: Infinity, rate: 0.37 }
-          ];
-        } else {
-          brackets = [
-            { limit: 11925, rate: 0.10 },
-            { limit: 48475, rate: 0.12 },
-            { limit: 103350, rate: 0.22 },
-            { limit: 197300, rate: 0.24 },
-            { limit: 250525, rate: 0.32 },
-            { limit: 626350, rate: 0.35 },
-            { limit: Infinity, rate: 0.37 }
-          ];
-        }
-
+        const brackets = sched.brackets[status] || sched.brackets.single;
         let tax = 0;
         let prev = 0;
         for (const b of brackets) {
           if (taxable > prev) {
-            const chunk = Math.min(taxable - prev, b.limit - prev);
+            const chunk = Math.min(taxable - prev, b.cap - prev);
             tax += chunk * b.rate;
-            prev = b.limit;
+            prev = b.cap;
           } else {
             break;
           }
@@ -9013,6 +12461,47 @@ const TOOLS = {
           { label: 'State Income Tax', value: fmt(stateTax) },
           { label: 'Net Take-Home Cash in Pocket', value: fmt(takeHomeCash) },
           { label: 'Deductible Business Expenses', value: fmt(expenses) }
+        ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'revenue-split',
+            title: 'Gross Revenue Allocation',
+            icon: 'fa-chart-pie',
+            labels: ['Net Take-Home Cash', 'Self-Employment Tax (SECA)', 'Federal Income Tax', 'State Income Tax', 'Business Write-Offs'],
+            data: [takeHomeCash, totalSETax, federalTaxFor1099, stateTax, expenses],
+            colors: ['#10B981', '#EF4444', '#F59E0B', '#6366F1', '#94A3B8'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'tax-breakdown',
+            title: 'Tax Obligations by Category',
+            icon: 'fa-receipt',
+            labels: ['SECA (15.3%)', 'Federal Income Tax', 'State Income Tax', 'Total Annual Tax'],
+            format: 'currency',
+            datasets: [{
+              label: 'Tax Due ($)',
+              data: [totalSETax, federalTaxFor1099, stateTax, totalAnnualTax],
+              colors: ['#EF4444', '#F59E0B', '#6366F1', '#DC2626'],
+              backgroundColor: ['#EF4444', '#F59E0B', '#6366F1', '#DC2626']
+            }]
+          },
+          {
+            type: 'bar',
+            id: 'quarterly-schedule',
+            title: 'Quarterly Estimated Payments (1040-ES)',
+            icon: 'fa-calendar-days',
+            labels: ['Q1 (Apr 15)', 'Q2 (Jun 15)', 'Q3 (Sep 15)', 'Q4 (Jan 15)'],
+            format: 'currency',
+            datasets: [{
+              label: 'Quarterly Due ($)',
+              data: [quarterlyPayment, quarterlyPayment, quarterlyPayment, quarterlyPayment],
+              colors: ['#3B82F6', '#3B82F6', '#3B82F6', '#3B82F6'],
+              backgroundColor: ['#3B82F6', '#3B82F6', '#3B82F6', '#3B82F6']
+            }]
+          }
         ],
         chart: {
           type: 'doughnut',
@@ -9084,6 +12573,12 @@ const TOOLS = {
   // ── 15-Year Mortgage Calculator Decision Engine ────────────────────────
   '15-year-mortgage-calculator': {
     name: '15-Year vs. 30-Year Mortgage Calculator',
+    related: [
+      'mortgage-calculator',
+      'refinance-calculator',
+      'amortization-calculator',
+      'house-affordability-calculator'
+    ],
     category: 'Finance',
     icon: 'fa-house-chimney',
     iconClass: 'icon-finance',
@@ -9192,6 +12687,48 @@ const TOOLS = {
           { label: 'Net Wealth with 30-Yr + Investing', value: fmt(totalWealth30), highlight: wealthDifference > 0 },
           { label: 'Principal Loan Balance', value: fmt(loan) }
         ],
+        charts: [
+          {
+            type: 'stackedBar',
+            id: 'wealth-comparison',
+            title: 'Net Wealth Comparison at Year 15',
+            icon: 'fa-chart-column',
+            labels: ['15-Year Payoff Strategy', '30-Year + Invest Difference'],
+            format: 'currency',
+            datasets: [
+              { label: 'Home Equity Built', data: [roundTo(equity15, 2), roundTo(equity30, 2)], color: '#6366F1', backgroundColor: '#6366F1', stack: 'wealth' },
+              { label: 'Investment Portfolio ($)', data: [0, investmentPortfolio30], color: '#10B981', backgroundColor: '#10B981', stack: 'wealth' }
+            ]
+          },
+          {
+            type: 'bar',
+            id: 'interest-paid',
+            title: 'Lifetime Interest Paid',
+            icon: 'fa-scale-balanced',
+            labels: ['15-Year Mortgage Interest', '30-Year Mortgage Interest'],
+            format: 'currency',
+            datasets: [{
+              label: 'Total Interest ($)',
+              data: [totalInterest15, totalInterest30],
+              colors: ['#10B981', '#EF4444'],
+              backgroundColor: ['#10B981', '#EF4444']
+            }]
+          },
+          {
+            type: 'bar',
+            id: 'monthly-outflow',
+            title: 'Monthly Payment P&I Comparison',
+            icon: 'fa-wallet',
+            labels: ['15-Year Note', '30-Year Note'],
+            format: 'currency',
+            datasets: [{
+              label: 'Monthly P&I ($)',
+              data: [roundTo(pi15, 2), roundTo(pi30, 2)],
+              colors: ['#6366F1', '#3B82F6'],
+              backgroundColor: ['#6366F1', '#3B82F6']
+            }]
+          }
+        ],
         chart: {
           type: 'bar',
           labels: ['15-Year Payoff Path', '30-Year + Invest Difference'],
@@ -9208,17 +12745,52 @@ const TOOLS = {
         }
       };
     },
+    formula: 'Monthly Payment (P&I) = P × [ r(1 + r)^n ] ÷ [ (1 + r)^n - 1 ]',
+    methodology: {
+      standards: 'Calculations follow Consumer Financial Protection Bureau (CFPB) standard fixed-rate amortization standards and federal truth-in-lending disclosure rules.',
+      assumptions: [
+        'Baseline Loan Amount: $320,000 (calculated from a $400,000 purchase price minus an $80,000 / 20% down payment).',
+        '15-Year Mortgage Baseline: 5.85% fixed interest rate, 180 monthly payments, monthly P&I of $2,674.48.',
+        '30-Year Mortgage Baseline: 6.75% fixed interest rate, 360 monthly payments, monthly P&I of $2,075.51.',
+        'Monthly Payment Difference: $598.96 higher monthly principal and interest on the 15-year note.',
+        'Escrow Charges: Annual property taxes ($4,800 or $400/mo) and homeowners insurance ($1,200 or $100/mo) are held identical across both loans for an apples-to-apples comparison.'
+      ],
+      sources: [
+        'Consumer Financial Protection Bureau (CFPB) Loan Estimate Disclosures',
+        'Federal Reserve Board Consumer Guide to Mortgages',
+        'Regulation Z (Truth in Lending Act) Amortization Standards'
+      ]
+    },
+    examples: [
+      {
+        title: '$400k Purchase ($320k Loan: 15-Yr @ 5.85% vs. 30-Yr @ 6.75%)',
+        input: 'Loan: $320,000 | 15-Yr: 5.85% ($2,674.48/mo) | 30-Yr: 6.75% ($2,075.51/mo)',
+        result: '15-Year Total Interest: $161,406.06 | 30-Year Total Interest: $427,185.01 | Lifetime Interest Saved: $265,778.94.'
+      }
+    ],
     article: {
       heading: '15-Year vs. 30-Year Mortgage: The Comprehensive Decision Guide',
-      intro: 'Deciding between a 15-year and 30-year mortgage is not just about monthly payments — it is a foundational strategic choice between guaranteed debt elimination and stock market wealth building.',
+      intro: 'Deciding between a 15-year and 30-year mortgage is a foundational strategic choice between guaranteed debt elimination and monthly cash flow flexibility. Comparing amortization trajectories reveals where every dollar goes.',
       sections: [
         {
-          heading: 'Guaranteed Return vs. Market Opportunity Cost',
-          body: 'Paying off a 15-year mortgage at 5.85% is equivalent to earning a guaranteed, risk-free 5.85% return on your money. Choosing a 30-year loan and investing the monthly cashflow difference in diversified index funds (averaging 7% to 10% historically) has higher expected long-term wealth, but comes with market volatility.'
+          heading: 'When a 15-Year Loan Makes Sense vs. When a 30-Year Makes Sense',
+          body: [
+            'A 15-year mortgage makes sense when you have high, stable income and prioritize debt freedom. You secure a lower interest rate (typically 0.50% to 1.00% below 30-year rates), build equity more than four times faster in the early years, and eliminate mortgage payments before college tuition or retirement arrive.',
+            'A 30-year mortgage makes sense when you need budget breathing room or want to maximize long-term wealth through investing. The lower mandatory payment protects against unexpected job disruptions or medical costs. Meanwhile, investing the $598.96 monthly savings into diversified index funds can yield a larger net worth over 30 years than paying down low-interest debt early.'
+          ]
         },
         {
-          heading: 'Cash Flow Flexibility: The Sleep-at-Night Factor',
-          body: 'A 30-year mortgage provides a lower mandatory monthly payment. If you face unexpected job loss or medical expenses, your required commitment is lower. If you have extra cash in good months, you can always prepay principal at your own pace.'
+          heading: 'Worked Example: Month-by-Month Interest Comparison ($320,000 Loan)',
+          body: [
+            'Consider a $320,000 mortgage comparing a 15-year note at 5.85% against a 30-year note at 6.75%:',
+            'Month 1 Breakdown: On the 15-year loan ($2,674.48 P&I), Month 1 interest is $1,560.00 and $1,114.48 goes directly toward principal. On the 30-year loan ($2,075.51 P&I), Month 1 interest is $1,800.00 and only $275.51 goes toward principal. In month one alone, the 15-year loan saves $240.00 in interest and pays off four times as much debt.',
+            'Year 1 Milestone (Month 12): After 12 payments, the 15-year loan balance drops to $306,261.79 ($13,738.21 principal paid; $18,355.55 interest). The 30-year loan balance remains at $316,589.61 ($3,410.39 principal paid; $21,495.73 interest). In just one year, the 15-year homeowner builds $10,327.82 more home equity and saves $3,140.18 in interest.',
+            'Lifetime Summary: Over the full term, the 15-year loan incurs $161,406.06 in total interest versus $427,185.01 on the 30-year loan, delivering guaranteed lifetime interest savings of $265,778.94.'
+          ]
+        },
+        {
+          heading: 'Guaranteed Return vs. Market Opportunity Cost',
+          body: 'Paying off a 15-year mortgage at 5.85% provides a guaranteed, risk-free 5.85% after-tax return on your principal. Conversely, selecting a 30-year loan and systematically investing the $598.96 monthly savings into low-cost index funds (which historically have returned 8% to 10% annualized) offers higher expected returns, subject to market volatility.'
         }
       ]
     },
@@ -9230,6 +12802,7 @@ const TOOLS = {
     ],
     faqs: [
       { q: 'Is a 15-year mortgage always better than a 30-year mortgage?', a: 'No. While a 15-year mortgage saves massive interest, the higher mandatory payment restricts cash flow. If investing the monthly difference in tax-advantaged retirement accounts (401k/IRA), a 30-year mortgage can actually yield a higher overall net worth.' },
+      { q: 'How much do I save with a 15-year mortgage on a $320,000 loan?', a: 'At baseline rates of 5.85% for 15 years and 6.75% for 30 years, a $320,000 loan saves $265,778.94 in total interest ($161,406.06 vs. $427,185.01). The 15-year monthly principal and interest payment is $2,674.48, compared to $2,075.51 on the 30-year loan (a difference of $598.96 per month).' },
       { q: 'Can I pay off a 30-year mortgage in 15 years?', a: 'Yes! Standard mortgages in the US have no prepayment penalties. You can take a 30-year loan for safety and make extra principal payments each month to retire the loan in 15 years.' },
       { q: 'How much lower is the interest rate on a 15-year mortgage?', a: 'Typically, 15-year fixed mortgage rates are 0.50% to 1.00% lower than 30-year fixed rates because lenders take on less duration risk.' },
       { q: 'What happens to my payment when the 15-year loan is paid off?', a: 'Your principal and interest payment drops to $0. You only pay property taxes, hazard insurance, and maintenance costs going forward.' }
@@ -9239,6 +12812,12 @@ const TOOLS = {
   // ── FHA Loan Decision Engine ───────────────────────────────────────────
   'fha-loan-calculator': {
     name: 'FHA Loan Calculator with Upfront & Monthly MIP',
+    related: [
+      'mortgage-calculator',
+      '15-year-mortgage-calculator',
+      'house-affordability-calculator',
+      'true-home-buying-system'
+    ],
     category: 'Finance',
     icon: 'fa-shield-halved',
     iconClass: 'icon-finance',
@@ -9334,6 +12913,45 @@ const TOOLS = {
           { label: 'Conventional PMI Drop Horizon', value: '~' + pmiDropYears + ' Years (' + pmiDropMonth + ' mo)' },
           { label: 'Conventional Payment After PMI', value: fmt(totalConvMonthlyAfterPMI), highlight: true }
         ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'monthly-piti-mip',
+            title: 'Monthly Housing Payment (PITI + MIP)',
+            icon: 'fa-wallet',
+            labels: ['Principal & Interest', 'FHA Monthly MIP', 'Property Taxes', 'Homeowners Insurance'],
+            data: [roundTo(piMonthly, 2), monthlyMIP, roundTo(monthlyTax, 2), roundTo(monthlyIns, 2)],
+            colors: ['#6366F1', '#F59E0B', '#3B82F6', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'fha-vs-conventional-comparison',
+            title: 'FHA vs. Conventional Monthly Payment',
+            icon: 'fa-scale-balanced',
+            labels: ['FHA Monthly (PITI+MIP)', 'Conventional 3% (Initial with PMI)', 'Conventional (After PMI Cancels)'],
+            format: 'currency',
+            datasets: [{
+              label: 'Monthly Payment ($)',
+              data: [totalFhaMonthly, totalConvMonthlyInitial, totalConvMonthlyAfterPMI],
+              colors: ['#6366F1', '#EC4899', '#10B981'],
+              backgroundColor: ['#6366F1', '#EC4899', '#10B981']
+            }]
+          },
+          {
+            type: 'stackedBar',
+            id: 'fha-loan-structure',
+            title: 'Total Financed Loan Structure',
+            icon: 'fa-chart-column',
+            labels: ['Purchase Loan Breakdown'],
+            format: 'currency',
+            datasets: [
+              { label: 'Base Loan Principal', data: [baseLoan], color: '#6366F1', stack: 'loan' },
+              { label: 'Upfront MIP Financed (1.75%)', data: [upfrontMIP], color: '#F59E0B', stack: 'loan' }
+            ]
+          }
+        ],
         chart: {
           type: 'bar',
           labels: ['FHA Monthly (PITI+MIP)', 'Conventional 3% (Initial)', 'Conventional (After PMI Drops)'],
@@ -9383,13 +13001,19 @@ const TOOLS = {
   // ── Auto Refinance Decision Engine ─────────────────────────────────────
   'auto-refinance-calculator': {
     name: 'Auto Loan Refinance & Break-Even Calculator',
+    related: [
+      'auto-loan-calculator',
+      'loan-calculator',
+      'loan-interest-calculator',
+      'budget-planner'
+    ],
     category: 'Finance',
     icon: 'fa-rotate-left',
     iconClass: 'icon-finance',
     tagClass: 'tag-finance',
     description: 'Calculate how much you can save every month and over the life of your car loan by refinancing to a lower interest rate, with instant break-even horizon analysis.',
-    metaTitle: 'Auto Loan Refinance Calculator | Monthly & Lifetime Savings — GetCalcu',
-    metaDescription: 'Free Auto Refinance Calculator. Calculate monthly payment savings, total interest reduction, loan-to-value equity, and exact break-even timeline in months.',
+    metaTitle: 'Auto Loan Refinance Calculator – Savings & Break-Even | GetCalcu',
+    metaDescription: 'See how much you could save each month and overall by refinancing your car loan to a lower rate, and when you break even.',
     keywords: [
       'auto loan refinance calculator',
       'car refinance savings calculator',
@@ -9455,6 +13079,45 @@ const TOOLS = {
           { label: 'Total Current Remaining Cost', value: fmt(balance + totalOldInterest) },
           { label: 'Total Refinanced Cost', value: fmt(newPrincipal + totalNewInterest) }
         ],
+        charts: [
+          {
+            type: 'stackedBar',
+            id: 'cost-comparison',
+            title: 'Remaining Loan Cost Comparison',
+            icon: 'fa-chart-column',
+            labels: ['Current Auto Loan', 'Refinanced Auto Loan'],
+            format: 'currency',
+            datasets: [
+              { label: 'Loan Principal', data: [balance, newPrincipal], color: '#6366F1', backgroundColor: '#6366F1', stack: 'cost' },
+              { label: 'Total Interest Paid', data: [totalOldInterest, totalNewInterest], color: '#F59E0B', backgroundColor: '#F59E0B', stack: 'cost' }
+            ]
+          },
+          {
+            type: 'bar',
+            id: 'monthly-comparison',
+            title: 'Monthly Payment Comparison',
+            icon: 'fa-wallet',
+            labels: ['Current Monthly Payment', 'Refinanced Monthly Payment'],
+            format: 'currency',
+            datasets: [{
+              label: 'Monthly Payment ($)',
+              data: [oldPayment, newPayment],
+              colors: ['#EF4444', '#10B981'],
+              backgroundColor: ['#EF4444', '#10B981']
+            }]
+          },
+          {
+            type: 'doughnut',
+            id: 'refi-savings-split',
+            title: 'Interest Savings Breakdown',
+            icon: 'fa-piggy-bank',
+            labels: ['New Total Interest', 'Net Lifetime Savings'],
+            data: [totalNewInterest, Math.max(0, lifetimeInterestSavings)],
+            colors: ['#6366F1', '#10B981'],
+            format: 'currency',
+            cutout: '62%'
+          }
+        ],
         chart: {
           type: 'bar',
           labels: ['Current Auto Loan', 'Refinanced Auto Loan'],
@@ -9475,7 +13138,7 @@ const TOOLS = {
     },
     article: {
       heading: 'How to Refinance a Car Loan: Timing & Break-Even Rules',
-      intro: 'Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.',
+      intro: 'Use this auto loan refinance calculator (also called a car loan refinance calculator) to compare your current car loan with a new rate and term and see your monthly savings and break-even point. Refinancing replaces your existing auto loan with a lower interest rate from a credit union or bank, immediately lowering monthly payments.',
       sections: [
         {
           heading: 'When Does Car Loan Refinancing Make Sense?',
@@ -9504,6 +13167,13 @@ const TOOLS = {
   // ── Freelance & Consultant Pricing Decision Engine ────────────────────
   'freelance-hourly-rate-calculator': {
     name: 'Freelance & Consultant Hourly Rate Calculator',
+    related: [
+      'freelance-true-rate-system',
+      'self-employment-tax-calculator',
+      'salary-calculator',
+      'profit-margin-calculator',
+      'emergency-fund-calculator'
+    ],
     category: 'Business',
     icon: 'fa-briefcase',
     iconClass: 'icon-business',
@@ -9584,6 +13254,47 @@ const TOOLS = {
           { label: 'Total Tax Reserve Needed', value: fmt(totalTaxes), warn: true },
           { label: 'Annual Billable Hours', value: totalBillableHours + ' hrs (' + workingWeeks + ' wks)' }
         ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'freelance-revenue-breakdown',
+            title: 'Gross Billing Revenue Allocation',
+            icon: 'fa-chart-pie',
+            labels: ['Net Take-Home Salary', 'Taxes (SECA + Income)', 'Benefits & Retirement', 'Business Overhead'],
+            data: [netSalary, totalTaxes, (healthAnnual + retirementAnnual), overhead],
+            colors: ['#10B981', '#EF4444', '#F59E0B', '#6366F1'],
+            format: 'currency',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'hourly-rate-ladder',
+            title: 'Hourly Rate Tier Ladder',
+            icon: 'fa-layer-group',
+            labels: ['Survival Floor Rate', 'Target Market Rate', 'Premium Value-Based Rate'],
+            format: 'currency',
+            datasets: [{
+              label: 'Hourly Billing Rate ($/hr)',
+              data: [floorHourlyRate, targetHourlyRate, premiumHourlyRate],
+              colors: ['#F59E0B', '#10B981', '#6366F1'],
+              backgroundColor: ['#F59E0B', '#10B981', '#6366F1']
+            }]
+          },
+          {
+            type: 'stackedBar',
+            id: 'personal-vs-business-split',
+            title: 'Personal Cashflow vs Overhead & Taxes',
+            icon: 'fa-chart-column',
+            labels: ['Annual Revenue Structure'],
+            format: 'currency',
+            datasets: [
+              { label: 'Personal Living Cash', data: [netSalary], color: '#10B981', stack: 'rev' },
+              { label: 'Retirement & Health Benefits', data: [healthAnnual + retirementAnnual], color: '#3B82F6', stack: 'rev' },
+              { label: 'Taxes (SECA + Fed + State)', data: [totalTaxes], color: '#EF4444', stack: 'rev' },
+              { label: 'Business Operating Overhead', data: [overhead], color: '#6366F1', stack: 'rev' }
+            ]
+          }
+        ],
         chart: {
           labels: ['Net Take-Home', 'Taxes (SECA + Inc)', 'Benefits & Retirement', 'Business Overhead'],
           datasets: [{
@@ -9635,6 +13346,10 @@ const TOOLS = {
   // ── Body Fat & Composition Goal Engine ─────────────────────────────────
   'body-fat-percentage-calculator': {
     name: 'Body Fat Percentage Calculator (US Navy Method)',
+    related: [
+      'bmi-calculator',
+      'tdee-calculator'
+    ],
     category: 'Health',
     icon: 'fa-ruler-combined',
     iconClass: 'icon-health',
@@ -9751,6 +13466,47 @@ const TOOLS = {
           { label: 'Target Goal Weight (at ' + targetBfRaw + '% BF)', value: targetWeight + ' ' + unitLabel },
           { label: 'Fat to Lose to Reach Goal', value: fatToLose + ' ' + unitLabel, warn: fatToLose > 0 },
           { label: 'Estimated Timeline to Goal', value: weeksToGoal > 0 ? weeksToGoal + ' Weeks (' + cuttingCalories + ' kcal/day)' : 'Goal Reached!' }
+        ],
+        charts: [
+          {
+            type: 'doughnut',
+            id: 'body-composition-split',
+            title: 'Body Composition Split',
+            icon: 'fa-chart-pie',
+            labels: [`Lean Muscle & Bone (${leanMass} ${unitLabel})`, `Body Fat Mass (${fatMass} ${unitLabel})`],
+            data: [leanMass, fatMass],
+            colors: ['#10B981', '#EC4899'],
+            format: 'number',
+            cutout: '62%'
+          },
+          {
+            type: 'bar',
+            id: 'current-vs-goal-weight',
+            title: 'Current Weight vs Target Goal Weight',
+            icon: 'fa-scale-balanced',
+            labels: ['Current Body Weight', 'Target Goal Weight (at ' + targetBfRaw + '% BF)', 'Lean Mass Baseline'],
+            format: 'number',
+            datasets: [{
+              label: 'Weight (' + unitLabel + ')',
+              data: [wt, targetWeight, leanMass],
+              colors: ['#6366F1', '#10B981', '#3B82F6'],
+              backgroundColor: ['#6366F1', '#10B981', '#3B82F6']
+            }]
+          },
+          {
+            type: 'bar',
+            id: 'body-fat-benchmark',
+            title: 'Body Fat % vs Ideal Standards',
+            icon: 'fa-ruler-horizontal',
+            labels: ['Your Body Fat %', 'Target Goal BF %', v.gender === 'male' ? 'Fitness Benchmark (15%)' : 'Fitness Benchmark (22%)'],
+            format: 'percentage',
+            datasets: [{
+              label: 'Body Fat (%)',
+              data: [bf, targetBfRaw, v.gender === 'male' ? 15 : 22],
+              colors: ['#EC4899', '#10B981', '#3B82F6'],
+              backgroundColor: ['#EC4899', '#10B981', '#3B82F6']
+            }]
+          }
         ],
         chart: {
           labels: ['Lean Muscle & Bone', 'Body Fat Mass'],

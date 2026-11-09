@@ -9,7 +9,26 @@ document.addEventListener('DOMContentLoaded', () => {
     initFooterYear();
     initCategoryFilter();
     initBackToTop();
+    updateCategoryCounts();
 });
+
+// ── Category Counts Sync ───────────────────────────────────────
+function updateCategoryCounts() {
+    if (typeof TOOLS === 'undefined') return;
+    const counts = {};
+    Object.values(TOOLS).forEach(t => {
+        if (t && t.category) {
+            const key = t.category.toLowerCase();
+            counts[key] = (counts[key] || 0) + 1;
+        }
+    });
+    Object.keys(counts).forEach(cat => {
+        const el = document.getElementById(`count-${cat}`);
+        if (el) {
+            el.textContent = `${counts[cat]} tools`;
+        }
+    });
+}
 
 // ── Footer Year ────────────────────────────────────────────────
 function initFooterYear() {
@@ -78,28 +97,37 @@ function initCategoryFilter() {
     }
 }
 
-// Floating back-to-top button
+// Floating back-to-top button (optimized: 0 forced reflows on initial load)
 function initBackToTop() {
     let btn = document.getElementById('back-to-top-btn');
-    if (!btn) {
-        btn = document.createElement('button');
-        btn.id = 'back-to-top-btn';
-        btn.className = 'back-to-top-btn';
-        btn.type = 'button';
-        btn.setAttribute('aria-label', 'Back to top');
-        btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
-        btn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        document.body.appendChild(btn);
-    }
+    let ticking = false;
 
-    const toggleVisibility = () => {
-        btn.classList.toggle('visible', window.scrollY > 480);
+    const handleScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrolled = window.scrollY > 480;
+                if (!btn && scrolled) {
+                    btn = document.createElement('button');
+                    btn.id = 'back-to-top-btn';
+                    btn.className = 'back-to-top-btn';
+                    btn.type = 'button';
+                    btn.setAttribute('aria-label', 'Back to top');
+                    btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+                    btn.addEventListener('click', () => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                    document.body.appendChild(btn);
+                }
+                if (btn) {
+                    btn.classList.toggle('visible', scrolled);
+                }
+                ticking = false;
+            });
+            ticking = true;
+        }
     };
 
-    toggleVisibility();
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
 // Category Page Rendering (supports /category/:slug and ?category=:slug)
@@ -205,24 +233,29 @@ function updateThemeIcon(btn, theme) {
     icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
 }
 
-// Hero Search — opens modal and pre-fills query
+// Hero & Final Search — opens modal and pre-fills query
 function initHeroSearch() {
-    const input = document.getElementById('hero-search-input');
-    const btn = document.getElementById('hero-search-btn');
-    if (!input && !btn) return;
+    function setupSearch(inputId, btnId) {
+        const input = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (!input && !btn) return;
 
-    function triggerSearch() {
-        const modal = document.getElementById('search-modal');
-        const searchField = document.getElementById('modal-search-field');
-        if (!modal || !searchField) return;
-        modal.classList.remove('hidden');
-        searchField.value = input ? input.value : '';
-        searchField.dispatchEvent(new Event('input'));
-        searchField.focus();
+        function triggerSearch() {
+            const modal = document.getElementById('search-modal');
+            const searchField = document.getElementById('modal-search-field');
+            if (!modal || !searchField) return;
+            modal.classList.remove('hidden');
+            searchField.value = input ? input.value : '';
+            searchField.dispatchEvent(new Event('input'));
+            searchField.focus();
+        }
+
+        if (btn) btn.addEventListener('click', triggerSearch);
+        if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') triggerSearch(); });
     }
 
-    if (btn) btn.addEventListener('click', triggerSearch);
-    if (input) input.addEventListener('keydown', (e) => { if (e.key === 'Enter') triggerSearch(); });
+    setupSearch('hero-search-input', 'hero-search-btn');
+    setupSearch('final-search-input', 'final-search-btn');
 }
 
 // Active Nav State
@@ -292,25 +325,27 @@ function initMobileNav() {
 
 // Auth UI — header slot + history nav visibility
 function initAuthUI() {
-    if (typeof onAuthChange !== 'function') return;
     const slot = document.getElementById('auth-header-slot');
     const historyNav = document.querySelector('.nav-item.auth-only');
     const promoCard  = document.getElementById('sidebar-promo');
 
-    onAuthChange(async (session) => {
+    function renderAuthUI(session) {
         if (!slot) return;
-        if (session) {
+        if (session && session.user) {
             const name = session.user.user_metadata?.full_name
-                || session.user.email.split('@')[0];
+                || (session.user.email ? session.user.email.split('@')[0] : 'User');
             slot.innerHTML = `
                 <div class="auth-user-menu">
                     <span class="auth-user-name">${name}</span>
                     <button class="btn btn-outline btn-sm" id="signout-btn">Sign out</button>
                 </div>`;
-            document.getElementById('signout-btn').addEventListener('click', async () => {
-                await signOut();
-                location.reload();
-            });
+            const signoutBtn = document.getElementById('signout-btn');
+            if (signoutBtn) {
+                signoutBtn.addEventListener('click', async () => {
+                    if (typeof signOut === 'function') await signOut();
+                    location.reload();
+                });
+            }
             if (historyNav) historyNav.classList.remove('hidden');
             if (promoCard)  promoCard.style.display = 'none';
         } else {
@@ -318,7 +353,23 @@ function initAuthUI() {
             if (historyNav) historyNav.classList.add('hidden');
             if (promoCard)  promoCard.style.display = '';
         }
-    });
+    }
+
+    if (typeof onAuthChange === 'function') {
+        onAuthChange(renderAuthUI);
+    } else {
+        window.addEventListener('getcalcu:auth-change', (e) => renderAuthUI(e.detail));
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof onAuthChange === 'function') {
+                clearInterval(interval);
+                onAuthChange(renderAuthUI);
+            } else if (attempts > 30) {
+                clearInterval(interval);
+            }
+        }, 100);
+    }
 }
 
 // Global Search Overlay Logic

@@ -13,13 +13,9 @@
   // ── Service Worker registration ───────────────────────────────
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function (reg) {
-          console.log('[PWA] Service worker registered:', reg.scope);
-        })
-        .catch(function (err) {
-          console.warn('[PWA] Service worker registration failed:', err);
-        });
+      navigator.serviceWorker.register('/sw.js').catch(function (err) {
+        // Silently handle offline/SW failures without polluting console
+      });
     });
   }
 

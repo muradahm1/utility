@@ -115,6 +115,19 @@ describe('getCurrencySymbol', () => {
     it('returns GBP symbol', () => {
         expect(getCurrencySymbol('GBP')).toBe('£');
     });
+    it('returns ETB symbol (Br)', () => {
+        expect(getCurrencySymbol('ETB')).toBe('Br');
+    });
+    it('returns KES symbol (KSh)', () => {
+        expect(getCurrencySymbol('KES')).toBe('KSh');
+    });
+    it('returns NGN symbol (₦)', () => {
+        expect(getCurrencySymbol('NGN')).toBe('₦');
+    });
+    it('returns AED and SAR symbols', () => {
+        expect(getCurrencySymbol('AED')).toBe('AED');
+        expect(getCurrencySymbol('SAR')).toBe('SAR');
+    });
     it('returns the code itself for unknown', () => {
         expect(getCurrencySymbol('XYZ')).toBe('XYZ');
     });
@@ -173,5 +186,8 @@ describe('Constants', () => {
     it('CURRENCIES is an object', () => {
         expect(typeof CURRENCIES).toBe('object');
         expect(CURRENCIES.USD).toBeDefined();
+        expect(CURRENCIES.ETB).toBe('Ethiopian Birr');
+        expect(CURRENCIES.KES).toBe('Kenyan Shilling');
+        expect(CURRENCIES.NGN).toBe('Nigerian Naira');
     });
 });

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
 
@@ -11,26 +11,37 @@
     <link rel="canonical" href="" id="canonical-tag">
 
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
-    <!-- End Google Tag Manager -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="GetCalcu">
     <meta property="og:title" content="">
@@ -45,10 +56,12 @@
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- PWA -->
@@ -57,9 +70,7 @@
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
     <body>
@@ -80,7 +91,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- Sidebar -->
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -173,7 +184,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -202,7 +213,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <!-- Legacy Tools Registry must load before tool-runner reads it -->
-    <script src="/js/tools.js"></script>
+    <script src="/js/tools.min.js"></script>
     <script src="/js/tools-template.js"></script>
     
     

@@ -115,7 +115,80 @@ function loadTools() {
   return sandbox.window.TOOLS || {};
 }
 
-// ── 2. Helpers ───────────────────────────────────────────────────────
+// ── 2. Load modular calculator files (ES modules) ────────────────────
+// These are ES modules with imports, so we can't execute them directly.
+// We parse them for id/name/category/metaDescription via regex.
+function loadModularTools() {
+  const tools = {};
+  const modularFiles = [
+    path.join(__dirname, 'js', 'calculators', 'construction.js'),
+    path.join(__dirname, 'js', 'calculators', 'engineering.js'),
+    path.join(__dirname, 'js', 'calculators', 'finance.js'),
+    path.join(__dirname, 'js', 'calculators', 'health.js'),
+  ];
+
+  modularFiles.forEach(filePath => {
+    if (!fs.existsSync(filePath)) return;
+    const source = fs.readFileSync(filePath, 'utf8');
+    const calcRegex = /export\s+const\s+\w+\s*=\s*\{([\s\S]*?)\n\s*\};/g;
+    let match;
+    while ((match = calcRegex.exec(source)) !== null) {
+      const body = match[1];
+      const idMatch = body.match(/id:\s*'([a-z0-9-]+)'/);
+      if (!idMatch) continue;
+      const slug = idMatch[1];
+      const nameMatch = body.match(/name:\s*'([^']+)'/);
+      const catMatch = body.match(/category:\s*'([^']+)'/);
+      const descMatch = body.match(/metaDescription:\s*'([^']+)'/);
+      const descMatch2 = body.match(/description:\s*'([^']+)'/);
+      tools[slug] = {
+        slug,
+        name: nameMatch ? nameMatch[1] : slug.replace(/-/g, ' '),
+        category: catMatch ? catMatch[1] : 'General',
+        description: descMatch2 ? descMatch2[1] : '',
+        metaDescription: descMatch ? descMatch[1] : (descMatch2 ? descMatch2[1] : ''),
+        metaTitle: null,
+        keywords: [],
+        formula: null,
+        articleHeading: null,
+        articleIntro: null,
+        faqs: [],
+      };
+    }
+  });
+  return tools;
+}
+
+// ── 3. Merge and normalize the registry ──────────────────────────────
+function buildRegistry() {
+  const legacy = loadTools();
+  const modular = loadModularTools();
+  const merged = { ...legacy, ...modular };
+
+  // Normalize each tool to a clean SEO metadata object
+  const registry = {};
+  Object.keys(merged).forEach(slug => {
+    const t = merged[slug];
+    registry[slug] = {
+      slug,
+      name: t.name || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      category: t.category || 'General',
+      description: t.description || '',
+      metaDescription: t.metaDescription || t.description || '',
+      metaTitle: t.metaTitle || null,
+      keywords: Array.isArray(t.keywords) ? t.keywords : [],
+      formula: t.formula || null,
+      articleHeading: (t.article && t.article.heading) || null,
+      articleIntro: (t.article && t.article.intro) || null,
+      faqs: Array.isArray(t.faqs) ? t.faqs.map(f => ({ q: f.q, a: f.a })) : [],
+      revisionDate: t.revisionDate || null,
+      lastReviewed: t.lastReviewed || null,
+    };
+  });
+  return registry;
+}
+
+// ── 4. Helpers ───────────────────────────────────────────────────────
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
@@ -143,10 +216,57 @@ function buildSoftwareAppJsonLd(tool) {
     name: tool.name,
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Web',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: tool.currency || 'USD' },
     description: tool.metaDescription || tool.description,
     url: buildCanonical(tool.slug),
   };
+}
+
+function buildHreflangTags(slug) {
+  const baseSlug = slug.split('/')[0];
+  if (baseSlug === 'salary-calculator') {
+    return `
+    <link rel="alternate" hreflang="x-default" href="${BASE_URL}/tool/salary-calculator">
+    <link rel="alternate" hreflang="en-US" href="${BASE_URL}/tool/salary-calculator">
+    <link rel="alternate" hreflang="en-ET" href="${BASE_URL}/tool/salary-calculator/et">
+    <link rel="alternate" hreflang="en-KE" href="${BASE_URL}/tool/salary-calculator/ke">
+    <link rel="alternate" hreflang="en-NG" href="${BASE_URL}/tool/salary-calculator/ng">
+    <link rel="alternate" hreflang="en-ZA" href="${BASE_URL}/tool/salary-calculator/za">`;
+  }
+  return '';
+}
+
+function renderCountrySwitcher(slug, currentCountry = 'us') {
+  const baseSlug = slug.split('/')[0];
+  if (baseSlug === 'salary-calculator') {
+    const isET = currentCountry === 'et' || slug === 'salary-calculator/et';
+    const isKE = currentCountry === 'ke' || slug === 'salary-calculator/ke';
+    const isNG = currentCountry === 'ng' || slug === 'salary-calculator/ng';
+    const isZA = currentCountry === 'za' || slug === 'salary-calculator/za';
+    const isUS = !isET && !isKE && !isNG && !isZA;
+    return `
+      <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
+        <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
+        <div class="country-switcher-options">
+          <a href="/tool/salary-calculator" class="country-pill ${isUS ? 'active' : ''}">
+            <span class="country-flag">🇺🇸</span> <span>United States</span>
+          </a>
+          <a href="/tool/salary-calculator/et" class="country-pill ${isET ? 'active' : ''}">
+            <span class="country-flag">🇪🇹</span> <span>Ethiopia (ETB)</span>
+          </a>
+          <a href="/tool/salary-calculator/ke" class="country-pill ${isKE ? 'active' : ''}">
+            <span class="country-flag">🇰🇪</span> <span>Kenya (KES)</span>
+          </a>
+          <a href="/tool/salary-calculator/ng" class="country-pill ${isNG ? 'active' : ''}">
+            <span class="country-flag">🇳🇬</span> <span>Nigeria (NGN)</span>
+          </a>
+          <a href="/tool/salary-calculator/za" class="country-pill ${isZA ? 'active' : ''}">
+            <span class="country-flag">🇿🇦</span> <span>South Africa (ZAR)</span>
+          </a>
+        </div>
+      </div>`;
+  }
+  return '';
 }
 
 function buildBreadcrumbJsonLd(tool) {
@@ -198,10 +318,11 @@ function buildArticleJsonLd(tool) {
     '@type': 'TechArticle',
     headline: tool.article.heading,
     description: tool.article.intro || tool.metaDescription || tool.description,
-    author: { '@type': 'Organization', name: 'GetCalcu Editorial & Calculation Review Board' },
+    author: { '@type': 'Organization', name: 'GetCalcu' },
     publisher: { '@type': 'Organization', name: 'GetCalcu', url: `${BASE_URL}/` },
     about: tool.name,
     url: buildCanonical(tool.slug),
+    dateModified: tool.revisionDate || TODAY,
   };
 }
 
@@ -220,7 +341,7 @@ function renderSidebarNav(activeSlug = null, isHome = false) {
   return `
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -244,8 +365,213 @@ function renderSidebarNav(activeSlug = null, isHome = false) {
         </aside>`;
 }
 
+// ── Contextual Trust Standards & Authority Scoping ─────────────────
+function getToolTrustInfo(tool, slug) {
+  const cat = (tool.category || '').toLowerCase();
+  if (cat === 'finance') {
+    if (['mortgage-calculator', 'auto-loan-calculator', 'loan-calculator', 'loan-interest-calculator', 'credit-card-payoff-calculator', 'amortization-calculator', 'house-affordability-calculator', 'student-loan-calculator'].includes(slug)) {
+      return {
+        standard: 'Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) & Truth in Lending Act (TILA) amortization standards.',
+        policy: 'Deterministic in-browser amortization'
+      };
+    }
+    if (['debt-snowball-calculator'].includes(slug)) {
+      return {
+        standard: 'Harvard Business School debt payoff empirical behavioral research & CFPB debt reduction guidelines.',
+        policy: 'Deterministic mathematical payoff simulation'
+      };
+    }
+    if (['refinance-calculator'].includes(slug)) {
+      return {
+        standard: 'Consumer Financial Protection Bureau (CFPB) TILA disclosure standards & break-even mortgage amortization formulas.',
+        policy: 'Deterministic break-even computation'
+      };
+    }
+    if (['self-employment-tax-calculator'].includes(slug)) {
+      return {
+        standard: 'IRS Schedule SE (Form 1040) statutory 92.35% SECA rules & Social Security Administration statutory wage limits.',
+        policy: 'Deterministic progressive tax modeling'
+      };
+    }
+    if (['salary-calculator'].includes(slug)) {
+      return {
+        standard: 'IRS Title 26 Internal Revenue Code (Rev. Proc. 2024-40) 2026 federal brackets, standard deductions, and FICA statutory rates.',
+        policy: 'Deterministic in-browser payroll calculation'
+      };
+    }
+    if (slug === 'salary-calculator/et') {
+      return {
+        standard: 'Federal Income Tax Proclamation No. 979/2016 (Schedule A) & Pension Proclamation No. 715/2011 statutory pension framework.',
+        policy: 'Deterministic in-browser Schedule A tax and pension computation'
+      };
+    }
+    if (slug === 'salary-calculator/ke') {
+      return {
+        standard: 'Kenya Revenue Authority (KRA) Income Tax Act (Cap. 470), Finance Act, NSSF Act 2013, SHIF Act 2023 & Affordable Housing Act 2024.',
+        policy: 'Deterministic in-browser PAYE, NSSF, SHIF, and Housing Levy computation'
+      };
+    }
+    if (slug === 'salary-calculator/ng') {
+      return {
+        standard: 'Personal Income Tax Act (PITA) Cap P8 LFN 2004 (amended by Finance Acts), Pension Reform Act (PRA) 2014 & NHF Act.',
+        policy: 'Deterministic in-browser PAYE, CRA, pension, and NHF computation'
+      };
+    }
+    if (slug === 'salary-calculator/za') {
+      return {
+        standard: 'South African Revenue Service (SARS) Income Tax Act No. 58 of 1962 & Unemployment Insurance Contributions Act No. 4 of 2002.',
+        policy: 'Deterministic in-browser SARS PAYE, UIF, Section 11F, and Section 6 rebate computation'
+      };
+    }
+    if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
+      return {
+        standard: 'Fisher Real Rate of Return Equation & SEC / FINRA compound interest modeling guidelines (4% Safe Withdrawal Framework).',
+        policy: 'Deterministic real purchasing-power projection'
+      };
+    }
+    return {
+      standard: 'Generally Accepted Accounting Principles (GAAP) & CFPB financial disclosure guidelines.',
+      policy: 'Deterministic client-side computation'
+    };
+  }
+  if (cat === 'health') {
+    if (slug === 'bmi-calculator') {
+      return {
+        standard: 'CDC Adult & Pediatric Body Mass Index criteria and World Health Organization (WHO) international classification thresholds.',
+        policy: 'Deterministic anthropometric evaluation'
+      };
+    }
+    return {
+      standard: 'Mifflin-St Jeor Energy Expenditure Equations (validated by the Academy of Nutrition and Dietetics).',
+      policy: 'Deterministic metabolic computation'
+    };
+  }
+  if (cat === 'engineering') {
+    if (slug === 'ohms-law-calculator') {
+      return {
+        standard: "IEEE standard DC/AC resistive circuit principles and Ohm's Law governing electrical relations.",
+        policy: 'Deterministic physics evaluation'
+      };
+    }
+    if (slug === 'beam-deflection-calculator') {
+      return {
+        standard: 'American Institute of Steel Construction (AISC) & classical Euler-Bernoulli beam theory deflection formulations.',
+        policy: 'Deterministic structural mechanics calculation'
+      };
+    }
+    return {
+      standard: 'ISO 80000-4 Quantities and Units (Mechanics) & standard hydrostatic pressure equations.',
+      policy: 'Deterministic fluid mechanics computation'
+    };
+  }
+  if (cat === 'construction') {
+    return {
+      standard: 'ASTM International standard specifications for construction materials and standard architectural coverage ratios.',
+      policy: 'Deterministic volumetric & material estimation'
+    };
+  }
+  if (cat === 'education') {
+    return {
+      standard: 'AACRAO (American Association of Collegiate Registrars and Admissions Officers) standard 4.0 GPA weighting conventions.',
+      policy: 'Deterministic academic calculation'
+    };
+  }
+  if (cat === 'business') {
+    return {
+      standard: 'Corporate Finance Institute (CFI) standard unit economics, GAAP gross margin formulas, and SaaS LTV/CAC metrics.',
+      policy: 'Deterministic commercial calculation'
+    };
+  }
+  if (cat === 'math') {
+    if (slug === 'unit-converter') {
+      return {
+        standard: 'NIST Special Publication 811 (Guide for the Use of the International System of Units) & BIPM definitions.',
+        policy: 'Deterministic floating-point unit conversion'
+      };
+    }
+    return {
+      standard: 'ISO 80000 mathematical sign standards and deterministic algebraic formulas.',
+      policy: 'Deterministic arithmetic evaluation'
+    };
+  }
+  return {
+    standard: 'Deterministic mathematical principles and open peer-reviewed computational standards.',
+    policy: 'In-browser deterministic computation'
+  };
+}
+
+const METHODOLOGY_BYLINE = 'Built and maintained by the GetCalcu founder.';
+
+function buildMethodologyHtml(tool, slug) {
+  if (!tool.methodology && !tool.formula) return '';
+  const m = tool.methodology || {};
+  const trustInfo = getToolTrustInfo(tool, slug);
+  const standards = m.standards || trustInfo.standard || 'Calculations are based on recognized financial, mathematical, and scientific models verified against authoritative reference standards.';
+  const lastReviewed = tool.lastReviewed || m.lastReviewed || 'September 2026';
+  const assumptions = m.assumptions || [];
+  const rawSources = Array.isArray(m.sources) ? m.sources : [];
+  const sources = rawSources.filter(s => s && !/GetCalcu/i.test(s));
+
+  let assumptionsHtml = '';
+  if (assumptions.length > 0) {
+    assumptionsHtml = `
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          ${assumptions.map(a => `<li>${escapeHtml(a)}</li>`).join('')}
+        </ul>
+      </div>`;
+  }
+  let sourcesHtml = '';
+  if (sources.length > 0) {
+    sourcesHtml = `
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">${sources.map(s => escapeHtml(s)).join(' • ')}</span>
+      </div>`;
+  }
+
+  return `
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
+        </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> ${escapeHtml(METHODOLOGY_BYLINE)}</span>
+      </div>
+      <p class="methodology-summary">${escapeHtml(m.summary || standards)}</p>
+      ${assumptionsHtml}
+      ${sourcesHtml}
+    </section>
+  `;
+}
+
+function buildOnThisPageHtml(tocItems) {
+  if (!tocItems || !tocItems.length) return '';
+  return `
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            ${tocItems.map(item => `
+              <li class="on-this-page-item">
+                <a href="#${escapeHtml(item.id)}" class="on-this-page-link">${escapeHtml(item.label)}</a>
+              </li>
+            `).join('')}
+          </ul>
+        </nav>
+      </details>
+    </div>
+  `;
+}
+
 // ── 3. Build Pre-Rendered Full Static HTML for Non-JS Crawlers & Humans ─
-function renderPreRenderedToolContent(tool, slug) {
+function renderPreRenderedToolContent(tool, slug, allTools = {}) {
   // Compute default values
   const defaultVals = {};
   if (tool.fields && Array.isArray(tool.fields)) {
@@ -367,389 +693,258 @@ function renderPreRenderedToolContent(tool, slug) {
     </div>
   `;
 
-  // 5. Article & Educational Sections
+  // TOC Item Accumulator
+  const tocItems = [];
+
+  // 5. Methodology
+  const methodologyHtml = buildMethodologyHtml(tool, slug);
+  if (methodologyHtml) {
+    tocItems.push({ id: 'methodology', label: 'Methodology & Standards' });
+  }
+
+  // 6. Article & Educational Sections
   let articleHtml = '';
   if (tool.article) {
     const a = tool.article;
+    const articleId = a.id || 'how-to-calculate';
+    tocItems.push({ id: articleId, label: a.heading || 'How to Calculate' });
+
     const sectionsHtml = (a.sections && a.sections.length)
-      ? a.sections.map(s => `
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">${escapeHtml(s.heading)}</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(s.body || s.content || '')}</p>
-      `).join('')
+      ? a.sections.map((s, idx) => {
+        const bodyText = typeof s.body === 'string'
+          ? `<p>${escapeHtml(s.body)}</p>`
+          : (Array.isArray(s.body) ? s.body.map(p => `<p>${escapeHtml(p)}</p>`).join('') : `<p>${escapeHtml(s.body || s.content || '')}</p>`);
+        return `
+          <div class="article-subsection" ${s.id ? `id="${escapeHtml(s.id)}"` : ''}>
+            <h3 class="article-subheading">${escapeHtml(s.heading)}</h3>
+            <div class="article-body-text">${bodyText}</div>
+          </div>`;
+      }).join('')
       : '';
+
     articleHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">${escapeHtml(a.heading)}</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">${escapeHtml(a.intro)}</p>
+      <article class="tool-runner-card educational-card" id="${escapeHtml(articleId)}" aria-labelledby="${escapeHtml(articleId)}-title">
+        <h2 id="${escapeHtml(articleId)}-title" class="educational-section-title">${escapeHtml(a.heading)}</h2>
+        <div class="article-intro-text"><p>${escapeHtml(a.intro)}</p></div>
         ${sectionsHtml}
-      </div>
+      </article>
     `;
   }
 
-  // 6. How To & Formula
+  // 7. How To
   let howToHtml = '';
   if (tool.howTo && tool.howTo.length) {
+    const howToId = 'how-to-use';
+    const howToTitle = `How to Use the ${tool.name}`;
+    tocItems.push({ id: howToId, label: howToTitle });
+
     const steps = tool.howTo.map((step, i) => {
       const stepText = typeof step === 'string' ? escapeHtml(step) : (step.name ? `<strong>${escapeHtml(step.name)}:</strong> ${escapeHtml(step.text)}` : escapeHtml(step.text || ''));
-      return `<li style="margin-bottom:10px;"><strong>Step ${i + 1}:</strong> ${stepText}</li>`;
+      return `
+        <li class="how-to-step">
+          <span class="step-num">${i + 1}</span>
+          <div class="step-content">${stepText}</div>
+        </li>
+      `;
     }).join('');
+
     howToHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the ${escapeHtml(tool.name)}</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;">${steps}</ol>
-        ${tool.formula ? `<div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> ${escapeHtml(tool.formula)}</div>` : ''}
-      </div>
+      <section class="tool-runner-card educational-card" id="${howToId}" aria-labelledby="${howToId}-title">
+        <h2 id="${howToId}-title" class="educational-section-title">${escapeHtml(howToTitle)}</h2>
+        <ol class="how-to-steps-list">${steps}</ol>
+      </section>
     `;
   }
 
-  // 7. Examples
+  // 8. Formula
+  let formulaHtml = '';
+  if (tool.formula || tool.formulaBreakdown) {
+    const formulaId = 'formula';
+    const formulaTitle = tool.formulaTitle || `${tool.name} Formula`;
+    tocItems.push({ id: formulaId, label: formulaTitle });
+
+    const formulaText = typeof tool.formula === 'string'
+      ? tool.formula
+      : (tool.formula && tool.formula.text ? tool.formula.text : (tool.formulaBreakdown || ''));
+    const rawVars = tool.formulaVariables || (tool.formula && tool.formula.variables) || [];
+
+    let variablesHtml = '';
+    if (rawVars && rawVars.length) {
+      variablesHtml = `
+        <div class="formula-variables-wrap">
+          <h4 class="formula-variables-heading">Variable Definitions:</h4>
+          <ul class="formula-variables-list">
+            ${rawVars.map(v => `<li><strong>${escapeHtml(v.name || v.symbol || '')}</strong>: ${escapeHtml(v.description || '')}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    let plainEnglishHtml = '';
+    const explanation = tool.formulaExplanation || (tool.formula && tool.formula.explanation);
+    if (explanation) {
+      plainEnglishHtml = `<div class="article-body-text"><p>${escapeHtml(explanation)}</p></div>`;
+    }
+
+    formulaHtml = `
+      <section class="tool-runner-card educational-card" id="${formulaId}" aria-labelledby="${formulaId}-title">
+        <h2 id="${formulaId}-title" class="educational-section-title">${escapeHtml(formulaTitle)}</h2>
+        <div class="formula-display-box">
+          <code>${escapeHtml(formulaText)}</code>
+        </div>
+        ${plainEnglishHtml}
+        ${variablesHtml}
+      </section>
+    `;
+  }
+
+  // 9. Examples
   let examplesHtml = '';
   if (tool.examples && tool.examples.length) {
+    const examplesId = 'worked-examples';
+    const examplesTitle = 'Real-World Worked Examples';
+    tocItems.push({ id: examplesId, label: examplesTitle });
+
     const exCards = tool.examples.map(ex => `
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(ex.title)}</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> ${escapeHtml(ex.input)}</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">${escapeHtml(ex.result)}</span></p>
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">${escapeHtml(ex.title)}</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">${escapeHtml(ex.input)}</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">${escapeHtml(ex.result)}</span></div>
+        ${ex.explanation ? `<p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5;">${escapeHtml(ex.explanation)}</p>` : ''}
       </div>
     `).join('');
+
     examplesHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">${exCards}</div>
-      </div>
+      <section class="tool-runner-card educational-card" id="${examplesId}" aria-labelledby="${examplesId}-title">
+        <h2 id="${examplesId}-title" class="educational-section-title">${escapeHtml(examplesTitle)}</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">${exCards}</div>
+      </section>
     `;
   }
 
-  // 8. FAQs
+  // 10. Additional domain-specific sections
+  let additionalSectionsHtml = '';
+  if (tool.additionalSections && tool.additionalSections.length) {
+    tool.additionalSections.forEach(sec => {
+      const secId = sec.id || 'domain-guide';
+      tocItems.push({ id: secId, label: sec.heading });
+
+      let contentHtml = '';
+      if (sec.items && sec.items.length) {
+        contentHtml = `
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+            ${sec.items.map(item => `
+              <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
+                <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">${escapeHtml(item.title)}</h4>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin:0;">${escapeHtml(item.description)}</p>
+                ${item.note ? `<span style="display:inline-block;margin-top:8px;font-size:11px;color:var(--primary-color);font-weight:600;">${escapeHtml(item.note)}</span>` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (sec.body) {
+        contentHtml = `<div class="article-body-text">${typeof sec.body === 'string' ? `<p>${escapeHtml(sec.body)}</p>` : sec.body.map(p => `<p>${escapeHtml(p)}</p>`).join('')}</div>`;
+      }
+
+      additionalSectionsHtml += `
+        <section class="tool-runner-card educational-card" id="${escapeHtml(secId)}" aria-labelledby="${escapeHtml(secId)}-title">
+          <h2 id="${escapeHtml(secId)}-title" class="educational-section-title">${escapeHtml(sec.heading)}</h2>
+          ${sec.intro ? `<p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">${escapeHtml(sec.intro)}</p>` : ''}
+          ${contentHtml}
+        </section>
+      `;
+    });
+  }
+
+  // 11. FAQs
   let faqsHtml = '';
   if (tool.faqs && tool.faqs.length) {
+    const faqsId = 'faqs';
+    const faqsTitle = 'Frequently Asked Questions';
+    tocItems.push({ id: faqsId, label: faqsTitle });
+
     const faqItems = tool.faqs.map(f => {
       const q = f.q || f.question || '';
       const a = f.a || f.answer || '';
       return `
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(q)}</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(a)}</p>
-      </details>
-    `;
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">${escapeHtml(q)}</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">${escapeHtml(a)}</p>
+        </details>
+      `;
     }).join('');
+
     faqsHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
+      <section class="tool-runner-card educational-card" id="${faqsId}" aria-labelledby="${faqsId}-title">
+        <h2 id="${faqsId}-title" class="educational-section-title">${escapeHtml(faqsTitle)}</h2>
         ${faqItems}
-      </div>
+      </section>
     `;
   }
 
-// ── Contextual Trust Standards & Authority Scoping ─────────────────
-function getToolTrustInfo(tool, slug) {
-  const cat = (tool.category || '').toLowerCase();
-  if (cat === 'finance') {
-    if (['mortgage-calculator', 'auto-loan-calculator', 'loan-calculator', 'loan-interest-calculator', 'credit-card-payoff-calculator', 'amortization-calculator', 'house-affordability-calculator', 'student-loan-calculator'].includes(slug)) {
-      return {
-        standard: 'Consumer Financial Protection Bureau (CFPB) Regulation Z (12 CFR § 1026.22) & Truth in Lending Act (TILA) amortization standards.',
-        reviewer: 'GetCalcu Consumer Credit & Lending Review Board',
-        policy: 'Deterministic in-browser amortization'
-      };
-    }
-    if (['debt-snowball-calculator'].includes(slug)) {
-      return {
-        standard: 'Harvard Business School debt payoff empirical behavioral research & CFPB debt reduction guidelines.',
-        reviewer: 'GetCalcu Consumer Debt & Credit Planning Board',
-        policy: 'Deterministic mathematical payoff simulation'
-      };
-    }
-    if (['refinance-calculator'].includes(slug)) {
-      return {
-        standard: 'Consumer Financial Protection Bureau (CFPB) TILA disclosure standards & break-even mortgage amortization formulas.',
-        reviewer: 'GetCalcu Mortgage & Real Estate Review Desk',
-        policy: 'Deterministic break-even computation'
-      };
-    }
-    if (['self-employment-tax-calculator'].includes(slug)) {
-      return {
-        standard: 'IRS Schedule SE (Form 1040) statutory 92.35% SECA rules & Social Security Administration statutory wage limits.',
-        reviewer: 'GetCalcu Small Business & Tax Planning Board',
-        policy: 'Deterministic progressive tax modeling'
-      };
-    }
-    if (['salary-calculator'].includes(slug)) {
-      return {
-        standard: 'IRS Title 26 Internal Revenue Code (Rev. Proc. 2024-40) 2026 federal brackets, standard deductions, and FICA statutory rates.',
-        reviewer: 'GetCalcu Payroll & Tax Calculation Desk',
-        policy: 'Deterministic in-browser payroll calculation'
-      };
-    }
-    if (['investment-calculator', 'compound-interest-calculator', 'retirement-calculator', 'fire-calculator', 'savings-calculator', 'emergency-fund-calculator', '401k-calculator', 'net-worth-calculator'].includes(slug)) {
-      return {
-        standard: 'Fisher Real Rate of Return Equation & SEC / FINRA compound interest modeling guidelines (4% Safe Withdrawal Framework).',
-        reviewer: 'GetCalcu Quantitative Finance & Wealth Planning Board',
-        policy: 'Deterministic real purchasing-power projection'
-      };
-    }
-    return {
-      standard: 'Generally Accepted Accounting Principles (GAAP) & CFPB financial disclosure guidelines.',
-      reviewer: 'GetCalcu Financial Editorial Board',
-      policy: 'Deterministic client-side computation'
-    };
+  // 12. Related Tools Mesh
+  let relatedToolsHtml = '';
+  let relSlugs = tool.related || [];
+  if (!relSlugs.length && allTools) {
+    relSlugs = Object.keys(allTools).filter(s => s !== slug && allTools[s].category === tool.category).slice(0, 4);
   }
-  if (cat === 'health') {
-    if (slug === 'bmi-calculator') {
-      return {
-        standard: 'CDC Adult & Pediatric Body Mass Index criteria and World Health Organization (WHO) international classification thresholds.',
-        reviewer: 'GetCalcu Health & Nutrition Advisory Group',
-        policy: 'Deterministic anthropometric evaluation'
-      };
-    }
-    return {
-      standard: 'Mifflin-St Jeor Energy Expenditure Equations (validated by the Academy of Nutrition and Dietetics).',
-      reviewer: 'GetCalcu Health & Nutrition Advisory Group',
-      policy: 'Deterministic metabolic computation'
-    };
-  }
-  if (cat === 'engineering') {
-    if (slug === 'ohms-law-calculator') {
-      return {
-        standard: "IEEE standard DC/AC resistive circuit principles and Ohm's Law governing electrical relations.",
-        reviewer: 'GetCalcu Physical Science & Electrical Review Desk',
-        policy: 'Deterministic physics evaluation'
-      };
-    }
-    if (slug === 'beam-deflection-calculator') {
-      return {
-        standard: 'American Institute of Steel Construction (AISC) & classical Euler-Bernoulli beam theory deflection formulations.',
-        reviewer: 'GetCalcu Structural Engineering Review Board',
-        policy: 'Deterministic structural mechanics calculation'
-      };
-    }
-    return {
-      standard: 'ISO 80000-4 Quantities and Units (Mechanics) & standard hydrostatic pressure equations.',
-      reviewer: 'GetCalcu Physical Science & Engineering Board',
-      policy: 'Deterministic fluid mechanics computation'
-    };
-  }
-  if (cat === 'construction') {
-    return {
-      standard: 'ASTM International standard specifications for construction materials and standard architectural coverage ratios.',
-      reviewer: 'GetCalcu Construction & Building Estimations Board',
-      policy: 'Deterministic volumetric & material estimation'
-    };
-  }
-  if (cat === 'education') {
-    return {
-      standard: 'AACRAO (American Association of Collegiate Registrars and Admissions Officers) standard 4.0 GPA weighting conventions.',
-      reviewer: 'GetCalcu Academic & Educational Review Board',
-      policy: 'Deterministic academic calculation'
-    };
-  }
-  if (cat === 'business') {
-    return {
-      standard: 'Corporate Finance Institute (CFI) standard unit economics, GAAP gross margin formulas, and SaaS LTV/CAC metrics.',
-      reviewer: 'GetCalcu Commercial Planning & Unit Economics Desk',
-      policy: 'Deterministic commercial calculation'
-    };
-  }
-  if (cat === 'math') {
-    if (slug === 'unit-converter') {
-      return {
-        standard: 'NIST Special Publication 811 (Guide for the Use of the International System of Units) & BIPM definitions.',
-        reviewer: 'GetCalcu Metrology & Dimensional Analysis Board',
-        policy: 'Deterministic floating-point unit conversion'
-      };
-    }
-    return {
-      standard: 'ISO 80000 mathematical sign standards and deterministic algebraic formulas.',
-      reviewer: 'GetCalcu Mathematical Review Board',
-      policy: 'Deterministic arithmetic evaluation'
-    };
-  }
-  return {
-    standard: 'Deterministic mathematical principles and open peer-reviewed computational standards.',
-    reviewer: 'GetCalcu Editorial & Calculation Board',
-    policy: 'In-browser deterministic computation'
-  };
-}
 
-const CONTEXTUAL_LINKS = {
-  'true-home-buying-system': [
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Standard 30-year mortgage calculation with taxes and insurance.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Detailed rent vs buy wealth and cash-flow comparisons.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Find the maximum home price you qualify for based on debt-to-income ratios.' },
-    { slug: 'fha-loan-calculator', name: 'FHA Loan Calculator', desc: 'Calculate 3.5% down payments and FHA monthly mortgage insurance.' },
-    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payment difference and interest savings.' }
-  ],
-  'freelance-true-rate-system': [
-    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Hourly Rate Calculator', desc: 'Simple freelance rate estimator.' },
-    { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against equivalent corporate W-2 salaries.' },
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price client project proposals with healthy profit margins.' },
-    { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the minimum billable revenue required to cover business fixed overhead.' }
-  ],
-  'mortgage-calculator': [
-    { slug: 'true-home-buying-system', name: 'True Home Buying System', desc: 'Calculate total cash to close, loaded PITIA, and 5-yr vs 10-yr break-even matrix.' },
-    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payment difference and interest savings.' },
-    { slug: 'fha-loan-calculator', name: 'FHA Loan Calculator', desc: 'Calculate 3.5% down payments and FHA monthly mortgage insurance.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Find the maximum home price you qualify for based on debt-to-income ratios.' },
-    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'See how extra monthly principal payments reduce total loan interest.' }
-  ],
-  '15-year-mortgage-calculator': [
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Standard 30-year mortgage calculation with taxes and insurance.' },
-    { slug: 'refinance-calculator', name: 'Refinance Calculator', desc: 'Check if refinancing into a 15-year loan saves money.' },
-    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View full month-by-month principal reduction schedules.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability', desc: 'Check maximum loan limits based on debt ratios.' }
-  ],
-  'fha-loan-calculator': [
-    { slug: 'mortgage-calculator', name: 'Conventional Mortgage Calculator', desc: 'Compare conventional loans with 20% down to skip mortgage insurance.' },
-    { slug: '15-year-mortgage-calculator', name: '15-Year Mortgage Calculator', desc: 'Evaluate shorter loan terms for faster equity growth.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Calculate qualifying income for FHA loan limits.' },
-    { slug: 'rent-vs-buy-calculator', name: 'Rent vs. Buy Calculator', desc: 'Compare renting vs purchasing your first home.' }
-  ],
-  'auto-loan-calculator': [
-    { slug: 'auto-refinance-calculator', name: 'Auto Loan Refinance Calculator', desc: 'Calculate how much you save by refinancing your car loan.' },
-    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Compare bank or credit union loan rates against dealership financing.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Check if your car payment stays within 15% of net income.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze total interest across various loan terms.' }
-  ],
-  'auto-refinance-calculator': [
-    { slug: 'auto-loan-calculator', name: 'Auto Loan Calculator', desc: 'Calculate new car loan payments and sales tax.' },
-    { slug: 'loan-calculator', name: 'Personal Loan Calculator', desc: 'Explore personal loan alternatives for debt consolidation.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Reallocate auto loan savings into emergency reserves.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'See total interest saved across lower interest rates.' }
-  ],
-  'freelance-hourly-rate-calculator': [
-    { slug: 'self-employment-tax-calculator', name: '1099 Self-Employment Tax Calculator', desc: 'Calculate quarterly IRS 1040-ES estimated payments.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare freelance revenue against equivalent corporate W-2 salaries.' },
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price client project proposals with healthy profit margins.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Build a 6-month buffer for unpredictable freelance income months.' }
-  ],
-  'body-fat-percentage-calculator': [
-    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Compare your body fat percentage to standard Body Mass Index categories.' },
-    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find your daily calorie target for fat loss while preserving muscle.' }
-  ],
-  'bmi-calculator': [
-    { slug: 'body-fat-percentage-calculator', name: 'Body Fat Calculator (Navy Method)', desc: 'Measure body composition using simple tape measurements at home.' },
-    { slug: 'tdee-calculator', name: 'TDEE & Calorie Calculator', desc: 'Find daily calorie requirements for weight maintenance, cutting, or bulking.' }
-  ],
-  'tdee-calculator': [
-    { slug: 'body-fat-percentage-calculator', name: 'Body Fat Calculator', desc: 'Calculate fat mass and lean body mass to fine-tune macros.' },
-    { slug: 'bmi-calculator', name: 'BMI Calculator', desc: 'Check your current Body Mass Index and healthy weight category.' }
-  ],
-  'retirement-calculator': [
-    { slug: '401k-calculator', name: '401(k) Retirement Calculator', desc: 'Maximize your employer matching contributions and tax-deferred growth.' },
-    { slug: 'fire-calculator', name: 'FIRE Calculator', desc: 'Determine your Financial Independence number and safe withdrawal rate.' },
-    { slug: 'investment-calculator', name: 'Investment Calculator', desc: 'Project long-term compound growth of stocks, bonds, and index funds.' },
-    { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'See how frequent deposits accelerate multi-decade savings.' }
-  ],
-  'emergency-fund-calculator': [
-    { slug: 'savings-calculator', name: 'Savings & HYSA Calculator', desc: 'Model high-yield savings growth while your emergency reserve is parked.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Categorize your monthly essential expenses versus discretionary spending.' },
-    { slug: 'credit-card-payoff-calculator', name: 'Credit Card Payoff Calculator', desc: 'Pay down high-interest debt alongside building your safety fund.' }
-  ],
-  '401k-calculator': [
-    { slug: 'retirement-calculator', name: 'Retirement Calculator', desc: 'Combine your 401(k), IRA, and Social Security for a total retirement projection.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'See how pre-tax 401(k) deductions lower your take-home tax burden today.' },
-    { slug: 'investment-calculator', name: 'Investment Calculator', desc: 'Simulate taxable brokerage investments alongside your 401(k).' }
-  ],
-  'savings-calculator': [
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Calculate your target savings cushion for 3, 6, or 12 months of expenses.' },
-    { slug: 'compound-interest-calculator', name: 'Compound Interest Calculator', desc: 'Calculate how interest compounds daily, monthly, or annually.' }
-  ],
-  'profit-margin-calculator': [
-    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Rate Calculator', desc: 'Calculate client billing rates from desired take-home salary.' },
-    { slug: 'break-even-calculator', name: 'Break-Even Calculator', desc: 'Calculate the exact unit sales volume needed to cover overhead costs.' },
-    { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Assess unit economics and customer acquisition payback periods.' }
-  ],
-  'break-even-calculator': [
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Optimize pricing markup and target gross margin percentages.' },
-    { slug: 'customer-lifetime-value-calculator', name: 'Customer Lifetime Value (LTV)', desc: 'Evaluate marketing profitability and customer retention impact.' }
-  ],
-  'gpa-calculator': [
-    { slug: 'final-grade-calculator', name: 'Final Grade Calculator', desc: 'Calculate the exact exam score required to achieve your target semester grade.' }
-  ],
-  'final-grade-calculator': [
-    { slug: 'gpa-calculator', name: 'GPA Calculator', desc: 'Calculate your cumulative semester GPA across all course credits.' }
-  ],
-  'debt-snowball-calculator': [
-    { slug: 'credit-card-payoff-calculator', name: 'Credit Card Payoff Calculator', desc: 'Focus specifically on high-interest revolving credit cards and repayment months.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Save your starter emergency fund cushion so you never fall back into debt.' },
-    { slug: 'budget-planner', name: 'Budget Planner', desc: 'Use the 50/30/20 rule to find extra cash to throw into your debt snowball.' },
-    { slug: 'savings-calculator', name: 'High-Yield Savings Calculator', desc: 'Grow your cash cushion while staying completely debt-free.' }
-  ],
-  'refinance-calculator': [
-    { slug: '15-year-mortgage-calculator', name: '15-Year vs 30-Year Mortgage', desc: 'Compare 15-year and 30-year payments and interest savings.' },
-    { slug: 'mortgage-calculator', name: 'Mortgage Calculator', desc: 'Recalculate your principal and interest payments with new interest rates.' },
-    { slug: 'amortization-calculator', name: 'Amortization Calculator', desc: 'View complete year-by-year principal reduction schedules.' },
-    { slug: 'house-affordability-calculator', name: 'House Affordability Calculator', desc: 'Check debt-to-income limits and maximum borrowing capacity.' }
-  ],
-  'self-employment-tax-calculator': [
-    { slug: 'freelance-hourly-rate-calculator', name: 'Freelance Hourly Rate Calculator', desc: 'Calculate client billing rates to hit your target personal take-home salary.' },
-    { slug: 'salary-calculator', name: 'Salary Paycheck Calculator', desc: 'Compare your 1099 freelance net income against equivalent W-2 corporate salaries.' },
-    { slug: 'profit-margin-calculator', name: 'Profit Margin Calculator', desc: 'Price your client work with healthy gross margins after accounting for taxes.' }
-  ],
-  'credit-card-payoff-calculator': [
-    { slug: 'debt-snowball-calculator', name: 'Debt Snowball Calculator', desc: 'Roll multiple credit card balances together into an accelerated payoff plan.' },
-    { slug: 'emergency-fund-calculator', name: 'Emergency Fund Calculator', desc: 'Build a safety buffer to stop unexpected expenses from adding to your balance.' },
-    { slug: 'loan-interest-calculator', name: 'Loan Interest Calculator', desc: 'Analyze how much bank interest you save with larger payments.' }
-  ]
-};
+  if (relSlugs.length > 0) {
+    const relatedId = 'related-tools';
+    const relatedTitle = 'Related Calculators';
+    tocItems.push({ id: relatedId, label: relatedTitle });
 
-  // 9. Authoritative E-E-A-T Editorial & Trust Block (Scoped Authority)
-  const trustInfo = getToolTrustInfo(tool, slug);
-  const trustBlockHtml = `
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            ${escapeHtml(trustInfo.standard)}
-          </p>
-        </div>
-      </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> ${escapeHtml(trustInfo.reviewer)}</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> ${escapeHtml(trustInfo.policy)}</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=${encodeURIComponent(tool.name + ' Correction')}" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
-      </div>
-    </div>
-  `;
+    const linkCards = relSlugs.map(relSlug => {
+      const relTool = allTools && allTools[relSlug] ? allTools[relSlug] : null;
+      const relName = relTool ? relTool.name : relSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const relDesc = relTool ? (relTool.metaDescription || relTool.description) : 'Calculate and evaluate metrics with precision.';
+      const relCat = relTool ? relTool.category : (tool.category || 'Finance');
+      const relIcon = (relTool && relTool.icon) || 'fa-calculator';
+      const relIconClass = (relTool && relTool.iconClass) || 'icon-finance';
+      const relTagClass = (relTool && relTool.tagClass) || 'tag-finance';
 
-  // 10. Contextual Cross-Linking Mesh
-  let complementaryMeshHtml = '';
-  const relList = CONTEXTUAL_LINKS[slug] || [];
-  if (relList.length > 0) {
-    const linkCards = relList.map(item => `
-      <a href="/tool/${encodeURIComponent(item.slug)}" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">${escapeHtml(item.name)}</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">${escapeHtml(item.desc)}</p>
-        </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
-    `).join('');
-    complementaryMeshHtml = `
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+      return `
+        <a href="/tool/${encodeURIComponent(relSlug)}" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon ${escapeHtml(relIconClass)}"><i class="fa-solid ${escapeHtml(relIcon)}"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">${escapeHtml(relName)}</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">${escapeHtml(relDesc)}</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag ${escapeHtml(relTagClass)}">${escapeHtml(relCat)}</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    relatedToolsHtml = `
+      <section class="tool-runner-card educational-card" id="${relatedId}" aria-labelledby="${relatedId}-title">
+        <h2 id="${relatedId}-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          ${escapeHtml(relatedTitle)}
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           ${linkCards}
         </div>
-      </div>
+      </section>
     `;
   }
+
+  // 13. Sidebar TOC HTML
+  const onThisPageHtml = buildOnThisPageHtml(tocItems);
 
   return `
     <div class="tool-runner-card">
       <div class="tool-header">
         <h1>${escapeHtml(tool.name)}</h1>
         <p>${escapeHtml(tool.description)}</p>
+        ${renderCountrySwitcher(slug, tool.country || 'us')}
       </div>
       <div class="tool-grid-workspace">
         <div class="calculator-form-inputs">
@@ -762,12 +957,21 @@ const CONTEXTUAL_LINKS = {
         </div>
       </div>
     </div>
-    ${trustBlockHtml}
-    ${articleHtml}
-    ${howToHtml}
-    ${examplesHtml}
-    ${faqsHtml}
-    ${complementaryMeshHtml}
+    ${methodologyHtml}
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        ${articleHtml}
+        ${howToHtml}
+        ${formulaHtml}
+        ${examplesHtml}
+        ${additionalSectionsHtml}
+        ${faqsHtml}
+        ${relatedToolsHtml}
+      </div>
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        ${onThisPageHtml}
+      </aside>
+    </div>
   `;
 }
 
@@ -775,7 +979,7 @@ const CONTEXTUAL_LINKS = {
 const toolDir = path.join(__dirname, 'tool');
 if (!fs.existsSync(toolDir)) fs.mkdirSync(toolDir, { recursive: true });
 
-const toolPageTemplate = (tool) => {
+const toolPageTemplate = (tool, allTools = {}) => {
   const title = buildTitle(tool);
   const canonical = buildCanonical(tool.slug);
   const desc = escapeHtml(tool.metaDescription || tool.description);
@@ -788,17 +992,19 @@ const toolPageTemplate = (tool) => {
   ].filter(Boolean);
 
   const catSlug = (tool.category || 'finance').toLowerCase();
-  const preRenderedBody = renderPreRenderedToolContent(tool, tool.slug);
+  const preRenderedBody = renderPreRenderedToolContent(tool, tool.slug, allTools);
 
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${desc}">
     <link rel="canonical" href="${canonical}">
+    ${buildHreflangTags(tool.slug)}
+    ${(tool.country && tool.currency) ? `<script>window.__GETCALCU_COUNTRY__ = '${tool.country}'; window.__ACTIVE_CURRENCY__ = '${tool.currency}'; window.__ACTIVE_CURRENCY_SYMBOL__ = '${tool.currencySymbol || tool.currency}';</script>` : ''}
     <meta name="robots" content="index, follow">
     ${tool.keywords && tool.keywords.length ? `<meta name="keywords" content="${escapeHtml(tool.keywords.join(', '))}">` : ''}
 
@@ -820,36 +1026,50 @@ const toolPageTemplate = (tool) => {
     ${jsonLdBlocks.map(b => `<script type="application/ld+json">${JSON.stringify(b)}</script>`).join('\n    ')}
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -901,10 +1121,13 @@ const toolPageTemplate = (tool) => {
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+            <div class="footer-social-links" aria-label="Social media links">
+                <a href="https://www.linkedin.com/in/getcalcu-community-963923383/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="footer-social-icon" title="Follow GetCalcu on LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align: -2px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+            </div>
             <nav class="footer-links" aria-label="Footer navigation">
                 <a href="/about">About</a>
                 <a href="/contact">Contact</a>
@@ -928,7 +1151,7 @@ const toolPageTemplate = (tool) => {
         </div>
     </div>
 
-    <script src="/js/tools.js"></script>
+    <script src="/js/tools.min.js"></script>
     <script src="/js/tools-template.js"></script>
     <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.js"></script>
@@ -957,7 +1180,6 @@ const toolPageTemplate = (tool) => {
 // ── 5. Generate static per-category HTML pages ───────────────────────
 const categoryDir = path.join(__dirname, 'category');
 if (!fs.existsSync(categoryDir)) fs.mkdirSync(categoryDir, { recursive: true });
-
 
 const CATEGORY_GUIDES = {
   finance: {
@@ -1091,7 +1313,7 @@ const categoryPageTemplate = (cat, catTools) => {
   return `<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
     <title>${escapeHtml(cat.title)}</title>
@@ -1118,36 +1340,50 @@ const categoryPageTemplate = (cat, catTools) => {
     <script type="application/ld+json">${JSON.stringify(itemListJsonLd)}</script>
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -1288,10 +1524,13 @@ const categoryPageTemplate = (cat, catTools) => {
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+            <div class="footer-social-links" aria-label="Social media links">
+                <a href="https://www.linkedin.com/in/getcalcu-community-963923383/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="footer-social-icon" title="Follow GetCalcu on LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align: -2px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+            </div>
             <nav class="footer-links" aria-label="Footer navigation">
                 <a href="/about">About</a>
                 <a href="/contact">Contact</a>
@@ -1330,9 +1569,41 @@ const categoryPageTemplate = (cat, catTools) => {
 };
 
 // ── 6. Main Build Runner ─────────────────────────────────────────────
-function build() {
-  const tools = loadTools();
+async function loadLocalizedTools() {
+  const localized = {};
+  try {
+    const etModule = await import('./js/modules/tax-ethiopia.js');
+    localized['salary-calculator/et'] = etModule.ethiopiaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load Ethiopian tax module in build-seo.js:', err);
+  }
+  try {
+    const keModule = await import('./js/modules/tax-kenya.js');
+    localized['salary-calculator/ke'] = keModule.kenyaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load Kenyan tax module in build-seo.js:', err);
+  }
+  try {
+    const ngModule = await import('./js/modules/tax-nigeria.js');
+    localized['salary-calculator/ng'] = ngModule.nigeriaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load Nigerian tax module in build-seo.js:', err);
+  }
+  try {
+    const zaModule = await import('./js/modules/tax-south-africa.js');
+    localized['salary-calculator/za'] = zaModule.southAfricaSalaryCalculator;
+  } catch (err) {
+    console.error('Failed to load South African tax module in build-seo.js:', err);
+  }
+  return localized;
+}
+
+async function build() {
+  const baseTools = loadTools();
+  const localizedTools = await loadLocalizedTools();
+  const tools = { ...baseTools, ...localizedTools };
   const allSlugs = Object.keys(tools);
+  const primarySlugs = allSlugs.filter(s => !s.includes('/'));
 
   // 1. Generate tool landing pages
   allSlugs.forEach(slug => {
@@ -1340,14 +1611,14 @@ function build() {
     const toolSubDir = path.join(toolDir, slug);
     if (!fs.existsSync(toolSubDir)) fs.mkdirSync(toolSubDir, { recursive: true });
 
-    const html = toolPageTemplate(tool);
+    const html = toolPageTemplate(tool, tools);
     fs.writeFileSync(path.join(toolSubDir, 'index.html'), html, 'utf8');
   });
 
   // 2. Generate category landing pages
   Object.keys(CATEGORIES).forEach(catKey => {
     const cat = CATEGORIES[catKey];
-    const catTools = allSlugs
+    const catTools = primarySlugs
       .map(s => ({ ...tools[s], slug: s }))
       .filter(t => (t.category || '').toLowerCase() === cat.slug);
 
@@ -1358,38 +1629,21 @@ function build() {
     fs.writeFileSync(path.join(catSubDir, 'index.html'), html, 'utf8');
   });
 
-  // 3. Generate sitemap.xml (Focus on high-value indexing targets; exclude low-intent legal boilerplate)
+  // 3. Generate sitemap.xml (Clean, canonical indexable URLs; omit changefreq, priority, and lastmod per hygiene guidelines)
   const sitemapUrls = [
-    { loc: `${BASE_URL}/`, priority: '1.0', changefreq: 'daily', lastmod: '2026-09-19' },
-    ...Object.keys(CATEGORIES).map(k => ({
-      loc: `${BASE_URL}/category/${CATEGORIES[k].slug}`,
-      priority: '0.8',
-      changefreq: 'weekly',
-      lastmod: '2026-09-19',
-    })),
-    ...allSlugs.map(s => {
-      const toolObj = tools[s] || {};
-      const toolLastMod = toolObj.lastmod || '2026-09-19';
-      return {
-        loc: `${BASE_URL}/tool/${s}`,
-        priority: '0.9',
-        changefreq: 'weekly',
-        lastmod: toolLastMod,
-      };
-    }),
-    { loc: `${BASE_URL}/about`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
-    { loc: `${BASE_URL}/contact`, priority: '0.5', changefreq: 'monthly', lastmod: '2026-09-19' },
+    `${BASE_URL}/`,
+    ...Object.keys(CATEGORIES).map(k => `${BASE_URL}/category/${CATEGORIES[k].slug}`),
+    ...allSlugs.map(s => `${BASE_URL}/tool/${s}`),
+    `${BASE_URL}/about`,
+    `${BASE_URL}/contact`,
   ];
 
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapUrls.map(u => `  <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${u.lastmod}</lastmod>
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
+    <loc>${u}</loc>
   </url>`).join('\n')}
-</urlset>`;
+</urlset>\n`;
 
   fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), sitemapXml, 'utf8');
 
@@ -1405,11 +1659,14 @@ Sitemap: ${BASE_URL}/sitemap.xml
   fs.writeFileSync(path.join(__dirname, 'robots.txt'), robotsTxt, 'utf8');
 
   console.log(`✓ build-seo.js complete`);
-  console.log(`  Tools registered: ${allSlugs.length}`);
+  console.log(`  Tools registered: ${allSlugs.length} (including localized variants)`);
   console.log(`  Static tool pages: ${allSlugs.length} (in /tool/{slug}/)`);
   console.log(`  Static category pages: ${Object.keys(CATEGORIES).length} (in /category/{slug}/)`);
   console.log(`  Sitemap URLs: ${sitemapUrls.length}`);
   console.log(`  robots.txt updated`);
 }
 
-build();
+build().catch(err => {
+  console.error('Build failed:', err);
+  process.exit(1);
+});

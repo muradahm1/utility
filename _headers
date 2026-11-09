@@ -1,3 +1,15 @@
+/*.html
+  Content-Type: text/html; charset=utf-8
+
+/tool/*
+  Content-Type: text/html; charset=utf-8
+
+/category/*
+  Content-Type: text/html; charset=utf-8
+
+/
+  Content-Type: text/html; charset=utf-8
+
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

@@ -8,7 +8,7 @@
  * @module modules/charts
  */
 
-import { formatCurrency, formatNumber, formatPercentage } from '../utils/index.js';
+import { formatCurrency, formatNumber, formatPercentage, escapeHtml, safeNum } from '../utils/index.js';
 
 // ── Chart Type Registry ─────────────────────────────────────────
 const CHART_TYPES = new Set(['line', 'bar', 'doughnut', 'pie', 'area', 'comparison', 'stackedBar']);
@@ -148,7 +148,9 @@ function buildChartConfig(config) {
         return base;
     });
     
-    // Build options
+    const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+
+    // Build options with responsive projection
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -161,10 +163,10 @@ function buildChartConfig(config) {
                 position: config.legendPosition || 'bottom',
                 labels: {
                     usePointStyle: true,
-                    boxWidth: 8,
-                    padding: 16,
+                    boxWidth: isSmallScreen ? 6 : 8,
+                    padding: isSmallScreen ? 10 : 16,
                     color: theme.text,
-                    font: { size: 12 }
+                    font: { size: isSmallScreen ? 11 : 12 }
                 }
             },
             tooltip: {
@@ -174,9 +176,11 @@ function buildChartConfig(config) {
                 bodyColor: theme.text,
                 borderColor: theme.border,
                 borderWidth: 1,
-                padding: 12,
+                padding: isSmallScreen ? 8 : 12,
                 cornerRadius: 8,
                 displayColors: true,
+                titleFont: { size: isSmallScreen ? 11 : 12 },
+                bodyFont: { size: isSmallScreen ? 10.5 : 11 },
                 callbacks: {
                     label: (context) => {
                         const ds = config.data?.datasets?.[context.datasetIndex];
@@ -189,14 +193,22 @@ function buildChartConfig(config) {
         },
         scales: isDoughnut ? undefined : {
             x: {
-                ticks: { color: theme.text, font: { size: 11 } },
+                ticks: { 
+                    color: theme.text, 
+                    font: { size: isSmallScreen ? 10 : 11 },
+                    autoSkip: true,
+                    maxTicksLimit: isSmallScreen ? 6 : 10,
+                    maxRotation: 45,
+                    minRotation: 0
+                },
                 grid: { display: false },
                 stacked: isStacked
             },
             y: {
                 ticks: {
                     color: theme.text,
-                    font: { size: 11 },
+                    font: { size: isSmallScreen ? 10 : 11 },
+                    maxTicksLimit: isSmallScreen ? 5 : 8,
                     callback: (value) => {
                         const format = config.format || 'number';
                         return formatValue(value, format);
@@ -247,13 +259,20 @@ function setupAccessibility(container, config) {
     container.setAttribute('role', 'img');
     container.setAttribute('aria-label', config.ariaLabel || config.title || 'Chart');
     
-    // Add title if provided
-    if (config.title && !container.querySelector('.chart-title')) {
-        const title = document.createElement('div');
-        title.className = 'chart-title';
+    // If container is unified, remove any previous title element to avoid collision/duplication
+    if (container.classList && container.classList.contains('chart-container--unified')) {
+        const existingTitle = container.querySelector('.chart-title');
+        if (existingTitle) existingTitle.remove();
+    } else if (config.title) {
+        // Add or update title if provided
+        let title = container.querySelector('.chart-title');
+        if (!title) {
+            title = document.createElement('div');
+            title.className = 'chart-title';
+            title.style.cssText = 'font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;';
+            container.prepend(title);
+        }
         title.textContent = config.title;
-        title.style.cssText = 'font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;';
-        container.prepend(title);
     }
     
     // Add text summary if provided
@@ -297,7 +316,7 @@ function loadChartJs() {
             return;
         }
         const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
         script.async = true;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load Chart.js'));
@@ -351,10 +370,13 @@ export const ChartManager = {
         }
         
         // Check for existing canvas
-        let canvas = container.querySelector('canvas');
+        let canvas = container.querySelector('canvas') || (config.id ? document.getElementById(config.id) : null);
         if (!canvas) {
             canvas = document.createElement('canvas');
+            if (config.id) canvas.id = config.id;
             container.appendChild(canvas);
+        } else if (!canvas.id && config.id) {
+            canvas.id = config.id;
         }
         
         // Validate datasets
@@ -372,6 +394,12 @@ export const ChartManager = {
         // ── Phase 5.11: Lazy-load Chart.js only when needed ─────
         const createChart = () => {
             try {
+                if (typeof Chart !== 'undefined' && Chart.getChart) {
+                    const existingChart = Chart.getChart(canvas);
+                    if (existingChart) {
+                        existingChart.destroy();
+                    }
+                }
                 return new Chart(canvas.getContext('2d'), chartConfig);
             } catch (err) {
                 console.error('[ChartManager] Failed to create chart:', err);
@@ -464,7 +492,7 @@ export const ChartManager = {
      * @param {string} id - Chart ID
      * @returns {boolean} Success
      */
-    destroy(id) {
+    destroy(id, removeCanvas = false) {
         const instance = instances.get(id);
         if (!instance) return false;
         
@@ -474,8 +502,8 @@ export const ChartManager = {
                 instance.chart.destroy();
             }
             
-            // Remove canvas
-            if (instance.canvas && instance.canvas.parentElement) {
+            // Remove canvas only if explicitly requested
+            if (removeCanvas && instance.canvas && instance.canvas.parentElement) {
                 instance.canvas.remove();
             }
             
@@ -572,6 +600,205 @@ export const ChartManager = {
      */
     formatValue(value, format = 'number') {
         return formatValue(value, format);
+    },
+
+    /**
+     * Build unified visual HTML for any calculator result
+     * Supports both modern multi-view charts and legacy charts
+     * @param {Object} result - Calculation result
+     * @returns {string} HTML string
+     */
+    buildCardHtml(result) {
+        if (!result) return '';
+        
+        // Modern multi-view chart switcher
+        if (Array.isArray(result.charts) && result.charts.length > 0) {
+            const tabsHtml = result.charts.map((c, idx) => `
+                <button type="button" class="chart-view-tab ${idx === 0 ? 'active' : ''}" data-chart-index="${idx}" aria-label="${escapeHtml(c.title || `View ${idx+1}`)}" role="tab" aria-selected="${idx === 0 ? 'true' : 'false'}">
+                    ${c.icon ? `<i class="fa-solid ${escapeHtml(c.icon)}"></i> ` : ''}<span>${escapeHtml(c.title || `View ${idx+1}`)}</span>
+                </button>
+            `).join('');
+
+            return `
+                <div class="chart-view-card">
+                    <div class="chart-view-header">
+                        <span class="chart-view-title"><i class="fa-solid fa-chart-line" style="color:var(--primary-color);margin-right:6px;"></i>Visual Projection</span>
+                        <div class="chart-view-tabs" role="tablist">
+                            ${tabsHtml}
+                        </div>
+                    </div>
+                    <div class="chart-container chart-container--unified">
+                        <canvas id="result-chart"></canvas>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Legacy multi-chart fallback
+        const charts = [];
+        if (result.chart) charts.push('<div class="chart-container"><canvas id="result-chart"></canvas></div>');
+        if (result.chart2) charts.push('<div class="chart-container"><canvas id="result-chart-2"></canvas></div>');
+        if (result.compareChart) charts.push('<div class="chart-container"><canvas id="result-chart-3"></canvas></div>');
+        if (result.chart3) charts.push('<div class="chart-container"><canvas id="result-chart-4"></canvas></div>');
+        
+        if (!charts.length) return '';
+        
+        if (result.chart && result.chart2) {
+            const firstTwo = charts.slice(0, 2).join('');
+            const rest = charts.slice(2).join('');
+            return `<div class="charts-side-by-side">${firstTwo}</div>${rest}`;
+        }
+        
+        return charts.join('');
+    },
+
+    /**
+     * Mount and manage chart visualization inside any container
+     * Automatically handles single unified canvas switching or legacy multi-canvas
+     * @param {HTMLElement} container - DOM container element
+     * @param {Object} result - Calculation result
+     * @param {Object} [options] - Options (onTabChange, etc.)
+     * @returns {Array<Object>} Created chart instances
+     */
+    mount(container, result, options = {}) {
+        if (!container || !result) return [];
+        const createdCharts = [];
+        
+        // Multi-view unified switcher
+        if (Array.isArray(result.charts) && result.charts.length > 0) {
+            const activeIdx = (typeof container._activeChartIdx === 'number' && container._activeChartIdx < result.charts.length) 
+                ? container._activeChartIdx 
+                : 0;
+            const activeData = result.charts[activeIdx] || result.charts[0];
+            
+            let canvas = container.querySelector('#result-chart');
+            if (!canvas) {
+                const unifiedWrap = container.querySelector('.chart-container--unified') || container.querySelector('.chart-container');
+                if (unifiedWrap) {
+                    canvas = unifiedWrap.querySelector('canvas');
+                    if (canvas) canvas.id = 'result-chart';
+                }
+            }
+            if (canvas) {
+                const chart = this.render(canvas, activeData);
+                if (chart) createdCharts.push(chart);
+            }
+            
+            // Bind tab switching cleanly
+            const tabs = container.querySelectorAll('.chart-view-tab');
+            tabs.forEach(tab => {
+                tab.onclick = (e) => {
+                    e.preventDefault();
+                    const idx = parseInt(tab.getAttribute('data-chart-index'), 10);
+                    if (isNaN(idx) || idx === container._activeChartIdx) return;
+                    container._activeChartIdx = idx;
+                    tabs.forEach(t => {
+                        const isSel = parseInt(t.getAttribute('data-chart-index'), 10) === idx;
+                        t.classList.toggle('active', isSel);
+                        t.setAttribute('aria-selected', isSel ? 'true' : 'false');
+                    });
+                    
+                    if (canvas && result.charts[idx]) {
+                        const newChart = this.render(canvas, result.charts[idx]);
+                        if (newChart && createdCharts.length > 0) {
+                            createdCharts[0] = newChart;
+                        } else if (newChart) {
+                            createdCharts.push(newChart);
+                        }
+                    }
+                    if (typeof options.onTabChange === 'function') {
+                        options.onTabChange(idx, result.charts[idx]);
+                    }
+                };
+            });
+            return createdCharts;
+        }
+        
+        // Legacy multi-chart mounting
+        const legacyCharts = [
+            { data: result.chart, id: 'result-chart' },
+            { data: result.chart2, id: 'result-chart-2' },
+            { data: result.compareChart, id: 'result-chart-3' },
+            { data: result.chart3, id: 'result-chart-4' }
+        ];
+        
+        legacyCharts.forEach(({ data, id }) => {
+            if (!data) return;
+            const canvas = container.querySelector(`#${id}`);
+            if (canvas) {
+                const chart = this.render(canvas, data);
+                if (chart) createdCharts.push(chart);
+            }
+        });
+        return createdCharts;
+    },
+
+    /**
+     * Render raw chart data onto a canvas element
+     * @param {HTMLCanvasElement} canvas - Canvas element
+     * @param {Object} chartData - Chart data spec
+     * @returns {Object|null} Chart instance
+     */
+    render(canvas, chartData) {
+        if (!canvas || !chartData) return null;
+        const id = canvas.id || `chart-${Date.now()}`;
+        if (!canvas.id) canvas.id = id;
+        
+        let datasets;
+        if (Array.isArray(chartData.datasets) && chartData.datasets.length > 0) {
+            datasets = chartData.datasets.map(ds => ({
+                label: ds.label || '',
+                data: ds.data || [],
+                color: ds.color || ds.borderColor,
+                colors: ds.colors || (Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined),
+                backgroundColor: ds.backgroundColor,
+                borderColor: ds.borderColor,
+                fill: ds.fill,
+                format: ds.format,
+                stack: ds.stack
+            }));
+        } else if (Array.isArray(chartData.data)) {
+            datasets = [{
+                data: chartData.data,
+                colors: chartData.colors || chartData.backgroundColor || DEFAULT_PALETTE,
+                backgroundColor: chartData.colors || chartData.backgroundColor || DEFAULT_PALETTE
+            }];
+        } else if (chartData.principal !== undefined || chartData.totalInterest !== undefined) {
+            datasets = [{
+                data: [safeNum(chartData.principal, 0), safeNum(chartData.totalInterest, 0)],
+                colors: ['#6366F1', '#F59E0B'],
+                backgroundColor: ['#6366F1', '#F59E0B']
+            }];
+        } else {
+            return null;
+        }
+
+        let type = chartData.type;
+        if (!type) {
+            if (datasets.length > 1 || (datasets[0] && datasets[0].label)) {
+                type = 'bar';
+            } else {
+                type = 'doughnut';
+            }
+        }
+        
+        const isHBar = type === 'horizontalBar';
+        const normalizedType = isHBar ? 'bar' : type;
+        
+        const instance = this.create({
+            id,
+            type: normalizedType,
+            container: canvas.parentElement || canvas,
+            data: {
+                labels: chartData.labels || ['Principal', 'Interest'],
+                datasets
+            },
+            title: chartData.title,
+            format: chartData.format || 'currency',
+            cutout: chartData.cutout,
+            options: isHBar ? { indexAxis: 'y' } : undefined
+        });
+        return instance ? instance.chart : null;
     }
 };
 

@@ -1,5 +1,5 @@
-﻿import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { exportToCSV, exportToJSON, exportAmortizationSchedule } from '../../js/modules/export.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { exportToCSV, exportToJSON, exportAmortizationSchedule, exportComprehensiveCSV, formatCsvValue } from '../../js/modules/export.js';
 import { buildFAQHtml, createFAQItem, searchFAQs } from '../../js/modules/faq.js';
 import { getRelatedTools } from '../../js/modules/related-tools.js';
 import { getPersonalizedRecommendations } from '../../js/modules/recommendations.js';
@@ -28,7 +28,61 @@ describe('Phase 6 Modules', () => {
             ];
             const text = exportAmortizationSchedule(schedule);
             expect(text).toContain('Month,Payment,Principal,Interest,Balance');
-            expect(text).toContain('1,$536.82,$120.15,$416.67,$99,879.85');
+            expect(text).toContain('1,$536.82,$120.15,$416.67,"$99,879.85"');
+        });
+
+        it('formatCsvValue unwraps complex objects without [object Object]', () => {
+            expect(formatCsvValue(null)).toBe('');
+            expect(formatCsvValue(undefined)).toBe('');
+            expect(formatCsvValue({ value: '$100.00' })).toBe('$100.00');
+            expect(formatCsvValue({ val: '4.5%' })).toBe('4.5%');
+            expect(formatCsvValue({ text: 'Note text' })).toBe('Note text');
+            expect(formatCsvValue({ headline: 'Winner', detail: 'Buy' })).toBe('Winner - Buy');
+            expect(formatCsvValue(['Item 1', 'Item 2'])).toBe('Item 1; Item 2');
+            expect(formatCsvValue({ a: 1, b: 2 })).not.toContain('[object Object]');
+        });
+
+        it('exportComprehensiveCSV generates full multi-section report', () => {
+            const tool = {
+                id: 'mortgage-calculator',
+                name: 'Mortgage Calculator',
+                category: 'Finance',
+                fields: [
+                    { id: 'homePrice', label: 'Home Price', unit: '$' },
+                    { id: 'rate', label: 'Interest Rate', unit: '%' }
+                ]
+            };
+            const result = {
+                stats: [
+                    { label: 'Monthly Payment', value: '$2,450.00' },
+                    { label: 'Total Interest', value: '$345,000.00' }
+                ],
+                insight: {
+                    headline: 'Refinance Potential',
+                    detail: 'Rates are currently favorable.'
+                },
+                insights: [
+                    { title: 'Tax Benefits', text: 'Interest is tax deductible.' }
+                ],
+                table: [
+                    { month: 1, payment: '$2,450.00', balance: '$398,000.00' }
+                ]
+            };
+            const inputs = { homePrice: 500000, rate: 6.5 };
+
+            const csv = exportComprehensiveCSV(tool, result, inputs);
+            expect(csv).toContain('GetCalcu Official Calculation Report');
+            expect(csv).toContain('Tool: Mortgage Calculator');
+            expect(csv).toContain('SECTION: INPUT PARAMETERS & ASSUMPTIONS');
+            expect(csv).toContain('Home Price');
+            expect(csv).toContain('SECTION: KEY RESULTS SUMMARY');
+            expect(csv).toContain('Monthly Payment');
+            expect(csv).toContain('SECTION: ANALYTICAL INSIGHTS');
+            expect(csv).toContain('Refinance Potential');
+            expect(csv).toContain('Tax Benefits');
+            expect(csv).toContain('SECTION: SCHEDULE / BREAKDOWN TABLE');
+            expect(csv).toContain('Month,Payment,Balance');
+            expect(csv).not.toContain('[object Object]');
         });
     });
 

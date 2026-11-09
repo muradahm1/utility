@@ -7,12 +7,12 @@
  * @module tool-runner
  */
 import { initializeMigration, legacyHelpers, initToolRunner, updateSeoMeta } from './core/migration.js';
-import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo } from './core/calculator-engine.js';
+import { escapeHtml, formatCurrency, safeNum, safeStr, roundTo, buildEducationalLayoutHtml, buildMethodologyHtml } from './core/calculator-engine.js';
 import { fmt } from './utils/index.js';
 import { buildStatsHtml, buildInsightHtml, buildRecommendationHtml, buildSummaryHtml, buildBmiGaugeHtml, buildChartsHtml, buildTableHtml, buildBreakdownTablesHtml, buildBarsHtml, buildInsightsHtml, buildTableSpecHtml } from './core/calculator-engine.js';
 import { ChartManager } from './modules/charts.js';
 import { initErrorBoundary } from './modules/error-boundary.js';
-import { exportToCSV, exportToJSON } from './modules/export.js';
+import { exportToCSV, exportToJSON, exportComprehensiveCSV } from './modules/export.js';
 import { generateResultsPDF } from './modules/pdf.js';
 import { printResults } from './modules/print.js';
 import { share } from './modules/sharing.js';
@@ -55,12 +55,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const urlParams = new URLSearchParams(window.location.search);
     let slug = urlParams.get('slug');
+    let country = urlParams.get('country') || (typeof window !== 'undefined' && window.__GETCALCU_COUNTRY__) || null;
 
-    // Support pretty URL format: /tool/{slug} (Phase 4 SEO)
+    // Support pretty URL formats: /tool/{slug}/{country} or /tool/{slug} (Phase 4 SEO & International)
     if (!slug) {
-        const pathMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/?$/);
-        if (pathMatch) {
-            slug = pathMatch[1];
+        const localizedMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/([a-z]{2})\/?$/);
+        if (localizedMatch) {
+            slug = localizedMatch[1];
+            country = localizedMatch[2].toLowerCase();
+        } else {
+            const pathMatch = window.location.pathname.match(/^\/tool\/([a-z0-9-]+)\/?$/);
+            if (pathMatch) {
+                slug = pathMatch[1];
+            }
         }
     }
 
@@ -70,8 +77,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     if (slug && SLUG_ALIASES[slug]) slug = SLUG_ALIASES[slug];
 
-    const TOOLS = window.TOOLS || {};
-    const tool = TOOLS[slug];
+    let tool;
+    if (slug === 'salary-calculator' && country === 'et') {
+        window.__ACTIVE_CURRENCY__ = 'ETB';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = 'Br';
+        try {
+            const taxModule = await import('./modules/tax-ethiopia.js');
+            tool = taxModule.ethiopiaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load Ethiopian tax module:', err);
+        }
+    } else if (slug === 'salary-calculator' && country === 'ke') {
+        window.__ACTIVE_CURRENCY__ = 'KES';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = 'KSh';
+        try {
+            const taxModule = await import('./modules/tax-kenya.js');
+            tool = taxModule.kenyaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load Kenyan tax module:', err);
+        }
+    } else if (slug === 'salary-calculator' && country === 'ng') {
+        window.__ACTIVE_CURRENCY__ = 'NGN';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = '₦';
+        try {
+            const taxModule = await import('./modules/tax-nigeria.js');
+            tool = taxModule.nigeriaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load Nigerian tax module:', err);
+        }
+    } else if (slug === 'salary-calculator' && country === 'za') {
+        window.__ACTIVE_CURRENCY__ = 'ZAR';
+        window.__ACTIVE_CURRENCY_SYMBOL__ = 'R';
+        try {
+            const taxModule = await import('./modules/tax-south-africa.js');
+            tool = taxModule.southAfricaSalaryCalculator;
+        } catch (err) {
+            console.error('Failed to load South African tax module:', err);
+        }
+    }
+
+    if (!tool) {
+        const TOOLS = window.TOOLS || {};
+        // Prefer the legacy window.TOOLS registry, but also resolve against the
+        // core registry so modular calculators (construction/engineering/tools.js
+        // modules) that register via registerTool() are reachable at runtime.
+        // Before this fallback, modular tools rendered a false "Tool Not Found".
+        tool = TOOLS[slug]
+            || (window.CORE && typeof window.CORE.getTool === 'function' ? window.CORE.getTool(slug) : undefined);
+    }
 
     if (!tool) {
         if (!slug) {
@@ -107,7 +160,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (useNewArchitecture && core && core.updateSeoMeta) {
         core.updateSeoMeta(tool, slug);
     } else {
-        updateSeoLegacy(tool, slug);
+        updateSeoLegacy(tool, slug, country);
     }
 
     if (useNewArchitecture && core && core.initToolRunner) {
@@ -117,11 +170,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    initLegacyRunner(tool, slug, container);
+    initLegacyRunner(tool, slug, container, country);
 });
 
-function updateSeoLegacy(tool, slug) {
-    const pageUrl = `https://www.getcalcu.com/tool/${slug}`;
+function updateSeoLegacy(tool, slug, country = null) {
+    const pageUrl = (country && !slug.includes('/'))
+        ? `https://www.getcalcu.com/tool/${slug}/${country}`
+        : `https://www.getcalcu.com/tool/${slug}`;
     document.title = tool.metaTitle
         ? tool.metaTitle
         : (`${tool.name} — Free Online Calculator | GetCalcu`.length > 60
@@ -154,6 +209,10 @@ function updateSeoLegacy(tool, slug) {
     if (twTitle) twTitle.setAttribute('content', `${tool.name} | GetCalcu`);
     const twDesc = document.querySelector('meta[name="twitter:description"]');
     if (twDesc) twDesc.setAttribute('content', tool.metaDescription);
+
+    if (document.querySelector('script[type="application/ld+json"]')) {
+        return;
+    }
 
     const schemaScript = document.createElement('script');
     schemaScript.type = 'application/ld+json';
@@ -214,16 +273,82 @@ function updateSeoLegacy(tool, slug) {
     }
 }
 
-function initLegacyRunner(tool, slug, container) {
+function formatFieldLabel(rawLabel) {
+    if (!rawLabel) return '';
+    const currency = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY__) || 'USD';
+    const symbol = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY_SYMBOL__) 
+        || (currency === 'USD' ? '$' : currency);
+    if (symbol === '$' && currency === 'USD') return rawLabel;
+    return rawLabel.replace(/\(\$\)/g, `(${symbol})`).replace(/\(USD\)/g, `(${currency})`);
+}
+
+function formatFieldHint(rawHint) {
+    if (!rawHint) return '';
+    const currency = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY__) || 'USD';
+    const symbol = (typeof window !== 'undefined' && window.__ACTIVE_CURRENCY_SYMBOL__) 
+        || (currency === 'USD' ? '$' : currency);
+    if (symbol === '$' && currency === 'USD') return rawHint;
+    return rawHint.replace(/\$/g, symbol).replace(/USD/g, currency);
+}
+
+function initLegacyRunner(tool, slug, container, country = null) {
     let values = {};
     tool.fields.forEach(f => {
         values[f.id] = typeof f.default === 'function' ? f.default() : f.default;
     });
 
+    function buildCountrySwitcherHtml() {
+        const baseSlug = (tool.baseSlug || slug).split('/')[0];
+        if (baseSlug === 'salary-calculator') {
+            const isET = country === 'et' || slug === 'salary-calculator/et' || (tool.country === 'et');
+            const isKE = country === 'ke' || slug === 'salary-calculator/ke' || (tool.country === 'ke');
+            const isNG = country === 'ng' || slug === 'salary-calculator/ng' || (tool.country === 'ng');
+            const isZA = country === 'za' || slug === 'salary-calculator/za' || (tool.country === 'za');
+            const isUS = !isET && !isKE && !isNG && !isZA;
+            return `
+                <div class="country-switcher-bar" role="group" aria-label="Select Country / Jurisdiction">
+                    <span class="country-switcher-label"><i class="fa-solid fa-earth-americas"></i> Jurisdiction:</span>
+                    <div class="country-switcher-options">
+                        <a href="/tool/salary-calculator" class="country-pill ${isUS ? 'active' : ''}">
+                            <span class="country-flag">🇺🇸</span> <span>United States</span>
+                        </a>
+                        <a href="/tool/salary-calculator/et" class="country-pill ${isET ? 'active' : ''}">
+                            <span class="country-flag">🇪🇹</span> <span>Ethiopia (ETB)</span>
+                        </a>
+                        <a href="/tool/salary-calculator/ke" class="country-pill ${isKE ? 'active' : ''}">
+                            <span class="country-flag">🇰🇪</span> <span>Kenya (KES)</span>
+                        </a>
+                        <a href="/tool/salary-calculator/ng" class="country-pill ${isNG ? 'active' : ''}">
+                            <span class="country-flag">🇳🇬</span> <span>Nigeria (NGN)</span>
+                        </a>
+                        <a href="/tool/salary-calculator/za" class="country-pill ${isZA ? 'active' : ''}">
+                            <span class="country-flag">🇿🇦</span> <span>South Africa (ZAR)</span>
+                        </a>
+                    </div>
+                </div>`;
+        }
+        return '';
+    }
+
     let isCompareMode = false;
     let activeScenario = 'A';
+    let activeChartViewIdx = 0;
     let valuesA = { ...values };
     let valuesB = JSON.parse(JSON.stringify(values));
+
+    function renderActiveCharts(res) {
+        if (!res) return;
+        const container = document.querySelector('.results-column') || document.querySelector('.chart-view-card') || document.body;
+        if (typeof activeChartViewIdx === 'number') {
+            container._activeChartIdx = activeChartViewIdx;
+        }
+        ChartManager.mount(container, res, {
+            onTabChange: (idx) => {
+                activeChartViewIdx = idx;
+                container._activeChartIdx = idx;
+            }
+        });
+    }
 
     // ── Phase 5.3: Debounce recalculation (~200ms) ─────────────
     let debounceTimer = null;
@@ -321,7 +446,7 @@ function initLegacyRunner(tool, slug, container) {
         let inCollapsible = false;
         for (const field of tool.fields) {
             const labels = tool.fieldLabels ? tool.fieldLabels(currentVals) : {};
-            const label = labels[field.id] || field.label;
+            const label = formatFieldLabel(labels[field.id] || field.label);
             const hidden = field.condition && !field.condition(currentVals);
             const attrs = [
                 field.min !== undefined ? `min="${field.min}"` : '',
@@ -340,15 +465,15 @@ function initLegacyRunner(tool, slug, container) {
                 continue;
             }
             if (field.type === 'select') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${currentVals[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(formatFieldHint(field.hint))}</span>` : ''}<select id="${field.id}" data-id="${field.id}" aria-describedby="error-${field.id}">${field.options.map(o => `<option value="${o.value}" ${currentVals[field.id] == o.value ? 'selected' : ''}>${escapeHtml(o.label)}</option>`).join('')}</select></div>`;
                 continue;
             }
             if (field.type === 'range') {
-                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${currentVals[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
+                html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(formatFieldHint(field.hint))}</span>` : ''}<div class="range-input-wrap"><input type="number" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" inputmode="decimal" enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><input type="range" id="${field.id}-range" data-range-for="${field.id}" value="${currentVals[field.id]}" ${attrs} aria-label="${escapeHtml(label)} slider"></div><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
                 continue;
             }
             const inputModeAttr = (field.type === 'number' || field.type === 'currency' || field.type === 'percentage') ? 'inputmode="decimal"' : '';
-            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(field.hint)}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
+            html += `<div class="form-group" data-field="${field.id}" ${hidden ? 'style="display:none"' : ''}><label for="${field.id}">${escapeHtml(label)}</label>${field.hint ? `<span class="field-hint">${escapeHtml(formatFieldHint(field.hint))}</span>` : ''}<input type="${field.type}" id="${field.id}" data-id="${field.id}" value="${currentVals[field.id]}" ${inputModeAttr} enterkeyhint="next" autocomplete="off" ${attrs} aria-describedby="error-${field.id}"><span class="field-error hidden" id="error-${field.id}" data-error="${field.id}" role="alert"></span></div>`;
         }
         if (inCollapsible) html += '</div></details>';
         return html;
@@ -398,7 +523,7 @@ function initLegacyRunner(tool, slug, container) {
 
         return `
             <div class="comparison-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div class="comparison-header">
                     <h3 style="font-size:16px; font-weight:700; color:var(--text-primary);">
                         <i class="fa-solid fa-code-compare" style="color:var(--primary-color);"></i> Side-by-Side Scenario Comparison
                     </h3>
@@ -409,6 +534,17 @@ function initLegacyRunner(tool, slug, container) {
                 </div>
             </div>
         `;
+    }
+
+    // ── Targeted section update helper (avoids full innerHTML wipe) ──────────
+    function setSectionHtml(card, name, html) {
+        const el = card.querySelector(`[data-section="${name}"]`);
+        if (el) {
+            el.innerHTML = html;
+        } else {
+            // Fallback: section wrapper not present (compare mode or error state).
+            // Don't create it here — compare mode does its own full replacement.
+        }
     }
 
     function updateResults() {
@@ -425,6 +561,7 @@ function initLegacyRunner(tool, slug, container) {
                 return;
             }
 
+            // Compare mode still does a full replacement (sections differ in structure)
             card.innerHTML =
                 buildComparisonCardHtml(resA, resB) +
                 buildStatsHtml(activeScenario === 'A' ? resA.stats : resB.stats) +
@@ -433,8 +570,8 @@ function initLegacyRunner(tool, slug, container) {
                 buildBreakdownTablesHtml(activeScenario === 'A' ? resA : resB) +
                 buildResultsToolbarHtml(activeScenario === 'A' ? resA : resB);
 
-            if (resA.chart && activeScenario === 'A') renderChart(resA.chart);
-            if (resB.chart && activeScenario === 'B') renderChart(resB.chart);
+            if (activeScenario === 'A') renderActiveCharts(resA);
+            if (activeScenario === 'B') renderActiveCharts(resB);
             bindResultsToolbar(activeScenario === 'A' ? resA : resB);
             return;
         }
@@ -443,17 +580,38 @@ function initLegacyRunner(tool, slug, container) {
         try { result = tool.calculate(valuesA); } 
         catch (err) { console.error('Calculation error:', err); return; }
 
-        card.innerHTML =
-            (result.error ? '' : buildInsightHtml(result.insight)) +
-            buildRecommendationHtml(result.recommendation) +
-            buildSummaryHtml(result.summary) +
-            buildBmiGaugeHtml(result.bmiGauge) +
-            buildStatsHtml(result.stats) +
-            (result.bars ? buildBarsHtml(result.bars) : '') +
-            buildChartsHtml(result) +
-            buildBreakdownTablesHtml(result) +
-            buildInsightsHtml(result.insights) +
-            buildResultsToolbarHtml(result);
+        // ── Phase perf: Targeted section updates instead of full innerHTML ──
+        // If section wrappers exist (normal mode), update each section in-place.
+        // This preserves canvas elements so ChartManager can update chart data
+        // without destroy + recreate on every debounce tick.
+        const hasWrappers = !!card.querySelector('[data-section="stats"]');
+        if (hasWrappers) {
+            setSectionHtml(card, 'insight', result.error ? '' : buildInsightHtml(result.insight));
+            setSectionHtml(card, 'recommendation', buildRecommendationHtml(result.recommendation));
+            setSectionHtml(card, 'summary', buildSummaryHtml(result.summary));
+            setSectionHtml(card, 'bmiGauge', buildBmiGaugeHtml(result.bmiGauge));
+            setSectionHtml(card, 'stats', buildStatsHtml(result.stats));
+            setSectionHtml(card, 'bars', result.bars ? buildBarsHtml(result.bars) : '');
+            // Note: 'charts' section is intentionally NOT wiped here.
+            // ChartManager.mount() (called below via renderActiveCharts) will update
+            // chart data in-place. Only rebuild chart HTML if the chart spec changed.
+            setSectionHtml(card, 'breakdownTables', buildBreakdownTablesHtml(result));
+            setSectionHtml(card, 'insights', buildInsightsHtml(result.insights));
+            setSectionHtml(card, 'toolbar', buildResultsToolbarHtml(result));
+        } else {
+            // Fallback: no section wrappers present — full replacement
+            card.innerHTML =
+                (result.error ? '' : buildInsightHtml(result.insight)) +
+                buildRecommendationHtml(result.recommendation) +
+                buildSummaryHtml(result.summary) +
+                buildBmiGaugeHtml(result.bmiGauge) +
+                buildStatsHtml(result.stats) +
+                (result.bars ? buildBarsHtml(result.bars) : '') +
+                buildChartsHtml(result) +
+                buildBreakdownTablesHtml(result) +
+                buildInsightsHtml(result.insights) +
+                buildResultsToolbarHtml(result);
+        }
 
         const tableContainer = document.querySelector('.calc-data-table');
         if (result.table) {
@@ -463,17 +621,14 @@ function initLegacyRunner(tool, slug, container) {
             } else {
                 const saveBar = document.getElementById('save-result-bar') || document.querySelector('.save-result-bar');
                 if (saveBar && newTableHtml) {
-                    saveBar.insertAdjacentHTML('beforebegin', newTableHtml);
+                    saveBar.insertAdjacentHTML('afterend', newTableHtml);
                 }
             }
         } else if (tableContainer) {
             tableContainer.remove();
         }
 
-        if (result.chart) renderChart(result.chart);
-        if (result.chart2) renderChart(result.chart2, 'result-chart-2');
-        if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
-        if (result.chart3) renderChart(result.chart3, 'result-chart-4');
+        renderActiveCharts(result);
         bindResultsToolbar(result);
 
         const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
@@ -497,6 +652,7 @@ function initLegacyRunner(tool, slug, container) {
     function buildResultsToolbarHtml(result) {
         return `
             <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+                <button class="btn btn-primary btn-sm action-btn action-save-btn" id="action-save-btn" title="Save calculation to your history"><i class="fa-solid fa-bookmark"></i> <span>Save</span></button>
                 <button class="btn btn-outline btn-sm action-btn ${isCompareMode ? 'active' : ''}" id="action-compare-btn" title="Compare Side-by-Side Scenarios"><i class="fa-solid fa-code-compare"></i> <span>${isCompareMode ? 'Close Compare' : 'Compare A vs B'}</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-share-btn" title="Share calculation with current inputs"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
                 <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn" title="Download PDF Report"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
@@ -507,22 +663,70 @@ function initLegacyRunner(tool, slug, container) {
         `;
     }
 
-    function showActionToast(message, isError = false) {
+    function showActionToast(message, isError = false, action = null) {
         const existing = document.querySelector('.action-toast');
         if (existing) existing.remove();
         const toast = document.createElement('div');
         toast.className = 'action-toast';
         if (isError) toast.style.background = '#EF4444';
-        toast.innerHTML = `<i class="fa-solid ${isError ? 'fa-triangle-exclamation' : 'fa-check'}"></i> <span>${escapeHtml(message)}</span>`;
+        
+        let actionHtml = '';
+        if (action && action.href && action.text) {
+            actionHtml = `<a href="${escapeHtml(action.href)}" class="toast-action-btn" style="margin-left:10px;padding:4px 10px;background:var(--primary-color, #6366F1);color:#ffffff;border-radius:6px;text-decoration:none;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:4px;"><i class="fa-solid fa-right-to-bracket"></i> ${escapeHtml(action.text)}</a>`;
+        }
+        
+        const icon = isError ? 'fa-triangle-exclamation' : (action ? 'fa-lock' : 'fa-check');
+        toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${escapeHtml(message)}</span>${actionHtml}`;
         document.body.appendChild(toast);
+        
+        const duration = action ? 6000 : 2500;
         setTimeout(() => {
             toast.style.opacity = '0';
             toast.style.transition = 'opacity 0.3s ease';
             setTimeout(() => toast.remove(), 300);
-        }, 2500);
+        }, duration);
     }
 
     function bindResultsToolbar(result) {
+        const actionSaveBtn = document.getElementById('action-save-btn');
+        if (actionSaveBtn) {
+            actionSaveBtn.addEventListener('click', async () => {
+                if (typeof saveCalculation !== 'function') return;
+
+                // Auth Gate: Check if user is signed in
+                const user = typeof getUser === 'function' ? await getUser() : null;
+                if (!user) {
+                    try { sessionStorage.setItem('uh_return', window.location.href); } catch (_) {}
+                    showActionToast('Sign in to save calculations to your history', false, {
+                        text: 'Sign In',
+                        href: '/auth'
+                    });
+                    return;
+                }
+
+                actionSaveBtn.disabled = true;
+                actionSaveBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Saving...</span>';
+                try {
+                    const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                    const res = tool.calculate(currentVals);
+                    await saveCalculation(slug, tool.name, currentVals, { stats: res.stats });
+                    actionSaveBtn.classList.add('btn-saved');
+                    actionSaveBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Saved!</span>';
+                    showActionToast('Saved to your calculation history!');
+                    trackEvent('calculator_action', { action_type: 'save' });
+                } catch (err) {
+                    actionSaveBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <span>Error</span>';
+                    showActionToast('Failed to save calculation. Please try again.', true);
+                } finally {
+                    setTimeout(() => {
+                        actionSaveBtn.disabled = false;
+                        actionSaveBtn.classList.remove('btn-saved');
+                        actionSaveBtn.innerHTML = '<i class="fa-solid fa-bookmark"></i> <span>Save</span>';
+                    }, 2500);
+                }
+            });
+        }
+
         const compareBtn = document.getElementById('action-compare-btn');
         if (compareBtn) {
             compareBtn.addEventListener('click', () => {
@@ -589,21 +793,14 @@ function initLegacyRunner(tool, slug, container) {
         const csvBtn = document.getElementById('action-csv-btn');
         if (csvBtn) {
             csvBtn.addEventListener('click', () => {
-                if (result.table && Array.isArray(result.table) && result.table.length > 0) {
-                    exportToCSV(result.table, { filename: `${slug}-schedule.csv` });
-                    showActionToast('Schedule exported as CSV!');
+                try {
+                    const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
+                    exportComprehensiveCSV(tool, result, currentVals, { filename: `${slug}-report.csv` });
+                    showActionToast('Report exported as CSV!');
                     trackEvent('calculator_action', { action_type: 'csv_export' });
-                } else if (result.table && result.table.rows && Array.isArray(result.table.rows)) {
-                    exportToCSV(result.table.rows, { filename: `${slug}-data.csv` });
-                    showActionToast('Data exported as CSV!');
-                    trackEvent('calculator_action', { action_type: 'csv_export' });
-                } else if (result.stats && Array.isArray(result.stats)) {
-                    const exportRows = result.stats.map(s => ({ Metric: s.label, Value: s.value }));
-                    exportToCSV(exportRows, { filename: `${slug}-summary.csv` });
-                    showActionToast('Summary exported as CSV!');
-                    trackEvent('calculator_action', { action_type: 'csv_export' });
-                } else {
-                    showActionToast('No exportable data available.', true);
+                } catch (e) {
+                    console.error('CSV export failed:', e);
+                    showActionToast('CSV export failed.', true);
                 }
             });
         }
@@ -619,7 +816,12 @@ function initLegacyRunner(tool, slug, container) {
         const copyBtn = document.getElementById('copy-results-btn');
         if (copyBtn && result && result.stats) {
             copyBtn.addEventListener('click', async () => {
-                const text = result.stats.map(s => `${s.label}: ${s.value}`).join('\n');
+                const text = result.stats.map(s => {
+                    const val = typeof s.value === 'object' && s.value !== null
+                        ? (s.value.value || s.value.val || JSON.stringify(s.value))
+                        : s.value;
+                    return `${s.label}: ${val}`;
+                }).join('\n');
                 try {
                     await navigator.clipboard.writeText(text);
                     copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Copied!</span>';
@@ -670,39 +872,36 @@ function initLegacyRunner(tool, slug, container) {
 
         container.innerHTML = `
             <div class="tool-runner-card">
-                <div class="tool-header"><h1>${escapeHtml(tool.name)}</h1><p>${escapeHtml(tool.description)}</p></div>
+                <div class="tool-header">
+                    <h1>${escapeHtml(tool.name)}</h1>
+                    <p>${escapeHtml(tool.description)}</p>
+                    ${buildCountrySwitcherHtml()}
+                </div>
                 <div class="tool-grid-workspace">
                     <div class="calculator-form-inputs">${buildFormHtml()}</div>
                     <div class="calculator-results-card" aria-live="polite" aria-atomic="true">
-                        ${result.error ? '' : buildInsightHtml(result.insight)}
-                        ${buildRecommendationHtml(result.recommendation)}
-                        ${buildSummaryHtml(result.summary)}
-                        ${buildBmiGaugeHtml(result.bmiGauge)}
-                        ${buildStatsHtml(result.stats)}
-                        ${result.bars ? buildBarsHtml(result.bars) : ''}
-                        ${buildChartsHtml(result)}
-                        ${buildBreakdownTablesHtml(result)}
-                        ${buildInsightsHtml(result.insights)}
-                        ${buildResultsToolbarHtml(result)}
+                        <div data-section="insight">${result.error ? '' : buildInsightHtml(result.insight)}</div>
+                        <div data-section="recommendation">${buildRecommendationHtml(result.recommendation)}</div>
+                        <div data-section="summary">${buildSummaryHtml(result.summary)}</div>
+                        <div data-section="bmiGauge">${buildBmiGaugeHtml(result.bmiGauge)}</div>
+                        <div data-section="stats">${buildStatsHtml(result.stats)}</div>
+                        <div data-section="bars">${result.bars ? buildBarsHtml(result.bars) : ''}</div>
+                        <div data-section="charts">${buildChartsHtml(result)}</div>
+                        <div data-section="breakdownTables">${buildBreakdownTablesHtml(result)}</div>
+                        <div data-section="insights">${buildInsightsHtml(result.insights)}</div>
+                        <div data-section="toolbar">${buildResultsToolbarHtml(result)}</div>
                     </div>
                 </div>
-                ${tableHtml}
                 <div class="save-result-bar" id="save-result-bar">
-                    <button class="btn btn-primary" id="save-result-btn"><i class="fa-solid fa-bookmark"></i> Save Result</button>
-                    <button class="btn btn-outline btn-sm" id="reset-btn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-                    <span class="save-result-msg hidden" id="save-result-msg"></span>
+                    <button class="btn btn-outline btn-sm" id="reset-btn" title="Reset all fields to defaults"><i class="fa-solid fa-rotate-left"></i> Reset</button>
                 </div>
+                ${tableHtml}
             </div>
             ${buildJourneyHtml(result.journey)}
-            ${buildSeoContentHtml()}
-            ${buildRelatedToolsHtml()}`;
+            ${buildEducationalLayoutHtml(tool, slug)}`;
 
-        if (result.chart) renderChart(result.chart);
-        if (result.chart2) renderChart(result.chart2, 'result-chart-2');
-        if (result.compareChart) renderChart(result.compareChart, 'result-chart-3');
-        if (result.chart3) renderChart(result.chart3, 'result-chart-4');
+        renderActiveCharts(result);
         bindResultsToolbar(result);
-        initSaveButton();
         initResetButton();
         trackEvent('calculator_viewed');
     }
@@ -813,38 +1012,7 @@ function initLegacyRunner(tool, slug, container) {
     container.addEventListener('click', handlePresetClick);
     container.addEventListener('keydown', handleKeyDown);
 
-    function initSaveButton() {
-        const bar = document.getElementById('save-result-bar');
-        const btn = document.getElementById('save-result-btn');
-        const msg = document.getElementById('save-result-msg');
-        if (!bar || !btn) return;
-        if (typeof onAuthChange === 'function') {
-            onAuthChange(session => { bar.style.display = session ? '' : 'none'; });
-        } else {
-            bar.style.display = 'none';
-        }
-        btn.addEventListener('click', async () => {
-            if (typeof saveCalculation !== 'function') return;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
-            try {
-                const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
-                const result = tool.calculate(currentVals);
-                const { error } = await saveCalculation(slug, tool.name, currentVals, { stats: result.stats });
-                msg.classList.remove('hidden');
-                msg.textContent = error ? 'Failed to save. Please try again.' : 'Saved to history!';
-                msg.style.color = error ? '#EF4444' : '#10B981';
-            } catch (err) {
-                msg.classList.remove('hidden');
-                msg.textContent = 'Failed to save. Please try again.';
-                msg.style.color = '#EF4444';
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-bookmark"></i> Save Result';
-                setTimeout(() => msg.classList.add('hidden'), 3000);
-            }
-        });
-    }
+
 
     function initResetButton() {
         const resetBtn = document.getElementById('reset-btn');
@@ -909,64 +1077,18 @@ function initLegacyRunner(tool, slug, container) {
     }
 
     function renderChart(chartData, canvasId) {
-        if (!chartData) return;
+        if (!chartData) return null;
         const id = canvasId || 'result-chart';
-        const canvas = document.getElementById(id);
-        if (!canvas) return;
-        
-        let datasets;
-        if (Array.isArray(chartData.datasets) && chartData.datasets.length > 0) {
-            datasets = chartData.datasets.map(ds => ({
-                label: ds.label || '',
-                data: ds.data || [],
-                color: ds.color || ds.borderColor,
-                colors: ds.colors || (Array.isArray(ds.backgroundColor) ? ds.backgroundColor : undefined),
-                backgroundColor: ds.backgroundColor,
-                borderColor: ds.borderColor,
-                fill: ds.fill,
-                format: ds.format,
-                stack: ds.stack
-            }));
-        } else if (Array.isArray(chartData.data)) {
-            datasets = [{
-                data: chartData.data,
-                colors: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'],
-                backgroundColor: chartData.colors || chartData.backgroundColor || ['#6366F1', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899']
-            }];
-        } else if (chartData.principal !== undefined || chartData.totalInterest !== undefined) {
-            datasets = [{
-                data: [safeNum(chartData.principal, 0), safeNum(chartData.totalInterest, 0)],
-                colors: ['#6366F1', '#F59E0B'],
-                backgroundColor: ['#6366F1', '#F59E0B']
-            }];
-        } else {
-            return;
-        }
-
-        let type = chartData.type;
-        if (!type) {
-            if (datasets.length > 1 || (datasets[0] && datasets[0].label)) {
-                type = 'bar';
-            } else {
-                type = 'doughnut';
+        let canvas = document.getElementById(id);
+        if (!canvas) {
+            const container = document.querySelector('.chart-container--unified') || document.querySelector('.chart-container');
+            if (container) {
+                canvas = container.querySelector('canvas');
+                if (canvas) canvas.id = id;
             }
         }
-        
-        const isHBar = type === 'horizontalBar';
-        const normalizedType = isHBar ? 'bar' : type;
-        
-        ChartManager.create({
-            id,
-            type: normalizedType,
-            container: canvas.parentElement || canvas,
-            data: {
-                labels: chartData.labels || ['Principal', 'Interest'],
-                datasets
-            },
-            format: chartData.format || 'currency',
-            cutout: chartData.cutout,
-            options: isHBar ? { indexAxis: 'y' } : undefined
-        });
+        if (!canvas) return null;
+        return ChartManager.render(canvas, chartData);
     }
 
     function renderTableHtml(tableData, currentSlug) {

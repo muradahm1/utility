@@ -3,39 +3,52 @@
  *
  * PWA installability + offline support.
  * Strategy:
- *   - Precache: core shell (HTML, CSS, JS, manifest, icons)
- *   - Cache-first: static assets (css, js, images, fonts)
- *   - Network-first: HTML navigations (fallback to cache when offline)
- *   - Network-only: API calls (Supabase, EmailJS, GA)
+ *   - Precache: core shell (HTML, CSS, JS, manifest, icons, PDF/export engines)
+ *   - Cache-first: static media & fonts (images, woff2)
+ *   - Network-first: JS, CSS, and HTML navigations (instant live updates when online, seamless offline fallback)
+ *   - Network-only: API calls (Firebase, EmailJS, GA)
  *
- * @version 1.0.0
+ * @version 2.1.0
  */
 
-const CACHE_NAME = 'getcalcu-v6';
-const STATIC_CACHE = 'getcalcu-static-v6';
-const PAGE_CACHE = 'getcalcu-pages-v6';
+const CACHE_NAME = 'getcalcu-v10';
+const STATIC_CACHE = 'getcalcu-static-v10';
+const PAGE_CACHE = 'getcalcu-pages-v10';
 
 // Core shell assets to precache on install (lightweight to prevent bandwidth congestion)
 const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/tool.html',
-  '/css/style.css',
+  '/css/style.min.css',
   '/css/icons.css',
   '/css/webfonts/fa-solid-900.woff2',
   '/js/tools.js',
   '/js/tools-template.js',
   '/js/app.js',
-  '/favicon.png',
+  '/js/tools.min.js',
+  '/js/app.min.js',
+  '/js/tool-runner.js',
+  '/js/tool-runner.min.js',
+  '/js/modules/export.js',
+  '/js/modules/pdf.js',
+  '/js/config.js',
+  '/js/firebase.js',
+  '/favicon.svg',
+  '/logo.svg',
   '/manifest.json'
 ];
 
-// Assets that should be cache-first (never change)
-const CACHE_FIRST = /\.(css|js|png|jpg|jpeg|svg|webp|gif|ico|woff2?|ttf)$/;
+// Media and font assets that are purely immutable and cache-first
+const CACHE_FIRST = /\.(png|jpg|jpeg|svg|webp|gif|ico|woff2?|ttf)$/;
 
 // API & external CDN endpoints that should always hit network directly
 const NETWORK_ONLY = [
-  'supabase.co',
+  'firebaseio.com',
+  'googleapis.com',
+  'firebaseapp.com',
+  'identitytoolkit.googleapis.com',
+  'securetoken.googleapis.com',
   'emailjs.com',
   'google-analytics.com',
   'googletagmanager.com',
@@ -54,7 +67,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// ── Activate: clean up old caches ───────────────────────────────
+// ── Activate: clean up old caches (v9 and earlier) ───────────────
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -73,6 +86,11 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests
   if (request.method !== 'GET') return;
+
+  // Never intercept cross-origin requests (Firebase, Google APIs, external CDNs)
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
   // Network-only for API/analytics endpoints
   if (NETWORK_ONLY.some((domain) => url.hostname.includes(domain))) {
@@ -116,7 +134,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache-first with network fallback
+  // Static media and fonts: cache-first with network fallback
   if (CACHE_FIRST.test(url.pathname)) {
     event.respondWith(
       caches.match(request, { ignoreSearch: true }).then((cached) => {
@@ -136,7 +154,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Default: network-first with cache fallback
+  // Default (JS, CSS, data): network-first with cache fallback
   event.respondWith(
     fetch(request)
       .then((response) => {

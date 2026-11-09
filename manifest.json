@@ -32,25 +32,25 @@
       "name": "Mortgage Calculator",
       "short_name": "Mortgage",
       "url": "/tool/mortgage-calculator",
-      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "BMI Calculator",
       "short_name": "BMI",
       "url": "/tool/bmi-calculator",
-      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Loan Calculator",
       "short_name": "Loan",
       "url": "/tool/loan-calculator",
-      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Percentage Calculator",
       "short_name": "Percentage",
       "url": "/tool/percentage-calculator",
-      "icons": [{ "src": "/favicon.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

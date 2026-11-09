@@ -6,26 +6,37 @@
     <meta name="theme-color" content="#6366F1">
     <link rel="manifest" href="/manifest.json">
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
-    <!-- End Google Tag Manager -->
     <title>Sign In &amp; Sign Up | GetCalcu</title>
     <meta name="description" content="Sign in or create a free GetCalcu account to save your calculations and history.">
     <link rel="canonical" href="https://www.getcalcu.com/auth">
@@ -35,12 +46,14 @@
     <meta property="og:url" content="https://www.getcalcu.com/auth">
     <meta property="og:image" content="https://www.getcalcu.com/og-image.png">
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body class="auth-page-body">
@@ -53,7 +66,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="auth-card" id="main-content">
         <!-- Brand -->
         <a href="/" class="brand brand-center" style="margin-bottom:24px; text-decoration: none;">
-            <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+            <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
             <span class="brand-name">GetCalcu</span>
         </a>
 
@@ -185,6 +198,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </form>
         </div>
 
+            <p class="auth-footer-links" style="text-align:center; font-size:13px; margin-top:20px; color:var(--text-secondary);"><a href="/contact" style="color:var(--text-secondary);">Contact Support</a> &middot; <a href="/privacy" style="color:var(--text-secondary);">Privacy Policy</a> &middot; <a href="/terms" style="color:var(--text-secondary);">Terms of Service</a></p>
     </div><!-- /.auth-card -->
 
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>

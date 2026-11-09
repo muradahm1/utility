@@ -13,3 +13,22 @@ const APP_CONFIG = {
     SITE_URL: 'https://www.getcalcu.com',
     // EmailJS credentials held server-side in Vercel environment variables
 };
+
+// Early auth listener queue — guarantees callbacks are never dropped regardless of script load order
+if (typeof window !== 'undefined') {
+    window._authCallbacks = window._authCallbacks || [];
+    if (typeof window.onAuthChange !== 'function') {
+        window.onAuthChange = function(cb) {
+            if (typeof cb === 'function') {
+                window._authCallbacks.push(cb);
+                if (window._currentAuthSession !== undefined) {
+                    try { cb(window._currentAuthSession); } catch(e) { console.error('[GetCalcu] Auth callback error:', e); }
+                }
+            }
+            return function() {
+                var idx = window._authCallbacks.indexOf(cb);
+                if (idx !== -1) window._authCallbacks.splice(idx, 1);
+            };
+        };
+    }
+}

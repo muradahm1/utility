@@ -6,26 +6,37 @@
     <meta name="theme-color" content="#6366F1">
     <link rel="manifest" href="/manifest.json">
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
-    <!-- End Google Tag Manager -->
     <title>Privacy Policy | GetCalcu</title>
     <meta name="description" content="Review the GetCalcu privacy policy. We are committed to protecting your data and do not collect personal information from our tools.">
     <link rel="canonical" href="https://www.getcalcu.com/privacy">
@@ -39,12 +50,14 @@
     <meta name="twitter:description" content="Review the GetCalcu privacy policy. We are committed to protecting your data and do not collect personal information from our tools.">
     <meta name="twitter:image" content="https://www.getcalcu.com/og-image.png">
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -55,7 +68,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="app-container">
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -78,7 +91,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="theme-switch-container">
                     <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
                     <label class="switch">
-                        <input type="checkbox" id="theme-toggle-switch">
+                        <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle dark mode">
                         <span class="slider round"></span>
                     </label>
                 </div>
@@ -107,7 +120,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="tool-runner-card">
                     <div class="tool-header">
                         <h1>Privacy Policy</h1>
-                        <p>Last Updated: <strong>July 22, 2025</strong> &nbsp;·&nbsp; Effective immediately upon posting.</p>
+                        <p>Last Updated: <strong>October 24, 2026</strong> &nbsp;·&nbsp; Effective immediately upon posting.</p>
                     </div>
 
                     <div class="static-content">
@@ -136,7 +149,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <p><strong>We do not collect, store, or transmit any personal or sensitive information you enter into our calculators, converters, or other tools.</strong> All calculations are performed locally within your browser using JavaScript. The data you input never reaches our servers. Once you close or refresh the page, that data is gone entirely.</p>
 
                         <h3 id="s2">2. Analytics & Cookies</h3>
-                        <p>To understand how our Site is used and to improve our services, we use privacy-focused analytics tools (such as Google Analytics 4). These services help us understand general usage patterns — which tools are most popular, what countries visitors come from, and what device types are used.</p>
+                        <p>To understand how our Site is used and to improve our services, we use privacy-focused analytics tools (such as Google Analytics 4). We load analytics tools through Google Tag Manager. These services help us understand general usage patterns — which tools are most popular, what countries visitors come from, and what device types are used.</p>
                         <ul>
                             <li>All analytics data is <strong>anonymized and aggregated</strong>. We do not collect IP addresses or any other personally identifiable information (PII) through analytics.</li>
                             <li>We use cookies to facilitate analytics. You can opt out via our cookie consent banner or your browser settings.</li>
@@ -194,7 +207,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <footer class="site-footer">
                 <div class="footer-inner">
                     <div class="footer-brand">
-                        <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                        <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                         <span class="brand-name">GetCalcu</span>
                     </div>
                     <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>

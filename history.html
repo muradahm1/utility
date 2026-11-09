@@ -8,9 +8,6 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
     <!-- Google Analytics & Tag Manager DataLayer Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -30,12 +27,14 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="canonical" href="https://www.getcalcu.com/history">
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -49,7 +48,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Sidebar -->
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
         <nav class="nav-menu">
@@ -67,7 +66,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="theme-switch-container">
                 <span class="theme-label"><i class="fa-solid fa-moon"></i> Dark mode</span>
                 <label class="switch">
-                    <input type="checkbox" id="theme-toggle-switch">
+                    <input type="checkbox" id="theme-toggle-switch" aria-label="Toggle dark mode">
                     <span class="slider round"></span>
                 </label>
             </div>
@@ -167,7 +166,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <footer class="site-footer">
     <div class="footer-inner">
         <div class="footer-brand">
-            <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+            <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
             <span class="brand-name">GetCalcu</span>
         </div>
         <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
@@ -246,14 +245,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // into innerHTML so stored malicious input/results can never execute.
         const esc = escapeHtml;
 
-        const inputLines = Object.entries(row.inputs)
-            .map(([k, v]) => `<span class="history-input-chip">${esc(formatKey(k))}: <strong>${esc(v)}</strong></span>`)
-            .join('');
+        function formatVal(val) {
+            if (val === null || val === undefined) return '';
+            if (typeof val === 'object') {
+                if (val.value !== undefined) return String(val.value);
+                if (val.val !== undefined) return String(val.val);
+                if (val.label !== undefined) return String(val.label);
+                if (Array.isArray(val)) return val.map(formatVal).filter(Boolean).join(', ');
+                try { return JSON.stringify(val); } catch { return ''; }
+            }
+            return String(val);
+        }
 
-        const resultLines = Object.entries(row.results)
-            .slice(0, 3)
-            .map(([k, v]) => `<div class="history-result-line"><span>${esc(formatKey(k))}</span><strong>${esc(v)}</strong></div>`)
-            .join('');
+        const inputLines = row.inputs && typeof row.inputs === 'object'
+            ? Object.entries(row.inputs)
+                .map(([k, v]) => `<span class="history-input-chip">${esc(formatKey(k))}: <strong>${esc(formatVal(v))}</strong></span>`)
+                .join('')
+            : '';
+
+        let resultLines = '';
+        if (row.results) {
+            if (Array.isArray(row.results.stats) && row.results.stats.length > 0) {
+                resultLines = row.results.stats
+                    .slice(0, 3)
+                    .map(s => `<div class="history-result-line"><span>${esc(s.label || 'Result')}</span><strong>${esc(formatVal(s.value))}</strong></div>`)
+                    .join('');
+            } else if (Array.isArray(row.results)) {
+                resultLines = row.results
+                    .slice(0, 3)
+                    .map(item => {
+                        const label = item.label || item.name || 'Result';
+                        const val = item.value !== undefined ? item.value : item;
+                        return `<div class="history-result-line"><span>${esc(label)}</span><strong>${esc(formatVal(val))}</strong></div>`;
+                    })
+                    .join('');
+            } else if (typeof row.results === 'object') {
+                const entries = Object.entries(row.results).filter(([k]) => k !== 'table' && k !== 'chart');
+                resultLines = entries
+                    .slice(0, 3)
+                    .map(([k, v]) => `<div class="history-result-line"><span>${esc(formatKey(k))}</span><strong>${esc(formatVal(v))}</strong></div>`)
+                    .join('');
+            }
+        }
 
         // Encode attribute values too — never trust stored slug/name/tool data
         const safeSlug = esc(row.tool_slug);

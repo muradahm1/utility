@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6366F1">
     <title>Final Grade Calculator | Required Exam Score — GetCalcu</title>
     <meta name="description" content="Free Final Grade Calculator. Find out what grade you need on your final exam to pass or achieve your target course grade.">
     <link rel="canonical" href="https://www.getcalcu.com/tool/final-grade-calculator">
+    
+    
     <meta name="robots" content="index, follow">
     <meta name="keywords" content="final grade calculator, what grade do i need on my final exam, final exam score calculator, college grade calculator, passing grade calculator">
 
@@ -27,41 +29,58 @@
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Final Grade Calculator","applicationCategory":"UtilityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Final Grade Calculator. Find out what grade you need on your final exam to pass or achieve your target course grade.","url":"https://www.getcalcu.com/tool/final-grade-calculator"}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Education","item":"https://www.getcalcu.com/category/education"},{"@type":"ListItem","position":3,"name":"Final Grade Calculator","item":"https://www.getcalcu.com/tool/final-grade-calculator"}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What if I need over 100% on the final?","acceptedAnswer":{"@type":"Answer","text":"If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor."}}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What if I need over 100% on the final?","acceptedAnswer":{"@type":"Answer","text":"If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor."}},{"@type":"Question","name":"How do I figure out the weight of my final exam if my syllabus uses points?","acceptedAnswer":{"@type":"Answer","text":"If your class uses a total-points system rather than percentages, divide the total points possible on the final exam by the total possible points for the entire course, then multiply by 100. For example, if your final is worth 250 points out of 1,000 total course points, the final exam weight is 25% (250 ÷ 1,000 × 100)."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Final Grade Calculator","description":"Calculate the exact score needed on your final exam to earn your desired target course grade.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter your current class grade percentage."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Enter the target letter grade or percentage you want to achieve."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Enter the weight percentage of the final exam."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"See the exact test score required and check grade cutoff benchmarks."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Required Final Exam Grade","description":"Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.","author":{"@type":"Organization","name":"GetCalcu Editorial & Calculation Review Board"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Final Grade Calculator","url":"https://www.getcalcu.com/tool/final-grade-calculator"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Required Final Exam Grade","description":"Knowing what you need on your final exam allows you to prioritize study time strategically across your courses. This calculator assumes a standard percentage-based grading system (0% to 100%) where prior coursework and the final exam combine to form 100% of your total score. Note that grading scales differ across other countries and international universities—such as the UK honors classification, the German 1-to-5 scale, or the French 20-point system—so international students should convert their letter or scale marks into proportional percentage equivalents before calculating.","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Final Grade Calculator","url":"https://www.getcalcu.com/tool/final-grade-calculator","dateModified":"2026-11-01"}</script>
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png">
-    <link rel="shortcut icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="shortcut icon" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-    <!-- Google Analytics & Tag Manager DataLayer Init -->
+    <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-M2PTXPP9QG');
+      
+      (function() {
+        function loadAnalytics() {
+          var ga = document.createElement('script');
+          ga.async = true;
+          ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG';
+          document.head.appendChild(ga);
+
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-WT5JT9KH');
+        }
+
+        if (window.requestIdleCallback) {
+          requestIdleCallback(function() { setTimeout(loadAnalytics, 50); }, { timeout: 1500 });
+        } else {
+          window.addEventListener('load', function() { setTimeout(loadAnalytics, 50); });
+        }
+      })();
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M2PTXPP9QG"></script>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WT5JT9KH');</script>
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preload" href="/js/tools.min.js" as="script">
+    <link rel="modulepreload" href="/js/tool-runner.min.js">
+    <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
 <body>
@@ -74,7 +93,7 @@
         
         <aside class="sidebar">
             <a href="/" class="brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </a>
             <nav class="nav-menu">
@@ -128,6 +147,7 @@
       <div class="tool-header">
         <h1>Final Grade Calculator</h1>
         <p>Calculate the exact score needed on your final exam to earn your desired target course grade.</p>
+        
       </div>
       <div class="tool-grid-workspace">
         <div class="calculator-form-inputs">
@@ -227,87 +247,235 @@
       </div>
     </div>
     
-    <div class="tool-runner-card" style="margin-top:24px; border-left:4px solid var(--primary-color); background:var(--bg-main);">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:15px; font-weight:700; color:var(--text-primary); margin-bottom:4px;">
-            <i class="fa-solid fa-shield-halved" style="color:var(--primary-color); margin-right:6px;"></i>
-            GetCalcu Methodology & Editorial Standards
-          </h3>
-          <p style="font-size:13px; color:var(--text-secondary); margin:0;">
-            AACRAO (American Association of Collegiate Registrars and Admissions Officers) standard 4.0 GPA weighting conventions.
-          </p>
+    <section class="tool-runner-card methodology-card" id="methodology" aria-labelledby="methodology-heading">
+      <div class="methodology-header">
+        <div class="methodology-title-wrap">
+          <span class="methodology-badge"><i class="fa-solid fa-shield-check"></i> Editorial Standard</span>
+          <h2 id="methodology-heading">GetCalcu Methodology &amp; Editorial Standards</h2>
         </div>
+        <span class="methodology-review-date"><i class="fa-regular fa-calendar-check"></i> Built and maintained by the GetCalcu founder.</span>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; font-size:12px; color:var(--text-secondary); margin-top:10px; padding-top:10px; border-top:1px solid var(--border-color);">
-        <div><strong>Reviewed by:</strong> GetCalcu Academic &amp; Educational Review Board</div>
-        <div><strong>Last Verified:</strong> September 2026</div>
-        <div><strong>Accuracy Policy:</strong> Deterministic academic calculation</div>
-        <div><strong>Feedback:</strong> <a href="/contact?subject=Final%20Grade%20Calculator%20Correction" style="color:var(--primary-color); text-decoration:none;">Report an issue</a></div>
-      </div>
-    </div>
-  
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:20px;font-weight:700;margin-bottom:14px;color:var(--text-primary);">How to Calculate Your Required Final Exam Grade</h2>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Knowing what you need on your final exam allows you to prioritize study time strategically across your courses.</p>
-        
-        <h3 style="font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text-primary);">Weighted Grading Formula</h3>
-        <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;">Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight.</p>
+      <p class="methodology-summary">Calculations use standard linear weighted mean arithmetic commonly applied across secondary and post-secondary educational institutions.</p>
       
+      <div class="methodology-block">
+        <h4 class="methodology-subheading">Key Modeling Assumptions:</h4>
+        <ul class="methodology-list">
+          <li>Grading Model: Assumes a percentage-based grading system (0% to 100%), where all previous assignments, midterms, and participation constitute (100% - Final Exam Weight).</li><li>International Grading Scale Variation: Grading scales differ significantly across countries and educational systems—such as the UK degree classifications (1st/2:1/2:2), the German 1.0–5.0 system, the French 20-point scale, and the Australian 7-point GPA—so non-percentage marks must first be converted into equivalent percentage terms.</li><li>Linear Distribution: Assumes no unannounced curves, drops, or penalty deductions are retroactively applied to prior coursework.</li>
+        </ul>
       </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">How to Use the Final Grade Calculator</h2>
-        <ol style="padding-left:20px;color:var(--text-secondary);font-size:14px;line-height:1.8;"><li style="margin-bottom:10px;"><strong>Step 1:</strong> Enter your current class grade percentage.</li><li style="margin-bottom:10px;"><strong>Step 2:</strong> Enter the target letter grade or percentage you want to achieve.</li><li style="margin-bottom:10px;"><strong>Step 3:</strong> Enter the weight percentage of the final exam.</li><li style="margin-bottom:10px;"><strong>Step 4:</strong> See the exact test score required and check grade cutoff benchmarks.</li></ol>
-        <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px 18px;margin-top:16px;font-size:13px;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Formula:</strong> Final Exam Score = (Target - (Current × (1 - Weight))) ÷ Weight</div>
+      
+      <div class="methodology-sources">
+        <span class="methodology-sources-label"><i class="fa-solid fa-book-bookmark"></i> Reference Sources:</span>
+        <span class="methodology-sources-list">AACRAO (American Association of Collegiate Registrars and Admissions Officers) Evaluation Guidelines • Standard Weighted Mean Equation: W = (Target - Current × (1 - Weight)) ÷ Weight</span>
       </div>
+    </section>
+  
+    <div class="educational-layout">
+      <div class="educational-main-content">
+        
+      <article class="tool-runner-card educational-card" id="how-to-calculate" aria-labelledby="how-to-calculate-title">
+        <h2 id="how-to-calculate-title" class="educational-section-title">How to Calculate Your Required Final Exam Grade</h2>
+        <div class="article-intro-text"><p>Knowing what you need on your final exam allows you to prioritize study time strategically across your courses. This calculator assumes a standard percentage-based grading system (0% to 100%) where prior coursework and the final exam combine to form 100% of your total score. Note that grading scales differ across other countries and international universities—such as the UK honors classification, the German 1-to-5 scale, or the French 20-point system—so international students should convert their letter or scale marks into proportional percentage equivalents before calculating.</p></div>
+        
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Weighted Grading Formula</h3>
+            <div class="article-body-text"><p>Final Exam Required = (Target Grade - (Current Grade × (1 - Final Weight))) ÷ Final Weight. This formula isolates the remaining points required on your syllabus and divides them by the exam weight.</p></div>
+          </div>
+          <div class="article-subsection" >
+            <h3 class="article-subheading">Percentage Assumptions and International Grading Scales</h3>
+            <div class="article-body-text"><p>Calculations assume continuous percentage scoring. If your syllabus uses letter cutoffs (e.g. 90% for an A, 80% for a B, 70% for a C), input the minimum percentage required for that letter grade. Because grading scales differ in other countries and curricula, always reference your institution-specific grading conversion rubric when translating foreign credits or non-percentage marks.</p></div>
+          </div>
+      </article>
     
+        
+      <section class="tool-runner-card educational-card" id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title" class="educational-section-title">How to Use the Final Grade Calculator</h2>
+        <ol class="how-to-steps-list">
+        <li class="how-to-step">
+          <span class="step-num">1</span>
+          <div class="step-content">Enter your current class grade percentage.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">2</span>
+          <div class="step-content">Enter the target letter grade or percentage you want to achieve.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">3</span>
+          <div class="step-content">Enter the weight percentage of the final exam.</div>
+        </li>
+      
+        <li class="how-to-step">
+          <span class="step-num">4</span>
+          <div class="step-content">See the exact test score required and check grade cutoff benchmarks.</div>
+        </li>
+      </ol>
+      </section>
     
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Real-World Worked Examples</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
-      <div style="background:var(--bg-main);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:16px;">
-        <p style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">85% Current, Aiming for 90% A (20% Final)</p>
-        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;"><strong>Input:</strong> Current: 85%, Target: 90%, Weight: 20%</p>
-        <p style="font-size:13px;color:var(--text-secondary);"><strong>Result:</strong> <span style="color:var(--primary-color);font-weight:700;">Required on Final: 110% (Needs Extra Credit)</span></p>
+        
+      <section class="tool-runner-card educational-card" id="formula" aria-labelledby="formula-title">
+        <h2 id="formula-title" class="educational-section-title">Final Grade Calculator Formula</h2>
+        <div class="formula-display-box">
+          <code>Final Exam Score = (Target - (Current × (1 - Weight))) ÷ Weight</code>
+        </div>
+        
+        
+      </section>
+    
+        
+      <section class="tool-runner-card educational-card" id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title" class="educational-section-title">Real-World Worked Examples</h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">These scenarios demonstrate how key input parameters alter your calculation outcome.</p>
+        <div class="worked-examples-grid">
+      <div class="worked-example-card">
+        <h3 class="worked-example-title">85% Current, Aiming for 90% A (20% Final)</h3>
+        <div class="worked-example-row"><span class="example-label"><strong>Input:</strong></span> <span class="example-val">Current: 85%, Target: 90%, Weight: 20%</span></div>
+        <div class="worked-example-row worked-example-result"><span class="example-label"><strong>Result:</strong></span> <span class="example-val-highlight">Required on Final: 110% (Needs Extra Credit)</span></div>
+        
       </div>
     </div>
-      </div>
+      </section>
     
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Frequently Asked Questions</h2>
         
-      <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
-        <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What if I need over 100% on the final?</summary>
-        <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.</p>
-      </details>
+        
+      <section class="tool-runner-card educational-card" id="faqs" aria-labelledby="faqs-title">
+        <h2 id="faqs-title" class="educational-section-title">Frequently Asked Questions</h2>
+        
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">What if I need over 100% on the final?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">If the required score exceeds 100%, achieving that grade is mathematically impossible without extra credit points or a grading curve from your instructor.</p>
+        </details>
+      
+        <details class="faq-item" style="border:1px solid var(--border-color);border-radius:var(--radius-md);margin-bottom:10px;padding:12px 16px;background:var(--bg-card);">
+          <summary style="font-weight:600;cursor:pointer;color:var(--text-primary);">How do I figure out the weight of my final exam if my syllabus uses points?</summary>
+          <p style="margin-top:10px;font-size:14px;color:var(--text-secondary);line-height:1.6;">If your class uses a total-points system rather than percentages, divide the total points possible on the final exam by the total possible points for the entire course, then multiply by 100. For example, if your final is worth 250 points out of 1,000 total course points, the final exam weight is 25% (250 ÷ 1,000 × 100).</p>
+        </details>
+      
+      </section>
     
-      </div>
-    
-    
-      <div class="tool-runner-card" style="margin-top:24px;">
-        <h2 style="font-size:18px; font-weight:700; margin-bottom:16px;">
+        
+      <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
+        <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Complementary Tools & Next Steps
+          Related Calculators
         </h2>
         <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
           
-      <a href="/tool/gpa-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
-        <div>
-          <h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">GPA Calculator</h4>
-          <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Calculate your cumulative semester GPA across all course credits.</p>
+        <a href="/tool/gpa-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-education"><i class="fa-solid fa-graduation-cap"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">College &amp; High School GPA Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online GPA Calculator. Calculate semester and cumulative GPA on 4.0 and 5.0 weighted scales. Project target graduation GPA effortlessly.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-education">Education</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/percentage-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-math"><i class="fa-solid fa-percent"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Percentage Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free percentage calculator — find percentages, percent change, and compute values instantly.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-math">Math</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/student-loan-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-education"><i class="fa-solid fa-bookmark"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Student Loan Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Student Loan Calculator. Estimate monthly payments, total lifetime interest, and interest saved by paying extra toward principal.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-education">Education</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/date-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px;">
+              <div class="tool-icon icon-math"><i class="fa-solid fa-calendar"></i></div>
+            </div>
+            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Date Calculator</h3>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Count the days, weeks and months between two dates, or add and subtract days from any date. Free and works in your browser.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
+            <span class="tag tag-math">Math</span>
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
+              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
         </div>
-        <div style="margin-top:12px; font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-          <span>Explore Tool</span> <i class="fa-solid fa-arrow-right"></i>
-        </div>
-      </a>
+      </section>
     
-        </div>
       </div>
-    
+      <aside class="educational-sidebar" aria-label="Page navigation sidebar">
+        
+    <div class="on-this-page-container">
+      <details class="on-this-page-details" open>
+        <summary class="on-this-page-summary">
+          <span class="on-this-page-title"><i class="fa-solid fa-list-ul"></i> On this page</span>
+          <i class="fa-solid fa-chevron-down on-this-page-chevron" aria-hidden="true"></i>
+        </summary>
+        <nav class="on-this-page-nav" aria-label="On this page">
+          <ul class="on-this-page-list">
+            
+              <li class="on-this-page-item">
+                <a href="#methodology" class="on-this-page-link">Methodology &amp; Standards</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-calculate" class="on-this-page-link">How to Calculate Your Required Final Exam Grade</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#how-to-use" class="on-this-page-link">How to Use the Final Grade Calculator</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#formula" class="on-this-page-link">Final Grade Calculator Formula</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#worked-examples" class="on-this-page-link">Real-World Worked Examples</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#faqs" class="on-this-page-link">Frequently Asked Questions</a>
+              </li>
+            
+              <li class="on-this-page-item">
+                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+              </li>
+            
+          </ul>
+        </nav>
+      </details>
+    </div>
+  
+      </aside>
+    </div>
   
             </div>
         </main>
@@ -329,10 +497,13 @@
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="brand-icon"><img src="/favicon.png" alt="GetCalcu"></div>
+                <div class="brand-icon"><img src="/logo.svg" alt="" width="36" height="36"></div>
                 <span class="brand-name">GetCalcu</span>
             </div>
             <p class="footer-tagline">Free, fast and accurate tools for everyday problems.</p>
+            <div class="footer-social-links" aria-label="Social media links">
+                <a href="https://www.linkedin.com/in/getcalcu-community-963923383/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="footer-social-icon" title="Follow GetCalcu on LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align: -2px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg></a>
+            </div>
             <nav class="footer-links" aria-label="Footer navigation">
                 <a href="/about">About</a>
                 <a href="/contact">Contact</a>
