@@ -37,7 +37,7 @@
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.getcalcu.com/"},{"@type":"ListItem","position":2,"name":"Finance","item":"https://www.getcalcu.com/category/finance"},{"@type":"ListItem","position":3,"name":"Salary & Paycheck Calculator","item":"https://www.getcalcu.com/tool/salary-calculator"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between gross pay and net pay?","acceptedAnswer":{"@type":"Answer","text":"Gross pay is the total amount earned before any deductions or taxes. Net pay (take-home pay) is the remaining money deposited into your bank account after all taxes and deductions."}},{"@type":"Question","name":"How does filing status affect paycheck withholding?","acceptedAnswer":{"@type":"Answer","text":"Filing status determines your standard deduction and income tax brackets. Married couples filing jointly have wider tax brackets, typically lowering tax withholding compared to single filers."}},{"@type":"Question","name":"How much are FICA taxes?","acceptedAnswer":{"@type":"Answer","text":"FICA taxes equal 7.65% for employees (6.2% Social Security + 1.45% Medicare). Employers match an identical 7.65%."}}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"How to Use the Salary & Paycheck Calculator","description":"Calculate your net take-home pay, federal & state taxes, FICA deductions, and hourly wage breakdown.","step":[{"@type":"HowToStep","position":1,"name":"Step 1","text":"Enter your gross income and select your pay frequency (annual, monthly, biweekly, or hourly)."},{"@type":"HowToStep","position":2,"name":"Step 2","text":"Select your tax filing status (Single, Married, or Head of Household)."},{"@type":"HowToStep","position":3,"name":"Step 3","text":"Set your state tax rate or leave at the 5% national average."},{"@type":"HowToStep","position":4,"name":"Step 4","text":"Add optional pre-tax retirement or health insurance deductions."},{"@type":"HowToStep","position":5,"name":"Step 5","text":"Review your net take-home pay and complete tax breakdown."}]}</script>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Net Paycheck and Understand Tax Withholding","description":"Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Salary & Paycheck Calculator","url":"https://www.getcalcu.com/tool/salary-calculator","dateModified":"2026-11-01"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"How to Calculate Your Net Paycheck and Understand Tax Withholding","description":"Your gross salary represents total earnings before federal income tax, state income tax, Social Security, Medicare, and voluntary pre-tax deductions (like 401k and healthcare).","author":{"@type":"Organization","name":"GetCalcu"},"publisher":{"@type":"Organization","name":"GetCalcu","url":"https://www.getcalcu.com/"},"about":"Salary & Paycheck Calculator","url":"https://www.getcalcu.com/tool/salary-calculator","dateModified":"2026-11-09"}</script>
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -51,7 +51,6 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="preconnect" href="https://www.google-analytics.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
     <!-- Google Analytics & Tag Manager Non-blocking Init -->
     <script>
@@ -84,8 +83,6 @@
     <!-- Font Preload for instant icon rendering -->
     <link rel="preload" href="/css/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
-    <link rel="preload" href="/js/tools.min.js" as="script">
-    <link rel="modulepreload" href="/js/tool-runner.min.js">
     <link rel="stylesheet" href="/css/style.min.css">
     <link rel="stylesheet" href="/css/icons.css">
 </head>
@@ -328,6 +325,7 @@
     
           
     <div class="results-action-toolbar" id="results-action-toolbar" role="toolbar" aria-label="Calculation actions">
+      <button class="btn btn-outline btn-sm action-btn ai-copilot-trigger-btn" id="action-ai-decision-btn" title="Analyze this decision with AI Decision Co-Pilot"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--primary-color);"></i> <span>Decision Co-Pilot</span></button>
       <button class="btn btn-outline btn-sm action-btn" id="action-compare-btn"><i class="fa-solid fa-code-compare"></i> <span>Compare A vs B</span></button>
       <button class="btn btn-outline btn-sm action-btn" id="action-share-btn"><i class="fa-solid fa-share-nodes"></i> <span>Share</span></button>
       <button class="btn btn-outline btn-sm action-btn" id="action-pdf-btn"><i class="fa-solid fa-file-pdf"></i> <span>PDF</span></button>
@@ -516,7 +514,7 @@
               <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
             </div>
             <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Budget Planner &amp; Expense Tracker</h3>
-            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free budget planner and expense tracker — manage monthly income, categorize spending, track savings rate, and get 50/30/20 budget recommendations.</p>
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free personal budget planner and expense tracker. Calculate net income, categorize needs vs wants, track savings rate, and optimize your 50/30/20 monthly budget.</p>
           </div>
           <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
             <span class="tag tag-finance">Finance</span>
@@ -627,7 +625,7 @@
         </div>
     </div>
 
-    <script src="/js/tools.js"></script>
+    <script src="/js/tools.min.js"></script>
     <script src="/js/tools-template.js"></script>
     <script src="/js/tool-runner.js" type="module"></script>
     <script src="/js/app.js"></script>
