@@ -4,10 +4,13 @@
  * Generates an executive, publication-grade PDF report for any GetCalcu calculator:
  *  - Premium branded header & verified calculation badge
  *  - Primary KPI & secondary metrics grid with color-coded accents
+ *  - BMI Assessment card with visual health status coloring
+ *  - Distribution & Coverage progress bar visualizations
  *  - Deep recommendation cards (Why?, Risks, Savings, Confidence, Break-even)
  *  - Full narrative insights (headline + detail) with tone-matched accents
+ *  - Applied scientific and mathematical formulas
  *  - Form input parameters & assumptions reference table
- *  - Formatted schedule / amortization breakdown table with zebra stripes
+ *  - Formatted schedule / amortization and asset/liability breakdown tables with zebra stripes
  *  - Dynamic pagination with running header banners and page numbers (Page X of Y)
  * 
  * @module modules/pdf
@@ -71,18 +74,31 @@ export async function loadPDFLibrary() {
     });
 }
 
-function formatPdfValue(val) {
+/**
+ * Formats any value into a clean, human-readable string for PDF text nodes.
+ * Guarantees zero [object Object] output across all data types.
+ * 
+ * @param {*} val - Value to format
+ * @returns {string} Clean string representation
+ */
+export function formatPdfValue(val) {
     if (val === null || val === undefined) return '—';
     if (typeof val === 'number') {
-        return val.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        return Number.isFinite(val) ? val.toLocaleString('en-US', { maximumFractionDigits: 2 }) : '—';
     }
     if (typeof val === 'boolean') {
         return val ? 'Yes' : 'No';
     }
     if (typeof val === 'object') {
+        if (val.formatted !== undefined) return formatPdfValue(val.formatted);
         if (val.value !== undefined) return formatPdfValue(val.value);
         if (val.val !== undefined) return formatPdfValue(val.val);
-        if (val.text !== undefined) return String(val.text);
+        if (val.text !== undefined) return formatPdfValue(val.text);
+        if (val.amount !== undefined) return formatPdfValue(val.amount);
+        if (val.label !== undefined && val.value === undefined) return formatPdfValue(val.label);
+        if (val.headline || val.detail) {
+            return [val.headline, val.detail].filter(Boolean).join(' - ');
+        }
         if (Array.isArray(val)) return val.map(formatPdfValue).join(', ');
         try { return JSON.stringify(val); } catch { return ''; }
     }
@@ -114,11 +130,11 @@ function normalizeRecommendation(rec) {
             title,
             headline: headline || 'Recommendation based on your specific financial numbers.',
             winner: rec.winner || '',
-            savings: rec.savings || '',
-            confidence: rec.confidence || '',
-            breakEvenYear: rec.breakEvenYear || '',
-            reasons: Array.isArray(rec.reasons) ? rec.reasons.map(String) : [],
-            risks: Array.isArray(rec.risks) ? rec.risks.map(String) : []
+            savings: rec.savings ? formatPdfValue(rec.savings) : '',
+            confidence: rec.confidence ? formatPdfValue(rec.confidence) : '',
+            breakEvenYear: rec.breakEvenYear ? formatPdfValue(rec.breakEvenYear) : '',
+            reasons: Array.isArray(rec.reasons) ? rec.reasons.map(formatPdfValue) : [],
+            risks: Array.isArray(rec.risks) ? rec.risks.map(formatPdfValue) : []
         };
     }
     return null;
@@ -186,31 +202,6 @@ function extractInputParameters(tool, inputs) {
     return params;
 }
 
-function extractTableData(result) {
-    if (result.table) {
-        if (Array.isArray(result.table) && result.table.length > 0) {
-            return {
-                title: 'Schedule / Amortization Breakdown',
-                rows: result.table
-            };
-        }
-        if (result.table.rows && Array.isArray(result.table.rows) && result.table.rows.length > 0) {
-            return {
-                title: result.table.title || 'Schedule Breakdown',
-                headers: result.table.headers,
-                rows: result.table.rows
-            };
-        }
-    }
-    if (result.assetTable && Array.isArray(result.assetTable)) {
-        return {
-            title: 'Asset & Liability Breakdown',
-            rows: result.assetTable.concat(result.liabilityTable || [])
-        };
-    }
-    return null;
-}
-
 function drawHeaderBanner(doc, pageWidth, margin, toolName) {
     doc.setFillColor(30, 27, 75); // Deep Indigo #1E1B4B
     doc.rect(0, 0, pageWidth, 24, 'F');
@@ -240,6 +231,83 @@ function ensureSpace(doc, neededHeight, currentY, toolName, pageWidth, pageHeigh
         return 32;
     }
     return currentY;
+}
+
+function renderPdfTable(doc, title, data, currentY, toolName, pageWidth, pageHeight, margin, contentWidth) {
+    if (!data) return currentY;
+    let rows = [];
+    let headers = null;
+    if (Array.isArray(data) && data.length > 0) {
+        rows = data;
+    } else if (data.rows && Array.isArray(data.rows) && data.rows.length > 0) {
+        rows = data.rows;
+        headers = data.headers;
+    }
+    if (rows.length === 0) return currentY;
+    
+    let y = ensureSpace(doc, 30, currentY, toolName, pageWidth, pageHeight, margin);
+    
+    doc.setTextColor(15, 23, 42);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10.5);
+    doc.text(title, margin, y);
+    y += 4.5;
+    
+    const sliceRows = rows.slice(0, 48);
+    const rawHeaders = headers || Object.keys(sliceRows[0] || {});
+    
+    const formattedHeaders = rawHeaders.map(h => {
+        return h.replace(/([A-Z])/g, ' $1')
+                .replace(/_/g, ' ')
+                .replace(/^\w/, c => c.toUpperCase())
+                .trim();
+    });
+    
+    const numCols = rawHeaders.length;
+    const tableColWidth = contentWidth / numCols;
+    
+    // Header row
+    doc.setFillColor(30, 41, 59); // Slate-800
+    doc.rect(margin, y, contentWidth, 6.5, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    
+    formattedHeaders.forEach((h, i) => {
+        doc.text(h, margin + (i * tableColWidth) + 2.5, y + 4.4);
+    });
+    y += 6.5;
+    
+    // Data rows
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    
+    sliceRows.forEach((row, rowIndex) => {
+        y = ensureSpace(doc, 5.5, y, toolName, pageWidth, pageHeight, margin);
+        
+        if (rowIndex % 2 === 0) {
+            doc.setFillColor(248, 250, 252);
+            doc.rect(margin, y, contentWidth, 5.2, 'F');
+        }
+        
+        doc.setTextColor(51, 65, 85);
+        rawHeaders.forEach((h, i) => {
+            const val = formatPdfValue(row[h]);
+            doc.text(val, margin + (i * tableColWidth) + 2.5, y + 3.6);
+        });
+        y += 5.2;
+    });
+    
+    if (rows.length > 48) {
+        y += 3;
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(7);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`* Showing first 48 of ${rows.length} records. Full breakdown available via CSV export at getcalcu.com.`, margin, y);
+        y += 4;
+    }
+    
+    return y + 6;
 }
 
 /**
@@ -310,10 +378,16 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             y += (descLines.length * 3.8) + 4;
         }
         
+        // Resolve stats array (with summary.kpis fallback)
+        const allStats = (result.stats && Array.isArray(result.stats) && result.stats.length > 0)
+            ? result.stats
+            : ((result.summary && Array.isArray(result.summary.kpis)) ? result.summary.kpis : []);
+
         // ── 3. Primary Key Metric Callout ────────────────────────────────
-        if (result.stats && result.stats.length > 0) {
+        if (allStats.length > 0) {
             y = ensureSpace(doc, 24, y, tool.name, pageWidth, pageHeight, margin);
-            const primaryStat = result.stats[0];
+            const primaryStat = allStats[0];
+            const statVal = primaryStat.value !== undefined ? primaryStat.value : primaryStat.val;
             
             doc.setFillColor(238, 242, 255); // #EEF2FF
             doc.setDrawColor(99, 102, 241); // #6366F1
@@ -327,14 +401,90 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             
             doc.setTextColor(30, 27, 75);
             doc.setFontSize(17);
-            doc.text(formatPdfValue(primaryStat.value), margin + 6, y + 15);
+            doc.text(formatPdfValue(statVal), margin + 6, y + 15);
             
             y += 26;
         }
+
+        // ── 3b. BMI Assessment Callout Card ──────────────────────────────
+        if (result.bmiGauge) {
+            y = ensureSpace(doc, 26, y, tool.name, pageWidth, pageHeight, margin);
+            
+            const bmiVal = typeof result.bmiGauge.bmi === 'number'
+                ? result.bmiGauge.bmi.toFixed(1)
+                : formatPdfValue(result.bmiGauge.bmi);
+            const bmiCategory = result.bmiGauge.label || 'Standard';
+            
+            const isNormal = bmiCategory.toLowerCase().includes('normal');
+            const isUnder = bmiCategory.toLowerCase().includes('under');
+            const cardBg = isNormal ? [236, 253, 245] : (isUnder ? [239, 246, 255] : [254, 242, 242]);
+            const cardBorder = isNormal ? [16, 185, 129] : (isUnder ? [59, 130, 246] : [239, 68, 68]);
+            const textBadge = isNormal ? [4, 120, 87] : (isUnder ? [29, 78, 216] : [185, 28, 28]);
+            
+            doc.setFillColor(cardBg[0], cardBg[1], cardBg[2]);
+            doc.setDrawColor(cardBorder[0], cardBorder[1], cardBorder[2]);
+            doc.setLineWidth(0.5);
+            doc.roundedRect(margin, y, contentWidth, 22, 2, 2, 'FD');
+            
+            doc.setTextColor(textBadge[0], textBadge[1], textBadge[2]);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.text('BODY MASS INDEX (BMI) ASSESSMENT', margin + 6, y + 7);
+            
+            doc.setTextColor(15, 23, 42);
+            doc.setFontSize(15);
+            doc.text(`BMI: ${bmiVal}`, margin + 6, y + 16.5);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10.5);
+            doc.setTextColor(textBadge[0], textBadge[1], textBadge[2]);
+            doc.text(`Classification: ${bmiCategory}`, pageWidth - margin - 6, y + 16.5, { align: 'right' });
+            
+            y += 28;
+        }
+
+        // ── 3c. Visual Progress & Coverage Bars ──────────────────────────
+        if (result.bars && Array.isArray(result.bars) && result.bars.length > 0) {
+            const barHeight = (result.bars.length * 10) + 12;
+            y = ensureSpace(doc, barHeight + 4, y, tool.name, pageWidth, pageHeight, margin);
+            
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text('Distribution & Breakdown', margin, y);
+            y += 5;
+            
+            result.bars.forEach(bar => {
+                const label = bar.label || '';
+                const pct = typeof bar.pct === 'number' ? bar.pct : (parseFloat(bar.pct) || 0);
+                const displayVal = bar.value ? formatPdfValue(bar.value) : `${pct.toFixed(1)}%`;
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(100, 116, 139);
+                doc.text(label, margin, y + 3.5);
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(15, 23, 42);
+                doc.text(displayVal, pageWidth - margin, y + 3.5, { align: 'right' });
+                
+                // Track background
+                doc.setFillColor(241, 245, 249);
+                doc.roundedRect(margin, y + 4.5, contentWidth, 3, 1, 1, 'F');
+                
+                // Progress fill
+                const fillWidth = Math.min(contentWidth, Math.max(1, (pct / 100) * contentWidth));
+                doc.setFillColor(99, 102, 241);
+                doc.roundedRect(margin, y + 4.5, fillWidth, 3, 1, 1, 'F');
+                
+                y += 10;
+            });
+            y += 4;
+        }
         
         // ── 4. Key Results Grid (Secondary Stats) ────────────────────────
-        if (result.stats && result.stats.length > 1) {
-            const secondaryStats = result.stats.slice(1);
+        if (allStats.length > 1) {
+            const secondaryStats = allStats.slice(1);
             const numCols = Math.min(3, secondaryStats.length);
             const numRows = Math.ceil(secondaryStats.length / numCols);
             const gridHeight = (numRows * 14) + 8;
@@ -355,6 +505,7 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
                 const row = Math.floor(index / numCols);
                 const currentX = margin + (col * (colWidth + colGap));
                 const currentY = y + (row * 14);
+                const statVal = stat.value !== undefined ? stat.value : stat.val;
                 
                 doc.setFillColor(248, 250, 252); // #F8FAFC
                 doc.setDrawColor(226, 232, 240); // #E2E8F0
@@ -370,7 +521,7 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
                 doc.setTextColor(15, 23, 42);
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(9.5);
-                doc.text(formatPdfValue(stat.value), currentX + 3.5, currentY + 9.5);
+                doc.text(formatPdfValue(statVal), currentX + 3.5, currentY + 9.5);
             });
             
             y += (numRows * 14) + 6;
@@ -379,7 +530,6 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
         // ── 5. Executive Recommendation Section ──────────────────────────
         const rec = normalizeRecommendation(result.recommendation);
         if (rec) {
-            // Calculate height for recommendation
             let recHeight = 22;
             const headlineLines = doc.splitTextToSize(rec.headline, contentWidth - 12);
             recHeight += (headlineLines.length * 3.8);
@@ -390,7 +540,7 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             y = ensureSpace(doc, recHeight + 6, y, tool.name, pageWidth, pageHeight, margin);
             
             const isBuy = rec.winner === 'buy' || rec.winner === 'BUY';
-            const cardBg = isBuy ? [236, 253, 245] : [245, 243, 255]; // emerald or violet
+            const cardBg = isBuy ? [236, 253, 245] : [245, 243, 255];
             const cardBorder = isBuy ? [16, 185, 129] : [129, 140, 248];
             const titleColor = isBuy ? [4, 120, 87] : [67, 56, 202];
             
@@ -504,6 +654,31 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
                 y += boxHeight + 4;
             });
         }
+
+        // ── 6b. Applied Mathematical Formula & Model ─────────────────────
+        if (result.formula) {
+            const formulaText = formatPdfValue(result.formula);
+            const formulaLines = doc.splitTextToSize(formulaText, contentWidth - 12);
+            const boxH = 10 + (formulaLines.length * 4);
+            y = ensureSpace(doc, boxH + 4, y, tool.name, pageWidth, pageHeight, margin);
+            
+            doc.setFillColor(248, 250, 252);
+            doc.setDrawColor(203, 213, 225);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(margin, y, contentWidth, boxH, 1.5, 1.5, 'FD');
+            
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(71, 85, 105);
+            doc.text('APPLIED FORMULA & MATHEMATICAL MODEL', margin + 6, y + 5.5);
+            
+            doc.setFont('courier', 'normal');
+            doc.setFontSize(7.5);
+            doc.setTextColor(15, 23, 42);
+            doc.text(formulaLines, margin + 6, y + 10);
+            
+            y += boxH + 6;
+        }
         
         // ── 7. Input Assumptions Table ───────────────────────────────────
         const inputParams = extractInputParameters(tool, inputs);
@@ -562,70 +737,15 @@ export async function generateResultsPDF(tool, result, inputs = {}) {
             y += 6;
         }
         
-        // ── 8. Schedule / Breakdown Table ────────────────────────────────
-        const tableData = extractTableData(result);
-        if (tableData && tableData.rows && tableData.rows.length > 0) {
-            y = ensureSpace(doc, 30, y, tool.name, pageWidth, pageHeight, margin);
-            
-            doc.setTextColor(15, 23, 42);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10.5);
-            doc.text(tableData.title, margin, y);
-            y += 4.5;
-            
-            const rows = tableData.rows.slice(0, 48); // First 48 periods
-            const rawHeaders = tableData.headers || Object.keys(rows[0] || {});
-            
-            // Clean up headers (e.g. 'totalInterest' -> 'Total Interest')
-            const formattedHeaders = rawHeaders.map(h => {
-                return h.replace(/([A-Z])/g, ' $1')
-                        .replace(/_/g, ' ')
-                        .replace(/^\w/, c => c.toUpperCase())
-                        .trim();
-            });
-            
-            const numCols = rawHeaders.length;
-            const tableColWidth = contentWidth / numCols;
-            
-            // Header row
-            doc.setFillColor(30, 41, 59); // Slate-800
-            doc.rect(margin, y, contentWidth, 6.5, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7.5);
-            
-            formattedHeaders.forEach((h, i) => {
-                doc.text(h, margin + (i * tableColWidth) + 2.5, y + 4.4);
-            });
-            y += 6.5;
-            
-            // Data rows
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7);
-            
-            rows.forEach((row, rowIndex) => {
-                y = ensureSpace(doc, 5.5, y, tool.name, pageWidth, pageHeight, margin);
-                
-                if (rowIndex % 2 === 0) {
-                    doc.setFillColor(248, 250, 252);
-                    doc.rect(margin, y, contentWidth, 5.2, 'F');
-                }
-                
-                doc.setTextColor(51, 65, 85);
-                rawHeaders.forEach((h, i) => {
-                    const val = formatPdfValue(row[h]);
-                    doc.text(val, margin + (i * tableColWidth) + 2.5, y + 3.6);
-                });
-                y += 5.2;
-            });
-            
-            if (tableData.rows.length > 48) {
-                y += 3;
-                doc.setFont('helvetica', 'italic');
-                doc.setFontSize(7);
-                doc.setTextColor(100, 116, 139);
-                doc.text(`* Showing first 48 of ${tableData.rows.length} rows. Full schedule available via CSV export at getcalcu.com.`, margin, y);
-            }
+        // ── 8. Schedule & Breakdown Tables ───────────────────────────────
+        if (result.table) {
+            y = renderPdfTable(doc, 'Schedule / Breakdown Table', result.table, y, tool.name, pageWidth, pageHeight, margin, contentWidth);
+        }
+        if (result.assetTable) {
+            y = renderPdfTable(doc, 'Asset Breakdown Table', result.assetTable, y, tool.name, pageWidth, pageHeight, margin, contentWidth);
+        }
+        if (result.liabilityTable) {
+            y = renderPdfTable(doc, 'Liability Breakdown Table', result.liabilityTable, y, tool.name, pageWidth, pageHeight, margin, contentWidth);
         }
         
         // ── 9. Page Footers (Running on all pages) ───────────────────────
