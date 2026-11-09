@@ -794,6 +794,7 @@ function initLegacyRunner(tool, slug, container, country = null) {
         if (csvBtn) {
             csvBtn.addEventListener('click', () => {
                 try {
+                    const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
                     exportComprehensiveCSV(tool, result, currentVals, { filename: `${slug}-report.csv` });
                     showActionToast('Report exported as CSV!');
                     trackEvent('calculator_action', { action_type: 'csv_export' });
