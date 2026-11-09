@@ -28,11 +28,7 @@ export function parseCurrentUrl() {
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
     
-    let slug = params.get('slug');
-    if (!slug && typeof url !== 'undefined' && url.pathname) {
-        const match = url.pathname.match(/^\/tool\/([a-z0-9-]+)/);
-        if (match) slug = match[1];
-    }
+    const slug = params.get('slug');
     const queryParams = {};
     
     // Extract all query parameters

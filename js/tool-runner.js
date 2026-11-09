@@ -163,12 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateSeoLegacy(tool, slug, country);
     }
 
-    if (useNewArchitecture && core && core.initToolRunner) {
-        const calculator = core.initToolRunner(container);
-        if (calculator) {
-            return;
-        }
-    }
+    // Always execute the full-featured production runner (provides PDF, CSV, Print,
+    // Copy, Share, Compare A vs B, Save, Amortization layout, and Decision Co-Pilot)
 
     initLegacyRunner(tool, slug, container, country);
 });
