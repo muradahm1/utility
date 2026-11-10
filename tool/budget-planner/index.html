@@ -516,70 +516,156 @@
       <section class="tool-runner-card educational-card" id="related-tools" aria-labelledby="related-tools-title">
         <h2 id="related-tools-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          Related Calculators
+          Next Decision Steps & Related Calculators
         </h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+        <p style="color:var(--text-secondary); font-size:14px; margin-top:-8px; margin-bottom:20px; line-height:1.5;">
+          Connect your calculation into a complete financial decision path with these recommended next steps.
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px;">
           
-        <a href="/tool/emergency-fund-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+        <a href="/tool/emergency-fund-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
           <div>
-            <div class="tool-card-header" style="margin-bottom:10px;">
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
               <div class="tool-icon icon-finance"><i class="fa-solid fa-shield-halved"></i></div>
+              <span class="tag tag-finance" style="font-size:11px;">Finance</span>
             </div>
-            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Emergency Fund Calculator</h3>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Emergency Fund Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Size your 3 to 6-month safety buffer based on essential expenses.
+              </div>
+            
             <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free emergency fund calculator. Calculate your 3, 6, or 9-month emergency savings target based on essential expenses and track your funding runway.</p>
           </div>
-          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-            <span class="tag tag-finance">Finance</span>
-            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
             </span>
           </div>
         </a>
       
-        <a href="/tool/credit-card-payoff-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+        <a href="/tool/debt-snowball-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
           <div>
-            <div class="tool-card-header" style="margin-bottom:10px;">
-              <div class="tool-icon icon-finance"><i class="fa-solid fa-credit-card"></i></div>
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-arrow-trend-down"></i></div>
+              <span class="tag tag-finance" style="font-size:11px;">Finance</span>
             </div>
-            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Credit Card Payoff &amp; Strategy Calculator</h3>
-            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Enter your balances and rates to see your debt-free date and the interest you save with the snowball or avalanche method.</p>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Debt Payoff &amp; Snowball Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Direct surplus budget funds toward accelerating debt elimination.
+              </div>
+            
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free debt payoff calculator. Compare Debt Snowball vs. Debt Avalanche strategies, determine optimal repayment order, and calculate total interest saved.</p>
           </div>
-          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-            <span class="tag tag-finance">Finance</span>
-            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
             </span>
           </div>
         </a>
       
-        <a href="/tool/savings-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+        <a href="/tool/savings-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
           <div>
-            <div class="tool-card-header" style="margin-bottom:10px;">
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
               <div class="tool-icon icon-finance"><i class="fa-solid fa-piggy-bank"></i></div>
+              <span class="tag tag-finance" style="font-size:11px;">Finance</span>
             </div>
-            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Savings &amp; Strategy Calculator</h3>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Savings &amp; Strategy Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Set up automated savings goals for upcoming milestones.
+              </div>
+            
             <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Find how long it takes to reach a savings goal, or how much your balance grows with interest and regular deposits.</p>
           </div>
-          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-            <span class="tag tag-finance">Finance</span>
-            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
             </span>
           </div>
         </a>
       
-        <a href="/tool/salary-calculator" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+        <a href="/tool/salary-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
           <div>
-            <div class="tool-card-header" style="margin-bottom:10px;">
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
               <div class="tool-icon icon-finance"><i class="fa-solid fa-wallet"></i></div>
+              <span class="tag tag-finance" style="font-size:11px;">Finance</span>
             </div>
-            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">Salary &amp; Paycheck Calculator</h3>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Salary &amp; Paycheck Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Calculate your accurate net take-home pay to power your budget.
+              </div>
+            
             <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free paycheck &amp; salary calculator — calculate net take-home pay, federal and state taxes, FICA (Social Security &amp; Medicare), and deductions.</p>
           </div>
-          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-            <span class="tag tag-finance">Finance</span>
-            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/student-loan-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div class="tool-icon icon-education"><i class="fa-solid fa-bookmark"></i></div>
+              <span class="tag tag-education" style="font-size:11px;">Education</span>
+            </div>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Student Loan Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Budget fixed monthly student debt installments.
+              </div>
+            
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free online Student Loan Calculator. Estimate monthly payments, total lifetime interest, and interest saved by paying extra toward principal.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/tip-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div class="tool-icon icon-math"><i class="fa-solid fa-receipt"></i></div>
+              <span class="tag tag-math" style="font-size:11px;">Math</span>
+            </div>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Tip Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Factor dining out gratuities and discretionary spending into monthly cash flow.
+              </div>
+            
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free tip calculator — instantly calculate tip amounts, split bills among friends, and find the total per person with tax included.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
+            </span>
+          </div>
+        </a>
+      
+        <a href="/tool/net-worth-calculator" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
+          <div>
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div class="tool-icon icon-finance"><i class="fa-solid fa-scale-balanced"></i></div>
+              <span class="tag tag-finance" style="font-size:11px;">Finance</span>
+            </div>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">Net Worth Calculator</h3>
+            
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>Track overall assets and liabilities as your budget succeeds.
+              </div>
+            
+            <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">Free Net Worth Calculator — instantly calculate your total net worth, asset breakdown, debt-to-asset ratio, and get personalized wealth-building insights. Track cash, investments, property, retirement, and debts.</p>
+          </div>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
             </span>
           </div>
         </a>
@@ -624,7 +710,7 @@
               </li>
             
               <li class="on-this-page-item">
-                <a href="#related-tools" class="on-this-page-link">Related Calculators</a>
+                <a href="#related-tools" class="on-this-page-link">Next Decision Steps</a>
               </li>
             
           </ul>

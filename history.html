@@ -96,21 +96,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <i class="fa-solid fa-circle-notch fa-spin" style="font-size:28px; color:var(--primary-color);"></i>
             </div>
 
-            <!-- Auth guard: shown if not signed in -->
-            <div id="history-unauthenticated" class="tool-not-found hidden">
-                <div class="not-found-icon"><i class="fa-solid fa-lock"></i></div>
-                <h2>Sign in to view history</h2>
-                <p>Your saved calculations will appear here once you sign in.</p>
-                <a href="/auth" class="btn btn-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
-            </div>
+            <!-- Auth & Guest banner slot -->
+            <div id="dossier-banner-slot"></div>
 
             <!-- Main history content -->
-            <div id="history-content" class="hidden">
+            <div id="history-content">
                 <div class="history-header">
                     <div>
-                        <h1 style="font-size:24px; font-weight:700;">Calculation History</h1>
+                        <h1 style="font-size:24px; font-weight:700;">Financial Decision Dossier</h1>
                         <p style="color:var(--text-secondary); font-size:14px; margin-top:4px;">
-                            Your last <span id="history-count">0</span> saved calculations
+                            Your saved decision models and calculation portfolio (<span id="history-count">0</span> saved)
                         </p>
                     </div>
                     <button class="btn btn-outline" id="clear-all-btn" style="color:#EF4444; border-color:#EF4444;">
@@ -200,15 +195,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // ── Auth guard ───────────────────────────────────────────
     onAuthChange(async (session) => {
         loadingEl.classList.add('hidden');
-        if (!session) {
-            unauthEl.classList.remove('hidden');
-            contentEl.classList.add('hidden');
-            return;
-        }
-        unauthEl.classList.add('hidden');
-        contentEl.classList.remove('hidden');
+        renderDossierBanner(session);
         await loadHistory();
     });
+
+    function renderDossierBanner(session) {
+        const slot = document.getElementById('dossier-banner-slot');
+        if (!slot) return;
+        if (!session) {
+            slot.innerHTML = `
+                <div class="guest-dossier-banner" style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid var(--primary-color); border-radius:12px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight:700; font-size:15px; color:var(--text-primary);">Privacy-First Local Dossier (Guest Mode)</div>
+                            <div style="font-size:13px; color:var(--text-secondary); margin-top:2px;">Calculations are saved locally on this browser with zero tracking. Sign in anytime to sync across devices.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="/auth" class="btn btn-primary btn-sm"><i class="fa-solid fa-cloud-arrow-up"></i> Sign In to Sync</a>
+                    </div>
+                </div>
+            `;
+        } else {
+            slot.innerHTML = `
+                <div class="cloud-dossier-banner" style="background:var(--bg-card); border:1px solid var(--border-color); border-left:4px solid #10B981; border-radius:12px; padding:12px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-cloud-check" style="color:#10B981; font-size:18px;"></i>
+                        <span style="font-size:14px; font-weight:600; color:var(--text-primary);">Cloud Sync Active</span>
+                        <span style="font-size:13px; color:var(--text-secondary);">(Synced with your GetCalcu account)</span>
+                    </div>
+                    <span style="font-size:12px; color:var(--text-secondary); font-weight:500;">${escapeHtml(session.email || '')}</span>
+                </div>
+            `;
+        }
+    }
 
     // ── Load history ─────────────────────────────────────────
     async function loadHistory() {
@@ -299,9 +322,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <span class="history-date">${formatDate(row.created_at)}</span>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <a href="/tool?slug=${safeSlug}" class="btn btn-outline btn-sm">
-                            <i class="fa-solid fa-rotate-right"></i> Re-run
-                        </a>
+                        ` + (() => {
+            let q = '';
+            if (row.inputs && typeof row.inputs === 'object') {
+                try {
+                    const p = new URLSearchParams();
+                    Object.entries(row.inputs).forEach(([k, v]) => {
+                        if (v !== null && v !== undefined && typeof v !== 'object') p.set(k, v);
+                    });
+                    const qs = p.toString();
+                    if (qs) q = '?input=' + encodeURIComponent(qs);
+                } catch(_) {}
+            }
+            const cleanSlug = encodeURIComponent(row.tool_slug || row.tool_id || '');
+            return '<a href="/tool/' + cleanSlug + q + '" class="btn btn-primary btn-sm"><i class="fa-solid fa-calculator"></i> Open & Calculate</a>';
+        })() + `
                         <button class="btn btn-sm history-delete-btn" data-id="${esc(row.id)}" style="background:rgba(239,68,68,0.1); color:#EF4444; border:none;">
                             <i class="fa-solid fa-trash"></i>
                         </button>

@@ -728,27 +728,24 @@ function initLegacyRunner(tool, slug, container, country = null) {
             actionSaveBtn.addEventListener('click', async () => {
                 if (typeof saveCalculation !== 'function') return;
 
-                // Auth Gate: Check if user is signed in
-                const user = typeof getUser === 'function' ? await getUser() : null;
-                if (!user) {
-                    try { sessionStorage.setItem('uh_return', window.location.href); } catch (_) {}
-                    showActionToast('Sign in to save calculations to your history', false, {
-                        text: 'Sign In',
-                        href: '/auth'
-                    });
-                    return;
-                }
-
                 actionSaveBtn.disabled = true;
                 actionSaveBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Saving...</span>';
                 try {
+                    const user = typeof getUser === 'function' ? await getUser() : null;
                     const currentVals = (isCompareMode && activeScenario === 'B') ? valuesB : valuesA;
                     const res = tool.calculate(currentVals);
                     await saveCalculation(slug, tool.name, currentVals, { stats: res.stats });
                     actionSaveBtn.classList.add('btn-saved');
                     actionSaveBtn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Saved!</span>';
-                    showActionToast('Saved to your calculation history!');
-                    trackEvent('calculator_action', { action_type: 'save' });
+                    if (user) {
+                        showActionToast('Saved to your Cloud Decision Dossier!');
+                    } else {
+                        showActionToast('Saved to your Local Dossier! (Private to this device)', false, {
+                            text: 'View Dossier',
+                            href: '/history'
+                        });
+                    }
+                    if (typeof trackEvent === 'function') trackEvent('calculator_action', { action_type: 'save' });
                 } catch (err) {
                     actionSaveBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <span>Error</span>';
                     showActionToast('Failed to save calculation. Please try again.', true);

@@ -159,6 +159,359 @@ function loadModularTools() {
   return tools;
 }
 
+// ── Comprehensive Decision Pathways (SEO Interlinking Mesh) ──────────
+const DECISION_PATHWAYS = {
+  // Real Estate & Mortgage Cluster
+  'mortgage-calculator': [
+    { slug: '15-year-mortgage-calculator', reason: 'Compare 15-yr vs 30-yr fixed payments and save tens of thousands in lifetime interest.' },
+    { slug: 'refinance-calculator', reason: 'Calculate your exact break-even horizon when refinancing to a lower interest rate.' },
+    { slug: 'fha-loan-calculator', reason: 'Evaluate low down-payment options (3.5%) with upfront and annual monthly MIP.' },
+    { slug: 'house-affordability-calculator', reason: 'Determine your maximum purchase price based on debt-to-income (DTI) ratios.' },
+    { slug: 'rent-vs-buy-calculator', reason: 'Compare long-term net wealth accumulation between homeownership and renting.' },
+    { slug: 'amortization-calculator', reason: 'Inspect payment-by-payment principal reduction across 360 monthly installments.' },
+    { slug: 'true-home-buying-system', reason: 'Audit true cash-to-close with closing fees, property tax reserves, and maintenance.' }
+  ],
+  '15-year-mortgage-calculator': [
+    { slug: 'mortgage-calculator', reason: 'Benchmark against standard 30-year fixed loan payments and amortization.' },
+    { slug: 'refinance-calculator', reason: 'See if refinancing an existing 30-year loan into a 15-year term accelerates equity.' },
+    { slug: 'amortization-calculator', reason: 'Inspect the steep equity acceleration curve on a 180-month timeline.' },
+    { slug: 'house-affordability-calculator', reason: 'Check if higher 15-year payments fit within qualifying debt limits.' },
+    { slug: 'fha-loan-calculator', reason: 'Compare with government-backed 15-year FHA loan options.' },
+    { slug: 'true-home-buying-system', reason: 'Factor in property taxes, insurance, and closing reserves.' }
+  ],
+  'fha-loan-calculator': [
+    { slug: 'mortgage-calculator', reason: 'Compare conventional mortgage financing with private mortgage insurance (PMI).' },
+    { slug: '15-year-mortgage-calculator', reason: 'Evaluate shorter loan durations for FHA borrowing.' },
+    { slug: 'house-affordability-calculator', reason: 'See how the 3.5% down payment impacts your total purchasing power.' },
+    { slug: 'refinance-calculator', reason: 'Model when you can refinance out of FHA MIP into a conventional mortgage.' },
+    { slug: 'true-home-buying-system', reason: 'Audit all upfront cash requirements including upfront MIP fees.' }
+  ],
+  'refinance-calculator': [
+    { slug: 'mortgage-calculator', reason: 'Calculate standard baseline mortgage costs and monthly obligations.' },
+    { slug: '15-year-mortgage-calculator', reason: 'Test refinancing from a 30-year to a 15-year term for massive interest savings.' },
+    { slug: 'amortization-calculator', reason: 'Analyze reset amortization timeline and total interest changes.' },
+    { slug: 'auto-refinance-calculator', reason: 'Explore refinancing your auto loans alongside home refinancing.' },
+    { slug: 'debt-snowball-calculator', reason: 'Apply monthly mortgage refinance savings toward accelerating debt freedom.' }
+  ],
+  'rent-vs-buy-calculator': [
+    { slug: 'mortgage-calculator', reason: 'Model detailed monthly homeownership obligations and interest.' },
+    { slug: 'house-affordability-calculator', reason: 'Calculate comfortable purchase limits for your household income.' },
+    { slug: 'true-home-buying-system', reason: 'Account for closing costs, property taxes, HOA, and maintenance reserves.' },
+    { slug: 'investment-calculator', reason: 'Project returns on invested down payment cash if you choose to rent.' },
+    { slug: 'fha-loan-calculator', reason: 'Check whether a 3.5% down FHA loan bridges the homeownership gap.' }
+  ],
+  'house-affordability-calculator': [
+    { slug: 'mortgage-calculator', reason: 'Calculate exact payment schedules for target homes.' },
+    { slug: 'fha-loan-calculator', reason: 'See if an FHA loan expands your purchase price range with 3.5% down.' },
+    { slug: 'rent-vs-buy-calculator', reason: 'Weigh buying affordability against local rental rates.' },
+    { slug: 'debt-snowball-calculator', reason: 'Lower your DTI ratio by knocking out debt balances first.' },
+    { slug: 'true-home-buying-system', reason: 'Audit true upfront cash needed beyond down payment.' }
+  ],
+  'amortization-calculator': [
+    { slug: 'mortgage-calculator', reason: 'Recalculate monthly mortgage payments and terms.' },
+    { slug: 'loan-calculator', reason: 'Amortize personal or business term loans.' },
+    { slug: '15-year-mortgage-calculator', reason: 'Compare 15-year vs 30-year amortization curves.' },
+    { slug: 'date-calculator', reason: 'Determine exact debt-free calendar dates based on repayment speed.' },
+    { slug: 'debt-snowball-calculator', reason: 'Apply extra payments strategically across multiple amortizing loans.' }
+  ],
+  'true-home-buying-system': [
+    { slug: 'mortgage-calculator', reason: 'Determine baseline principal and interest payments.' },
+    { slug: 'house-affordability-calculator', reason: 'Verify debt-to-income limits and qualifying income.' },
+    { slug: 'rent-vs-buy-calculator', reason: 'Compare total cost of ownership against market rent.' },
+    { slug: 'fha-loan-calculator', reason: 'Model cash requirements with 3.5% down FHA financing.' },
+    { slug: 'emergency-fund-calculator', reason: 'Preserve home maintenance reserves after closing.' }
+  ],
+
+  // Debt, Credit & Loans Cluster
+  'loan-calculator': [
+    { slug: 'loan-interest-calculator', reason: 'Calculate total interest paid across various compounding frequencies.' },
+    { slug: 'debt-snowball-calculator', reason: 'Model payoff timelines across multiple debts using Snowball or Avalanche.' },
+    { slug: 'credit-card-payoff-calculator', reason: 'Tackle high-interest revolving credit lines.' },
+    { slug: 'student-loan-calculator', reason: 'Evaluate student loan terms, grace periods, and interest capitalization.' },
+    { slug: 'auto-loan-calculator', reason: 'Calculate specific auto financing with dealer trade-ins and taxes.' },
+    { slug: 'amortization-calculator', reason: 'Inspect payment amortization schedule and principal payoff curve.' }
+  ],
+  'loan-interest-calculator': [
+    { slug: 'loan-calculator', reason: 'Compare overall loan payments and principal costs.' },
+    { slug: 'credit-card-payoff-calculator', reason: 'Analyze compound interest accumulation on credit cards.' },
+    { slug: 'debt-snowball-calculator', reason: 'Prioritize loans by highest interest rate (Debt Avalanche).' },
+    { slug: 'student-loan-calculator', reason: 'Measure student loan interest deductions and repayment costs.' },
+    { slug: 'amortization-calculator', reason: 'View payment-by-payment interest versus principal breakdown.' }
+  ],
+  'auto-loan-calculator': [
+    { slug: 'auto-refinance-calculator', reason: 'Calculate monthly and lifetime savings by refinancing your car loan.' },
+    { slug: 'loan-calculator', reason: 'Compare auto loan financing against personal bank loan options.' },
+    { slug: 'budget-planner', reason: 'Ensure your total vehicle expenses stay under 10-15% of net income.' },
+    { slug: 'loan-interest-calculator', reason: 'Evaluate total interest paid over 36, 48, 60, or 72 months.' }
+  ],
+  'auto-refinance-calculator': [
+    { slug: 'auto-loan-calculator', reason: 'Calculate baseline payments for auto loan comparisons.' },
+    { slug: 'loan-calculator', reason: 'Examine consolidation loan alternatives.' },
+    { slug: 'budget-planner', reason: 'Reallocate monthly car payment savings into your emergency buffer.' },
+    { slug: 'refinance-calculator', reason: 'Compare auto refinancing with residential mortgage refinancing.' },
+    { slug: 'debt-snowball-calculator', reason: 'Channel monthly auto interest savings into accelerated debt elimination.' }
+  ],
+  'debt-snowball-calculator': [
+    { slug: 'credit-card-payoff-calculator', reason: 'Model specific payoff strategies for revolving cards.' },
+    { slug: 'student-loan-calculator', reason: 'Incorporate federal and private student debt into your payoff plan.' },
+    { slug: 'auto-refinance-calculator', reason: 'Refinance high-rate auto loans to accelerate debt snowball velocity.' },
+    { slug: 'loan-calculator', reason: 'Check consolidation loan options to lower average interest rates.' },
+    { slug: 'budget-planner', reason: 'Free up discretionary cash flow to accelerate debt elimination.' },
+    { slug: 'emergency-fund-calculator', reason: 'Build a starter buffer so unexpected costs do not cause new debt.' }
+  ],
+  'credit-card-payoff-calculator': [
+    { slug: 'debt-snowball-calculator', reason: 'Coordinate credit cards into a multi-debt payoff roadmap.' },
+    { slug: 'loan-calculator', reason: 'Explore a fixed personal loan to replace 20%+ credit card APRs.' },
+    { slug: 'budget-planner', reason: 'Re-align monthly cash flow to eliminate card balances faster.' },
+    { slug: 'savings-calculator', reason: 'Transition card payments into automated savings once debt-free.' },
+    { slug: 'emergency-fund-calculator', reason: 'Prevent falling back into credit card balances with emergency cash.' }
+  ],
+  'student-loan-calculator': [
+    { slug: 'loan-calculator', reason: 'Compare standard student loan terms against private refinancing.' },
+    { slug: 'debt-snowball-calculator', reason: 'Include student loans in your systematic payoff schedule.' },
+    { slug: 'salary-calculator', reason: 'Project net take-home salary to establish affordable loan repayment.' },
+    { slug: 'budget-planner', reason: 'Incorporate student loan payments into your monthly living budget.' },
+    { slug: 'loan-interest-calculator', reason: 'Audit total lifetime interest accrued during deferment and repayment.' }
+  ],
+
+  // Cash Flow, Budgeting & Emergency Cluster
+  'budget-planner': [
+    { slug: 'emergency-fund-calculator', reason: 'Size your 3 to 6-month safety buffer based on essential expenses.' },
+    { slug: 'debt-snowball-calculator', reason: 'Direct surplus budget funds toward accelerating debt elimination.' },
+    { slug: 'savings-calculator', reason: 'Set up automated savings goals for upcoming milestones.' },
+    { slug: 'salary-calculator', reason: 'Calculate your accurate net take-home pay to power your budget.' },
+    { slug: 'student-loan-calculator', reason: 'Budget fixed monthly student debt installments.' },
+    { slug: 'tip-calculator', reason: 'Factor dining out gratuities and discretionary spending into monthly cash flow.' },
+    { slug: 'net-worth-calculator', reason: 'Track overall assets and liabilities as your budget succeeds.' }
+  ],
+  'emergency-fund-calculator': [
+    { slug: 'budget-planner', reason: 'Identify baseline essential living expenses to size your runway.' },
+    { slug: 'savings-calculator', reason: 'Calculate monthly timeline to fund your full emergency target.' },
+    { slug: 'debt-snowball-calculator', reason: 'Balance building emergency reserves with paying down debt.' },
+    { slug: 'date-calculator', reason: 'Calculate exact target completion date for your safety fund.' },
+    { slug: 'compound-interest-calculator', reason: 'Model high-yield savings growth on your emergency reserves.' }
+  ],
+
+  // Wealth, Investing & Retirement Cluster
+  'retirement-calculator': [
+    { slug: '401k-calculator', reason: 'Maximize your employer match and tax-deferred retirement growth.' },
+    { slug: 'fire-calculator', reason: 'Calculate your Financial Independence number and early retirement horizon.' },
+    { slug: 'compound-interest-calculator', reason: 'Visualize long-term compound growth on retirement contributions.' },
+    { slug: 'investment-calculator', reason: 'Benchmark investment portfolios against $100k, $500k, and $1M milestones.' },
+    { slug: 'inflation-calculator', reason: 'Protect your retirement nest egg against eroding purchasing power.' },
+    { slug: 'date-calculator', reason: 'Determine exact target retirement date based on current age and savings rate.' },
+    { slug: 'net-worth-calculator', reason: 'Track your current financial baseline toward retirement readiness.' }
+  ],
+  '401k-calculator': [
+    { slug: 'retirement-calculator', reason: 'Integrate 401(k) projections into your comprehensive retirement plan.' },
+    { slug: 'compound-interest-calculator', reason: 'See the exponential impact of employer matching contributions.' },
+    { slug: 'investment-calculator', reason: 'Compare tax-advantaged 401(k) returns with taxable brokerage investing.' },
+    { slug: 'salary-calculator', reason: 'Check how pre-tax 401(k) contributions lower your taxable paycheck.' },
+    { slug: 'fire-calculator', reason: 'Determine if 401(k) assets support your target retirement age.' }
+  ],
+  'fire-calculator': [
+    { slug: 'retirement-calculator', reason: 'Benchmark FIRE assumptions against traditional retirement models.' },
+    { slug: '401k-calculator', reason: 'Model tax-advantaged accounts in your early retirement bridge strategy.' },
+    { slug: 'investment-calculator', reason: 'Project milestone growth rates toward your FIRE target number.' },
+    { slug: 'savings-calculator', reason: 'Model aggressive 40% to 70% savings rates needed for early retirement.' },
+    { slug: 'net-worth-calculator', reason: 'Monitor total liquid assets contributing to your financial independence.' }
+  ],
+  'investment-calculator': [
+    { slug: 'compound-interest-calculator', reason: 'Calculate compounding returns with recurring deposits.' },
+    { slug: '401k-calculator', reason: 'Compare taxable investing with tax-advantaged employer matching.' },
+    { slug: 'retirement-calculator', reason: 'Map portfolio growth to your desired retirement lifestyle.' },
+    { slug: 'savings-calculator', reason: 'Balance guaranteed cash yields with equity market investments.' },
+    { slug: 'inflation-calculator', reason: 'Compute real (inflation-adjusted) portfolio purchasing power.' }
+  ],
+  'compound-interest-calculator': [
+    { slug: 'investment-calculator', reason: 'Test market asset allocation and investment milestone targets.' },
+    { slug: 'savings-calculator', reason: 'Model high-yield savings compounding intervals.' },
+    { slug: '401k-calculator', reason: 'Evaluate compound growth with employer matching contributions.' },
+    { slug: 'retirement-calculator', reason: 'Connect compound savings directly to retirement readiness.' }
+  ],
+  'savings-calculator': [
+    { slug: 'emergency-fund-calculator', reason: 'Model funding your emergency cash safety cushion.' },
+    { slug: 'compound-interest-calculator', reason: 'See how interest compounding accelerates goal completion.' },
+    { slug: 'budget-planner', reason: 'Optimize monthly spending to boost your savings rate.' },
+    { slug: 'date-calculator', reason: 'Calculate the exact calendar milestone date for your savings goal.' },
+    { slug: 'inflation-calculator', reason: 'Verify that cash savings beat inflation over time.' }
+  ],
+  'net-worth-calculator': [
+    { slug: 'budget-planner', reason: 'Improve monthly savings to grow net worth over time.' },
+    { slug: 'debt-snowball-calculator', reason: 'Reduce liabilities to increase net equity.' },
+    { slug: 'investment-calculator', reason: 'Track investment asset expansion.' },
+    { slug: 'fire-calculator', reason: 'Evaluate how close your liquid net worth is to your FIRE target.' }
+  ],
+  'inflation-calculator': [
+    { slug: 'investment-calculator', reason: 'Ensure your investment returns outpace inflation.' },
+    { slug: 'retirement-calculator', reason: 'Calculate future living costs in retirement dollars.' },
+    { slug: 'savings-calculator', reason: 'Analyze purchasing power loss on uninvested cash.' },
+    { slug: 'salary-calculator', reason: 'Check if your annual wage increases match real inflation.' }
+  ],
+
+  // Career, Income & Self-Employment Cluster
+  'salary-calculator': [
+    { slug: 'salary-calculator/za', reason: 'South Africa SARS income tax brackets and net take-home pay.' },
+    { slug: 'salary-calculator/ke', reason: 'Kenya KRA PAYE tax, NSSF, and SHA health insurance.' },
+    { slug: 'salary-calculator/ng', reason: 'Nigeria Personal Income Tax (PIT) and pension deductions.' },
+    { slug: 'salary-calculator/et', reason: 'Ethiopia employment income tax and employee pension calculations.' },
+    { slug: 'self-employment-tax-calculator', reason: 'Calculate 1099 freelance taxes vs W-2 employment.' },
+    { slug: 'student-loan-calculator', reason: 'Ensure net paycheck comfortably covers student loan repayment.' },
+    { slug: 'budget-planner', reason: 'Allocate your take-home pay with the 50/30/20 budget framework.' }
+  ],
+  'salary-calculator/za': [
+    { slug: 'salary-calculator', reason: 'Compare South African net pay with US/Global tax benchmarks.' },
+    { slug: 'salary-calculator/ke', reason: 'Compare with Kenya KRA PAYE tax brackets.' },
+    { slug: 'salary-calculator/ng', reason: 'Compare with Nigeria PIT tax rates.' },
+    { slug: 'salary-calculator/et', reason: 'Compare with Ethiopia employment income tax brackets.' },
+    { slug: 'budget-planner', reason: 'Plan monthly expenses and savings with South African net income.' },
+    { slug: 'emergency-fund-calculator', reason: 'Size your emergency cushion based on South African expenses.' }
+  ],
+  'salary-calculator/ke': [
+    { slug: 'salary-calculator', reason: 'Compare Kenyan net salary against US/Global standards.' },
+    { slug: 'salary-calculator/za', reason: 'Compare with South Africa SARS tax tables.' },
+    { slug: 'salary-calculator/ng', reason: 'Compare with Nigeria PIT tax rates.' },
+    { slug: 'salary-calculator/et', reason: 'Compare with Ethiopia employment tax brackets.' },
+    { slug: 'budget-planner', reason: 'Structure your budget around your KRA take-home earnings.' },
+    { slug: 'emergency-fund-calculator', reason: 'Build an emergency savings reserve in KES.' }
+  ],
+  'salary-calculator/ng': [
+    { slug: 'salary-calculator', reason: 'Compare Nigerian take-home pay against global benchmarks.' },
+    { slug: 'salary-calculator/za', reason: 'Compare with South African income tax brackets.' },
+    { slug: 'salary-calculator/ke', reason: 'Compare with Kenyan PAYE tax rates.' },
+    { slug: 'salary-calculator/et', reason: 'Compare with Ethiopian employee income tax brackets.' },
+    { slug: 'budget-planner', reason: 'Plan savings and living costs from your net paycheck.' },
+    { slug: 'emergency-fund-calculator', reason: 'Maintain emergency reserves in Nigerian Naira.' }
+  ],
+  'salary-calculator/et': [
+    { slug: 'salary-calculator', reason: 'Compare Ethiopian take-home income against international standards.' },
+    { slug: 'salary-calculator/ke', reason: 'Compare with Kenya KRA tax rules.' },
+    { slug: 'salary-calculator/za', reason: 'Compare with South Africa SARS brackets.' },
+    { slug: 'salary-calculator/ng', reason: 'Compare with Nigeria Personal Income Tax rates.' },
+    { slug: 'budget-planner', reason: 'Allocate net earnings into savings and living essentials.' },
+    { slug: 'emergency-fund-calculator', reason: 'Safeguard essential living runway in Ethiopian Birr.' }
+  ],
+  'self-employment-tax-calculator': [
+    { slug: 'freelance-hourly-rate-calculator', reason: 'Set minimum billing rates factoring in self-employment taxes.' },
+    { slug: 'freelance-true-rate-system', reason: 'Comprehensive freelance pricing system with overhead & buffers.' },
+    { slug: 'salary-calculator', reason: 'Compare 1099 contractor earnings against equivalent W-2 employee pay.' },
+    { slug: 'break-even-calculator', reason: 'Calculate monthly business sales needed to cover expenses and taxes.' },
+    { slug: 'budget-planner', reason: 'Set aside quarterly estimated taxes without cash flow crunches.' }
+  ],
+  'freelance-hourly-rate-calculator': [
+    { slug: 'self-employment-tax-calculator', reason: 'Calculate SECA tax and quarterly 1040-ES payments.' },
+    { slug: 'freelance-true-rate-system', reason: 'Comprehensive rate calculator with unpaid time and equipment reserves.' },
+    { slug: 'salary-calculator', reason: 'Determine equivalent annual corporate salary.' },
+    { slug: 'profit-margin-calculator', reason: 'Ensure healthy profit margins on client contracts.' }
+  ],
+  'freelance-true-rate-system': [
+    { slug: 'freelance-hourly-rate-calculator', reason: 'Quick baseline hourly rate comparison.' },
+    { slug: 'self-employment-tax-calculator', reason: 'Calculate quarterly tax obligations.' },
+    { slug: 'break-even-calculator', reason: 'Calculate monthly billable hours needed to break even.' },
+    { slug: 'emergency-fund-calculator', reason: 'Build a 6-month buffer for freelance income volatility.' }
+  ],
+  'break-even-calculator': [
+    { slug: 'profit-margin-calculator', reason: 'Analyze gross, operating, and net profit margins.' },
+    { slug: 'customer-lifetime-value-calculator', reason: 'Evaluate customer acquisition cost versus lifetime profit.' },
+    { slug: 'freelance-true-rate-system', reason: 'Calculate freelance business break-even hourly rates.' }
+  ],
+  'profit-margin-calculator': [
+    { slug: 'break-even-calculator', reason: 'Determine sales volume required to hit target margins.' },
+    { slug: 'customer-lifetime-value-calculator', reason: 'Analyze unit economics and customer profitability.' },
+    { slug: 'freelance-hourly-rate-calculator', reason: 'Price services to maintain strong profit margins.' }
+  ],
+  'customer-lifetime-value-calculator': [
+    { slug: 'profit-margin-calculator', reason: 'Understand margin impact on customer lifetime profitability.' },
+    { slug: 'break-even-calculator', reason: 'Calculate break-even payback on customer acquisition costs.' }
+  ],
+
+  // Health & Wellness Cluster
+  'bmi-calculator': [
+    { slug: 'body-fat-percentage-calculator', reason: 'Measure body composition and lean muscle mass vs fat.' },
+    { slug: 'tdee-calculator', reason: 'Calculate daily calorie expenditure based on physical activity.' }
+  ],
+  'body-fat-percentage-calculator': [
+    { slug: 'bmi-calculator', reason: 'Compare US Navy body fat formula results with standard BMI.' },
+    { slug: 'tdee-calculator', reason: 'Align calorie intake with body composition targets.' }
+  ],
+  'tdee-calculator': [
+    { slug: 'bmi-calculator', reason: 'Check your baseline BMI category.' },
+    { slug: 'body-fat-percentage-calculator', reason: 'Fine-tune calorie needs based on body fat percentage.' }
+  ],
+
+  // Construction Cluster
+  'concrete-calculator': [
+    { slug: 'paint-calculator', reason: 'Estimate surface area and paint gallon requirements.' },
+    { slug: 'tile-calculator', reason: 'Calculate tile square footage and waste factors.' },
+    { slug: 'stair-calculator', reason: 'Calculate stair stringers, risers, and treads.' }
+  ],
+  'paint-calculator': [
+    { slug: 'concrete-calculator', reason: 'Estimate concrete slab and footing materials.' },
+    { slug: 'tile-calculator', reason: 'Calculate flooring tile requirements.' },
+    { slug: 'stair-calculator', reason: 'Calculate surface area for painting or staining wooden stairs.' }
+  ],
+  'tile-calculator': [
+    { slug: 'concrete-calculator', reason: 'Calculate subfloor concrete materials.' },
+    { slug: 'paint-calculator', reason: 'Estimate wall paint for room finishing.' },
+    { slug: 'stair-calculator', reason: 'Calculate step tiling and riser coverage.' }
+  ],
+  'stair-calculator': [
+    { slug: 'concrete-calculator', reason: 'Calculate concrete volume for poured steps.' },
+    { slug: 'tile-calculator', reason: 'Calculate tile surface area for steps and landings.' },
+    { slug: 'unit-converter', reason: 'Convert construction measurements between metric and imperial.' }
+  ],
+
+  // Engineering & Math Cluster
+  'ohms-law-calculator': [
+    { slug: 'beam-deflection-calculator', reason: 'Calculate structural beam deflection under load.' },
+    { slug: 'pressure-calculator', reason: 'Convert and calculate fluid and atmospheric pressure.' },
+    { slug: 'unit-converter', reason: 'Convert electrical and mechanical units with precision.' }
+  ],
+  'beam-deflection-calculator': [
+    { slug: 'ohms-law-calculator', reason: 'Solve electrical circuit voltage, current, and resistance.' },
+    { slug: 'pressure-calculator', reason: 'Calculate hydraulic and mechanical pressure.' },
+    { slug: 'unit-converter', reason: 'Convert metric and imperial structural measurements.' }
+  ],
+  'pressure-calculator': [
+    { slug: 'ohms-law-calculator', reason: 'Calculate electrical engineering parameters.' },
+    { slug: 'beam-deflection-calculator', reason: 'Compute structural loads and deflection.' },
+    { slug: 'unit-converter', reason: 'Convert engineering units across PSI, bar, and Pascals.' }
+  ],
+  'unit-converter': [
+    { slug: 'pressure-calculator', reason: 'Perform detailed pressure unit conversions.' },
+    { slug: 'beam-deflection-calculator', reason: 'Convert engineering structural dimensions.' },
+    { slug: 'ohms-law-calculator', reason: 'Calculate circuit values using standard units.' }
+  ],
+  'percentage-calculator': [
+    { slug: 'tip-calculator', reason: 'Calculate tip percentages and bill splitting.' },
+    { slug: 'inflation-calculator', reason: 'Calculate percentage purchasing power erosion.' },
+    { slug: 'student-loan-calculator', reason: 'Calculate interest percentages on educational debt.' },
+    { slug: 'gpa-calculator', reason: 'Convert percentage grades into standard 4.0 GPA.' },
+    { slug: 'final-grade-calculator', reason: 'Calculate weighted percentage needed on final exams.' }
+  ],
+  'tip-calculator': [
+    { slug: 'percentage-calculator', reason: 'Calculate discounts, sales taxes, and general percentages.' },
+    { slug: 'budget-planner', reason: 'Track dining out spending within your monthly budget.' },
+    { slug: 'date-calculator', reason: 'Calculate days and split expenses across group vacations.' }
+  ],
+  'date-calculator': [
+    { slug: 'amortization-calculator', reason: 'Calculate loan maturity dates and repayment timelines.' },
+    { slug: 'savings-calculator', reason: 'Calculate exact target dates for savings milestones.' },
+    { slug: 'tip-calculator', reason: 'Split shared travel bills and restaurant tips across group itineraries.' },
+    { slug: 'retirement-calculator', reason: 'Determine exact years and months until target retirement age.' }
+  ],
+  'gpa-calculator': [
+    { slug: 'final-grade-calculator', reason: 'Calculate the score needed on your final exam to achieve target grade.' },
+    { slug: 'student-loan-calculator', reason: 'Estimate post-graduation student loan repayment based on degree.' },
+    { slug: 'percentage-calculator', reason: 'Convert course points to percentages.' }
+  ],
+  'final-grade-calculator': [
+    { slug: 'gpa-calculator', reason: 'Calculate cumulative semester GPA.' },
+    { slug: 'percentage-calculator', reason: 'Calculate exam weighting percentages.' },
+    { slug: 'student-loan-calculator', reason: 'Plan degree completion and financial aid qualifications.' }
+  ]
+};
+
 // ── 3. Merge and normalize the registry ──────────────────────────────
 function buildRegistry() {
   const legacy = loadTools();
@@ -885,19 +1238,30 @@ function renderPreRenderedToolContent(tool, slug, allTools = {}) {
     `;
   }
 
-  // 12. Related Tools Mesh
+  // 12. Decision Pathways & Interlinking Mesh
   let relatedToolsHtml = '';
-  let relSlugs = tool.related || [];
-  if (!relSlugs.length && allTools) {
-    relSlugs = Object.keys(allTools).filter(s => s !== slug && allTools[s].category === tool.category).slice(0, 4);
+  const pathwayEntries = DECISION_PATHWAYS[slug] || [];
+  let relItems = [];
+
+  if (pathwayEntries.length > 0) {
+    relItems = pathwayEntries;
+  } else if (Array.isArray(tool.related) && tool.related.length > 0) {
+    relItems = tool.related.map(r => typeof r === 'string' ? { slug: r, reason: 'Complementary decision tool.' } : r);
+  } else if (allTools) {
+    relItems = Object.keys(allTools)
+      .filter(s => s !== slug && allTools[s].category === tool.category)
+      .slice(0, 4)
+      .map(s => ({ slug: s, reason: 'Complementary calculation tool.' }));
   }
 
-  if (relSlugs.length > 0) {
+  if (relItems.length > 0) {
     const relatedId = 'related-tools';
-    const relatedTitle = 'Related Calculators';
+    const relatedTitle = 'Next Decision Steps';
     tocItems.push({ id: relatedId, label: relatedTitle });
 
-    const linkCards = relSlugs.map(relSlug => {
+    const linkCards = relItems.map(item => {
+      const relSlug = typeof item === 'string' ? item : item.slug;
+      const relReason = (typeof item === 'object' && item.reason) ? item.reason : null;
       const relTool = allTools && allTools[relSlug] ? allTools[relSlug] : null;
       const relName = relTool ? relTool.name : relSlug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
       const relDesc = relTool ? (relTool.metaDescription || relTool.description) : 'Calculate and evaluate metrics with precision.';
@@ -907,18 +1271,23 @@ function renderPreRenderedToolContent(tool, slug, allTools = {}) {
       const relTagClass = (relTool && relTool.tagClass) || 'tag-finance';
 
       return `
-        <a href="/tool/${encodeURIComponent(relSlug)}" class="tool-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between;">
+        <a href="/tool/${encodeURIComponent(relSlug)}" class="tool-card decision-pathway-card" style="text-decoration:none; display:flex; flex-direction:column; justify-content:space-between; position:relative;">
           <div>
-            <div class="tool-card-header" style="margin-bottom:10px;">
+            <div class="tool-card-header" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
               <div class="tool-icon ${escapeHtml(relIconClass)}"><i class="fa-solid ${escapeHtml(relIcon)}"></i></div>
+              <span class="tag ${escapeHtml(relTagClass)}" style="font-size:11px;">${escapeHtml(relCat)}</span>
             </div>
-            <h3 style="font-size:14px; font-weight:700; margin-bottom:6px; color:var(--text-primary);">${escapeHtml(relName)}</h3>
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:6px; color:var(--text-primary); line-height:1.3;">${escapeHtml(relName)}</h3>
+            ${relReason ? `
+              <div style="background:rgba(99,102,241,0.06); border-radius:6px; padding:6px 10px; margin-bottom:8px; font-size:12px; color:var(--primary-color); font-weight:600; line-height:1.4;">
+                <i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>${escapeHtml(relReason)}
+              </div>
+            ` : ''}
             <p style="font-size:12px; color:var(--text-secondary); line-height:1.5; margin:0;">${escapeHtml(relDesc)}</p>
           </div>
-          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-            <span class="tag ${escapeHtml(relTagClass)}">${escapeHtml(relCat)}</span>
-            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:4px;">
-              <span>Calculate</span> <i class="fa-solid fa-arrow-right"></i>
+          <div class="tool-card-footer" style="margin-top:14px; display:flex; justify-content:flex-end; align-items:center;">
+            <span style="font-size:12px; color:var(--primary-color); font-weight:600; display:flex; align-items:center; gap:6px;">
+              <span>Calculate Next Step</span> <i class="fa-solid fa-arrow-right"></i>
             </span>
           </div>
         </a>
@@ -929,9 +1298,12 @@ function renderPreRenderedToolContent(tool, slug, allTools = {}) {
       <section class="tool-runner-card educational-card" id="${relatedId}" aria-labelledby="${relatedId}-title">
         <h2 id="${relatedId}-title" class="educational-section-title">
           <i class="fa-solid fa-arrows-split-up-and-left" style="color:var(--primary-color); margin-right:8px;"></i>
-          ${escapeHtml(relatedTitle)}
+          ${escapeHtml(relatedTitle)} & Related Calculators
         </h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px;">
+        <p style="color:var(--text-secondary); font-size:14px; margin-top:-8px; margin-bottom:20px; line-height:1.5;">
+          Connect your calculation into a complete financial decision path with these recommended next steps.
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px;">
           ${linkCards}
         </div>
       </section>
