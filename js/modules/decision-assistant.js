@@ -213,6 +213,7 @@ async function handleQuerySubmit(tool, slug, onApply, getValues) {
                     <div>
                         <h4>Unable to complete analysis</h4>
                         <p>${escapeHtml(resData.error || 'Server connection failed. Please try again.')}</p>
+                        ${resData.details && resData.details !== resData.error ? `<p style="font-size:12px; opacity:0.85; margin-top:6px; font-family:monospace;">${escapeHtml(resData.details)}</p>` : ''}
                     </div>
                 </div>
             `;

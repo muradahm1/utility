@@ -15,8 +15,8 @@
 // ============================================================
 
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
-const DEFAULT_MODEL = 'gemini-2.5-flash';
-const FALLBACK_MODEL = 'gemini-1.5-flash';
+const DEFAULT_MODEL = 'gemini-1.5-flash';
+const FALLBACK_MODEL = 'gemini-2.0-flash';
 
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 15;
@@ -222,33 +222,47 @@ Return a valid JSON object with the following schema:
             }
         };
 
-        let geminiUrl = `${GEMINI_API_BASE}/${targetModel}:generateContent?key=${apiKey}`;
+        const modelsToTry = [
+            body.model,
+            DEFAULT_MODEL,
+            FALLBACK_MODEL,
+            'gemini-1.5-pro'
+        ].filter(Boolean);
+        const uniqueModels = [...new Set(modelsToTry)];
+
+        let geminiResponse = null;
+        let lastErrorMsg = '';
 
         try {
-            let geminiResponse = await fetch(geminiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestPayload)
-            });
-
-            // Fallback to secondary model if primary model is unavailable or rate-limited
-            if (!geminiResponse.ok && targetModel !== FALLBACK_MODEL) {
-                targetModel = FALLBACK_MODEL;
-                geminiUrl = `${GEMINI_API_BASE}/${targetModel}:generateContent?key=${apiKey}`;
-                geminiResponse = await fetch(geminiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestPayload)
-                });
+            for (const model of uniqueModels) {
+                targetModel = model;
+                const geminiUrl = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
+                try {
+                    geminiResponse = await fetch(geminiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestPayload)
+                    });
+                    if (geminiResponse.ok) {
+                        break;
+                    } else {
+                        const errData = await geminiResponse.json().catch(() => ({}));
+                        lastErrorMsg = errData.error?.message || `Google AI returned status ${geminiResponse.status} (${geminiResponse.statusText})`;
+                        console.warn(`[GetCalcu AI] Model ${model} failed:`, lastErrorMsg);
+                    }
+                } catch (fetchErr) {
+                    lastErrorMsg = fetchErr.message;
+                    console.warn(`[GetCalcu AI] Fetch to ${model} threw error:`, fetchErr.message);
+                }
             }
 
-            if (!geminiResponse.ok) {
-                const errData = await geminiResponse.json().catch(() => ({}));
-                const errMsg = errData.error?.message || `Gemini API returned status ${geminiResponse.status}`;
-                console.error('[GetCalcu AI] Gemini Error:', errMsg);
+            if (!geminiResponse || !geminiResponse.ok) {
+                console.error('[GetCalcu AI] All candidate Gemini models failed. Last error:', lastErrorMsg);
                 return res.status(502).json({
                     ok: false,
-                    error: 'The AI decision assistant is momentarily busy. Please try again or adjust your calculator inputs directly.'
+                    error: lastErrorMsg || 'The AI decision assistant is momentarily busy. Please try again or adjust your calculator inputs directly.',
+                    details: lastErrorMsg,
+                    modelAttempted: targetModel
                 });
             }
 
