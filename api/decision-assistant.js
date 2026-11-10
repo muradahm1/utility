@@ -90,6 +90,85 @@ ${fieldDescriptions}`;
 }
 
 /**
+ * Deterministic behavioral decision fallback when external AI providers are unavailable
+ */
+export function generateDeterministicGuidance(tool, currentVals = {}, query = '') {
+    const params = { ...currentVals };
+    const tradeOffs = [];
+    const riskWarnings = [];
+    let explanation = '';
+    const qLower = (query || '').toLowerCase();
+    const toolId = (tool.id || '').toLowerCase();
+
+    if (toolId.includes('mortgage') || toolId.includes('home')) {
+        let price = parseFloat(params.home_price) || 400000;
+        let down = parseFloat(params.down_payment) || Math.round(price * 0.2);
+        let rate = parseFloat(params.interest_rate) || 6.5;
+        let term = parseInt(params.loan_term) || 30;
+
+        if (qLower.includes('drop 1%') || qLower.includes('lower rate') || qLower.includes('drop')) {
+            rate = Math.max(1, +(rate - 1).toFixed(2));
+            params.interest_rate = rate;
+            explanation = `Simulating a 1.0% interest rate reduction to ${rate}%. Lowering your mortgage interest rate directly decreases your required monthly payment and reduces lifetime interest expenses.`;
+            tradeOffs.push(`Rate drop reduces monthly amortization strain, freeing up cash flow for investments or emergency reserves.`);
+        } else if (qLower.includes('15') || qLower.includes('shorter') || qLower.includes('faster')) {
+            term = 15;
+            rate = Math.max(1, +(rate - 0.5).toFixed(2));
+            params.loan_term = 15;
+            params.interest_rate = rate;
+            explanation = `Simulating a transition from a 30-year to a 15-year fixed mortgage at ${rate}%. Equity accumulates at more than double the speed.`;
+            tradeOffs.push(`Monthly payments increase by approximately 30-40%, but tens of thousands of dollars in lifetime interest are eliminated.`);
+        } else if (qLower.includes('3.5%') || qLower.includes('fha') || qLower.includes('low down')) {
+            down = Math.round(price * 0.035);
+            params.down_payment = down;
+            explanation = `Modeling an FHA or low-down-payment scenario with 3.5% down ($${down.toLocaleString()}).`;
+            tradeOffs.push(`Preserves liquid cash upfront, but incurs ongoing mortgage insurance premiums (MIP/PMI) and higher principal balances.`);
+        } else {
+            explanation = `Analyzing mortgage scenario with a purchase price of $${price.toLocaleString()} and $${down.toLocaleString()} down payment.`;
+            tradeOffs.push(`Every additional $10,000 in down payment reduces the financed balance and lifetime finance charges.`);
+        }
+
+        const ltv = ((price - down) / price) * 100;
+        if (ltv > 80) {
+            riskWarnings.push(`Loan-to-Value (LTV) is ${ltv.toFixed(1)}%. Financing more than 80% requires private mortgage insurance (PMI) until principal drops to 78-80%.`);
+        }
+        riskWarnings.push('Ensure total housing debt (PITI) does not exceed 28% of your gross monthly household income.');
+
+    } else if (toolId.includes('loan') || toolId.includes('credit') || toolId.includes('debt')) {
+        let amount = parseFloat(params.loan_amount || params.balance) || 25000;
+        let rate = parseFloat(params.interest_rate || params.apr) || 7.5;
+        let term = parseInt(params.loan_term || params.months) || 48;
+
+        if (qLower.includes('extra') || qLower.includes('pay off') || qLower.includes('accelerate')) {
+            explanation = `Evaluating an accelerated debt payoff strategy. Making extra payments directly to principal shortens your amortization timeline.`;
+            tradeOffs.push('Directing extra funds toward debt produces a guaranteed, risk-free return equal to your loan interest rate.');
+        } else {
+            explanation = `Evaluating debt payoff for $${amount.toLocaleString()} at ${rate}% APR across ${term} periods.`;
+            tradeOffs.push('Shorter loan durations cut total financing costs, while longer durations lower monthly cash obligations.');
+        }
+        riskWarnings.push('Maintain a starter emergency cushion ($1,000 to 1 month of expenses) before aggressively paying down low-interest debt.');
+
+    } else if (toolId.includes('retire') || toolId.includes('401k') || toolId.includes('invest') || toolId.includes('compound')) {
+        explanation = `Projecting wealth accumulation and compound growth under current contribution rates.`;
+        tradeOffs.push('Increasing recurring monthly contributions by even 1-2% has an exponential compounding effect over a 15 to 30-year horizon.');
+        riskWarnings.push('Account for inflation when estimating future purchasing power; historical inflation averages roughly 2.5-3.0% annually.');
+
+    } else {
+        explanation = `Analyzing ${tool.name || 'calculator'} parameters to identify optimal financial adjustments.`;
+        tradeOffs.push('Reviewing immediate cash flow constraints against long-term goal completion.');
+        riskWarnings.push('Verify baseline assumptions before committing significant capital.');
+    }
+
+    return {
+        parameters: params,
+        explanation,
+        tradeOffs,
+        riskWarnings,
+        followUpQuestion: null
+    };
+}
+
+/**
  * Resolve Gemini API key from environment with flexible name and case matching
  */
 export function resolveGeminiApiKey() {
@@ -222,11 +301,17 @@ Return a valid JSON object with the following schema:
             }
         };
 
+        const endpointsToTry = [
+            'https://generativelanguage.googleapis.com/v1beta/models',
+            'https://generativelanguage.googleapis.com/v1/models'
+        ];
         const modelsToTry = [
             body.model,
-            DEFAULT_MODEL,
-            FALLBACK_MODEL,
-            'gemini-1.5-pro'
+            'gemini-1.5-flash',
+            'gemini-1.5-flash-latest',
+            'gemini-2.0-flash',
+            'gemini-1.5-pro',
+            'gemini-pro'
         ].filter(Boolean);
         const uniqueModels = [...new Set(modelsToTry)];
 
@@ -234,59 +319,85 @@ Return a valid JSON object with the following schema:
         let lastErrorMsg = '';
 
         try {
-            for (const model of uniqueModels) {
-                targetModel = model;
-                const geminiUrl = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
-                try {
-                    geminiResponse = await fetch(geminiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(requestPayload)
-                    });
-                    if (geminiResponse.ok) {
-                        break;
-                    } else {
-                        const errData = await geminiResponse.json().catch(() => ({}));
-                        lastErrorMsg = errData.error?.message || `Google AI returned status ${geminiResponse.status} (${geminiResponse.statusText})`;
-                        console.warn(`[GetCalcu AI] Model ${model} failed:`, lastErrorMsg);
+            // 1. Try standard candidate models across v1beta and v1
+            outerLoop:
+            for (const ep of endpointsToTry) {
+                for (const model of uniqueModels) {
+                    targetModel = model;
+                    const geminiUrl = `${ep}/${model}:generateContent?key=${apiKey}`;
+                    try {
+                        geminiResponse = await fetch(geminiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestPayload)
+                        });
+                        if (geminiResponse.ok) {
+                            break outerLoop;
+                        } else {
+                            const errData = await geminiResponse.json().catch(() => ({}));
+                            lastErrorMsg = errData.error?.message || `Google AI returned status ${geminiResponse.status} (${geminiResponse.statusText})`;
+                        }
+                    } catch (fetchErr) {
+                        lastErrorMsg = fetchErr.message;
                     }
-                } catch (fetchErr) {
-                    lastErrorMsg = fetchErr.message;
-                    console.warn(`[GetCalcu AI] Fetch to ${model} threw error:`, fetchErr.message);
                 }
             }
 
+            // 2. If candidates failed, attempt dynamic ModelService.ListModels discovery
             if (!geminiResponse || !geminiResponse.ok) {
-                console.error('[GetCalcu AI] All candidate Gemini models failed. Last error:', lastErrorMsg);
-                return res.status(502).json({
-                    ok: false,
-                    error: lastErrorMsg || 'The AI decision assistant is momentarily busy. Please try again or adjust your calculator inputs directly.',
-                    details: lastErrorMsg,
-                    modelAttempted: targetModel
-                });
+                try {
+                    for (const ep of endpointsToTry) {
+                        const listResp = await fetch(`${ep}?key=${apiKey}`);
+                        if (listResp.ok) {
+                            const listJson = await listResp.json();
+                            const dynamicModels = (listJson.models || [])
+                                .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+                                .map(m => m.name.replace(/^models\//, ''));
+                            for (const dynModel of dynamicModels) {
+                                targetModel = dynModel;
+                                const dynUrl = `${ep}/${dynModel}:generateContent?key=${apiKey}`;
+                                const dynResp = await fetch(dynUrl, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(requestPayload)
+                                });
+                                if (dynResp.ok) {
+                                    geminiResponse = dynResp;
+                                    break;
+                                }
+                            }
+                            if (geminiResponse && geminiResponse.ok) break;
+                        }
+                    }
+                } catch (_) {}
             }
 
-            const data = await geminiResponse.json();
-            const candidate = data.candidates?.[0];
-            const rawContent = candidate?.content?.parts?.[0]?.text;
+            // 3. Parse Gemini response or fall back gracefully to deterministic guidance
+            if (!geminiResponse || !geminiResponse.ok) {
+                console.warn('[GetCalcu AI] Upstream provider unavailable, falling back to deterministic synthesis:', lastErrorMsg);
+                parsedData = generateDeterministicGuidance(tool, body.currentValues, sanitizedQuery);
+                targetModel = 'deterministic-synthesis';
+            } else {
+                const data = await geminiResponse.json();
+                const candidate = data.candidates?.[0];
+                const rawContent = candidate?.content?.parts?.[0]?.text;
 
-            if (!rawContent) {
-                return res.status(502).json({ ok: false, error: 'Empty response received from AI provider.' });
-            }
-
-            try {
-                parsedData = JSON.parse(rawContent);
-            } catch (jsonErr) {
-                // Clean markdown fences if any slipped through
-                const cleaned = rawContent.replace(/```json\s*|```/g, '').trim();
-                parsedData = JSON.parse(cleaned);
+                if (!rawContent) {
+                    parsedData = generateDeterministicGuidance(tool, body.currentValues, sanitizedQuery);
+                    targetModel = 'deterministic-synthesis';
+                } else {
+                    try {
+                        parsedData = JSON.parse(rawContent);
+                    } catch (jsonErr) {
+                        const cleaned = rawContent.replace(/```json\s*|```/g, '').trim();
+                        parsedData = JSON.parse(cleaned);
+                    }
+                }
             }
         } catch (err) {
-            console.error('[GetCalcu AI] Internal Exception:', err);
-            return res.status(500).json({
-                ok: false,
-                error: 'An unexpected error occurred while processing your financial decision query.'
-            });
+            console.warn('[GetCalcu AI] Error during synthesis, using deterministic fallback:', err.message);
+            parsedData = generateDeterministicGuidance(tool, body.currentValues, sanitizedQuery);
+            targetModel = 'deterministic-synthesis';
         }
     }
 
