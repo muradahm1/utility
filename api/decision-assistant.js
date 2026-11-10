@@ -90,6 +90,31 @@ ${fieldDescriptions}`;
 }
 
 /**
+ * Resolve Gemini API key from environment with flexible name and case matching
+ */
+export function resolveGeminiApiKey() {
+    const directKeys = [
+        'GEMINI_API_KEY',
+        'GOOGLE_API_KEY',
+        'GEMINI_KEY',
+        'GOOGLE_GEMINI_KEY',
+        'GOOGLE_AI_API_KEY',
+        'NEXT_PUBLIC_GEMINI_API_KEY',
+        'VITE_GEMINI_API_KEY'
+    ];
+    for (const k of directKeys) {
+        if (process.env[k]) return process.env[k].trim();
+    }
+    // Case-insensitive / fuzzy match across all process.env keys
+    for (const [k, v] of Object.entries(process.env)) {
+        if (/^(?:NEXT_PUBLIC_|VITE_)?(?:GEMINI|GOOGLE_AI|GOOGLE_GEMINI)(?:_API)?_KEY$/i.test(k) && v) {
+            return v.trim();
+        }
+    }
+    return null;
+}
+
+/**
  * Main API Handler
  */
 export default async function handler(req, res) {
@@ -157,11 +182,11 @@ export default async function handler(req, res) {
         targetModel = 'mock-test';
     } else {
         // 6. Check API Key
-        const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+        const apiKey = resolveGeminiApiKey();
         if (!apiKey) {
             return res.status(500).json({
                 ok: false,
-                error: 'GEMINI_API_KEY is not configured in Vercel environment variables.'
+                error: 'GEMINI_API_KEY is not configured in Vercel environment variables. Please check that GEMINI_API_KEY is added under Vercel Project Settings > Environment Variables for Production.'
             });
         }
 
