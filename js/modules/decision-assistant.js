@@ -180,11 +180,23 @@ async function handleQuerySubmit(tool, slug, onApply, getValues) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> <span>Evaluating trade-offs...</span>`;
 
+    let contextualMsg = "Analyzing scenario against GetCalcu's verified financial models...";
+    const qLower = query.toLowerCase();
+    if (qLower.includes('rate') || qLower.includes('interest')) {
+        contextualMsg = 'Evaluating interest rate variance and monthly amortization impact...';
+    } else if (qLower.includes('afford') || qLower.includes('salary') || qLower.includes('income')) {
+        contextualMsg = 'Calculating debt-to-income thresholds and safe purchase capacity...';
+    } else if (qLower.includes('down') || qLower.includes('pmi') || qLower.includes('ltv')) {
+        contextualMsg = 'Simulating equity thresholds and private mortgage insurance requirements...';
+    } else if (qLower.includes('pay off') || qLower.includes('extra') || qLower.includes('accelerat')) {
+        contextualMsg = 'Modeling principal acceleration and interest savings curve...';
+    }
+
     outputArea.style.display = 'block';
     outputArea.innerHTML = `
         <div class="decision-loading-state">
             <div class="decision-spinner"><i class="fa-solid fa-brain-circuit fa-spin"></i></div>
-            <p>Analyzing scenario against GetCalcu's verified financial models...</p>
+            <p>${escapeHtml(contextualMsg)}</p>
         </div>
     `;
 
@@ -220,7 +232,7 @@ async function handleQuerySubmit(tool, slug, onApply, getValues) {
             return;
         }
 
-        renderAnalysisOutput(resData.data, tool, onApply);
+        renderAnalysisOutput(resData.data, tool, onApply, resData.cached);
 
     } catch (err) {
         console.error('[GetCalcu Decision Co-Pilot] Network error:', err);
@@ -242,11 +254,17 @@ async function handleQuerySubmit(tool, slug, onApply, getValues) {
 /**
  * Render structured decision intelligence output
  */
-function renderAnalysisOutput(data, tool, onApply) {
+function renderAnalysisOutput(data, tool, onApply, isCached = false) {
     const outputArea = document.getElementById('decision-output-area');
     if (!outputArea || !data) return;
 
     const hasParams = data.parameters && Object.keys(data.parameters).length > 0;
+
+    const cacheBadge = isCached ? `
+        <div class="decision-meta-badge" style="display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--text-muted); background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:12px; padding:2px 8px; margin-bottom:12px;">
+            <i class="fa-solid fa-bolt" style="color:#F59E0B; font-size:10px;"></i> Instant Verified Evaluation
+        </div>
+    ` : '';
 
     let tradeOffsHtml = '';
     if (data.tradeOffs && data.tradeOffs.length) {
@@ -310,6 +328,7 @@ function renderAnalysisOutput(data, tool, onApply) {
 
     outputArea.innerHTML = `
         <div class="decision-result-card">
+            ${cacheBadge}
             <div class="decision-explanation">
                 <p>${escapeHtml(data.explanation)}</p>
             </div>
